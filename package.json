@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "start": "node .output/server/index.mjs",
+    "start": "vite preview",
+    "deploy": "alchemy deploy",
     "types:check": "fumadocs-mdx && tsc --noEmit",
     "postinstall": "fumadocs-mdx",
     "lint": "biome check",
@@ -27,13 +28,14 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.2.2",
     "@tailwindcss/vite": "^4.1.17",
     "@types/mdx": "^2.0.13",
     "@types/node": "^24.10.2",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.2",
-    "nitro": "3.0.1-alpha.1",
+    "alchemy": "^0.81.1",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^5.1.4",
