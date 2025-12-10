@@ -1,0 +1,72 @@
+import { createFileRoute, notFound } from "@tanstack/react-router";
+import { HomeLayout } from "fumadocs-ui/layouts/home";
+import { createServerFn } from "@tanstack/react-start";
+import { InlineTOC } from "fumadocs-ui/components/inline-toc";
+import browserCollections from "fumadocs-mdx:collections/browser";
+import { blog } from "@/lib/source";
+import { baseOptions } from "@/lib/layout.shared";
+import { getMDXComponents } from "@/mdx-components";
+
+export const Route = createFileRoute("/blog/$slug")({
+  loader: async ({ params }) => {
+    const data = await serverLoader({ data: params.slug });
+    await clientLoader.preload(data.path);
+    return data;
+  },
+  component: BlogPost,
+});
+
+const serverLoader = createServerFn({ method: "GET" })
+  .inputValidator((slug: string) => slug)
+  .handler(async ({ data: slug }) => {
+    const page = blog.getPage([slug]);
+    if (!page) throw notFound();
+
+    return {
+      path: page.path,
+      title: page.data.title,
+      description: page.data.description,
+      date: page.data.date,
+      author: page.data.author,
+    };
+  });
+
+const clientLoader = browserCollections.blog.createClientLoader({
+  component({ toc, default: MDX }) {
+    return (
+      <>
+        <InlineTOC items={toc} />
+        <div className="prose prose-fd mt-6">
+          <MDX components={getMDXComponents()} />
+        </div>
+      </>
+    );
+  },
+});
+
+function BlogPost() {
+  const data = Route.useLoaderData();
+  const Content = clientLoader.getComponent(data.path);
+
+  return (
+    <HomeLayout {...baseOptions()}>
+      <article className="mx-auto max-w-3xl px-4 py-12">
+        <header className="mb-8">
+          <div className="mb-2 flex gap-4 text-sm text-fd-muted-foreground">
+            {data.date && (
+              <time>{new Date(data.date).toLocaleDateString()}</time>
+            )}
+            {data.author && <span>by {data.author}</span>}
+          </div>
+          <h1 className="text-4xl font-bold">{data.title}</h1>
+          {data.description && (
+            <p className="mt-3 text-lg text-fd-muted-foreground">
+              {data.description}
+            </p>
+          )}
+        </header>
+        <Content />
+      </article>
+    </HomeLayout>
+  );
+}
