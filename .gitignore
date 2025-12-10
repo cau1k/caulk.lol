@@ -14,5 +14,10 @@ node_modules
 /blob-report/
 /playwright/.cache/
 .tanstack
-
 .source
+
+.env
+.env.local
+.env.prod
+.alchemy
+
