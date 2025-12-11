@@ -2,8 +2,6 @@
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
 
-@plugin "tailwindcss-animate";
-
 /* CMU Serif - for headings/titles */
 @font-face {
   font-family: "CMU Serif";
@@ -126,11 +124,8 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
   body {
-    @apply font-sans bg-background text-foreground;
+    @apply font-sans;
   }
   h1,
   h2,
