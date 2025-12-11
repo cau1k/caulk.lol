@@ -106,13 +106,6 @@ function Home() {
             >
               Archive
             </Link>
-            <Link
-              to="/docs/$"
-              params={{ _splat: "" }}
-              className="hover:text-fd-foreground transition-colors"
-            >
-              Docs
-            </Link>
           </div>
         </footer>
       </main>

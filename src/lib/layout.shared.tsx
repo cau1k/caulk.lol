@@ -5,9 +5,6 @@ export function baseOptions(): BaseLayoutProps {
     nav: {
       title: "Caulk",
     },
-    links: [
-      { text: "Blog", url: "/blog" },
-      { text: "Docs", url: "/docs" },
-    ],
+    links: [{ text: "Blog", url: "/blog" }],
   };
 }
