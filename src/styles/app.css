@@ -1,114 +1,6 @@
 @import "tailwindcss";
 @import "fumadocs-ui/css/preset.css";
-
-/* CMU Serif - for headings/titles */
-@font-face {
-  font-family: "CMU Serif";
-  src:
-    url("/fonts/cmu-serif/cmunrm-webfont.woff") format("woff"),
-    url("/fonts/cmu-serif/cmunrm-webfont.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-  size-adjust: 106.25%;
-}
-
-@font-face {
-  font-family: "CMU Serif";
-  src:
-    url("/fonts/cmu-serif/cmunti-webfont.woff") format("woff"),
-    url("/fonts/cmu-serif/cmunti-webfont.ttf") format("truetype");
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-  size-adjust: 126.25%;
-}
-
-@font-face {
-  font-family: "CMU Serif";
-  src:
-    url("/fonts/cmu-serif/cmunbx-webfont.woff") format("woff"),
-    url("/fonts/cmu-serif/cmunbx-webfont.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-  size-adjust: 126.25%;
-}
-
-@font-face {
-  font-family: "CMU Serif";
-  src:
-    url("/fonts/cmu-serif/cmunbi-webfont.woff") format("woff"),
-    url("/fonts/cmu-serif/cmunbi-webfont.ttf") format("truetype");
-  font-weight: 700;
-  font-style: italic;
-  font-display: swap;
-  size-adjust: 126.25%;
-}
-
-/* CMU Sans Serif - for body text */
-@font-face {
-  font-family: "CMU Sans Serif";
-  src:
-    url("/fonts/cmu-sans/cmunss-webfont.woff") format("woff"),
-    url("/fonts/cmu-sans/cmunss-webfont.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "CMU Sans Serif";
-  src:
-    url("/fonts/cmu-sans/cmunsi-webfont.woff") format("woff"),
-    url("/fonts/cmu-sans/cmunsi-webfont.ttf") format("truetype");
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "CMU Sans Serif";
-  src:
-    url("/fonts/cmu-sans/cmunsx-webfont.woff") format("woff"),
-    url("/fonts/cmu-sans/cmunsx-webfont.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "CMU Sans Serif";
-  src:
-    url("/fonts/cmu-sans/cmunso-webfont.woff") format("woff"),
-    url("/fonts/cmu-sans/cmunso-webfont.ttf") format("truetype");
-  font-weight: 700;
-  font-style: italic;
-  font-display: swap;
-}
-
-/* CMU Typewriter Variable Width - for code */
-@font-face {
-  font-family: "CMU Typewriter Variable";
-  src:
-    url("/fonts/cmu-typewriter/cmunvt-webfont.woff") format("woff"),
-    url("/fonts/cmu-typewriter/cmunvt-webfont.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-  size-adjust: 130%;
-}
-
-@font-face {
-  font-family: "CMU Typewriter Variable";
-  src:
-    url("/fonts/cmu-typewriter/cmunvi-webfont.woff") format("woff"),
-    url("/fonts/cmu-typewriter/cmunvi-webfont.ttf") format("truetype");
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-  size-adjust: 130%;
-}
+@import "fonts.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -139,6 +31,7 @@
   --color-fd-secondary: hsl(220, 22%, 92%);
   --color-fd-background: hsl(220, 23%, 95%);
   --color-fd-ring: hsl(267, 84%, 81%);
+  --border-radius: 0rem;
 }
 
 .dark {
@@ -158,6 +51,7 @@
   --color-fd-popover-foreground: hsl(226, 64%, 88%);
   --color-fd-accent-foreground: hsl(226, 64%, 88%);
   --color-fd-muted-foreground: hsl(228, 24%, 72%);
+  --border-radius: 0rem;
 }
 
 #nd-sidebar {
@@ -170,6 +64,11 @@
   --color-fd-muted: hsl(237, 16%, 23%);
 }
 @layer base {
+  html {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
   body {
     @apply font-sans;
   }

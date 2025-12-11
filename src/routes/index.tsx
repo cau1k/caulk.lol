@@ -45,7 +45,7 @@ function Home() {
     <HomeLayout {...baseOptions()}>
       <main className="mx-auto max-w-2xl px-6 py-16">
         <header className="mb-16">
-          <h1 className="text-4xl font-bold tracking-tight mb-4">Caulk</h1>
+          <h1 className="text-4xl font-mono! tracking-tight mb-4">caulk.lol</h1>
           <p className="text-fd-muted-foreground text-lg">
             Thoughts on software, AI, and building things.
           </p>
