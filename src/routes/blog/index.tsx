@@ -11,8 +11,14 @@ export const Route = createFileRoute("/blog/")({
 
 const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
   const pages = blog.getPages();
+  const sorted = pages.sort((a, b) => {
+    const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
+    const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
+    return dateB - dateA;
+  });
+
   return {
-    posts: pages.map((page) => ({
+    posts: sorted.map((page) => ({
       url: page.url,
       title: page.data.title,
       description: page.data.description,
@@ -22,35 +28,54 @@ const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
   };
 });
 
+function formatDate(dateStr: string | Date) {
+  const date = typeof dateStr === "string" ? new Date(dateStr) : dateStr;
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
 function BlogIndex() {
   const { posts } = Route.useLoaderData();
 
   return (
     <HomeLayout {...baseOptions()}>
-      <main className="mx-auto max-w-4xl px-4 py-12">
-        <h1 className="mb-8 text-3xl font-bold">Blog</h1>
-        <div className="space-y-6">
+      <main className="mx-auto max-w-2xl px-6 py-16">
+        <header className="mb-12">
+          <h1 className="text-3xl font-bold tracking-tight">Archive</h1>
+        </header>
+
+        <div className="space-y-1">
           {posts.map((post) => (
             <Link
               key={post.url}
               to={post.url}
-              className="block rounded-lg border border-fd-border bg-fd-card p-6 transition-colors hover:bg-fd-accent"
+              className="group block -mx-4 px-4 py-4 rounded-lg transition-colors hover:bg-fd-accent/50"
             >
-              <h2 className="text-xl font-semibold">{post.title}</h2>
-              {post.description && (
-                <p className="mt-2 text-fd-muted-foreground">
-                  {post.description}
-                </p>
-              )}
-              <div className="mt-3 flex gap-4 text-sm text-fd-muted-foreground">
-                {post.date && (
-                  <span>{new Date(post.date).toLocaleDateString()}</span>
-                )}
-                {post.author && <span>by {post.author}</span>}
-              </div>
+              <article className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+                <time className="text-sm text-fd-muted-foreground shrink-0 tabular-nums sm:w-28">
+                  {post.date && formatDate(post.date)}
+                </time>
+                <div className="flex-1 min-w-0">
+                  <h2 className="font-medium group-hover:text-fd-primary transition-colors">
+                    {post.title}
+                  </h2>
+                  {post.description && (
+                    <p className="mt-1 text-sm text-fd-muted-foreground line-clamp-1 group-hover:text-fd-muted-foreground/80">
+                      {post.description}
+                    </p>
+                  )}
+                </div>
+              </article>
             </Link>
           ))}
         </div>
+
+        {posts.length === 0 && (
+          <p className="text-fd-muted-foreground">No posts yet.</p>
+        )}
       </main>
     </HomeLayout>
   );
