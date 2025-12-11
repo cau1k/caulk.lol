@@ -32,7 +32,15 @@
   --color-fd-secondary: hsl(220, 22%, 92%);
   --color-fd-background: hsl(220, 23%, 95%);
   --color-fd-ring: hsl(267, 84%, 81%);
-  --border-radius: 0rem;
+
+  --radius-xs: 0;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-2xl: 0;
+  --radius-3xl: 0;
+  --radius-4xl: 0;
 }
 
 .dark {
@@ -52,7 +60,6 @@
   --color-fd-popover-foreground: hsl(226, 64%, 88%);
   --color-fd-accent-foreground: hsl(226, 64%, 88%);
   --color-fd-muted-foreground: hsl(228, 24%, 72%);
-  --border-radius: 0rem;
 }
 
 #nd-sidebar {
