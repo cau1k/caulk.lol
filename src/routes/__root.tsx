@@ -19,7 +19,7 @@ export const Route = createRootRoute({
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "Caulk",
+        title: "caulk.lol",
       },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
