@@ -5,9 +5,9 @@ import {
 } from "fumadocs-mdx/config";
 import { z } from "zod";
 
-export const blog = defineCollections({
+export const posts = defineCollections({
   type: "doc",
-  dir: "content/blog",
+  dir: "content/posts",
   schema: frontmatterSchema.extend({
     author: z.string().optional(),
     date: z.string().date().or(z.date()).optional(),

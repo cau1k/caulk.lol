@@ -1,16 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { createServerFn } from "@tanstack/react-start";
-import { blog } from "@/lib/source";
+import { posts } from "@/lib/source";
 import { baseOptions } from "@/lib/layout.shared";
 
-export const Route = createFileRoute("/blog/")({
+export const Route = createFileRoute("/posts/")({
   loader: () => serverLoader(),
-  component: BlogIndex,
+  component: PostsIndex,
 });
 
 const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
-  const pages = blog.getPages();
+  const pages = posts.getPages();
   const sorted = pages.sort((a, b) => {
     const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
     const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
@@ -37,14 +37,14 @@ function formatDate(dateStr: string | Date) {
   });
 }
 
-function BlogIndex() {
+function PostsIndex() {
   const { posts } = Route.useLoaderData();
 
   return (
     <HomeLayout {...baseOptions()}>
       <main className="mx-auto max-w-2xl px-6 py-16">
         <header className="mb-12">
-          <h1 className="text-3xl font-bold tracking-tight">Archive</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Writing</h1>
         </header>
 
         <div className="space-y-1">
@@ -74,7 +74,7 @@ function BlogIndex() {
         </div>
 
         {posts.length === 0 && (
-          <p className="text-fd-muted-foreground">No posts yet.</p>
+          <p className="text-fd-muted-foreground">Nothing here yet.</p>
         )}
       </main>
     </HomeLayout>

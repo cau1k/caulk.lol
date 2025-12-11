@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { createServerFn } from "@tanstack/react-start";
-import { blog } from "@/lib/source";
+import { posts } from "@/lib/source";
 import { baseOptions } from "@/lib/layout.shared";
 
 export const Route = createFileRoute("/")({
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/")({
 });
 
 const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
-  const pages = blog.getPages();
+  const pages = posts.getPages();
   const sorted = pages.sort((a, b) => {
     const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
     const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
@@ -77,7 +77,7 @@ function Home() {
         {rest.length > 0 && (
           <section>
             <h2 className="text-sm font-medium text-fd-muted-foreground uppercase tracking-wider mb-6">
-              Recent Posts
+              Recent
             </h2>
             <div className="space-y-1">
               {rest.map((post) => (
@@ -101,10 +101,10 @@ function Home() {
         <footer className="mt-20 pt-8 border-t border-fd-border">
           <div className="flex gap-6 text-sm text-fd-muted-foreground">
             <Link
-              to="/blog"
+              to="/posts"
               className="hover:text-fd-foreground transition-colors"
             >
-              Archive
+              All writing
             </Link>
           </div>
         </footer>

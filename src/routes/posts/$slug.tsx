@@ -3,23 +3,23 @@ import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { createServerFn } from "@tanstack/react-start";
 import { InlineTOC } from "fumadocs-ui/components/inline-toc";
 import browserCollections from "fumadocs-mdx:collections/browser";
-import { blog } from "@/lib/source";
+import { posts } from "@/lib/source";
 import { baseOptions } from "@/lib/layout.shared";
 import { getMDXComponents } from "@/mdx-components";
 
-export const Route = createFileRoute("/blog/$slug")({
+export const Route = createFileRoute("/posts/$slug")({
   loader: async ({ params }) => {
     const data = await serverLoader({ data: params.slug });
     await clientLoader.preload(data.path);
     return data;
   },
-  component: BlogPost,
+  component: Post,
 });
 
 const serverLoader = createServerFn({ method: "GET" })
   .inputValidator((slug: string) => slug)
   .handler(async ({ data: slug }) => {
-    const page = blog.getPage([slug]);
+    const page = posts.getPage([slug]);
     if (!page) throw notFound();
 
     return {
@@ -31,7 +31,7 @@ const serverLoader = createServerFn({ method: "GET" })
     };
   });
 
-const clientLoader = browserCollections.blog.createClientLoader({
+const clientLoader = browserCollections.posts.createClientLoader({
   component({ toc, default: MDX }) {
     return (
       <>
@@ -44,7 +44,7 @@ const clientLoader = browserCollections.blog.createClientLoader({
   },
 });
 
-function BlogPost() {
+function Post() {
   const data = Route.useLoaderData();
   const Content = clientLoader.getComponent(data.path);
 
