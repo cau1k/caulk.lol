@@ -3,6 +3,7 @@ import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { createServerFn } from "@tanstack/react-start";
 import { posts } from "@/lib/source";
 import { baseOptions } from "@/lib/layout.shared";
+import { Button } from "@/components/ui";
 
 export const Route = createFileRoute("/")({
   loader: () => serverLoader(),
@@ -45,7 +46,9 @@ function Home() {
     <HomeLayout {...baseOptions()}>
       <main className="mx-auto max-w-2xl px-6 py-16">
         <header className="mb-16">
-          <h1 className="text-4xl font-mono! tracking-tight mb-4">caulk.lol</h1>
+          <h1 className="text-4xl font-serif! tracking-tight mb-4">
+            <Button>zerocaulk</Button>
+          </h1>
           <p className="text-fd-muted-foreground text-lg">
             Thoughts on software, AI, and building things.
           </p>
