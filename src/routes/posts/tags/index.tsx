@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { createServerFn } from "@tanstack/react-start";
 import { posts } from "@/lib/source";
@@ -25,11 +25,13 @@ const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
     (a, b) => b.count - a.count || a.tag.localeCompare(b.tag),
   );
 
-  return { tags: tagList };
+  const maxCount = tagList[0]?.count ?? 1;
+
+  return { tags: tagList, maxCount };
 });
 
 function TagsIndex() {
-  const { tags } = Route.useLoaderData();
+  const { tags, maxCount } = Route.useLoaderData();
 
   return (
     <HomeLayout {...baseOptions()}>
@@ -39,19 +41,15 @@ function TagsIndex() {
           <p className="mt-2 text-fd-muted-foreground">Browse posts by topic</p>
         </header>
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {tags.map(({ tag, count }) => (
-            <Link
+            <TagBadge
               key={tag}
-              to="/posts/tags/$tag"
-              params={{ tag }}
-              className="group flex items-center gap-2 border border-fd-border bg-fd-card px-4 py-2 font-sans transition-colors hover:bg-fd-accent hover:border-fd-accent"
-            >
-              <span className="font-medium group-hover:text-fd-primary">
-                {tag}
-              </span>
-              <span className="text-sm text-fd-muted-foreground">{count}</span>
-            </Link>
+              tag={tag}
+              size="scaled"
+              count={count}
+              maxCount={maxCount}
+            />
           ))}
         </div>
 
