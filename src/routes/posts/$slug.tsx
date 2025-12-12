@@ -4,7 +4,7 @@ import browserCollections from "fumadocs-mdx:collections/browser";
 import { findNeighbour } from "fumadocs-core/page-tree";
 import type { TOCItemType } from "fumadocs-core/toc";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { HomeLayout } from "fumadocs-ui/layouts/home";
+import { useEffect } from "react";
 import { formatDate } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
 import { posts } from "@/lib/source";
@@ -12,8 +12,8 @@ import { getMDXComponents } from "@/mdx-components";
 import { TagBadge } from "@/components/tag-badge";
 import { TOCProvider, TOCScrollArea } from "@/components/toc";
 import { TOCItems } from "@/components/toc/default";
-import { InlineTOC } from "@/components/inline-toc";
 import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
+import { PostLayout, usePostTOC } from "@/components/layout/post";
 
 export const Route = createFileRoute("/posts/$slug")({
   loader: async ({ params }) => {
@@ -77,13 +77,14 @@ function PostContent({
   toc: TOCItemType[];
   children: React.ReactNode;
 }) {
-  return (
-    <TOCProvider toc={toc}>
-      {/* Mobile: inline TOC */}
-      <InlineTOC items={toc} className="mb-8 lg:hidden" />
-      <div className="prose prose-fd">{children}</div>
-    </TOCProvider>
-  );
+  const { setToc } = usePostTOC();
+
+  useEffect(() => {
+    setToc(toc);
+    return () => setToc([]);
+  }, [toc, setToc]);
+
+  return <div className="prose prose-fd">{children}</div>;
 }
 
 function SidebarTOC({ toc }: { toc: TOCItemType[] }) {
@@ -155,7 +156,7 @@ function Post() {
   const Content = clientLoader.getComponent(data.path);
 
   return (
-    <HomeLayout {...baseOptions()}>
+    <PostLayout {...baseOptions()}>
       <article className="mx-auto max-w-2xl w-2xl px-4 py-12">
         <header className="mb-8">
           <div className="mb-2 flex gap-4 text-sm text-fd-muted-foreground">
@@ -192,6 +193,6 @@ function Post() {
         <Content />
         <PostNavigation previous={data.previous} next={data.next} />
       </article>
-    </HomeLayout>
+    </PostLayout>
   );
 }
