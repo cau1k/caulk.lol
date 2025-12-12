@@ -72,7 +72,7 @@ function Post() {
                   key={tag}
                   to="/posts/tags/$tag"
                   params={{ tag }}
-                  className="rounded-full bg-fd-muted px-3 py-1 text-xs hover:bg-fd-accent transition-colors"
+                  className="bg-fd-muted px-3 py-1 text-xs font-sans hover:bg-fd-accent transition-colors"
                 >
                   #{tag}
                 </Link>

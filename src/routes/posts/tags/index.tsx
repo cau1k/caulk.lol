@@ -44,7 +44,7 @@ function TagsIndex() {
               key={tag}
               to="/posts/tags/$tag"
               params={{ tag }}
-              className="group flex items-center gap-2 rounded-full border border-fd-border bg-fd-card px-4 py-2 transition-colors hover:bg-fd-accent hover:border-fd-accent"
+              className="group flex items-center gap-2 border border-fd-border bg-fd-card px-4 py-2 font-sans transition-colors hover:bg-fd-accent hover:border-fd-accent"
             >
               <span className="font-medium group-hover:text-fd-primary">
                 #{tag}

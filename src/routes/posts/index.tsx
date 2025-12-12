@@ -73,7 +73,7 @@ function PostsIndex() {
                       {post.tags.slice(0, 3).map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-full bg-fd-muted px-2 py-0.5 text-xs text-fd-muted-foreground"
+                          className="bg-fd-muted px-2 py-0.5 text-xs font-sans text-fd-muted-foreground"
                         >
                           #{tag}
                         </span>
