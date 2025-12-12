@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { createServerFn } from "@tanstack/react-start";
-import { posts } from "@/lib/source";
+import { HomeLayout } from "fumadocs-ui/layouts/home";
+import { formatDate } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
+import { posts } from "@/lib/source";
 
 export const Route = createFileRoute("/posts/")({
   loader: () => serverLoader(),
@@ -27,15 +28,6 @@ const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
     })),
   };
 });
-
-function formatDate(dateStr: string | Date) {
-  const date = typeof dateStr === "string" ? new Date(dateStr) : dateStr;
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
 
 function BlogIndex() {
   const { posts } = Route.useLoaderData();

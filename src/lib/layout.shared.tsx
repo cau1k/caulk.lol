@@ -3,8 +3,11 @@ import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
 export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
-      title: "Caulk",
+      title: "caulk.lol",
     },
-    links: [{ text: "Writing", url: "/posts" }],
+    links: [
+      { text: "archive", url: "/posts" },
+      { text: "about", url: "/about" },
+    ],
   };
 }

@@ -1,14 +1,17 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
-import { HomeLayout } from "fumadocs-ui/layouts/home";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import browserCollections from "fumadocs-mdx:collections/browser";
-import { posts } from "@/lib/source";
+import { findNeighbour } from "fumadocs-core/page-tree";
+import type { TOCItemType } from "fumadocs-core/toc";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { HomeLayout } from "fumadocs-ui/layouts/home";
+import { formatDate } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
+import { posts } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 import { TagBadge } from "@/components/tag-badge";
 import { TOCProvider, TOCScrollArea } from "@/components/toc";
 import { TOCItems } from "@/components/toc/default";
-import type { TOCItemType } from "fumadocs-core/toc";
 
 export const Route = createFileRoute("/posts/$slug")({
   loader: async ({ params }) => {
@@ -78,9 +81,7 @@ function Post() {
       <article className="mx-auto max-w-4xl px-4 py-12">
         <header className="mb-8">
           <div className="mb-2 flex gap-4 text-sm text-fd-muted-foreground">
-            {data.date && (
-              <time>{new Date(data.date).toLocaleDateString()}</time>
-            )}
+            {data.date && <time>{formatDate(data.date)}</time>}
             {data.author && <span>by {data.author}</span>}
           </div>
           <h1 className="text-4xl font-bold">{data.title}</h1>
