@@ -49,6 +49,7 @@ function TagsIndex() {
               size="scaled"
               count={count}
               maxCount={maxCount}
+              showCount
             />
           ))}
         </div>

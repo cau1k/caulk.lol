@@ -54,15 +54,17 @@ function TagPosts() {
 
   return (
     <HomeLayout {...baseOptions()}>
-      <main className="mx-auto max-w-2xl px-6 py-16">
+      <main className="mx-auto max-w-3xl px-6 py-16">
         <header className="mb-12">
-          <Link
-            to="/posts/tags"
-            className="mb-4 inline-flex items-center text-sm text-fd-muted-foreground hover:text-fd-foreground transition-colors"
-          >
-            <span className="mr-1">&larr;</span> All tags
-          </Link>
-          <h1 className="text-3xl font-bold tracking-tight">{tag}</h1>
+          {/* <Link */}
+          {/*   to="/posts/tags" */}
+          {/*   className="mb-4 inline-flex items-center text-sm text-fd-muted-foreground hover:text-fd-foreground transition-colors" */}
+          {/* > */}
+          {/*   <span className="mr-1">&larr;</span> All tags */}
+          {/* </Link> */}
+          <h1 className="text-3xl font-bold tracking-tight">
+            {posts.length === 1 ? "post" : "posts"} posts tagged with "{tag}"
+          </h1>
           <p className="mt-2 text-fd-muted-foreground">
             {posts.length} {posts.length === 1 ? "post" : "posts"}
           </p>

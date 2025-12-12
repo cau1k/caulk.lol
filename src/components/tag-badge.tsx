@@ -4,6 +4,7 @@ import { cn } from "@/lib/cn";
 type TagBadgeBaseProps = {
   tag: string;
   linked?: boolean;
+  showCount?: boolean;
   className?: string;
 };
 
@@ -36,6 +37,7 @@ function getScaledStyles(count: number, maxCount: number) {
 export function TagBadge({
   tag,
   linked = true,
+  showCount = false,
   size = "md",
   className,
   ...rest
@@ -57,10 +59,19 @@ export function TagBadge({
     ? getScaledStyles(scaledProps.count!, scaledProps.maxCount!)
     : undefined;
 
+  const content = (
+    <>
+      {tag}
+      {showCount && isScaled && scaledProps.count !== undefined && (
+        <span className="ml-1.5 opacity-60">({scaledProps.count})</span>
+      )}
+    </>
+  );
+
   if (!linked) {
     return (
       <span className={baseStyles} style={inlineStyle}>
-        {tag}
+        {content}
       </span>
     );
   }
@@ -72,7 +83,7 @@ export function TagBadge({
       className={baseStyles}
       style={inlineStyle}
     >
-      {tag}
+      {content}
     </Link>
   );
 }
