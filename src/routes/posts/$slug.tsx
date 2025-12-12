@@ -154,7 +154,7 @@ function Post() {
 
   return (
     <HomeLayout {...baseOptions()}>
-      <article className="mx-auto max-w-3xl px-4 py-12">
+      <article className="mx-auto max-w-2xl w-2xl px-4 py-12">
         <header className="mb-8">
           <div className="mb-2 flex gap-4 text-sm text-fd-muted-foreground">
             {data.date && <time>{formatDate(data.date)}</time>}
