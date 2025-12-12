@@ -89,7 +89,7 @@ function SidebarTOC({ toc }: { toc: TOCItemType[] }) {
 
   return (
     <TOCProvider toc={toc}>
-      <aside className="fixed right-[max(1rem,calc((100vw-56rem)/2-14rem-2rem))] top-24 hidden h-fit max-h-[calc(100vh-8rem)] w-56 xl:block">
+      <aside className="fixed right-[max(1rem,calc((100vw-48rem)/2-14rem-2rem))] top-24 hidden h-fit max-h-[calc(100vh-8rem)] w-56 xl:block">
         <p className="mb-2 text-sm font-medium text-fd-muted-foreground">
           On this page
         </p>
@@ -154,7 +154,7 @@ function Post() {
 
   return (
     <HomeLayout {...baseOptions()}>
-      <article className="mx-auto max-w-4xl px-4 py-12">
+      <article className="mx-auto max-w-3xl px-4 py-12">
         <header className="mb-8">
           <div className="mb-2 flex gap-4 text-sm text-fd-muted-foreground">
             {data.date && <time>{formatDate(data.date)}</time>}
