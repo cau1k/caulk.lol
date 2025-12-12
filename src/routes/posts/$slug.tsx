@@ -22,11 +22,25 @@ export const Route = createFileRoute("/posts/$slug")({
   component: Post,
 });
 
+type NeighbourLink = { url: string; title: string } | null;
+
 const serverLoader = createServerFn({ method: "GET" })
   .inputValidator((slug: string) => slug)
   .handler(async ({ data: slug }) => {
     const page = posts.getPage([slug]);
     if (!page) throw notFound();
+
+    const tree = posts.getPageTree();
+    const { previous, next } = findNeighbour(tree, page.url);
+
+    const toLink = (node: typeof previous | typeof next): NeighbourLink => {
+      if (!node) return null;
+      const nodePage = posts.getNodePage(node);
+      const title =
+        nodePage?.data.title ??
+        (typeof node.name === "string" ? node.name : node.url);
+      return { url: node.url, title };
+    };
 
     return {
       path: page.path,
@@ -35,6 +49,8 @@ const serverLoader = createServerFn({ method: "GET" })
       date: page.data.date,
       author: page.data.author,
       tags: page.data.tags ?? [],
+      previous: toLink(previous),
+      next: toLink(next),
     };
   });
 
@@ -72,6 +88,53 @@ function PostContent({
   );
 }
 
+function PostNavigation({
+  previous,
+  next,
+}: {
+  previous: NeighbourLink;
+  next: NeighbourLink;
+}) {
+  if (!previous && !next) return null;
+
+  return (
+    <nav className="mt-12 grid grid-cols-2 gap-4 border-t border-fd-border pt-8">
+      {previous ? (
+        <Link
+          to={previous.url}
+          className="group flex items-center gap-2 text-sm text-fd-muted-foreground transition-colors hover:text-fd-foreground"
+        >
+          <ChevronLeftIcon className="size-4 transition-transform group-hover:-translate-x-0.5" />
+          <div className="min-w-0">
+            <div className="text-xs uppercase tracking-wide">Previous</div>
+            <div className="truncate font-medium text-fd-foreground">
+              {previous.title}
+            </div>
+          </div>
+        </Link>
+      ) : (
+        <div />
+      )}
+      {next ? (
+        <Link
+          to={next.url}
+          className="group flex items-center justify-end gap-2 text-right text-sm text-fd-muted-foreground transition-colors hover:text-fd-foreground"
+        >
+          <div className="min-w-0">
+            <div className="text-xs uppercase tracking-wide">Next</div>
+            <div className="truncate font-medium text-fd-foreground">
+              {next.title}
+            </div>
+          </div>
+          <ChevronRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
+        </Link>
+      ) : (
+        <div />
+      )}
+    </nav>
+  );
+}
+
 function Post() {
   const data = Route.useLoaderData();
   const Content = clientLoader.getComponent(data.path);
@@ -99,6 +162,7 @@ function Post() {
           )}
         </header>
         <Content />
+        <PostNavigation previous={data.previous} next={data.next} />
       </article>
     </HomeLayout>
   );
