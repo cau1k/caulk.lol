@@ -97,7 +97,7 @@ export function CodeBlock({
           : "my-4 bg-fd-card rounded-xl",
         keepBackground && "bg-(--shiki-light-bg) dark:bg-(--shiki-dark-bg)",
 
-        "shiki relative border shadow-sm not-prose overflow-hidden text-sm",
+        "shiki relative border shadow-sm not-prose overflow-hidden text-sm w-full max-w-full",
         props.className,
       )}
     >

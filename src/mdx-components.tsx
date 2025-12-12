@@ -8,6 +8,7 @@ import { ImageZoom } from "fumadocs-ui/components/image-zoom";
 import { Step, Steps } from "fumadocs-ui/components/steps";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { TypeTable } from "fumadocs-ui/components/type-table";
+import { CodeBlock, Pre } from "@/components/codeblock";
 
 /**
  * Returns MDX components with optional overrides.
@@ -16,6 +17,11 @@ import { TypeTable } from "fumadocs-ui/components/type-table";
 export function getMDXComponents(overrides?: MDXComponents): MDXComponents {
   return {
     ...defaultMdxComponents,
+    pre: (props) => (
+      <CodeBlock {...props}>
+        <Pre>{props.children}</Pre>
+      </CodeBlock>
+    ),
     Accordion,
     Accordions,
     Callout,
