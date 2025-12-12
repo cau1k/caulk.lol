@@ -1,17 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { createServerFn } from "@tanstack/react-start";
-import { posts } from "@/lib/source";
+import { blog } from "@/lib/source";
 import { baseOptions } from "@/lib/layout.shared";
-import { TagBadge } from "@/components/tag-badge";
 
 export const Route = createFileRoute("/posts/")({
   loader: () => serverLoader(),
-  component: PostsIndex,
+  component: BlogIndex,
 });
 
 const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
-  const pages = posts.getPages();
+  const pages = blog.getPages();
   const sorted = pages.sort((a, b) => {
     const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
     const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
@@ -25,7 +24,6 @@ const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
       description: page.data.description,
       date: page.data.date,
       author: page.data.author,
-      tags: page.data.tags ?? [],
     })),
   };
 });
@@ -39,14 +37,14 @@ function formatDate(dateStr: string | Date) {
   });
 }
 
-function PostsIndex() {
+function BlogIndex() {
   const { posts } = Route.useLoaderData();
 
   return (
     <HomeLayout {...baseOptions()}>
-      <main className="mx-auto max-w-2xl px-6 py-16">
+      <main className="mx-auto max-w-3xl px-6 py-16">
         <header className="mb-12">
-          <h1 className="text-3xl font-bold tracking-tight">Writing</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Archive</h1>
         </header>
 
         <div className="space-y-1">
@@ -69,18 +67,6 @@ function PostsIndex() {
                       {post.description}
                     </p>
                   )}
-                  {post.tags.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {post.tags.slice(0, 3).map((tag) => (
-                        <TagBadge
-                          key={tag}
-                          tag={tag}
-                          size="sm"
-                          linked={false}
-                        />
-                      ))}
-                    </div>
-                  )}
                 </div>
               </article>
             </Link>
@@ -88,7 +74,7 @@ function PostsIndex() {
         </div>
 
         {posts.length === 0 && (
-          <p className="text-fd-muted-foreground">Nothing here yet.</p>
+          <p className="text-fd-muted-foreground">No posts yet.</p>
         )}
       </main>
     </HomeLayout>
