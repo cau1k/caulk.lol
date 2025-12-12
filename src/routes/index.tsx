@@ -4,6 +4,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { posts } from "@/lib/source";
 import { baseOptions } from "@/lib/layout.shared";
 import { LinkItem } from "@/components/layout/link-item";
+import { formatDate } from "@/lib/format-date";
 
 export const Route = createFileRoute("/")({
   loader: () => serverLoader(),
@@ -28,15 +29,6 @@ const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
     })),
   };
 });
-
-function formatDate(dateStr: string | Date) {
-  const date = typeof dateStr === "string" ? new Date(dateStr) : dateStr;
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
 
 function Home() {
   const { posts } = Route.useLoaderData();

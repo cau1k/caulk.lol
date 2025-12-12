@@ -3,6 +3,7 @@ import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { createServerFn } from "@tanstack/react-start";
 import { posts } from "@/lib/source";
 import { baseOptions } from "@/lib/layout.shared";
+import { formatDate } from "@/lib/format-date";
 
 export const Route = createFileRoute("/posts/tags/$tag")({
   loader: ({ params }) => serverLoader({ data: params.tag }),
@@ -39,15 +40,6 @@ const serverLoader = createServerFn({ method: "GET" })
       })),
     };
   });
-
-function formatDate(dateStr: string | Date) {
-  const date = typeof dateStr === "string" ? new Date(dateStr) : dateStr;
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
 
 function TagPosts() {
   const { tag, posts } = Route.useLoaderData();
