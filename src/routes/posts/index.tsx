@@ -4,6 +4,7 @@ import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { formatDate } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
 import { posts } from "@/lib/source";
+import { TagBadge } from "@/components/tag-badge";
 
 export const Route = createFileRoute("/posts/")({
   loader: () => serverLoader(),
@@ -22,6 +23,7 @@ const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
     posts: sorted.map((page) => ({
       url: page.url,
       title: page.data.title,
+      tags: page.data.tags ?? [],
       description: page.data.description,
       date: page.data.date,
       author: page.data.author,
@@ -51,14 +53,21 @@ function BlogIndex() {
                   {post.date && formatDate(post.date)}
                 </time>
                 <div className="flex-1 min-w-0">
-                  <h2 className="font-medium group-hover:text-fd-primary transition-colors">
+                  <h2 className="font-medium font-sans group-hover:text-fd-primary transition-colors">
                     {post.title}
                   </h2>
-                  {post.description && (
-                    <p className="mt-1 text-sm text-fd-muted-foreground line-clamp-1 group-hover:text-fd-muted-foreground/80">
-                      {post.description}
-                    </p>
+                  {post.tags.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-2">
+                      {post.tags.map((tag) => (
+                        <TagBadge key={tag} tag={tag} />
+                      ))}
+                    </div>
                   )}
+                  {/* {post.description && ( */}
+                  {/*   <p className="mt-1 text-sm text-fd-muted-foreground line-clamp-1 group-hover:text-fd-muted-foreground/80"> */}
+                  {/*     {post.description} */}
+                  {/*   </p> */}
+                  {/* )} */}
                 </div>
               </article>
             </Link>

@@ -55,11 +55,9 @@ function TagPosts() {
           {/*   <span className="mr-1">&larr;</span> All tags */}
           {/* </Link> */}
           <h1 className="text-3xl font-bold tracking-tight">
-            {posts.length === 1 ? "post" : "posts"} posts tagged with "{tag}"
+            {posts.length.toString()} {posts.length === 1 ? "post" : "posts"}{" "}
+            tagged with <span className="font-mono font-normal">"{tag}"</span>
           </h1>
-          <p className="mt-2 text-fd-muted-foreground">
-            {posts.length} {posts.length === 1 ? "post" : "posts"}
-          </p>
         </header>
 
         <div className="space-y-1">
@@ -77,11 +75,11 @@ function TagPosts() {
                   <h2 className="font-medium group-hover:text-fd-primary transition-colors">
                     {post.title}
                   </h2>
-                  {post.description && (
-                    <p className="mt-1 text-sm text-fd-muted-foreground line-clamp-1 group-hover:text-fd-muted-foreground/80">
-                      {post.description}
-                    </p>
-                  )}
+                  {/* {post.description && ( */}
+                  {/*   <p className="mt-1 text-sm text-fd-muted-foreground line-clamp-1 group-hover:text-fd-muted-foreground/80"> */}
+                  {/*     {post.description} */}
+                  {/*   </p> */}
+                  {/* )} */}
                 </div>
               </article>
             </Link>

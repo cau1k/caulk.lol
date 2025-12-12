@@ -44,8 +44,7 @@ function Home() {
             </LinkItem>
           </h1>
           <p className="text-fd-muted-foreground text-lg">
-            Thoughts on software, philosophy, and building my perfect agent
-            harness.
+            Thoughts on software, philosophy, and hacking on agent harnesses.
           </p>
         </header>
 
