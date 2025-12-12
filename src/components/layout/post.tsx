@@ -41,36 +41,23 @@ export function PostLayout({ children, ...props }: PostLayoutProps) {
 
   return (
     <PostTOCContext value={{ toc, setToc }}>
-      <HomeLayout
-        {...props}
-        links={[
-          ...(props.links ?? []),
-          ...(hasToc
-            ? [
-                {
-                  type: "custom" as const,
-                  on: "menu" as const,
-                  children: <MobileTOC items={toc} />,
-                },
-              ]
-            : []),
-        ]}
-      >
+      <HomeLayout {...props}>
+        {hasToc && <MobileTOCBar items={toc} />}
         {children}
       </HomeLayout>
     </PostTOCContext>
   );
 }
 
-function MobileTOC({ items }: { items: TOCItemType[] }) {
+function MobileTOCBar({ items }: { items: TOCItemType[] }) {
   return (
-    <Collapsible className="w-full border-t pt-4 mt-2">
-      <CollapsibleTrigger className="group flex w-full items-center justify-between text-sm font-medium text-fd-muted-foreground">
+    <Collapsible className="sticky top-14 z-30 border-b bg-fd-background/95 backdrop-blur-sm xl:hidden">
+      <CollapsibleTrigger className="group flex w-full items-center justify-between px-4 py-2.5 text-sm font-medium">
         On this page
-        <ChevronDown className="size-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+        <ChevronDown className="size-4 text-fd-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <nav className="flex flex-col gap-1 pt-2 text-sm">
+        <nav className="flex flex-col gap-1 px-4 pb-3 text-sm">
           {items.map((item) => (
             <a
               key={item.url}
