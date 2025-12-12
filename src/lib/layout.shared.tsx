@@ -1,5 +1,6 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
 import { NavSearchButton } from "@/components/nav-search-button";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -15,6 +16,9 @@ export function baseOptions(): BaseLayoutProps {
         lg: <NavSearchButton />,
         sm: <NavSearchButton className="p-2" />,
       },
+    },
+    themeSwitch: {
+      component: <ThemeToggle />,
     },
   };
 }

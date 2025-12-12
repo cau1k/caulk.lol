@@ -5,17 +5,14 @@ import { useTheme } from "next-themes";
 import { ComponentProps, useEffect, useState } from "react";
 import { cn } from "../../lib/cn";
 
-const itemVariants = cva(
-  "size-6.5 rounded-full p-1.5 text-fd-muted-foreground",
-  {
-    variants: {
-      active: {
-        true: "bg-fd-accent text-fd-accent-foreground",
-        false: "text-fd-muted-foreground",
-      },
+const itemVariants = cva("size-6.5 p-1.5 text-fd-muted-foreground", {
+  variants: {
+    active: {
+      true: "bg-fd-accent text-fd-accent-foreground",
+      false: "text-fd-muted-foreground",
     },
   },
-);
+});
 
 const full = [
   ["light", Sun] as const,
@@ -38,7 +35,7 @@ export function ThemeToggle({
   }, []);
 
   const container = cn(
-    "inline-flex items-center rounded-full border p-1",
+    "inline-flex items-center border px-1 py-1 rounded-none",
     className,
   );
 
@@ -78,7 +75,7 @@ export function ThemeToggle({
           className={cn(itemVariants({ active: value === key }))}
           onClick={() => setTheme(key)}
         >
-          <Icon className="size-full" fill="currentColor" />
+          <Icon className="size-5" fill="currentColor" />
         </button>
       ))}
     </div>

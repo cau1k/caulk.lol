@@ -13,11 +13,11 @@ export function NavSearchButton({ className }: { className?: string }) {
       aria-label="Open search"
       onClick={() => setOpenSearch(true)}
       className={cn(
-        "inline-flex items-center gap-2 border bg-fd-secondary/50 px-2 py-1.5 text-sm text-fd-muted-foreground transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground",
+        "inline-flex items-center border bg-fd-secondary/50 p-1 gap-1 text-sm text-fd-muted-foreground transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground",
         className,
       )}
     >
-      <Search className="size-4" />
+      <Search className="size-5" />
       <kbd className="border bg-fd-background px-1.5 text-xs">/</kbd>
     </button>
   );
