@@ -84,7 +84,11 @@ function PostContent({
     return () => setToc([]);
   }, [toc, setToc]);
 
-  return <div className="prose prose-fd">{children}</div>;
+  return (
+    <div className="prose prose-fd max-w-none overflow-x-hidden">
+      {children}
+    </div>
+  );
 }
 
 function SidebarTOC({ toc }: { toc: TOCItemType[] }) {
@@ -157,13 +161,13 @@ function Post() {
 
   return (
     <PostLayout {...baseOptions()}>
-      <article className="mx-auto max-w-2xl w-2xl px-4 py-12">
+      <article className="mx-auto w-full max-w-2xl px-4 py-12">
         <header className="mb-8">
           <div className="mb-2 flex gap-4 text-sm text-fd-muted-foreground">
             {data.date && <time>{formatDate(data.date)}</time>}
             {data.author && <span>by {data.author}</span>}
           </div>
-          <h1 className="text-4xl font-bold">{data.title}</h1>
+          <h1 className="text-3xl font-bold sm:text-4xl">{data.title}</h1>
           {data.description && (
             <p className="mt-3 text-lg text-fd-muted-foreground">
               {data.description}
@@ -184,7 +188,7 @@ function Post() {
               <LLMCopyButton markdownUrl={`/posts/${data.slug}.mdx`} />
               <ViewOptions
                 markdownUrl={`/posts/${data.slug}.mdx`}
-                githubUrl={`https://github.com/caulk-dev/caulk.lol/blob/main/content/posts/${data.slug}.mdx`}
+                githubUrl={`https://github.com/cau1k/caulk.lol/blob/main/content/posts/${data.slug}.mdx`}
               />
             </div>
           </div>
