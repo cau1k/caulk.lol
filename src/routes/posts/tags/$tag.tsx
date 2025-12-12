@@ -62,7 +62,7 @@ function TagPosts() {
           >
             <span className="mr-1">&larr;</span> All tags
           </Link>
-          <h1 className="text-3xl font-bold tracking-tight">#{tag}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{tag}</h1>
           <p className="mt-2 text-fd-muted-foreground">
             {posts.length} {posts.length === 1 ? "post" : "posts"}
           </p>

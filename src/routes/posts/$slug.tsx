@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { createServerFn } from "@tanstack/react-start";
 import { InlineTOC } from "fumadocs-ui/components/inline-toc";
@@ -6,6 +6,7 @@ import browserCollections from "fumadocs-mdx:collections/browser";
 import { posts } from "@/lib/source";
 import { baseOptions } from "@/lib/layout.shared";
 import { getMDXComponents } from "@/mdx-components";
+import { TagBadge } from "@/components/tag-badge";
 
 export const Route = createFileRoute("/posts/$slug")({
   loader: async ({ params }) => {
@@ -68,14 +69,7 @@ function Post() {
           {data.tags.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2">
               {data.tags.map((tag) => (
-                <Link
-                  key={tag}
-                  to="/posts/tags/$tag"
-                  params={{ tag }}
-                  className="bg-fd-muted px-3 py-1 text-xs font-sans hover:bg-fd-accent transition-colors"
-                >
-                  #{tag}
-                </Link>
+                <TagBadge key={tag} tag={tag} />
               ))}
             </div>
           )}

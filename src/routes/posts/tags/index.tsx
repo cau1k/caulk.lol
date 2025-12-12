@@ -3,6 +3,7 @@ import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { createServerFn } from "@tanstack/react-start";
 import { posts } from "@/lib/source";
 import { baseOptions } from "@/lib/layout.shared";
+import { TagBadge } from "@/components/tag-badge";
 
 export const Route = createFileRoute("/posts/tags/")({
   loader: () => serverLoader(),
@@ -47,7 +48,7 @@ function TagsIndex() {
               className="group flex items-center gap-2 border border-fd-border bg-fd-card px-4 py-2 font-sans transition-colors hover:bg-fd-accent hover:border-fd-accent"
             >
               <span className="font-medium group-hover:text-fd-primary">
-                #{tag}
+                {tag}
               </span>
               <span className="text-sm text-fd-muted-foreground">{count}</span>
             </Link>

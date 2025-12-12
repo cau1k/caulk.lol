@@ -3,6 +3,7 @@ import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { createServerFn } from "@tanstack/react-start";
 import { posts } from "@/lib/source";
 import { baseOptions } from "@/lib/layout.shared";
+import { TagBadge } from "@/components/tag-badge";
 
 export const Route = createFileRoute("/posts/")({
   loader: () => serverLoader(),
@@ -71,12 +72,12 @@ function PostsIndex() {
                   {post.tags.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-1">
                       {post.tags.slice(0, 3).map((tag) => (
-                        <span
+                        <TagBadge
                           key={tag}
-                          className="bg-fd-muted px-2 py-0.5 text-xs font-sans text-fd-muted-foreground"
-                        >
-                          #{tag}
-                        </span>
+                          tag={tag}
+                          size="sm"
+                          linked={false}
+                        />
                       ))}
                     </div>
                   )}
