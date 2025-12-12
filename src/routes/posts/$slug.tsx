@@ -1,4 +1,4 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { createServerFn } from "@tanstack/react-start";
 import { InlineTOC } from "fumadocs-ui/components/inline-toc";
@@ -28,6 +28,7 @@ const serverLoader = createServerFn({ method: "GET" })
       description: page.data.description,
       date: page.data.date,
       author: page.data.author,
+      tags: page.data.tags ?? [],
     };
   });
 
@@ -63,6 +64,20 @@ function Post() {
             <p className="mt-3 text-lg text-fd-muted-foreground">
               {data.description}
             </p>
+          )}
+          {data.tags.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {data.tags.map((tag) => (
+                <Link
+                  key={tag}
+                  to="/posts/tags/$tag"
+                  params={{ tag }}
+                  className="rounded-full bg-fd-muted px-3 py-1 text-xs hover:bg-fd-accent transition-colors"
+                >
+                  #{tag}
+                </Link>
+              ))}
+            </div>
           )}
         </header>
         <Content />

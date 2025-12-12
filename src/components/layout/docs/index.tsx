@@ -1,5 +1,5 @@
-'use client';
-import type * as PageTree from 'fumadocs-core/page-tree';
+"use client";
+import type * as PageTree from "fumadocs-core/page-tree";
 import {
   type ComponentProps,
   createContext,
@@ -7,13 +7,13 @@ import {
   use,
   useMemo,
   useState,
-} from 'react';
-import { cn } from '../../../lib/cn';
-import { TreeContextProvider, useTreeContext } from 'fumadocs-ui/contexts/tree';
-import Link from 'fumadocs-core/link';
-import { useSearchContext } from 'fumadocs-ui/contexts/search';
-import { cva } from 'class-variance-authority';
-import { usePathname } from 'fumadocs-core/framework';
+} from "react";
+import { cn } from "../../../lib/cn";
+import { TreeContextProvider, useTreeContext } from "fumadocs-ui/contexts/tree";
+import Link from "fumadocs-core/link";
+import { useSearchContext } from "fumadocs-ui/contexts/search";
+import { cva } from "class-variance-authority";
+import { usePathname } from "fumadocs-core/framework";
 
 interface SidebarContext {
   open: boolean;
@@ -71,14 +71,14 @@ function SidebarProvider({ children }: { children: ReactNode }) {
   );
 }
 
-function SearchToggle(props: ComponentProps<'button'>) {
+function SearchToggle(props: ComponentProps<"button">) {
   const { enabled, setOpenSearch } = useSearchContext();
   if (!enabled) return;
 
   return (
     <button
       {...props}
-      className={cn('text-sm', props.className)}
+      className={cn("text-sm", props.className)}
       onClick={() => setOpenSearch(true)}
     >
       Search
@@ -86,13 +86,13 @@ function SearchToggle(props: ComponentProps<'button'>) {
   );
 }
 
-function NavbarSidebarTrigger(props: ComponentProps<'button'>) {
+function NavbarSidebarTrigger(props: ComponentProps<"button">) {
   const { open, setOpen } = use(SidebarContext)!;
 
   return (
     <button
       {...props}
-      className={cn('text-sm', props.className)}
+      className={cn("text-sm", props.className)}
       onClick={() => setOpen(!open)}
     >
       Sidebar
@@ -108,7 +108,7 @@ function Sidebar() {
     function renderItems(items: PageTree.Node[]) {
       return items.map((item) => (
         <SidebarItem key={item.$id} item={item}>
-          {item.type === 'folder' ? renderItems(item.children) : null}
+          {item.type === "folder" ? renderItems(item.children) : null}
         </SidebarItem>
       ));
     }
@@ -119,9 +119,9 @@ function Sidebar() {
   return (
     <aside
       className={cn(
-        'fixed flex flex-col shrink-0 p-4 top-14 z-20 text-sm overflow-auto md:sticky md:h-[calc(100dvh-56px)] md:w-[300px]',
-        'max-md:inset-x-0 max-md:bottom-0 max-md:bg-fd-background',
-        !open && 'max-md:invisible',
+        "fixed flex flex-col shrink-0 p-4 top-14 z-20 text-sm overflow-auto md:sticky md:h-[calc(100dvh-56px)] md:w-[300px]",
+        "max-md:inset-x-0 max-md:bottom-0 max-md:bg-fd-background",
+        !open && "max-md:invisible",
       )}
     >
       {children}
@@ -130,12 +130,12 @@ function Sidebar() {
 }
 
 const linkVariants = cva(
-  'flex items-center gap-2 w-full py-1.5 rounded-lg text-fd-foreground/80 [&_svg]:size-4',
+  "flex items-center gap-2 w-full py-1.5 rounded-lg text-fd-foreground/80 [&_svg]:size-4",
   {
     variants: {
       active: {
-        true: 'text-fd-primary font-medium',
-        false: 'hover:text-fd-accent-foreground',
+        true: "text-fd-primary font-medium",
+        false: "hover:text-fd-accent-foreground",
       },
     },
   },
@@ -150,7 +150,7 @@ function SidebarItem({
 }) {
   const pathname = usePathname();
 
-  if (item.type === 'page') {
+  if (item.type === "page") {
     return (
       <Link
         href={item.url}
@@ -164,7 +164,7 @@ function SidebarItem({
     );
   }
 
-  if (item.type === 'separator') {
+  if (item.type === "separator") {
     return (
       <p className="text-fd-muted-foreground mt-6 mb-2 first:mt-0">
         {item.icon}
@@ -186,7 +186,7 @@ function SidebarItem({
           {item.index.name}
         </Link>
       ) : (
-        <p className={cn(linkVariants(), 'text-start')}>
+        <p className={cn(linkVariants(), "text-start")}>
           {item.icon}
           {item.name}
         </p>

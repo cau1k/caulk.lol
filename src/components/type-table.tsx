@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { ChevronDown } from 'lucide-react';
-import Link from 'fumadocs-core/link';
-import { cva } from 'class-variance-authority';
-import { cn } from '../lib/cn';
-import { type ReactNode, useState } from 'react';
+import { ChevronDown } from "lucide-react";
+import Link from "fumadocs-core/link";
+import { cva } from "class-variance-authority";
+import { cn } from "../lib/cn";
+import { type ReactNode, useState } from "react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from './ui/collapsible';
+} from "./ui/collapsible";
 
 export interface ParameterNode {
   name: string;
@@ -47,15 +47,15 @@ export interface TypeNode {
   returns?: ReactNode;
 }
 
-const keyVariants = cva('text-fd-primary', {
+const keyVariants = cva("text-fd-primary", {
   variants: {
     deprecated: {
-      true: 'line-through text-fd-primary/50',
+      true: "line-through text-fd-primary/50",
     },
   },
 });
 
-const fieldVariants = cva('text-fd-muted-foreground not-prose pe-2');
+const fieldVariants = cva("text-fd-muted-foreground not-prose pe-2");
 
 export function TypeTable({ type }: { type: Record<string, TypeNode> }) {
   return (
@@ -95,10 +95,10 @@ function Item({
       open={open}
       onOpenChange={setOpen}
       className={cn(
-        'rounded-xl border overflow-hidden transition-all',
+        "rounded-xl border overflow-hidden transition-all",
         open
-          ? 'shadow-sm bg-fd-background not-last:mb-2'
-          : 'border-transparent',
+          ? "shadow-sm bg-fd-background not-last:mb-2"
+          : "border-transparent",
       )}
     >
       <CollapsibleTrigger className="relative flex flex-row items-center w-full group text-start px-3 py-2 not-prose hover:bg-fd-accent">
@@ -106,12 +106,12 @@ function Item({
           className={cn(
             keyVariants({
               deprecated,
-              className: 'min-w-fit w-[25%] font-medium pe-2',
+              className: "min-w-fit w-[25%] font-medium pe-2",
             }),
           )}
         >
           {name}
-          {!required && '?'}
+          {!required && "?"}
         </code>
         {typeDescriptionLink ? (
           <Link href={typeDescriptionLink} className="underline @max-xl:hidden">

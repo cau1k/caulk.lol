@@ -1,5 +1,5 @@
-import { source } from '@/lib/source';
-import type { Graph } from '../components/graph-view';
+import { source } from "@/lib/source";
+import type { Graph } from "../components/graph-view";
 
 export function buildGraph(): Graph {
   const pages = source.getPages();

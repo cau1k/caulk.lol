@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PostsIndexRouteImport } from './routes/posts/index'
 import { Route as PostsSlugRouteImport } from './routes/posts/$slug'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
+import { Route as PostsTagsIndexRouteImport } from './routes/posts/tags/index'
+import { Route as PostsTagsTagRouteImport } from './routes/posts/tags/$tag'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +36,32 @@ const ApiSearchRoute = ApiSearchRouteImport.update({
   path: '/api/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PostsTagsIndexRoute = PostsTagsIndexRouteImport.update({
+  id: '/posts/tags/',
+  path: '/posts/tags/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostsTagsTagRoute = PostsTagsTagRouteImport.update({
+  id: '/posts/tags/$tag',
+  path: '/posts/tags/$tag',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/search': typeof ApiSearchRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/posts': typeof PostsIndexRoute
+  '/posts/tags/$tag': typeof PostsTagsTagRoute
+  '/posts/tags': typeof PostsTagsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/search': typeof ApiSearchRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/posts': typeof PostsIndexRoute
+  '/posts/tags/$tag': typeof PostsTagsTagRoute
+  '/posts/tags': typeof PostsTagsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +69,34 @@ export interface FileRoutesById {
   '/api/search': typeof ApiSearchRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/posts/': typeof PostsIndexRoute
+  '/posts/tags/$tag': typeof PostsTagsTagRoute
+  '/posts/tags/': typeof PostsTagsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/search' | '/posts/$slug' | '/posts'
+  fullPaths:
+    | '/'
+    | '/api/search'
+    | '/posts/$slug'
+    | '/posts'
+    | '/posts/tags/$tag'
+    | '/posts/tags'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/search' | '/posts/$slug' | '/posts'
-  id: '__root__' | '/' | '/api/search' | '/posts/$slug' | '/posts/'
+  to:
+    | '/'
+    | '/api/search'
+    | '/posts/$slug'
+    | '/posts'
+    | '/posts/tags/$tag'
+    | '/posts/tags'
+  id:
+    | '__root__'
+    | '/'
+    | '/api/search'
+    | '/posts/$slug'
+    | '/posts/'
+    | '/posts/tags/$tag'
+    | '/posts/tags/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +104,8 @@ export interface RootRouteChildren {
   ApiSearchRoute: typeof ApiSearchRoute
   PostsSlugRoute: typeof PostsSlugRoute
   PostsIndexRoute: typeof PostsIndexRoute
+  PostsTagsTagRoute: typeof PostsTagsTagRoute
+  PostsTagsIndexRoute: typeof PostsTagsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +138,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/posts/tags/': {
+      id: '/posts/tags/'
+      path: '/posts/tags'
+      fullPath: '/posts/tags'
+      preLoaderRoute: typeof PostsTagsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/posts/tags/$tag': {
+      id: '/posts/tags/$tag'
+      path: '/posts/tags/$tag'
+      fullPath: '/posts/tags/$tag'
+      preLoaderRoute: typeof PostsTagsTagRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +160,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSearchRoute: ApiSearchRoute,
   PostsSlugRoute: PostsSlugRoute,
   PostsIndexRoute: PostsIndexRoute,
+  PostsTagsTagRoute: PostsTagsTagRoute,
+  PostsTagsIndexRoute: PostsTagsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

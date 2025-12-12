@@ -1,33 +1,44 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { createServerFn } from "@tanstack/react-start";
 import { posts } from "@/lib/source";
 import { baseOptions } from "@/lib/layout.shared";
 
-export const Route = createFileRoute("/posts/")({
-  loader: () => serverLoader(),
-  component: PostsIndex,
+export const Route = createFileRoute("/posts/tags/$tag")({
+  loader: ({ params }) => serverLoader({ data: params.tag }),
+  component: TagPosts,
 });
 
-const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
-  const pages = posts.getPages();
-  const sorted = pages.sort((a, b) => {
-    const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
-    const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
-    return dateB - dateA;
+const serverLoader = createServerFn({ method: "GET" })
+  .inputValidator((tag: string) => tag)
+  .handler(async ({ data: tag }) => {
+    const normalized = tag.toLowerCase();
+    const pages = posts
+      .getPages()
+      .filter((p) => {
+        const tags = p.data.tags ?? [];
+        return tags.some((t) => t.toLowerCase() === normalized);
+      })
+      .sort((a, b) => {
+        const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
+        const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
+        return dateB - dateA;
+      });
+
+    if (pages.length === 0) throw notFound();
+
+    return {
+      tag: normalized,
+      posts: pages.map((p) => ({
+        url: p.url,
+        title: p.data.title,
+        description: p.data.description,
+        date: p.data.date,
+        author: p.data.author,
+        tags: p.data.tags ?? [],
+      })),
+    };
   });
-
-  return {
-    posts: sorted.map((page) => ({
-      url: page.url,
-      title: page.data.title,
-      description: page.data.description,
-      date: page.data.date,
-      author: page.data.author,
-      tags: page.data.tags ?? [],
-    })),
-  };
-});
 
 function formatDate(dateStr: string | Date) {
   const date = typeof dateStr === "string" ? new Date(dateStr) : dateStr;
@@ -38,14 +49,23 @@ function formatDate(dateStr: string | Date) {
   });
 }
 
-function PostsIndex() {
-  const { posts } = Route.useLoaderData();
+function TagPosts() {
+  const { tag, posts } = Route.useLoaderData();
 
   return (
     <HomeLayout {...baseOptions()}>
       <main className="mx-auto max-w-2xl px-6 py-16">
         <header className="mb-12">
-          <h1 className="text-3xl font-bold tracking-tight">Writing</h1>
+          <Link
+            to="/posts/tags"
+            className="mb-4 inline-flex items-center text-sm text-fd-muted-foreground hover:text-fd-foreground transition-colors"
+          >
+            <span className="mr-1">&larr;</span> All tags
+          </Link>
+          <h1 className="text-3xl font-bold tracking-tight">#{tag}</h1>
+          <p className="mt-2 text-fd-muted-foreground">
+            {posts.length} {posts.length === 1 ? "post" : "posts"}
+          </p>
         </header>
 
         <div className="space-y-1">
@@ -68,27 +88,11 @@ function PostsIndex() {
                       {post.description}
                     </p>
                   )}
-                  {post.tags.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {post.tags.slice(0, 3).map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-full bg-fd-muted px-2 py-0.5 text-xs text-fd-muted-foreground"
-                        >
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
                 </div>
               </article>
             </Link>
           ))}
         </div>
-
-        {posts.length === 0 && (
-          <p className="text-fd-muted-foreground">Nothing here yet.</p>
-        )}
       </main>
     </HomeLayout>
   );
