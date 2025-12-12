@@ -17,8 +17,10 @@ export function NavSearchButton({ className }: { className?: string }) {
         className,
       )}
     >
-      <Search className="size-5" />
-      <kbd className="border bg-fd-background px-1.5 text-xs">/</kbd>
+      <Search className="size-6.5 p-1.5" />
+      <kbd className="size-6.5 inline-flex items-center justify-center border bg-fd-background text-xs">
+        /
+      </kbd>
     </button>
   );
 }
