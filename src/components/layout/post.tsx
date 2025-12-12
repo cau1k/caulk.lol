@@ -10,7 +10,7 @@ import {
 } from "react";
 import type { TOCItemType } from "fumadocs-core/toc";
 import { HomeLayout, type HomeLayoutProps } from "fumadocs-ui/layouts/home";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, List } from "lucide-react";
 import { cn } from "@/lib/cn";
 import {
   Collapsible,
@@ -52,9 +52,10 @@ export function PostLayout({ children, ...props }: PostLayoutProps) {
 function MobileTOCBar({ items }: { items: TOCItemType[] }) {
   return (
     <Collapsible className="sticky top-14 z-30 border-b bg-fd-background/95 backdrop-blur-sm xl:hidden">
-      <CollapsibleTrigger className="group flex w-full items-center justify-between px-4 py-2.5 text-sm font-medium">
+      <CollapsibleTrigger className="group flex w-full items-center gap-2 px-4 py-2.5 text-sm font-medium">
+        <List className="size-4 text-fd-muted-foreground" />
         On this page
-        <ChevronDown className="size-4 text-fd-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
+        <ChevronDown className="ml-auto size-4 text-fd-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
       </CollapsibleTrigger>
       <CollapsibleContent>
         <nav className="flex flex-col gap-1 px-4 pb-3 text-sm">
