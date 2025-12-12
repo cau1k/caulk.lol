@@ -13,6 +13,9 @@ export const posts = defineCollections({
     date: z.string().date().or(z.date()).optional(),
     tags: z.array(z.string().trim().toLowerCase()).default([]),
   }),
+  postprocess: {
+    includeProcessedMarkdown: true,
+  },
 });
 
 export default defineConfig();

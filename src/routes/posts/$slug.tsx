@@ -13,6 +13,7 @@ import { TagBadge } from "@/components/tag-badge";
 import { TOCProvider, TOCScrollArea } from "@/components/toc";
 import { TOCItems } from "@/components/toc/default";
 import { InlineTOC } from "@/components/inline-toc";
+import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
 
 export const Route = createFileRoute("/posts/$slug")({
   loader: async ({ params }) => {
@@ -44,6 +45,7 @@ const serverLoader = createServerFn({ method: "GET" })
     };
 
     return {
+      slug,
       path: page.path,
       title: page.data.title,
       description: page.data.description,
@@ -173,6 +175,13 @@ function Post() {
               ))}
             </div>
           )}
+          <div className="mt-4 flex flex-row gap-2 items-center border-t border-fd-border pt-4">
+            <LLMCopyButton markdownUrl={`/posts/${data.slug}.mdx`} />
+            <ViewOptions
+              markdownUrl={`/posts/${data.slug}.mdx`}
+              githubUrl={`https://github.com/caulk-dev/caulk.lol/blob/main/content/posts/${data.slug}.mdx`}
+            />
+          </div>
         </header>
         <Content />
         <PostNavigation previous={data.previous} next={data.next} />
