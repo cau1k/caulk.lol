@@ -168,20 +168,26 @@ function Post() {
               {data.description}
             </p>
           )}
-          {data.tags.length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-2">
-              {data.tags.map((tag) => (
-                <TagBadge key={tag} tag={tag} />
-              ))}
+          <div className="mt-4 flex items-center justify-between gap-4">
+            {data.tags.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {data.tags.map((tag) => (
+                  <TagBadge key={tag} tag={tag} />
+                ))}
+              </div>
+            ) : (
+              <div />
+            )}
+            <div className="h-5 w-px bg-fd-border" />
+            <div className="flex items-center gap-2">
+              <LLMCopyButton markdownUrl={`/posts/${data.slug}.mdx`} />
+              <ViewOptions
+                markdownUrl={`/posts/${data.slug}.mdx`}
+                githubUrl={`https://github.com/caulk-dev/caulk.lol/blob/main/content/posts/${data.slug}.mdx`}
+              />
             </div>
-          )}
-          <div className="mt-4 flex flex-row gap-2 items-center border-t border-fd-border pt-4">
-            <LLMCopyButton markdownUrl={`/posts/${data.slug}.mdx`} />
-            <ViewOptions
-              markdownUrl={`/posts/${data.slug}.mdx`}
-              githubUrl={`https://github.com/caulk-dev/caulk.lol/blob/main/content/posts/${data.slug}.mdx`}
-            />
           </div>
+          <div className="mt-4 h-px w-full bg-fd-border" />
         </header>
         <Content />
         <PostNavigation previous={data.previous} next={data.next} />
