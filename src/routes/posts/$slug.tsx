@@ -12,6 +12,7 @@ import { getMDXComponents } from "@/mdx-components";
 import { TagBadge } from "@/components/tag-badge";
 import { TOCProvider, TOCScrollArea } from "@/components/toc";
 import { TOCItems } from "@/components/toc/default";
+import { InlineTOC } from "@/components/inline-toc";
 
 export const Route = createFileRoute("/posts/$slug")({
   loader: async ({ params }) => {
@@ -57,9 +58,12 @@ const serverLoader = createServerFn({ method: "GET" })
 const clientLoader = browserCollections.posts.createClientLoader({
   component({ toc, default: MDX }) {
     return (
-      <PostContent toc={toc}>
-        <MDX components={getMDXComponents()} />
-      </PostContent>
+      <>
+        <PostContent toc={toc}>
+          <MDX components={getMDXComponents()} />
+        </PostContent>
+        <SidebarTOC toc={toc} />
+      </>
     );
   },
 });
@@ -73,17 +77,26 @@ function PostContent({
 }) {
   return (
     <TOCProvider toc={toc}>
-      <div className="flex gap-8">
-        <div className="prose prose-fd min-w-0 flex-1">{children}</div>
-        <aside className="sticky top-24 hidden h-fit max-h-[calc(100vh-8rem)] w-56 shrink-0 lg:block">
-          <p className="mb-2 text-sm font-medium text-fd-muted-foreground">
-            On this page
-          </p>
-          <TOCScrollArea className="relative">
-            <TOCItems />
-          </TOCScrollArea>
-        </aside>
-      </div>
+      {/* Mobile: inline TOC */}
+      <InlineTOC items={toc} className="mb-8 lg:hidden" />
+      <div className="prose prose-fd">{children}</div>
+    </TOCProvider>
+  );
+}
+
+function SidebarTOC({ toc }: { toc: TOCItemType[] }) {
+  if (toc.length === 0) return null;
+
+  return (
+    <TOCProvider toc={toc}>
+      <aside className="fixed right-[max(1rem,calc((100vw-56rem)/2-14rem-2rem))] top-24 hidden h-fit max-h-[calc(100vh-8rem)] w-56 xl:block">
+        <p className="mb-2 text-sm font-medium text-fd-muted-foreground">
+          On this page
+        </p>
+        <TOCScrollArea className="relative">
+          <TOCItems />
+        </TOCScrollArea>
+      </aside>
     </TOCProvider>
   );
 }
