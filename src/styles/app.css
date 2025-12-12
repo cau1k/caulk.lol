@@ -16,6 +16,8 @@
 }
 
 @theme {
+  --spacing: 0.2rem;
+
   --color-fd-popover: hsl(220, 22%, 92%);
   --color-fd-popover-foreground: hsl(234, 16%, 35%);
   --color-fd-secondary-foreground: hsl(234, 16%, 35%);
