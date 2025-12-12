@@ -163,16 +163,20 @@ function Post() {
     <PostLayout {...baseOptions()}>
       <article className="mx-auto w-full max-w-2xl px-4 py-12">
         <header className="mb-8">
+          <h1 className="text-3xl font-bold mb-3 sm:text-4xl">{data.title}</h1>
           <div className="mb-2 flex gap-4 text-sm text-fd-muted-foreground">
             {data.date && <time>{formatDate(data.date)}</time>}
-            {data.author && <span>by {data.author}</span>}
           </div>
-          <h1 className="text-3xl font-bold sm:text-4xl">{data.title}</h1>
-          {data.description && (
-            <p className="mt-3 text-lg text-fd-muted-foreground">
-              {data.description}
-            </p>
-          )}
+          {/* <div className="mt-4 flex items-center justify-between gap-4"> */}
+          {/*   {data.author && <span>by {data.author}</span>} */}
+          {/* </div> */}
+
+          <div className="mt-8 h-px w-full bg-fd-border" />
+          {/* {data.description && ( */}
+          {/*   <p className="mb-3 text-lg text-fd-muted-foreground"> */}
+          {/*     {data.description} */}
+          {/*   </p> */}
+          {/* )} */}
           <div className="mt-4 flex items-center justify-between gap-4">
             {data.tags.length > 0 ? (
               <div className="flex flex-wrap gap-2">
@@ -192,7 +196,7 @@ function Post() {
               />
             </div>
           </div>
-          <div className="mt-4 h-px w-full bg-fd-border" />
+          <div className="my-4 h-px w-full bg-fd-border" />
         </header>
         <Content />
         <PostNavigation previous={data.previous} next={data.next} />
