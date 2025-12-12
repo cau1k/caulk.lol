@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { createServerFn } from "@tanstack/react-start";
-import { blog } from "@/lib/source";
+import { posts } from "@/lib/source";
 import { baseOptions } from "@/lib/layout.shared";
 
 export const Route = createFileRoute("/posts/")({
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/posts/")({
 });
 
 const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
-  const pages = blog.getPages();
+  const pages = posts.getPages();
   const sorted = pages.sort((a, b) => {
     const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
     const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
