@@ -14,7 +14,7 @@ export function baseOptions(): BaseLayoutProps {
     searchToggle: {
       components: {
         lg: <NavSearchButton />,
-        sm: <NavSearchButton className="p-2" />,
+        sm: <NavSearchButton />,
       },
     },
     themeSwitch: {
