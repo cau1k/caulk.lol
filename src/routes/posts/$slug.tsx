@@ -178,7 +178,7 @@ function Post() {
             ) : (
               <div />
             )}
-            <div className="h-5 w-px bg-fd-border" />
+
             <div className="flex items-center gap-2">
               <LLMCopyButton markdownUrl={`/posts/${data.slug}.mdx`} />
               <ViewOptions
