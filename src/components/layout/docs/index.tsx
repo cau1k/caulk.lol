@@ -1,5 +1,10 @@
 "use client";
+import { cva } from "class-variance-authority";
+import { usePathname } from "fumadocs-core/framework";
+import Link from "fumadocs-core/link";
 import type * as PageTree from "fumadocs-core/page-tree";
+import { useSearchContext } from "fumadocs-ui/contexts/search";
+import { TreeContextProvider, useTreeContext } from "fumadocs-ui/contexts/tree";
 import {
   type ComponentProps,
   createContext,
@@ -9,11 +14,6 @@ import {
   useState,
 } from "react";
 import { cn } from "../../../lib/cn";
-import { TreeContextProvider, useTreeContext } from "fumadocs-ui/contexts/tree";
-import Link from "fumadocs-core/link";
-import { useSearchContext } from "fumadocs-ui/contexts/search";
-import { cva } from "class-variance-authority";
-import { usePathname } from "fumadocs-core/framework";
 
 interface SidebarContext {
   open: boolean;

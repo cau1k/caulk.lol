@@ -1,19 +1,19 @@
+import browserCollections from "fumadocs-mdx:collections/browser";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import browserCollections from "fumadocs-mdx:collections/browser";
 import type { TOCItemType } from "fumadocs-core/toc";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { formatDateTime, formatRelativeTime } from "@/lib/format-date";
-import { cn } from "@/lib/cn";
-import { baseOptions } from "@/lib/layout.shared";
-import { posts } from "@/lib/source";
-import { getMDXComponents } from "@/mdx-components";
+import { PostLayout, usePostTOC } from "@/components/layout/post";
+import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
 import { TagBadge } from "@/components/tag-badge";
 import { TOCProvider } from "@/components/toc";
 import { WheelTOCItems } from "@/components/toc/wheel";
-import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
-import { PostLayout, usePostTOC } from "@/components/layout/post";
+import { cn } from "@/lib/cn";
+import { formatDateTime, formatRelativeTime } from "@/lib/format-date";
+import { baseOptions } from "@/lib/layout.shared";
+import { posts } from "@/lib/source";
+import { getMDXComponents } from "@/mdx-components";
 
 export const Route = createFileRoute("/posts/$slug")({
   loader: async ({ params }) => {

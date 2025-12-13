@@ -1,6 +1,6 @@
+import { redirect } from "@tanstack/react-router";
 import { createMiddleware, createStart } from "@tanstack/react-start";
 import { rewritePath } from "fumadocs-core/negotiation";
-import { redirect } from "@tanstack/react-router";
 
 const { rewrite: rewriteLLM } = rewritePath(
   "/posts{/*path}.mdx",

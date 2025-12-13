@@ -1,22 +1,22 @@
 "use client";
 
-import {
-  createContext,
-  use,
-  useState,
-  type Dispatch,
-  type ReactNode,
-  type SetStateAction,
-} from "react";
 import type { TOCItemType } from "fumadocs-core/toc";
 import { HomeLayout, type HomeLayoutProps } from "fumadocs-ui/layouts/home";
 import { ChevronDown, List } from "lucide-react";
-import { cn } from "@/lib/cn";
+import {
+  createContext,
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+  use,
+  useState,
+} from "react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { cn } from "@/lib/cn";
 
 type PostTOCContextType = {
   toc: TOCItemType[];

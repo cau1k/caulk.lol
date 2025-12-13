@@ -1,4 +1,5 @@
 "use client";
+import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
 import { Check, Clipboard } from "lucide-react";
 import {
   type ComponentProps,
@@ -11,10 +12,9 @@ import {
   useRef,
 } from "react";
 import { cn } from "../lib/cn";
-import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
-import { buttonVariants } from "./ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs.unstyled";
 import { mergeRefs } from "../lib/merge-refs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs.unstyled";
+import { buttonVariants } from "./ui/button";
 
 export interface CodeBlockProps extends ComponentProps<"figure"> {
   /**

@@ -3,8 +3,8 @@ import * as Primitive from "fumadocs-core/toc";
 import {
   type ComponentProps,
   createContext,
-  use,
   type RefObject,
+  use,
   useEffect,
   useEffectEvent,
   useRef,

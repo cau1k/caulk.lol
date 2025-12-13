@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { posts } from "@/lib/source";
 import { createFromSource } from "fumadocs-core/search/server";
+import { posts } from "@/lib/source";
 
 const server = createFromSource(posts, {
   // https://docs.orama.com/docs/orama-js/supported-languages

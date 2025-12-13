@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
 import type { I18nConfig } from "fumadocs-core/i18n";
+import type { ReactNode } from "react";
 import type { LinkItemType } from "./link-item";
 
 export interface NavOptions {

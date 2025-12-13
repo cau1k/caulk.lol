@@ -1,4 +1,6 @@
 "use client";
+import { forceCollide, forceLink, forceManyBody } from "d3-force";
+import { useRouter } from "fumadocs-core/framework";
 import {
   lazy,
   type RefObject,
@@ -13,8 +15,6 @@ import type {
   LinkObject,
   NodeObject,
 } from "react-force-graph-2d";
-import { forceCollide, forceLink, forceManyBody } from "d3-force";
-import { useRouter } from "fumadocs-core/framework";
 
 export interface Graph {
   links: Link[];

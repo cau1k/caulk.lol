@@ -1,5 +1,6 @@
 "use client";
 
+import * as Primitive from "@radix-ui/react-tabs";
 import {
   type ComponentProps,
   createContext,
@@ -10,7 +11,6 @@ import {
   useRef,
   useState,
 } from "react";
-import * as Primitive from "@radix-ui/react-tabs";
 import { mergeRefs } from "../lib/merge-refs";
 
 type ChangeListener = (v: string) => void;

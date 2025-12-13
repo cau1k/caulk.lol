@@ -1,15 +1,15 @@
 "use client";
 
-import { type ComponentProps, type ReactNode, useMemo } from "react";
+import { Link, usePathname } from "fumadocs-core/framework";
+import type * as PageTree from "fumadocs-core/page-tree";
 import {
   AnchorProvider,
   type TOCItemType,
   useActiveAnchors,
 } from "fumadocs-core/toc";
-import { cn } from "../../../lib/cn";
 import { useTreeContext } from "fumadocs-ui/contexts/tree";
-import { Link, usePathname } from "fumadocs-core/framework";
-import type * as PageTree from "fumadocs-core/page-tree";
+import { type ComponentProps, type ReactNode, useMemo } from "react";
+import { cn } from "../../../lib/cn";
 
 export interface DocsPageProps {
   toc?: TOCItemType[];

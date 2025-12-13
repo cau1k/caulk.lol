@@ -6,6 +6,7 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from "react";
 import { cn } from "../../lib/cn";
 import { useTOCItems } from "./index";
@@ -23,8 +24,18 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
   const items = useTOCItems();
   const active = Primitive.useActiveAnchors();
   const wheelRef = useRef<HTMLUListElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef(0);
   const animationRef = useRef<number | null>(null);
+
+  // Drag state
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartY = useRef(0);
+  const dragStartScroll = useRef(0);
+  const velocityRef = useRef(0);
+  const lastDragY = useRef(0);
+  const lastDragTime = useRef(0);
+  const isUserControlling = useRef(false);
 
   // Calculate wheel geometry
   const itemAngle = 360 / Math.max(VISIBLE_COUNT * 2, items.length + 4);
@@ -74,8 +85,164 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
     [radius, itemAngle, quarterCount],
   );
 
-  // Animate wheel to active position
+  // Scroll page to item at given index
+  const scrollToItem = useCallback(
+    (index: number) => {
+      const item = items[index];
+      if (item) {
+        const el = document.getElementById(item.url.slice(1));
+        el?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    },
+    [items],
+  );
+
+  // Animate wheel with momentum after drag release
+  const animateMomentum = useCallback(
+    (initialVelocity: number) => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+
+      const friction = 0.95;
+      let velocity = initialVelocity;
+
+      const animate = () => {
+        velocity *= friction;
+
+        if (Math.abs(velocity) < 0.01) {
+          // Snap to nearest item and scroll page
+          const targetIndex = Math.round(scrollRef.current);
+          const clampedIndex = Math.max(
+            0,
+            Math.min(items.length - 1, targetIndex),
+          );
+          scrollRef.current = clampedIndex;
+          applyTransform(clampedIndex);
+          scrollToItem(clampedIndex);
+          isUserControlling.current = false;
+          return;
+        }
+
+        scrollRef.current += velocity;
+        // Clamp scroll position
+        scrollRef.current = Math.max(
+          -0.5,
+          Math.min(items.length - 0.5, scrollRef.current),
+        );
+        applyTransform(scrollRef.current);
+
+        animationRef.current = requestAnimationFrame(animate);
+      };
+
+      animationRef.current = requestAnimationFrame(animate);
+    },
+    [applyTransform, items.length, scrollToItem],
+  );
+
+  // Drag handlers
+  const handleDragStart = useCallback((clientY: number) => {
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+    }
+    isUserControlling.current = true;
+    setIsDragging(true);
+    dragStartY.current = clientY;
+    dragStartScroll.current = scrollRef.current;
+    lastDragY.current = clientY;
+    lastDragTime.current = performance.now();
+    velocityRef.current = 0;
+  }, []);
+
+  const handleDragMove = useCallback(
+    (clientY: number) => {
+      if (!isUserControlling.current) return;
+
+      const now = performance.now();
+      const deltaY = clientY - lastDragY.current;
+      const deltaTime = now - lastDragTime.current;
+
+      // Calculate velocity (items per ms)
+      if (deltaTime > 0) {
+        velocityRef.current = (-deltaY / ITEM_HEIGHT) * (16 / deltaTime);
+      }
+
+      lastDragY.current = clientY;
+      lastDragTime.current = now;
+
+      // Update scroll position based on drag distance
+      const totalDeltaY = clientY - dragStartY.current;
+      const scrollDelta = -totalDeltaY / ITEM_HEIGHT;
+      let newScroll = dragStartScroll.current + scrollDelta;
+
+      // Clamp with rubber band effect at edges
+      newScroll = Math.max(-0.5, Math.min(items.length - 0.5, newScroll));
+      scrollRef.current = newScroll;
+      applyTransform(newScroll);
+    },
+    [applyTransform, items.length],
+  );
+
+  const handleDragEnd = useCallback(() => {
+    setIsDragging(false);
+    animateMomentum(velocityRef.current);
+  }, [animateMomentum]);
+
+  // Mouse events
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      handleDragStart(e.clientY);
+    },
+    [handleDragStart],
+  );
+
+  // Global mouse move/up handlers
   useEffect(() => {
+    if (!isDragging) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      handleDragMove(e.clientY);
+    };
+
+    const handleMouseUp = () => {
+      handleDragEnd();
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging, handleDragMove, handleDragEnd]);
+
+  // Touch events
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      const touch = e.touches[0];
+      if (touch) handleDragStart(touch.clientY);
+    },
+    [handleDragStart],
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      const touch = e.touches[0];
+      if (touch) handleDragMove(touch.clientY);
+    },
+    [handleDragMove],
+  );
+
+  const handleTouchEnd = useCallback(() => {
+    handleDragEnd();
+  }, [handleDragEnd]);
+
+  // Animate wheel to active position (only when not user-controlled)
+  useEffect(() => {
+    if (isUserControlling.current) return;
+
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
     }
@@ -93,6 +260,8 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
     const duration = 300;
 
     const animate = (now: number) => {
+      if (isUserControlling.current) return;
+
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - (1 - progress) ** 3; // ease-out-cubic
@@ -121,11 +290,7 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
   }, [applyTransform]);
 
   const handleItemClick = (index: number) => {
-    const item = items[index];
-    if (item) {
-      const el = document.getElementById(item.url.slice(1));
-      el?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    scrollToItem(index);
   };
 
   if (items.length === 0) {
@@ -137,18 +302,30 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
   }
 
   return (
+    // biome-ignore lint/a11y/useSemanticElements: wheel picker is a custom interactive element
     <div
-      className={cn("relative select-none overflow-hidden", className)}
+      ref={containerRef}
+      role="listbox"
+      tabIndex={0}
+      className={cn(
+        "relative overflow-hidden",
+        isDragging ? "cursor-grabbing" : "cursor-grab",
+        className,
+      )}
       style={{
         height: containerHeight,
         perspective: "1000px",
       }}
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       {...props}
     >
       {/* 3D wheel layer */}
       <ul
         ref={wheelRef}
-        className="absolute inset-x-0 top-1/2 will-change-transform"
+        className="pointer-events-none absolute inset-x-0 top-1/2 select-none will-change-transform"
         style={{
           transformStyle: "preserve-3d",
           backfaceVisibility: "hidden",
@@ -158,7 +335,7 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
           <li
             key={item.url}
             data-index={index}
-            className="absolute inset-x-0 flex items-center text-sm text-fd-muted-foreground transition-colors"
+            className="pointer-events-auto absolute inset-x-0 flex items-center text-sm text-fd-muted-foreground transition-colors"
             style={{
               height: ITEM_HEIGHT,
               top: -ITEM_HEIGHT / 2,
@@ -168,7 +345,10 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
           >
             <button
               type="button"
-              onClick={() => handleItemClick(index)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleItemClick(index);
+              }}
               className="truncate text-left transition-colors hover:text-fd-foreground"
             >
               {item.title}

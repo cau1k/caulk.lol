@@ -2,10 +2,10 @@ import { readFile } from "node:fs/promises";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
+import { TagBadge } from "@/components/tag-badge";
 import { formatDate, formatDateTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
 import { posts } from "@/lib/source";
-import { TagBadge } from "@/components/tag-badge";
 
 /** Extract first paragraph from MDX content (after frontmatter), trimmed to ~100 chars */
 async function getExcerpt(absolutePath: string, maxLen = 100): Promise<string> {

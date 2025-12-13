@@ -5,6 +5,7 @@ import type {
   AccordionSingleProps,
 } from "@radix-ui/react-accordion";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
+import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
 import { Check, ChevronRight, Link as LinkIcon } from "lucide-react";
 import {
   type ComponentPropsWithoutRef,
@@ -15,9 +16,8 @@ import {
   useState,
 } from "react";
 import { cn } from "../lib/cn";
-import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
-import { buttonVariants } from "./ui/button";
 import { mergeRefs } from "../lib/merge-refs";
+import { buttonVariants } from "./ui/button";
 
 export const Accordions = forwardRef<
   HTMLDivElement,

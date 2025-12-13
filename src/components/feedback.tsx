@@ -1,14 +1,14 @@
 "use client";
-import { cn } from "../lib/cn";
-import { buttonVariants } from "./ui/button";
-import { ThumbsDown, ThumbsUp } from "lucide-react";
-import { type SyntheticEvent, useEffect, useState, useTransition } from "react";
+import { cva } from "class-variance-authority";
 import {
   Collapsible,
   CollapsibleContent,
 } from "fumadocs-ui/components/ui/collapsible";
-import { cva } from "class-variance-authority";
+import { ThumbsDown, ThumbsUp } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { type SyntheticEvent, useEffect, useState, useTransition } from "react";
+import { cn } from "../lib/cn";
+import { buttonVariants } from "./ui/button";
 
 const rateButtonVariants = cva(
   "inline-flex items-center gap-2 px-3 py-2 rounded-full font-medium border text-sm [&_svg]:size-4 disabled:cursor-not-allowed",

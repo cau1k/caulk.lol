@@ -1,13 +1,13 @@
 import {
-  defineConfig,
+  rehypeToc,
+  remarkHeading,
+  remarkMdxMermaid,
+} from "fumadocs-core/mdx-plugins";
+import {
   defineCollections,
+  defineConfig,
   frontmatterSchema,
 } from "fumadocs-mdx/config";
-import {
-  remarkMdxMermaid,
-  remarkHeading,
-  rehypeToc,
-} from "fumadocs-core/mdx-plugins";
 import { z } from "zod";
 
 export const posts = defineCollections({

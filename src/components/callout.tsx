@@ -1,4 +1,4 @@
-import { CircleCheck, CircleX, Info, TriangleAlert, Sun } from "lucide-react";
+import { CircleCheck, CircleX, Info, Sun, TriangleAlert } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "../lib/cn";
 

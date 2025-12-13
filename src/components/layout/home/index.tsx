@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 import { cn } from "../../../lib/cn";
-import { type BaseLayoutProps, type NavOptions } from "../shared";
+import type { BaseLayoutProps, NavOptions } from "../shared";
 import { Header } from "./client";
 
 export interface HomeLayoutProps extends BaseLayoutProps {

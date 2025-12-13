@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { createServerFn } from "@tanstack/react-start";
-import { posts } from "@/lib/source";
-import { baseOptions } from "@/lib/layout.shared";
+import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { TagBadge } from "@/components/tag-badge";
+import { baseOptions } from "@/lib/layout.shared";
+import { posts } from "@/lib/source";
 
 export const Route = createFileRoute("/posts/tags/")({
   loader: () => serverLoader(),
