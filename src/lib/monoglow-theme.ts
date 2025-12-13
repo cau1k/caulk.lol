@@ -192,3 +192,195 @@ export const monoGlowTheme: ThemeRegistration = {
     },
   ],
 };
+
+/**
+ * Monoglow Light variant - inverted for light backgrounds
+ */
+export const monoGlowLightTheme: ThemeRegistration = {
+  name: "monoglow-light",
+  type: "light",
+  colors: {
+    "editor.background": "#fafafa",
+    "editor.foreground": "#333333",
+    "editor.lineHighlightBackground": "#f0f0f0",
+    "editor.selectionBackground": "#0d9e6030",
+    "editorCursor.foreground": "#0d9e60",
+    "editorLineNumber.foreground": "#bbbbbb",
+    "editorLineNumber.activeForeground": "#888888",
+  },
+  settings: [
+    {
+      settings: {
+        background: "#fafafa",
+        foreground: "#333333",
+      },
+    },
+    {
+      scope: ["comment", "punctuation.definition.comment"],
+      settings: {
+        foreground: "#999999",
+        fontStyle: "italic",
+      },
+    },
+    {
+      scope: ["string", "string.quoted", "string.template"],
+      settings: {
+        foreground: "#666666",
+      },
+    },
+    {
+      scope: ["constant.numeric", "constant.language", "constant.character"],
+      settings: {
+        foreground: "#0d9e60",
+      },
+    },
+    {
+      scope: ["constant.other", "variable.other.constant"],
+      settings: {
+        foreground: "#333333",
+      },
+    },
+    {
+      scope: [
+        "keyword",
+        "keyword.control",
+        "storage",
+        "storage.type",
+        "storage.modifier",
+      ],
+      settings: {
+        foreground: "#666666",
+      },
+    },
+    {
+      scope: [
+        "keyword.operator",
+        "keyword.operator.assignment",
+        "keyword.operator.arithmetic",
+        "keyword.operator.comparison",
+        "keyword.operator.logical",
+        "keyword.operator.type",
+        "keyword.operator.arrow",
+        "punctuation.definition.arrow",
+        "storage.type.function.arrow",
+      ],
+      settings: {
+        foreground: "#0d9e60",
+      },
+    },
+    {
+      scope: ["entity.name.function", "support.function", "meta.function-call"],
+      settings: {
+        foreground: "#333333",
+      },
+    },
+    {
+      scope: [
+        "entity.name.type",
+        "entity.name.class",
+        "support.type",
+        "support.class",
+      ],
+      settings: {
+        foreground: "#555555",
+      },
+    },
+    {
+      scope: ["entity.name.tag", "support.tag"],
+      settings: {
+        foreground: "#666666",
+      },
+    },
+    {
+      scope: ["entity.other.attribute-name"],
+      settings: {
+        foreground: "#777777",
+      },
+    },
+    {
+      scope: ["variable", "variable.other", "variable.parameter"],
+      settings: {
+        foreground: "#333333",
+      },
+    },
+    {
+      scope: ["variable.language", "variable.language.this"],
+      settings: {
+        foreground: "#666666",
+        fontStyle: "italic",
+      },
+    },
+    {
+      scope: ["punctuation", "meta.brace"],
+      settings: {
+        foreground: "#888888",
+      },
+    },
+    {
+      scope: [
+        "punctuation.definition.tag",
+        "punctuation.separator",
+        "punctuation.terminator",
+      ],
+      settings: {
+        foreground: "#aaaaaa",
+      },
+    },
+    {
+      scope: ["support.type.property-name", "meta.object-literal.key"],
+      settings: {
+        foreground: "#555555",
+      },
+    },
+    {
+      scope: ["meta.import", "meta.export"],
+      settings: {
+        foreground: "#666666",
+      },
+    },
+    {
+      scope: ["markup.heading", "entity.name.section"],
+      settings: {
+        foreground: "#0d9e60",
+        fontStyle: "bold",
+      },
+    },
+    {
+      scope: ["markup.bold"],
+      settings: {
+        fontStyle: "bold",
+      },
+    },
+    {
+      scope: ["markup.italic"],
+      settings: {
+        fontStyle: "italic",
+      },
+    },
+    {
+      scope: ["markup.inline.raw", "markup.fenced_code"],
+      settings: {
+        foreground: "#666666",
+      },
+    },
+    {
+      scope: ["markup.list"],
+      settings: {
+        foreground: "#666666",
+      },
+    },
+    {
+      scope: ["markup.quote"],
+      settings: {
+        foreground: "#999999",
+        fontStyle: "italic",
+      },
+    },
+    {
+      scope: ["invalid", "invalid.illegal"],
+      settings: {
+        foreground: "#d43f3f",
+      },
+    },
+  ],
+};

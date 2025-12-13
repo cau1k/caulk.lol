@@ -13,7 +13,7 @@ import {
 import { transformerTwoslash } from "fumadocs-twoslash";
 import { createFileSystemTypesCache } from "fumadocs-twoslash/cache-fs";
 import { z } from "zod";
-import { monoGlowTheme } from "./src/lib/monoglow-theme";
+import { monoGlowLightTheme, monoGlowTheme } from "./src/lib/monoglow-theme";
 
 export const posts = defineCollections({
   type: "doc",
@@ -32,7 +32,7 @@ export const posts = defineCollections({
     rehypeCodeOptions: {
       ...rehypeCodeDefaultOptions,
       themes: {
-        light: monoGlowTheme,
+        light: monoGlowLightTheme,
         dark: monoGlowTheme,
       },
       transformers: [
