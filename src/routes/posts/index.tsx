@@ -77,7 +77,7 @@ function BlogIndex() {
             <Link
               key={post.url}
               to={post.url}
-              className="group/item block -mx-4 px-4 py-4 rounded-lg transition-all duration-200 ease-out hover:bg-fd-accent/50 group-has-hover/list:opacity-50 hover:!opacity-100"
+              className="group/item block -mx-4 px-4 py-4 rounded-lg transition-all duration-200 ease-out group-has-hover/list:opacity-50 hover:!opacity-100"
             >
               <article className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
                 <time
