@@ -72,12 +72,12 @@ function BlogIndex() {
           <h1 className="text-3xl font-bold tracking-tight">Archive</h1>
         </header>
 
-        <div className="space-y-1">
+        <div className="group/list space-y-1">
           {posts.map((post) => (
             <Link
               key={post.url}
               to={post.url}
-              className="group block -mx-4 px-4 py-4 rounded-lg transition-colors hover:bg-fd-accent/50"
+              className="group/item block -mx-4 px-4 py-4 rounded-lg transition-all duration-200 ease-out hover:bg-fd-accent/50 group-has-hover/list:opacity-50 hover:!opacity-100"
             >
               <article className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
                 <time
@@ -87,7 +87,7 @@ function BlogIndex() {
                   {post.date && formatDate(post.date)}
                 </time>
                 <div className="flex-1 min-w-0">
-                  <h2 className="font-medium font-sans group-hover:text-fd-primary transition-colors">
+                  <h2 className="font-medium font-sans group-hover/item:text-fd-primary transition-colors">
                     {post.title}
                   </h2>
                   {post.tags.length > 0 && (
@@ -98,7 +98,7 @@ function BlogIndex() {
                     </div>
                   )}
                   {post.excerpt && (
-                    <p className="mt-1 text-sm text-fd-muted-foreground line-clamp-1 group-hover:text-fd-muted-foreground/80">
+                    <p className="mt-1 text-sm text-fd-muted-foreground line-clamp-1 group-hover/item:text-fd-muted-foreground/80">
                       {post.excerpt}
                     </p>
                   )}
