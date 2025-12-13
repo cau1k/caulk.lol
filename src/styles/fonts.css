@@ -116,33 +116,21 @@
   line-gap-override: 0%;
 }
 
-/* CMU Typewriter Variable Width - for code */
+/* JetBrains Mono - for code */
 @font-face {
-  font-family: "CMU Typewriter Variable";
-  src:
-    url("/fonts/cmu-typewriter/cmunvt-webfont.woff") format("woff"),
-    url("/fonts/cmu-typewriter/cmunvt-webfont.ttf") format("truetype");
-  font-weight: 400;
+  font-family: "JetBrains Mono";
+  src: url("https://fonts.gstatic.com/s/jetbrainsmono/v21/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxjPVmUsaaDhw.woff2")
+    format("woff2");
+  font-weight: 100 800;
   font-style: normal;
   font-display: swap;
-  font-synthesis: none;
-  size-adjust: 130%;
-  ascent-override: 81%;
-  descent-override: 19%;
-  line-gap-override: 0%;
 }
 
 @font-face {
-  font-family: "CMU Typewriter Variable";
-  src:
-    url("/fonts/cmu-typewriter/cmunvi-webfont.woff") format("woff"),
-    url("/fonts/cmu-typewriter/cmunvi-webfont.ttf") format("truetype");
-  font-weight: 400;
+  font-family: "JetBrains Mono";
+  src: url("https://fonts.gstatic.com/s/jetbrainsmono/v21/tDbX2o-flEEny0FZhsfKu5WU4xD-IQ-PuZJJXxfpAO-Lfjuh.woff2")
+    format("woff2");
+  font-weight: 100 800;
   font-style: italic;
   font-display: swap;
-  font-synthesis: none;
-  size-adjust: 130%;
-  ascent-override: 81%;
-  descent-override: 19%;
-  line-gap-override: 0%;
 }
