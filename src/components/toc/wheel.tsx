@@ -1,5 +1,13 @@
 "use client";
+import type { TOCItemType } from "fumadocs-core/toc";
 import * as Primitive from "fumadocs-core/toc";
+import {
+  type MotionValue,
+  animate,
+  motion,
+  useMotionValue,
+  useTransform,
+} from "motion/react";
 import {
   type ComponentProps,
   useCallback,
@@ -12,7 +20,13 @@ import { cn } from "../../lib/cn";
 import { useTOCItems } from "./index";
 
 const ITEM_HEIGHT = 32;
-const VISIBLE_COUNT = 9;
+const MIN_VISIBLE = 5;
+const MAX_VISIBLE = 9;
+
+// Velocity tuning - adjust these to change drag/release feel
+const VELOCITY_MULTIPLIER = 1.5; // Amplifies drag velocity
+const RELEASE_PROJECTION = 12; // How far ahead to project on release
+const SPRING_VELOCITY_SCALE = 80; // Initial velocity for spring animation
 
 function getItemOffset(depth: number): number {
   if (depth <= 2) return 12;
@@ -23,188 +37,200 @@ function getItemOffset(depth: number): number {
 export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
   const items = useTOCItems();
   const active = Primitive.useActiveAnchors();
-  const wheelRef = useRef<HTMLUListElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef(0);
-  const animationRef = useRef<number | null>(null);
 
-  // Drag state
+  // Motion value for wheel scroll position (in item units)
+  const scrollPosition = useMotionValue(0);
   const [isDragging, setIsDragging] = useState(false);
-  const dragStartY = useRef(0);
-  const dragStartScroll = useRef(0);
-  const velocityRef = useRef(0);
-  const lastDragY = useRef(0);
-  const lastDragTime = useRef(0);
   const isUserControlling = useRef(false);
 
+  // Drag tracking
+  const dragStartY = useRef(0);
+  const dragStartScroll = useRef(0);
+  const lastDragY = useRef(0);
+  const lastDragTime = useRef(0);
+  const velocityRef = useRef(0);
+
+  // Track last scrolled item to avoid redundant scrolls
+  const lastScrolledIndex = useRef(-1);
+
+  // Adjust visible count based on number of items (between MIN and MAX)
+  const visibleCount = Math.max(
+    MIN_VISIBLE,
+    Math.min(MAX_VISIBLE, items.length + 2),
+  );
+
   // Calculate wheel geometry
-  const itemAngle = 360 / Math.max(VISIBLE_COUNT * 2, items.length + 4);
+  const itemAngle = 360 / Math.max(visibleCount * 2, items.length + 4);
   const radius = ITEM_HEIGHT / Math.tan((itemAngle * Math.PI) / 180);
   const containerHeight = Math.min(
-    VISIBLE_COUNT * ITEM_HEIGHT,
+    visibleCount * ITEM_HEIGHT,
     Math.round(radius * 2 + ITEM_HEIGHT * 0.25),
   );
-  const quarterCount = Math.floor(VISIBLE_COUNT / 2);
+  const quarterCount = Math.floor(visibleCount / 2);
 
-  // Find active index
+  // Transform scroll position to wheel rotation
+  const wheelRotation = useTransform(
+    scrollPosition,
+    (scroll) => `translateZ(${-radius}px) rotateX(${itemAngle * scroll}deg)`,
+  );
+
+  // Find active index from page scroll
   const activeIndex = useMemo(() => {
     if (active.length === 0) return 0;
     const idx = items.findIndex((item) => item.url === `#${active[0]}`);
     return idx >= 0 ? idx : 0;
   }, [active, items]);
 
-  // Apply wheel transform at a given scroll position
-  const applyTransform = useCallback(
-    (scroll: number) => {
-      if (!wheelRef.current) return;
-
-      // Rotate wheel
-      wheelRef.current.style.transform = `translateZ(${-radius}px) rotateX(${itemAngle * scroll}deg)`;
-
-      // Toggle visibility and style based on distance from center
-      wheelRef.current.childNodes.forEach((node) => {
-        const li = node as HTMLLIElement;
-        const idx = Number(li.dataset.index);
-        const distance = Math.abs(idx - scroll);
-        const isActive = distance < 0.5;
-
-        li.style.visibility =
-          distance > quarterCount + 1 ? "hidden" : "visible";
-        li.style.opacity = String(Math.max(0, 1 - distance * 0.15));
-
-        // Style active item
-        if (isActive) {
-          li.classList.add("text-fd-primary", "font-medium");
-          li.classList.remove("text-fd-muted-foreground");
-        } else {
-          li.classList.remove("text-fd-primary", "font-medium");
-          li.classList.add("text-fd-muted-foreground");
-        }
-      });
-    },
-    [radius, itemAngle, quarterCount],
-  );
-
-  // Scroll page to item at given index (instant during drag, smooth otherwise)
+  // Scroll page to item
   const scrollToItem = useCallback(
-    (index: number, instant = false) => {
-      const item = items[index];
-      if (item) {
-        const el = document.getElementById(item.url.slice(1));
-        el?.scrollIntoView({
-          behavior: instant ? "instant" : "smooth",
-          block: "start",
-        });
-      }
+    (index: number) => {
+      const clampedIndex = Math.max(0, Math.min(items.length - 1, index));
+      const item = items[clampedIndex];
+      if (!item) return;
+
+      const el = document.getElementById(item.url.slice(1));
+      if (!el) return;
+
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
     },
     [items],
   );
 
-  // Track which item we last scrolled to during drag (avoid redundant scrolls)
-  const lastScrolledIndex = useRef(-1);
+  // Subscribe to scroll position changes during user control
+  useEffect(() => {
+    const unsubscribe = scrollPosition.on("change", (value) => {
+      if (!isUserControlling.current || items.length === 0) return;
 
-  // Animate wheel with momentum after drag release
-  const animateMomentum = useCallback(
-    (initialVelocity: number) => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
+      const nearestIndex = Math.round(value);
+      const clampedIndex = Math.max(
+        0,
+        Math.min(items.length - 1, nearestIndex),
+      );
+
+      if (clampedIndex !== lastScrolledIndex.current) {
+        lastScrolledIndex.current = clampedIndex;
+        scrollToItem(clampedIndex);
+      }
+    });
+
+    return unsubscribe;
+  }, [scrollPosition, items.length, scrollToItem]);
+
+  // Animate wheel to position with wobble effect
+  const animateToPosition = useCallback(
+    (targetIndex: number, withWobble = false) => {
+      if (items.length === 0) return;
+
+      const clampedTarget = Math.max(
+        0,
+        Math.min(items.length - 1, targetIndex),
+      );
+
+      if (withWobble) {
+        animate(scrollPosition, clampedTarget, {
+          type: "spring",
+          stiffness: 400,
+          damping: 25,
+          mass: 0.8,
+          velocity: velocityRef.current * SPRING_VELOCITY_SCALE,
+        });
+      } else {
+        animate(scrollPosition, clampedTarget, {
+          type: "spring",
+          stiffness: 300,
+          damping: 30,
+        });
       }
 
-      const friction = 0.95;
-      let velocity = initialVelocity;
-
-      const animate = () => {
-        velocity *= friction;
-
-        if (Math.abs(velocity) < 0.01) {
-          // Snap to nearest item and scroll page
-          const targetIndex = Math.round(scrollRef.current);
-          const clampedIndex = Math.max(
-            0,
-            Math.min(items.length - 1, targetIndex),
-          );
-          scrollRef.current = clampedIndex;
-          applyTransform(clampedIndex);
-          scrollToItem(clampedIndex);
-          isUserControlling.current = false;
-          return;
-        }
-
-        scrollRef.current += velocity;
-        // Clamp scroll position
-        scrollRef.current = Math.max(
-          -0.5,
-          Math.min(items.length - 0.5, scrollRef.current),
-        );
-        applyTransform(scrollRef.current);
-
-        animationRef.current = requestAnimationFrame(animate);
-      };
-
-      animationRef.current = requestAnimationFrame(animate);
+      scrollToItem(clampedTarget);
     },
-    [applyTransform, items.length, scrollToItem],
+    [scrollPosition, items.length, scrollToItem],
   );
 
+  // Handle momentum after drag release
+  const handleRelease = useCallback(() => {
+    if (items.length === 0) return;
+
+    const currentPos = scrollPosition.get();
+    const velocity = velocityRef.current;
+
+    // Project where we'd end up based on velocity, then clamp
+    const projectedEnd = currentPos + velocity * RELEASE_PROJECTION;
+    const targetIndex = Math.round(projectedEnd);
+    const clampedTarget = Math.max(0, Math.min(items.length - 1, targetIndex));
+
+    // Animate with spring physics (wobble effect)
+    animate(scrollPosition, clampedTarget, {
+      type: "spring",
+      stiffness: 300,
+      damping: 20,
+      mass: 1,
+      velocity: velocity * SPRING_VELOCITY_SCALE,
+      onComplete: () => {
+        isUserControlling.current = false;
+        lastScrolledIndex.current = -1;
+      },
+    });
+
+    scrollToItem(clampedTarget);
+  }, [scrollPosition, items.length, scrollToItem]);
+
   // Drag handlers
-  const handleDragStart = useCallback((clientY: number) => {
-    if (animationRef.current) {
-      cancelAnimationFrame(animationRef.current);
-    }
-    isUserControlling.current = true;
-    setIsDragging(true);
-    dragStartY.current = clientY;
-    dragStartScroll.current = scrollRef.current;
-    lastDragY.current = clientY;
-    lastDragTime.current = performance.now();
-    velocityRef.current = 0;
-  }, []);
+  const handleDragStart = useCallback(
+    (clientY: number) => {
+      isUserControlling.current = true;
+      setIsDragging(true);
+      dragStartY.current = clientY;
+      dragStartScroll.current = scrollPosition.get();
+      lastDragY.current = clientY;
+      lastDragTime.current = performance.now();
+      velocityRef.current = 0;
+    },
+    [scrollPosition],
+  );
 
   const handleDragMove = useCallback(
     (clientY: number) => {
-      if (!isUserControlling.current) return;
+      if (!isUserControlling.current || items.length === 0) return;
 
       const now = performance.now();
       const deltaY = clientY - lastDragY.current;
       const deltaTime = now - lastDragTime.current;
 
-      // Calculate velocity (items per ms)
+      // Calculate velocity with multiplier
       if (deltaTime > 0) {
-        velocityRef.current = (-deltaY / ITEM_HEIGHT) * (16 / deltaTime);
+        const instantVelocity =
+          (-deltaY / ITEM_HEIGHT) * (16 / deltaTime) * VELOCITY_MULTIPLIER;
+        velocityRef.current = velocityRef.current * 0.7 + instantVelocity * 0.3;
       }
 
       lastDragY.current = clientY;
       lastDragTime.current = now;
 
-      // Update scroll position based on drag distance
+      // Update scroll position with soft boundaries (rubber band at edges)
       const totalDeltaY = clientY - dragStartY.current;
       const scrollDelta = -totalDeltaY / ITEM_HEIGHT;
       let newScroll = dragStartScroll.current + scrollDelta;
 
-      // Clamp with rubber band effect at edges
-      newScroll = Math.max(-0.5, Math.min(items.length - 0.5, newScroll));
-      scrollRef.current = newScroll;
-      applyTransform(newScroll);
-
-      // Scroll page to the nearest item in real-time
-      const nearestIndex = Math.round(newScroll);
-      const clampedIndex = Math.max(
-        0,
-        Math.min(items.length - 1, nearestIndex),
-      );
-      if (clampedIndex !== lastScrolledIndex.current) {
-        lastScrolledIndex.current = clampedIndex;
-        scrollToItem(clampedIndex, true);
+      // Soft clamp with resistance at edges
+      const minScroll = -0.3;
+      const maxScroll = items.length - 0.7;
+      if (newScroll < minScroll) {
+        newScroll = minScroll + (newScroll - minScroll) * 0.3;
+      } else if (newScroll > maxScroll) {
+        newScroll = maxScroll + (newScroll - maxScroll) * 0.3;
       }
+
+      scrollPosition.set(newScroll);
     },
-    [applyTransform, items.length, scrollToItem],
+    [scrollPosition, items.length],
   );
 
   const handleDragEnd = useCallback(() => {
     setIsDragging(false);
-    lastScrolledIndex.current = -1;
-    animateMomentum(velocityRef.current);
-  }, [animateMomentum]);
+    handleRelease();
+  }, [handleRelease]);
 
   // Mouse events
   const handleMouseDown = useCallback(
@@ -215,17 +241,11 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
     [handleDragStart],
   );
 
-  // Global mouse move/up handlers
   useEffect(() => {
     if (!isDragging) return;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      handleDragMove(e.clientY);
-    };
-
-    const handleMouseUp = () => {
-      handleDragEnd();
-    };
+    const handleMouseMove = (e: MouseEvent) => handleDragMove(e.clientY);
+    const handleMouseUp = () => handleDragEnd();
 
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
@@ -257,59 +277,28 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
     handleDragEnd();
   }, [handleDragEnd]);
 
-  // Animate wheel to active position (only when not user-controlled)
+  // Sync wheel to page scroll (when not user-controlled)
   useEffect(() => {
-    if (isUserControlling.current) return;
+    if (isUserControlling.current || items.length === 0) return;
 
-    if (animationRef.current) {
-      cancelAnimationFrame(animationRef.current);
-    }
+    animate(scrollPosition, activeIndex, {
+      type: "spring",
+      stiffness: 300,
+      damping: 30,
+    });
+  }, [activeIndex, scrollPosition, items.length]);
 
-    const startScroll = scrollRef.current;
-    const targetScroll = activeIndex;
-
-    if (Math.abs(startScroll - targetScroll) < 0.01) {
-      scrollRef.current = targetScroll;
-      applyTransform(targetScroll);
-      return;
-    }
-
-    const startTime = performance.now();
-    const duration = 300;
-
-    const animate = (now: number) => {
-      if (isUserControlling.current) return;
-
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - (1 - progress) ** 3; // ease-out-cubic
-
-      const newScroll = startScroll + (targetScroll - startScroll) * eased;
-      scrollRef.current = newScroll;
-      applyTransform(newScroll);
-
-      if (progress < 1) {
-        animationRef.current = requestAnimationFrame(animate);
-      }
-    };
-
-    animationRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [activeIndex, applyTransform]);
-
-  // Initial render
-  useEffect(() => {
-    applyTransform(scrollRef.current);
-  }, [applyTransform]);
-
-  const handleItemClick = (index: number) => {
-    scrollToItem(index);
-  };
+  // Item click handler
+  const handleItemClick = useCallback(
+    (index: number) => {
+      isUserControlling.current = true;
+      animateToPosition(index, true);
+      setTimeout(() => {
+        isUserControlling.current = false;
+      }, 500);
+    },
+    [animateToPosition],
+  );
 
   if (items.length === 0) {
     return (
@@ -320,7 +309,6 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
   }
 
   return (
-    // biome-ignore lint/a11y/useSemanticElements: wheel picker is a custom interactive element
     <div
       ref={containerRef}
       role="listbox"
@@ -340,40 +328,28 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
       onTouchEnd={handleTouchEnd}
       {...props}
     >
-      {/* 3D wheel layer */}
-      <ul
-        ref={wheelRef}
+      {/* 3D wheel */}
+      <motion.ul
         className="pointer-events-none absolute inset-x-0 top-1/2 select-none will-change-transform"
         style={{
+          transform: wheelRotation,
           transformStyle: "preserve-3d",
           backfaceVisibility: "hidden",
         }}
       >
         {items.map((item, index) => (
-          <li
+          <WheelItem
             key={item.url}
-            data-index={index}
-            className="pointer-events-auto absolute inset-x-0 flex items-center text-sm text-fd-muted-foreground transition-colors"
-            style={{
-              height: ITEM_HEIGHT,
-              top: -ITEM_HEIGHT / 2,
-              transform: `rotateX(${-itemAngle * index}deg) translateZ(${radius}px)`,
-              paddingInlineStart: getItemOffset(item.depth),
-            }}
-          >
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleItemClick(index);
-              }}
-              className="truncate text-left transition-colors hover:text-fd-foreground"
-            >
-              {item.title}
-            </button>
-          </li>
+            item={item}
+            index={index}
+            scrollPosition={scrollPosition}
+            itemAngle={itemAngle}
+            radius={radius}
+            quarterCount={quarterCount}
+            onItemClick={handleItemClick}
+          />
         ))}
-      </ul>
+      </motion.ul>
 
       {/* Center highlight bar */}
       <div
@@ -384,7 +360,7 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
         }}
       />
 
-      {/* Fade mask gradient */}
+      {/* Fade mask */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -393,5 +369,67 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
         }}
       />
     </div>
+  );
+}
+
+// Individual wheel item with reactive opacity/styling
+function WheelItem({
+  item,
+  index,
+  scrollPosition,
+  itemAngle,
+  radius,
+  quarterCount,
+  onItemClick,
+}: {
+  item: TOCItemType;
+  index: number;
+  scrollPosition: MotionValue<number>;
+  itemAngle: number;
+  radius: number;
+  quarterCount: number;
+  onItemClick: (index: number) => void;
+}) {
+  const opacity = useTransform(scrollPosition, (scroll) => {
+    const distance = Math.abs(index - scroll);
+    if (distance > quarterCount + 1) return 0;
+    return Math.max(0, 1 - distance * 0.15);
+  });
+
+  const isActive = useTransform(scrollPosition, (scroll) => {
+    return Math.abs(index - scroll) < 0.5;
+  });
+
+  // Track active state for styling
+  const [active, setActive] = useState(false);
+  useEffect(() => {
+    return isActive.on("change", setActive);
+  }, [isActive]);
+
+  return (
+    <motion.li
+      className={cn(
+        "pointer-events-auto absolute inset-x-0 flex items-center text-sm transition-colors",
+        active ? "font-medium text-fd-primary" : "text-fd-muted-foreground",
+      )}
+      style={{
+        height: ITEM_HEIGHT,
+        top: -ITEM_HEIGHT / 2,
+        transform: `rotateX(${-itemAngle * index}deg) translateZ(${radius}px)`,
+        paddingInlineStart: getItemOffset(item.depth),
+        opacity,
+      }}
+    >
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onItemClick(index);
+        }}
+        className="truncate text-left transition-colors hover:text-fd-foreground"
+      >
+        {item.title}
+      </button>
+    </motion.li>
   );
 }
