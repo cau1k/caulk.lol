@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import browserCollections from "fumadocs-mdx:collections/browser";
 import type { TOCItemType } from "fumadocs-core/toc";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { formatDateTime, formatRelativeTime } from "@/lib/format-date";
 import { cn } from "@/lib/cn";
 import { baseOptions } from "@/lib/layout.shared";
@@ -11,8 +11,7 @@ import { posts } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 import { TagBadge } from "@/components/tag-badge";
 import { TOCProvider } from "@/components/toc";
-import { TOCItems } from "@/components/toc/clerk";
-import { ScrollArea, ScrollViewport } from "@/components/ui/scroll-area";
+import { WheelTOCItems } from "@/components/toc/wheel";
 import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
 import { PostLayout, usePostTOC } from "@/components/layout/post";
 
@@ -121,18 +120,14 @@ function SidebarTOC() {
     <TOCProvider toc={toc}>
       <aside
         className={cn(
-          "fixed top-16 right-[max(1rem,calc((100vw-42rem)/2-16rem))] hidden h-fit max-h-[calc(100vh-6rem)] w-56 xl:flex xl:flex-col transition-opacity duration-200",
+          "fixed top-16 right-[max(1rem,calc((100vw-42rem)/2-16rem))] hidden w-56 xl:flex xl:flex-col transition-opacity duration-200",
           contentVisible ? "opacity-100" : "opacity-0 pointer-events-none",
         )}
       >
         <p className="mb-2 text-sm font-medium text-fd-muted-foreground">
           On this page
         </p>
-        <ScrollArea className="flex-1 min-h-0">
-          <ScrollViewport className="relative pe-4">
-            <TOCItems />
-          </ScrollViewport>
-        </ScrollArea>
+        <WheelTOCItems />
       </aside>
     </TOCProvider>
   );
