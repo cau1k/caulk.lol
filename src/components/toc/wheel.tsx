@@ -186,8 +186,12 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
       mass: 1,
       velocity: velocity * SPRING_VELOCITY_SCALE,
       onComplete: () => {
-        isUserControlling.current = false;
-        lastScrolledIndex.current = -1;
+        // Delay releasing user control to let page scroll settle
+        // This prevents the sync effect from fighting with the wheel
+        setTimeout(() => {
+          isUserControlling.current = false;
+          lastScrolledIndex.current = -1;
+        }, 150);
       },
     });
 
