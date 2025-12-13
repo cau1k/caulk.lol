@@ -113,17 +113,12 @@ function PostContent({
 }
 
 function SidebarTOC() {
-  const { toc, contentVisible } = usePostTOC();
+  const { toc } = usePostTOC();
   if (toc.length === 0) return null;
 
   return (
     <TOCProvider toc={toc}>
-      <aside
-        className={cn(
-          "fixed top-16 right-[max(1rem,calc((100vw-42rem)/2-16rem))] hidden w-56 xl:flex xl:flex-col transition-opacity duration-200",
-          contentVisible ? "opacity-100" : "opacity-0 pointer-events-none",
-        )}
-      >
+      <aside className="fixed top-16 right-[max(1rem,calc((100vw-42rem)/2-16rem))] hidden w-56 xl:flex xl:flex-col">
         {/* <p className="mb-2 text-sm font-medium text-fd-muted-foreground"> */}
         {/*   On this page */}
         {/* </p> */}

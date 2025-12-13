@@ -19,12 +19,12 @@ import { useTOCItems } from "./index";
 
 const ITEM_HEIGHT = 32;
 const MIN_VISIBLE = 5;
-const MAX_VISIBLE = 9;
+const MAX_VISIBLE = 5;
 
 // Velocity tuning - adjust these to change drag/release feel
-const VELOCITY_MULTIPLIER = 1.5; // Amplifies drag velocity
-const RELEASE_PROJECTION = 12; // How far ahead to project on release
-const SPRING_VELOCITY_SCALE = 80; // Initial velocity for spring animation
+const VELOCITY_MULTIPLIER = 2.0; // Amplifies drag velocity
+const RELEASE_PROJECTION = 8; // How far ahead to project on release
+const SPRING_VELOCITY_SCALE = 10; // Initial velocity for spring animation
 
 function getItemOffset(depth: number): number {
   if (depth <= 2) return 12;
