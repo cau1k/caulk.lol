@@ -1,7 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import browserCollections from "fumadocs-mdx:collections/browser";
-import { findNeighbour } from "fumadocs-core/page-tree";
 import type { TOCItemType } from "fumadocs-core/toc";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useEffect } from "react";
@@ -32,16 +31,21 @@ const serverLoader = createServerFn({ method: "GET" })
     const page = posts.getPage([slug]);
     if (!page) throw notFound();
 
-    const tree = posts.getPageTree();
-    const { previous, next } = findNeighbour(tree, page.url);
+    // sort all posts by date ascending (oldest first)
+    const allPages = posts.getPages().sort((a, b) => {
+      const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
+      const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
+      return dateA - dateB;
+    });
 
-    const toLink = (node: typeof previous | typeof next): NeighbourLink => {
-      if (!node) return null;
-      const nodePage = posts.getNodePage(node);
-      const title =
-        nodePage?.data.title ??
-        (typeof node.name === "string" ? node.name : node.url);
-      return { url: node.url, title };
+    const currentIndex = allPages.findIndex((p) => p.url === page.url);
+    const prevPage = currentIndex > 0 ? allPages[currentIndex - 1] : null;
+    const nextPage =
+      currentIndex < allPages.length - 1 ? allPages[currentIndex + 1] : null;
+
+    const toLink = (p: (typeof allPages)[number] | null): NeighbourLink => {
+      if (!p) return null;
+      return { url: p.url, title: p.data.title };
     };
 
     return {
@@ -52,8 +56,8 @@ const serverLoader = createServerFn({ method: "GET" })
       date: page.data.date,
       author: page.data.author,
       tags: page.data.tags ?? [],
-      previous: toLink(previous),
-      next: toLink(next),
+      previous: toLink(prevPage),
+      next: toLink(nextPage),
     };
   });
 

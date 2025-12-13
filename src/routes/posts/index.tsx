@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
@@ -5,6 +6,34 @@ import { formatDate } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
 import { posts } from "@/lib/source";
 import { TagBadge } from "@/components/tag-badge";
+
+/** Extract first paragraph from MDX content (after frontmatter), trimmed to ~100 chars */
+async function getExcerpt(absolutePath: string, maxLen = 100): Promise<string> {
+  try {
+    const content = await readFile(absolutePath, "utf-8");
+    // Remove frontmatter (between --- delimiters)
+    const withoutFrontmatter = content.replace(/^---[\s\S]*?---\s*/, "");
+    // Get first non-empty paragraph (skip headings, imports, empty lines)
+    const lines = withoutFrontmatter.split("\n");
+    let paragraph = "";
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#") || trimmed.startsWith("import "))
+        continue;
+      paragraph = trimmed;
+      break;
+    }
+    if (!paragraph) return "";
+    // Strip markdown links, bold, italic for cleaner excerpt
+    const clean = paragraph
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // [text](url) -> text
+      .replace(/\*\*([^*]+)\*\*/g, "$1") // **bold** -> bold
+      .replace(/\*([^*]+)\*/g, "$1"); // *italic* -> italic
+    return clean.length > maxLen ? `${clean.slice(0, maxLen).trim()}…` : clean;
+  } catch {
+    return "";
+  }
+}
 
 export const Route = createFileRoute("/posts/")({
   loader: () => serverLoader(),
@@ -19,16 +48,18 @@ const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
     return dateB - dateA;
   });
 
-  return {
-    posts: sorted.map((page) => ({
+  const postsWithExcerpts = await Promise.all(
+    sorted.map(async (page) => ({
       url: page.url,
       title: page.data.title,
       tags: page.data.tags ?? [],
-      description: page.data.description,
+      excerpt: page.absolutePath ? await getExcerpt(page.absolutePath) : "",
       date: page.data.date,
       author: page.data.author,
     })),
-  };
+  );
+
+  return { posts: postsWithExcerpts };
 });
 
 function BlogIndex() {
@@ -59,15 +90,15 @@ function BlogIndex() {
                   {post.tags.length > 0 && (
                     <div className="mt-1 flex flex-wrap gap-2">
                       {post.tags.map((tag) => (
-                        <TagBadge key={tag} tag={tag} />
+                        <TagBadge key={tag} tag={tag} size="sm" />
                       ))}
                     </div>
                   )}
-                  {/* {post.description && ( */}
-                  {/*   <p className="mt-1 text-sm text-fd-muted-foreground line-clamp-1 group-hover:text-fd-muted-foreground/80"> */}
-                  {/*     {post.description} */}
-                  {/*   </p> */}
-                  {/* )} */}
+                  {post.excerpt && (
+                    <p className="mt-1 text-sm text-fd-muted-foreground line-clamp-1 group-hover:text-fd-muted-foreground/80">
+                      {post.excerpt}
+                    </p>
+                  )}
                 </div>
               </article>
             </Link>

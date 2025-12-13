@@ -1,0 +1,35 @@
+---
+title: GPT 5.2 & Opus 4.5
+description: A new way to search for code in your codebase.
+author: Caulk
+date: 2025-12-13
+tags: [ai, openai, gpt, codex, claude-code, opus, anthropic]
+---
+
+OpenAI declared a "[code red](https://fortune.com/2025/12/02/sam-altman-declares-code-red-google-gemini-ceo-sundar-pichai/)" on Monday, December 1st, due to increased market competition, namely, the introduction of Google Gemini's 3 Pro. Just under two weeks later, as a result, OpenAI [released GPT-5.2](https://openai.com/index/introducing-gpt-5-2/). However, after using the model for quite some time in legitimate coding tasks, I'm not sure we can be certain that OpenAI's code red response was good enough.
+
+Now I haven't used Gemini 3 Pro as much as I'd like. I began testing it in Antigravity, Google's [Windsurf-based](https://x.com/silasalberti/status/1990898984706036125) vibe coding editor, and it was a PITA to use due to capacity/rate limiting issues.
+
+And now, I'm running into the same [issue]() with GPT-5.2 on Microsoft Foundry/Azure. I tried using it on OpenRouter, but I couldn't stand the sub-30 tk/s responses. Fortunately, I've been using it with my ChatGPT subscription in Codex and OpenCode, and I'm still unsure if it deserves any trophies.
+
+<Mermaid
+  chart="
+graph TD;
+subgraph AA [Consumers]
+A[Mobile app];
+B[Web app];
+C[Node.js client];
+end
+subgraph BB [Services]
+E[REST API];
+F[GraphQL API];
+G[SOAP API];
+end
+Z[GraphQL API];
+A --> Z;
+B --> Z;
+C --> Z;
+Z --> E;
+Z --> F;
+Z --> G;"
+/>
