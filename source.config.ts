@@ -1,8 +1,8 @@
 import {
+  rehypeCodeDefaultOptions,
   rehypeToc,
   remarkHeading,
   remarkMdxMermaid,
-  rehypeCodeDefaultOptions,
 } from "fumadocs-core/mdx-plugins";
 import {
   applyMdxPreset,
@@ -13,6 +13,7 @@ import {
 import { transformerTwoslash } from "fumadocs-twoslash";
 import { createFileSystemTypesCache } from "fumadocs-twoslash/cache-fs";
 import { z } from "zod";
+import { monoGlowTheme } from "./src/lib/monoglow-theme";
 
 export const posts = defineCollections({
   type: "doc",
@@ -31,8 +32,8 @@ export const posts = defineCollections({
     rehypeCodeOptions: {
       ...rehypeCodeDefaultOptions,
       themes: {
-        light: "github-light",
-        dark: "github-dark",
+        light: monoGlowTheme,
+        dark: monoGlowTheme,
       },
       transformers: [
         ...(rehypeCodeDefaultOptions.transformers ?? []),
