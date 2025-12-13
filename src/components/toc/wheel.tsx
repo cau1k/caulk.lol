@@ -54,6 +54,9 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
   // Track last scrolled item to avoid redundant scrolls
   const lastScrolledIndex = useRef(-1);
 
+  // Track active scroll animation so we can cancel it
+  const scrollAnimationRef = useRef<ReturnType<typeof animate> | null>(null);
+
   // Adjust visible count based on number of items (between MIN and MAX)
   const visibleCount = Math.max(
     MIN_VISIBLE,
@@ -82,7 +85,7 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
     return idx >= 0 ? idx : 0;
   }, [active, items]);
 
-  // Scroll page to item
+  // Scroll page to item using motion animate for cancellable smooth scrolling
   const scrollToItem = useCallback(
     (index: number) => {
       const clampedIndex = Math.max(0, Math.min(items.length - 1, index));
@@ -92,7 +95,22 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
       const el = document.getElementById(item.url.slice(1));
       if (!el) return;
 
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Calculate target scroll position
+      const targetY = el.getBoundingClientRect().top + window.scrollY;
+
+      // Cancel any existing scroll animation
+      if (scrollAnimationRef.current) {
+        scrollAnimationRef.current.stop();
+      }
+
+      // Animate scroll with motion - this is cancellable and doesn't queue
+      scrollAnimationRef.current = animate(window.scrollY, targetY, {
+        type: "spring",
+        stiffness: 200,
+        damping: 30,
+        mass: 0.5,
+        onUpdate: (value) => window.scrollTo(0, value),
+      });
     },
     [items],
   );
