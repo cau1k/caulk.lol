@@ -39,6 +39,8 @@ export function PostLayout({ children, ...props }: PostLayoutProps) {
   const [toc, setToc] = useState<TOCItemType[]>([]);
   const hasToc = toc.length > 0;
 
+  console.log("[PostLayout] toc length:", toc.length, "hasToc:", hasToc);
+
   return (
     <PostTOCContext value={{ toc, setToc }}>
       <HomeLayout {...props}>

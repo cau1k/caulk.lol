@@ -3,7 +3,11 @@ import {
   defineCollections,
   frontmatterSchema,
 } from "fumadocs-mdx/config";
-import { remarkMdxMermaid } from "fumadocs-core/mdx-plugins";
+import {
+  remarkMdxMermaid,
+  remarkHeading,
+  rehypeToc,
+} from "fumadocs-core/mdx-plugins";
 import { z } from "zod";
 
 export const posts = defineCollections({
@@ -18,7 +22,8 @@ export const posts = defineCollections({
     includeProcessedMarkdown: true,
   },
   mdxOptions: {
-    remarkPlugins: [remarkMdxMermaid],
+    remarkPlugins: [remarkMdxMermaid, remarkHeading],
+    rehypePlugins: [[rehypeToc, { exportToc: true }]],
   },
 });
 

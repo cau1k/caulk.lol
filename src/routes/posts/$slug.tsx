@@ -64,12 +64,9 @@ const serverLoader = createServerFn({ method: "GET" })
 const clientLoader = browserCollections.posts.createClientLoader({
   component({ toc, default: MDX }) {
     return (
-      <>
-        <PostContent toc={toc}>
-          <MDX components={getMDXComponents()} />
-        </PostContent>
-        <SidebarTOC toc={toc} />
-      </>
+      <PostContent toc={toc}>
+        <MDX components={getMDXComponents()} />
+      </PostContent>
     );
   },
 });
@@ -95,13 +92,16 @@ function PostContent({
   );
 }
 
-function SidebarTOC({ toc }: { toc?: TOCItemType[] }) {
-  const items = toc ?? [];
-  if (items.length === 0) return null;
+function SidebarTOC() {
+  const { toc } = usePostTOC();
+  if (toc.length === 0) return null;
 
   return (
-    <TOCProvider toc={items}>
-      <aside className="fixed right-[max(1rem,calc((100vw-48rem)/2-14rem-2rem))] top-24 hidden h-fit max-h-[calc(100vh-8rem)] w-56 xl:block">
+    <TOCProvider toc={toc}>
+      <aside
+        className="fixed top-24 hidden h-fit max-h-[calc(100vh-8rem)] w-56 xl:block"
+        style={{ left: "calc(50% + 18rem)" }}
+      >
         <p className="mb-2 text-sm font-medium text-fd-muted-foreground">
           On this page
         </p>
@@ -187,16 +187,8 @@ function Post() {
               </time>
             )}
           </div>
-          {/* <div className="mt-4 flex items-center justify-between gap-4"> */}
-          {/*   {data.author && <span>by {data.author}</span>} */}
-          {/* </div> */}
 
           <div className="mt-8 h-px w-full bg-fd-border" />
-          {/* {data.description && ( */}
-          {/*   <p className="mb-3 text-lg text-fd-muted-foreground"> */}
-          {/*     {data.description} */}
-          {/*   </p> */}
-          {/* )} */}
           <div className="mt-4 flex items-center justify-between gap-4">
             {data.tags.length > 0 ? (
               <div className="flex flex-wrap gap-2">
@@ -221,6 +213,7 @@ function Post() {
         <Content />
         <PostNavigation previous={data.previous} next={data.next} />
       </article>
+      <SidebarTOC />
     </PostLayout>
   );
 }
