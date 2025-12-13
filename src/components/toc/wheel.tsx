@@ -1,6 +1,5 @@
 "use client";
 import type { TOCItemType } from "fumadocs-core/toc";
-import * as Primitive from "fumadocs-core/toc";
 import {
   type MotionValue,
   animate,
@@ -12,7 +11,6 @@ import {
   type ComponentProps,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -36,7 +34,6 @@ function getItemOffset(depth: number): number {
 
 export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
   const items = useTOCItems();
-  const active = Primitive.useActiveAnchors();
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Motion value for wheel scroll position (in item units)
@@ -77,13 +74,6 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
     scrollPosition,
     (scroll) => `translateZ(${-radius}px) rotateX(${itemAngle * scroll}deg)`,
   );
-
-  // Find active index from page scroll
-  const activeIndex = useMemo(() => {
-    if (active.length === 0) return 0;
-    const idx = items.findIndex((item) => item.url === `#${active[0]}`);
-    return idx >= 0 ? idx : 0;
-  }, [active, items]);
 
   // Scroll page to item using motion animate for cancellable smooth scrolling
   const scrollToItem = useCallback(
@@ -302,16 +292,61 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
     handleDragEnd();
   }, [handleDragEnd]);
 
-  // Sync wheel to page scroll (when not user-controlled)
+  // Calculate continuous scroll position based on progress through sections
+  // This interpolates between headings rather than snapping
   useEffect(() => {
     if (isUserControlling.current || items.length === 0) return;
 
-    animate(scrollPosition, activeIndex, {
-      type: "spring",
-      stiffness: 300,
-      damping: 30,
+    const calculateScrollPosition = () => {
+      if (isUserControlling.current) return;
+
+      const headingPositions = items.map((item) => {
+        const el = document.getElementById(item.url.slice(1));
+        return el ? el.getBoundingClientRect().top + window.scrollY : 0;
+      });
+
+      const scrollY = window.scrollY;
+      const viewportTop = scrollY;
+
+      // Find which section we're in and how far through it
+      for (let i = 0; i < headingPositions.length; i++) {
+        const currentPos = headingPositions[i];
+        const nextPos =
+          headingPositions[i + 1] ?? document.documentElement.scrollHeight;
+
+        if (viewportTop >= currentPos && viewportTop < nextPos) {
+          const sectionLength = nextPos - currentPos;
+          const progress =
+            sectionLength > 0 ? (viewportTop - currentPos) / sectionLength : 0;
+
+          // Interpolate: current index + progress toward next
+          const continuousIndex = i + Math.min(progress, 0.99);
+
+          animate(scrollPosition, continuousIndex, {
+            type: "spring",
+            stiffness: 300,
+            damping: 30,
+          });
+          return;
+        }
+      }
+
+      // Before first heading or edge case - snap to first
+      if (viewportTop < headingPositions[0]) {
+        animate(scrollPosition, 0, {
+          type: "spring",
+          stiffness: 300,
+          damping: 30,
+        });
+      }
+    };
+
+    calculateScrollPosition();
+    window.addEventListener("scroll", calculateScrollPosition, {
+      passive: true,
     });
-  }, [activeIndex, scrollPosition, items.length]);
+    return () => window.removeEventListener("scroll", calculateScrollPosition);
+  }, [items, scrollPosition]);
 
   // Item click handler
   const handleItemClick = useCallback(
@@ -375,15 +410,6 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
           />
         ))}
       </motion.ul>
-
-      {/* Center highlight bar */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-1/2 rounded-sm bg-fd-accent/30"
-        style={{
-          height: ITEM_HEIGHT,
-          marginTop: -ITEM_HEIGHT / 2,
-        }}
-      />
 
       {/* Fade mask */}
       <div
