@@ -8,4 +8,521 @@ tags: ["opencode", "plugins", "agents", "guide"]
 
 # Introduction
 
-OpenCode is one of the most powerful and customizable coding agent harnesses available today. And it's 100% open source. It is **THE** open source coding agent.
+OpenCode plugins are Bun/TypeScript modules that run inside the harness process. This guide shows every feature you can use: manifests, hooks, tools, auth, permissions, events, cancellation, testing, and packaging—plus MDX components you can copy into your own docs.
+
+<Callout type="info" title="What this guide covers">
+  - Manifest/config formats (config files + env)
+  - Plugin entrypoint shape, hooks, tools, auth
+  - Events, permissions, shell usage, logging, errors
+  - Packaging, hot reload, testing, safety limits
+</Callout>
+
+<Callout type="warning" title="Reality check">
+  Plugins run in the same Bun process as OpenCode. No sandbox. Validate inputs, respect AbortSignals, and avoid unsafe shell calls.
+</Callout>
+
+## Fast path: scaffold in 6 steps
+
+<Steps>
+  <Step>
+    <strong>Bootstrap</strong>
+    <br />
+    Create a package and add the SDK.
+
+    ```bash title="bootstrap.sh"
+    mkdir -p plugins/hello-opencode
+    cd plugins/hello-opencode
+    bun init --yes
+    bun add @opencode-ai/plugin zod
+    ```
+  </Step>
+  <Step>
+    <strong>Write entry</strong>
+    <br />
+    Export a Plugin that returns hooks.
+
+    ```ts title="src/index.ts" data-line-numbers data-line-numbers-start="1"
+    import type { Plugin, PluginInput, Hooks } from "@opencode-ai/plugin";
+    import { tool } from "@opencode-ai/plugin";
+
+    export const Hello: Plugin = async (
+      input: PluginInput,
+    ): Promise<Hooks> => {
+      return {
+        tool: {
+          hello: tool({
+            description: "Say hello",
+            args: { name: tool.schema.string().describe("Who to greet") },
+            async execute(args) {
+              return `Hello, ${args.name}!`;
+            },
+          }),
+        },
+      };
+    };
+
+    export default Hello;
+    ```
+  </Step>
+  <Step>
+    <strong>Link it</strong>
+    <br />
+    Point OpenCode at your plugin.
+
+    ```json title="opencode.jsonc"
+    {
+      "plugin": ["file:///absolute/path/plugins/hello-opencode/src/index.ts"]
+    }
+    ```
+  </Step>
+  <Step>
+    <strong>Reload</strong>
+    <br />
+    Restart the session; local file plugins reload on restart.
+  </Step>
+  <Step>
+    <strong>Test</strong>
+    <br />
+    Run Bun tests against your tools.
+
+    ```bash title="tests.sh"
+    bun test
+    ```
+  </Step>
+  <Step>
+    <strong>Publish</strong>
+    <br />
+    Build to `dist/` and ship to npm.
+
+    ```bash title="build.sh"
+    bun build ./src/index.ts --outdir ./dist --target node
+    ```
+  </Step>
+</Steps>
+
+## Files at a glance
+
+<Files>
+  <Folder name="plugins" defaultOpen>
+    <Folder name="hello-opencode" defaultOpen>
+      <File name="src/index.ts" />
+      <File name="package.json" />
+      <File name="tsconfig.json" />
+      <File name="dist/index.js" />
+    </Folder>
+  </Folder>
+  <Folder name="config" defaultOpen>
+    <File name="opencode.jsonc" />
+    <File name=".env.local" />
+  </Folder>
+</Files>
+
+## Manifest and config
+
+### Minimal config
+
+```json title="opencode.jsonc"
+{
+  "plugin": [
+    "opencode-anthropic-auth",        // default auth (can disable)
+    "opencode-copilot-auth",          // default auth (can disable)
+    "file:///home/user/plugins/hello-opencode/src/index.ts"
+  ]
+}
+```
+
+### Environment knobs (h4)
+#### Core toggles (h5)
+##### Disable defaults (h6)
+
+- `OPENCODE_DISABLE_DEFAULT_PLUGINS=true` — skip bundled auth plugins
+- `OPENCODE_CONFIG=/abs/path/config.json` — custom config file
+- `OPENCODE_CONFIG_DIR=/abs/path/config-dir` — load extra configs
+- `OPENCODE_CONFIG_CONTENT='{"plugin":[]}'` — inline JSON
+- `OPENCODE_PERMISSION='{"bash":"allow"}'` — permission overrides
+
+### Packaging metadata
+
+```json title="package.json"
+{
+  "name": "opencode-hello-plugin",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "peerDependencies": {
+    "@opencode-ai/plugin": "^1.0.0"
+  }
+}
+```
+
+## Plugin entry shape
+
+<Tabs items={["Overview", "Full Example", "Unknowns"]} label="Entrypoint">
+  <Tab>
+    ```ts title="plugin signature" data-line-numbers
+    import type { Plugin, PluginInput, Hooks } from "@opencode-ai/plugin";
+
+    export const MyPlugin: Plugin = async (
+      input: PluginInput,
+    ): Promise<Hooks> => {
+      const { client, project, directory, worktree, $ } = input;
+      // return hooks to register
+      return {};
+    };
+    ```
+  </Tab>
+  <Tab>
+    ```ts title="with hooks + tool" data-line-numbers
+    import { tool } from "@opencode-ai/plugin";
+
+    export default async function plugin(input) {
+      return {
+        event: async ({ event }) => {
+          if (event.type === "file.edited") {
+            console.log("edited", event.properties.file);
+          }
+        },
+        tool: {
+          read_file: tool({
+            description: "Read a file",
+            args: { path: tool.schema.string() },
+            async execute(args) {
+              const text = await Bun.file(args.path).text();
+              return text;
+            },
+          }),
+        },
+      };
+    }
+    ```
+  </Tab>
+  <Tab>
+    Unknowns: no direct UI/MDX injection from plugins; streaming tool outputs are not exposed; telemetry hooks are not published.
+  </Tab>
+</Tabs>
+
+## Context you receive
+
+<TypeTable
+  type={{
+    client: {
+      description: "SDK client for sessions/files/providers.",
+      type: <code>OpencodeClient</code>,
+      required: true,
+    },
+    project: {
+      description: "Project metadata (id, worktree, vcsDir?, time).",
+      type: <code>Project</code>,
+      required: true,
+    },
+    directory: {
+      description: "Current working directory for this invocation.",
+      type: <code>string</code>,
+      required: true,
+    },
+    worktree: {
+      description: "Git worktree root.",
+      type: <code>string</code>,
+      required: true,
+    },
+    $: {
+      description: "BunShell for commands (templated).",
+      type: <code>BunShell</code>,
+      required: true,
+    },
+  }}
+/>
+
+### BunShell tips
+
+```ts title="shell-usage.ts" data-line-numbers
+const status = await input.$`git status`.quiet().text();
+const files = await input.$
+  .cwd(input.worktree)
+  .nothrow()
+  `fd -g '*.ts'`
+  .text();
+```
+
+- `quiet()` buffers output only.
+- `nothrow()` lets you handle non-zero exits.
+- Use template literals; each substitution is shell-escaped.
+
+## Hooks (full coverage)
+
+<Accordions type="multiple">
+  <Accordion title="config" id="hook-config">
+    Called once when the plugin loads.
+  </Accordion>
+  <Accordion title="event" id="hook-event">
+    Receives all bus events (see list below). Filter on `event.type`.
+  </Accordion>
+  <Accordion title="tool" id="hook-tool">
+    Register tools via `tool()` helper; each must return a string.
+  </Accordion>
+  <Accordion title="auth" id="hook-auth">
+    Provide OAuth/API auth flows for a provider. Prompts support text/select fields.
+  </Accordion>
+  <Accordion title="chat.message" id="hook-chat-message">
+    Runs when a user message is created; can inspect `parts`.
+  </Accordion>
+  <Accordion title="chat.params" id="hook-chat-params">
+    Adjust model params (temperature/topP/options) before LLM call.
+  </Accordion>
+  <Accordion title="permission.ask" id="hook-permission">
+    Intercept permission requests and allow/deny/ask.
+  </Accordion>
+  <Accordion title="tool.execute.before/after" id="hook-tool-execute">
+    Wrap tool execution for logging/metrics.
+  </Accordion>
+  <Accordion title="experimental.*" id="hook-experimental">
+    `experimental.chat.messages.transform`, `experimental.text.complete` for message/part transforms.
+  </Accordion>
+</Accordions>
+
+### Deep dive: chat hooks
+#### chat.message
+##### Example
+###### Notes
+
+```ts title="chat-hooks.ts" data-line-numbers
+export default async function plugin() {
+  return {
+    "chat.message": async (input, output) => {
+      console.log("msg", input.messageID, output.parts.length);
+    },
+    "chat.params": async (_input, output) => {
+      output.temperature = 0.3;
+    },
+  };
+}
+```
+
+## Tool definition with schema
+
+```ts title="tool.ts" data-line-numbers
+import { tool } from "@opencode-ai/plugin";
+
+export const search_files = tool({
+  description: "Search files by glob",
+  args: {
+    pattern: tool.schema.string().describe("Glob pattern, e.g. src/**/*.ts"),
+    limit: tool.schema.number().optional().describe("Max results"),
+  },
+  async execute(args, ctx) {
+    if (ctx.abort.aborted) throw new Error("Cancelled");
+    const res = await Bun.spawn(
+      ["fd", "-g", args.pattern, "-c", "never"],
+      { cwd: ".", stdout: "pipe" },
+    );
+    const text = await new Response(res.stdout).text();
+    const files = text.trim().split("\n");
+    return files
+      .slice(0, args.limit ?? 10)
+      .filter(Boolean)
+      .join("\n");
+  },
+});
+```
+
+- Tool args are Zod-powered via `tool.schema.*` helpers.
+- `execute` receives `{ abort, sessionID, messageID, agent }` in `ctx`.
+
+## Auth hook (OAuth/API)
+
+```ts title="auth.ts" data-line-numbers
+export default async function plugin() {
+  return {
+    auth: {
+      provider: "github",
+      methods: [
+        {
+          type: "oauth",
+          label: "GitHub OAuth",
+          authorize: async () => ({
+            url: "https://github.com/login/oauth/authorize?...",
+            instructions: "Complete the OAuth flow",
+            method: "code",
+            async callback(code) {
+              return { type: "success", access: code, refresh: "", expires: Date.now() + 3600_000 };
+            },
+          }),
+        },
+      ],
+    },
+  };
+}
+```
+
+## Events you can listen to
+
+- `session.status`, `session.idle`, `session.created`, `session.updated`, `session.deleted`
+- `message.updated/removed`, `message.part.updated/removed`
+- `permission.updated/replied`
+- `file.edited`, `file.watcher.updated`
+- `vcs.branch.updated`
+- `command.executed`, `pty.created/updated/exited/deleted`
+- `installation.updated/update.available`, `server.connected`, `server.instance.disposed`
+
+```ts title="event-listener.ts" data-line-numbers
+export default async function plugin() {
+  return {
+    event: async ({ event }) => {
+      if (event.type === "session.status" && event.status === "idle") {
+        console.log("Session idle:", event.sessionID);
+      }
+      if (event.type === "file.edited") {
+        console.log("Edited", event.properties.file);
+      }
+    },
+  };
+}
+```
+
+## Permissions & guardrails
+
+```ts title="permission.ts" data-line-numbers
+export default async function plugin() {
+  return {
+    "permission.ask": async (input, output) => {
+      if (input.type === "bash" && input.metadata?.cmd?.startsWith("git ")) {
+        output.status = "allow";
+      }
+      if (input.type === "external_directory") {
+        output.status = "deny";
+      }
+    },
+  };
+}
+```
+
+- Permission types include `bash`, `edit`, `webfetch`, `doom_loop`, `external_directory`.
+- Use to auto-allow safe patterns and deny risky ones.
+
+## Error handling, timeouts, cancellation
+
+```ts title="errors.ts" data-line-numbers
+async function withTimeout<T>(ms: number, task: () => Promise<T>): Promise<T> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), ms);
+  try {
+    return await task();
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+```
+
+- Respect `ctx.abort` in tools.
+- Throw informative errors; they surface in tool output.
+- No built-in retries or streaming for tools—implement manually if needed.
+
+## Logging & telemetry
+
+- Use `console.log/warn/error`; logs land in `~/.local/share/opencode/log/`.
+- Wrap `tool.execute.before/after` to log tool inputs/outputs.
+
+## Testing patterns
+
+```ts title="tool.test.ts" data-line-numbers
+import { describe, expect, it } from "bun:test";
+import { search_files } from "../src/tool";
+
+const ctx = {
+  sessionID: "s",
+  messageID: "m",
+  agent: "a",
+  abort: new AbortController().signal,
+};
+
+describe("search_files", () => {
+  it("limits results", async () => {
+    const out = await search_files.execute({ pattern: "*.md", limit: 1 }, ctx);
+    expect(out.split("\n").length).toBeLessThanOrEqual(1);
+  });
+});
+```
+
+## Packaging & publishing
+
+```bash title="build-and-publish"
+bun build ./src/index.ts --outdir ./dist --target node
+npm publish --access public
+```
+
+- Export ESM; ship `dist/index.js` and `dist/index.d.ts`.
+- Use peerDependency on `@opencode-ai/plugin`.
+
+## Limitations & unknowns
+
+<Callout type="error" title="Known gaps">
+  - No plugin APIs for streaming tool output.
+  - No UI/MDX injection from plugins.
+  - Telemetry hooks are not documented; rely on your own logging.
+</Callout>
+
+## Mermaid: request → tool → result
+
+<Mermaid
+  chart={`graph TD
+    A[User message] --> B[chat.params]
+    B --> C[LLM call]
+    C --> D[tool.execute.before]
+    D --> E[tool.execute]
+    E --> F[tool.execute.after]
+    F --> G[Response to user]
+  `}
+/>
+
+## Zoomable screenshot
+
+<ImageZoom
+  alt="OpenCode plugin terminal and docs"
+  src="https://images.unsplash.com/photo-1527430253228-e93688616381?w=1200&auto=format&fit=crop&q=80"
+/>
+
+## Reference tables
+
+| Area | You can do | Notes |
+| --- | --- | --- |
+| Hooks | config, event, tool, auth, chat.*, permission.*, tool.execute.*, experimental.* | Return from Plugin entry |
+| Tools | Zod args, string return, AbortSignal, logging | No streaming |
+| Auth | OAuth/API prompts, callback handling | Provide provider id |
+| Permissions | allow/deny/ask per type | Use patterns to auto-allow |
+| Events | session/message/file/permission/vcs/pty | Subscribe via `event` hook |
+
+## Rich code fence options
+
+```bash title="lint-and-typecheck"
+bun run lint && bun run types:check
+```
+
+```json title="manifest-snippet.json"
+{
+  "plugin": [
+    "opencode-anthropic-auth",
+    "opencode-copilot-auth",
+    "file:///home/user/plugins/hello-opencode/src/index.ts"
+  ]
+}
+```
+
+```ts title="with-actions.tsx" data-line-numbers
+import { CodeBlock } from "@/components/codeblock";
+
+export function WithActions() {
+  return (
+    <CodeBlock title="hello.ts" allowCopy={false}>
+      <pre>{`export const hello = () => "hi";`}</pre>
+    </CodeBlock>
+  );
+}
+```
+
+## Final reminders
+
+- Keep handlers pure; avoid mutable singletons.
+- Validate every input via `tool.schema`.
+- Respect `ctx.abort`; implement your own timeouts.
+- Log what you execute; prefer narrow permission grants.
+- Ship small ESM bundles with types.

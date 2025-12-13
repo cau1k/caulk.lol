@@ -10,7 +10,7 @@ import { posts } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 import { TagBadge } from "@/components/tag-badge";
 import { TOCProvider, TOCScrollArea } from "@/components/toc";
-import { TOCItems } from "@/components/toc/default";
+import { TOCItems } from "@/components/toc/clerk";
 import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
 import { PostLayout, usePostTOC } from "@/components/layout/post";
 
@@ -98,10 +98,7 @@ function SidebarTOC() {
 
   return (
     <TOCProvider toc={toc}>
-      <aside
-        className="fixed top-24 hidden h-fit max-h-[calc(100vh-8rem)] w-56 xl:block"
-        style={{ left: "calc(50% + 18rem)" }}
-      >
+      <aside className="fixed top-24 right-[max(1rem,calc((100vw-42rem)/2-16rem))] hidden h-fit max-h-[calc(100vh-8rem)] w-56 xl:block">
         <p className="mb-2 text-sm font-medium text-fd-muted-foreground">
           On this page
         </p>
