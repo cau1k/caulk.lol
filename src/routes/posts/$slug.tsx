@@ -3,14 +3,16 @@ import { createServerFn } from "@tanstack/react-start";
 import browserCollections from "fumadocs-mdx:collections/browser";
 import type { TOCItemType } from "fumadocs-core/toc";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatDateTime, formatRelativeTime } from "@/lib/format-date";
+import { cn } from "@/lib/cn";
 import { baseOptions } from "@/lib/layout.shared";
 import { posts } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 import { TagBadge } from "@/components/tag-badge";
-import { TOCProvider, TOCScrollArea } from "@/components/toc";
+import { TOCProvider } from "@/components/toc";
 import { TOCItems } from "@/components/toc/clerk";
+import { ScrollArea, ScrollViewport } from "@/components/ui/scroll-area";
 import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
 import { PostLayout, usePostTOC } from "@/components/layout/post";
 
@@ -78,33 +80,59 @@ function PostContent({
   toc?: TOCItemType[];
   children: React.ReactNode;
 }) {
-  const { setToc } = usePostTOC();
+  const { setToc, setContentVisible } = usePostTOC();
 
   useEffect(() => {
     setToc(toc ?? []);
     return () => setToc([]);
   }, [toc, setToc]);
 
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // TOC visible when sentinel has scrolled past top of viewport
+        setContentVisible(!entry.isIntersecting);
+      },
+      { threshold: 0, rootMargin: "-64px 0px 0px 0px" },
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [setContentVisible]);
+
   return (
     <div className="prose prose-fd max-w-none overflow-x-hidden">
+      <div ref={sentinelRef} className="h-0 w-full" aria-hidden="true" />
       {children}
     </div>
   );
 }
 
 function SidebarTOC() {
-  const { toc } = usePostTOC();
+  const { toc, contentVisible } = usePostTOC();
   if (toc.length === 0) return null;
 
   return (
     <TOCProvider toc={toc}>
-      <aside className="fixed top-44 right-[max(1rem,calc((100vw-42rem)/2-16rem))] hidden h-fit max-h-[calc(100vh-12rem)] w-56 xl:block">
+      <aside
+        className={cn(
+          "fixed top-16 right-[max(1rem,calc((100vw-42rem)/2-16rem))] hidden h-fit max-h-[calc(100vh-6rem)] w-56 xl:flex xl:flex-col transition-opacity duration-200",
+          contentVisible ? "opacity-100" : "opacity-0 pointer-events-none",
+        )}
+      >
         <p className="mb-2 text-sm font-medium text-fd-muted-foreground">
           On this page
         </p>
-        <TOCScrollArea className="relative">
-          <TOCItems />
-        </TOCScrollArea>
+        <ScrollArea className="flex-1 min-h-0">
+          <ScrollViewport className="relative pe-4">
+            <TOCItems />
+          </ScrollViewport>
+        </ScrollArea>
       </aside>
     </TOCProvider>
   );
@@ -169,7 +197,7 @@ function Post() {
 
   return (
     <PostLayout {...baseOptions()}>
-      <article className="mx-auto w-full max-w-2xl px-4 py-12">
+      <article className="relative mx-auto w-full max-w-2xl px-4 py-12">
         <header className="mb-8">
           <h1 className="text-3xl font-bold mb-3 sm:text-4xl">{data.title}</h1>
           <div className="mb-2 flex gap-4 text-sm text-fd-muted-foreground">

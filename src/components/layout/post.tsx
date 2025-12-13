@@ -21,6 +21,8 @@ import {
 type PostTOCContextType = {
   toc: TOCItemType[];
   setToc: Dispatch<SetStateAction<TOCItemType[]>>;
+  contentVisible: boolean;
+  setContentVisible: Dispatch<SetStateAction<boolean>>;
 };
 
 const PostTOCContext = createContext<PostTOCContextType | null>(null);
@@ -37,12 +39,13 @@ type PostLayoutProps = HomeLayoutProps & {
 
 export function PostLayout({ children, ...props }: PostLayoutProps) {
   const [toc, setToc] = useState<TOCItemType[]>([]);
+  const [contentVisible, setContentVisible] = useState(false);
   const hasToc = toc.length > 0;
 
   console.log("[PostLayout] toc length:", toc.length, "hasToc:", hasToc);
 
   return (
-    <PostTOCContext value={{ toc, setToc }}>
+    <PostTOCContext value={{ toc, setToc, contentVisible, setContentVisible }}>
       <HomeLayout {...props}>
         {hasToc && <MobileTOCBar items={toc} />}
         {children}
