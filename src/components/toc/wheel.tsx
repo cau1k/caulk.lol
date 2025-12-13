@@ -23,7 +23,6 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
   const items = useTOCItems();
   const active = Primitive.useActiveAnchors();
   const wheelRef = useRef<HTMLUListElement>(null);
-  const highlightRef = useRef<HTMLUListElement>(null);
   const scrollRef = useRef(0);
   const animationRef = useRef<number | null>(null);
 
@@ -46,22 +45,30 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
   // Apply wheel transform at a given scroll position
   const applyTransform = useCallback(
     (scroll: number) => {
-      if (!wheelRef.current || !highlightRef.current) return;
+      if (!wheelRef.current) return;
 
       // Rotate wheel
       wheelRef.current.style.transform = `translateZ(${-radius}px) rotateX(${itemAngle * scroll}deg)`;
 
-      // Translate highlight list
-      highlightRef.current.style.transform = `translateY(${-scroll * ITEM_HEIGHT}px)`;
-
-      // Toggle visibility based on distance from center
+      // Toggle visibility and style based on distance from center
       wheelRef.current.childNodes.forEach((node) => {
         const li = node as HTMLLIElement;
         const idx = Number(li.dataset.index);
         const distance = Math.abs(idx - scroll);
+        const isActive = distance < 0.5;
+
         li.style.visibility =
           distance > quarterCount + 1 ? "hidden" : "visible";
-        li.style.opacity = String(Math.max(0, 1 - distance * 0.2));
+        li.style.opacity = String(Math.max(0, 1 - distance * 0.15));
+
+        // Style active item
+        if (isActive) {
+          li.classList.add("text-fd-primary", "font-medium");
+          li.classList.remove("text-fd-muted-foreground");
+        } else {
+          li.classList.remove("text-fd-primary", "font-medium");
+          li.classList.add("text-fd-muted-foreground");
+        }
       });
     },
     [radius, itemAngle, quarterCount],
@@ -151,7 +158,7 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
           <li
             key={item.url}
             data-index={index}
-            className="absolute inset-x-0 flex items-center text-sm text-fd-muted-foreground transition-opacity"
+            className="absolute inset-x-0 flex items-center text-sm text-fd-muted-foreground transition-colors"
             style={{
               height: ITEM_HEIGHT,
               top: -ITEM_HEIGHT / 2,
@@ -162,7 +169,7 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
             <button
               type="button"
               onClick={() => handleItemClick(index)}
-              className="truncate text-left hover:text-fd-foreground transition-colors"
+              className="truncate text-left transition-colors hover:text-fd-foreground"
             >
               {item.title}
             </button>
@@ -170,42 +177,21 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
         ))}
       </ul>
 
-      {/* Highlight window - shows active item clearly */}
+      {/* Center highlight bar */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-1/2 overflow-hidden rounded-sm bg-fd-accent/50"
+        className="pointer-events-none absolute inset-x-0 top-1/2 rounded-sm bg-fd-accent/30"
         style={{
           height: ITEM_HEIGHT,
           marginTop: -ITEM_HEIGHT / 2,
         }}
-      >
-        <ul
-          ref={highlightRef}
-          className="will-change-transform"
-          style={{
-            paddingTop: containerHeight / 2 - ITEM_HEIGHT / 2,
-          }}
-        >
-          {items.map((item) => (
-            <li
-              key={item.url}
-              className="flex items-center text-sm font-medium text-fd-primary"
-              style={{
-                height: ITEM_HEIGHT,
-                paddingInlineStart: getItemOffset(item.depth),
-              }}
-            >
-              <span className="truncate">{item.title}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      />
 
       {/* Fade mask gradient */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "linear-gradient(to bottom, var(--color-fd-background) 0%, transparent 25%, transparent 75%, var(--color-fd-background) 100%)",
+            "linear-gradient(to bottom, var(--color-fd-background) 0%, transparent 20%, transparent 80%, var(--color-fd-background) 100%)",
         }}
       />
     </div>

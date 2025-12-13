@@ -124,9 +124,9 @@ function SidebarTOC() {
           contentVisible ? "opacity-100" : "opacity-0 pointer-events-none",
         )}
       >
-        <p className="mb-2 text-sm font-medium text-fd-muted-foreground">
-          On this page
-        </p>
+        {/* <p className="mb-2 text-sm font-medium text-fd-muted-foreground"> */}
+        {/*   On this page */}
+        {/* </p> */}
         <WheelTOCItems />
       </aside>
     </TOCProvider>
