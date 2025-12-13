@@ -85,17 +85,23 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
     [radius, itemAngle, quarterCount],
   );
 
-  // Scroll page to item at given index
+  // Scroll page to item at given index (instant during drag, smooth otherwise)
   const scrollToItem = useCallback(
-    (index: number) => {
+    (index: number, instant = false) => {
       const item = items[index];
       if (item) {
         const el = document.getElementById(item.url.slice(1));
-        el?.scrollIntoView({ behavior: "smooth", block: "start" });
+        el?.scrollIntoView({
+          behavior: instant ? "instant" : "smooth",
+          block: "start",
+        });
       }
     },
     [items],
   );
+
+  // Track which item we last scrolled to during drag (avoid redundant scrolls)
+  const lastScrolledIndex = useRef(-1);
 
   // Animate wheel with momentum after drag release
   const animateMomentum = useCallback(
@@ -179,12 +185,24 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
       newScroll = Math.max(-0.5, Math.min(items.length - 0.5, newScroll));
       scrollRef.current = newScroll;
       applyTransform(newScroll);
+
+      // Scroll page to the nearest item in real-time
+      const nearestIndex = Math.round(newScroll);
+      const clampedIndex = Math.max(
+        0,
+        Math.min(items.length - 1, nearestIndex),
+      );
+      if (clampedIndex !== lastScrolledIndex.current) {
+        lastScrolledIndex.current = clampedIndex;
+        scrollToItem(clampedIndex, true);
+      }
     },
-    [applyTransform, items.length],
+    [applyTransform, items.length, scrollToItem],
   );
 
   const handleDragEnd = useCallback(() => {
     setIsDragging(false);
+    lastScrolledIndex.current = -1;
     animateMomentum(velocityRef.current);
   }, [animateMomentum]);
 
