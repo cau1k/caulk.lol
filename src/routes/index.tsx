@@ -36,7 +36,7 @@ function Home() {
 
   return (
     <HomeLayout {...baseOptions()}>
-      <main className="mx-auto max-w-3xl px-6 py-16">
+      <main className="mx-auto max-w-4xl px-6 py-16">
         <header className="mb-16">
           <h1 className="text-4xl font-bold font-serif! tracking-tight mb-4">
             <LinkItem item={{ url: "https://x.com/zerocaulk" }}>

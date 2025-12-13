@@ -97,3 +97,11 @@
     @apply font-mono;
   }
 }
+
+/* Keep top navigation aligned with content width. */
+#nd-nav > div {
+  width: 100%;
+  max-width: 42rem;
+  margin-inline: auto;
+  border-bottom: 0;
+}
