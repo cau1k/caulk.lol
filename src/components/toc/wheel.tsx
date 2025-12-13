@@ -18,8 +18,8 @@ import { cn } from "../../lib/cn";
 import { useTOCItems } from "./index";
 
 const ITEM_HEIGHT = 32;
-const MIN_VISIBLE = 5;
-const MAX_VISIBLE = 5;
+const MIN_VISIBLE = 4;
+const MAX_VISIBLE = 9;
 
 // Velocity tuning - adjust these to change drag/release feel
 const VELOCITY_MULTIPLIER = 2.0; // Amplifies drag velocity
@@ -149,8 +149,8 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
       } else {
         animate(scrollPosition, clampedTarget, {
           type: "spring",
-          stiffness: 300,
-          damping: 30,
+          stiffness: 1000,
+          damping: 0,
         });
       }
 
@@ -166,21 +166,20 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
     const currentPos = scrollPosition.get();
     const velocity = velocityRef.current;
 
-    // Project where we'd end up based on velocity, then clamp
+    // Project where we'd end up based on velocity, then snap to nearest item
     const projectedEnd = currentPos + velocity * RELEASE_PROJECTION;
     const targetIndex = Math.round(projectedEnd);
     const clampedTarget = Math.max(0, Math.min(items.length - 1, targetIndex));
 
-    // Animate with spring physics (smooth settle)
+    // Lower stiffness + lower damping = more wobble during deceleration
+    // Pass velocity directly so spring continues the motion naturally
     animate(scrollPosition, clampedTarget, {
       type: "spring",
-      stiffness: 180,
-      damping: 26,
-      mass: 0.8,
+      stiffness: 120,
+      damping: 14,
+      mass: 0.6,
       velocity: velocity * SPRING_VELOCITY_SCALE,
       onComplete: () => {
-        // Delay releasing user control to let page scroll settle
-        // This prevents the sync effect from fighting with the wheel
         setTimeout(() => {
           isUserControlling.current = false;
           lastScrolledIndex.current = -1;
