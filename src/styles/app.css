@@ -1,7 +1,7 @@
 @import "tailwindcss";
+@import "./fonts.css";
 @import "fumadocs-ui/css/solar.css";
 @import "fumadocs-ui/css/preset.css";
-@import "./fonts.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -78,6 +78,8 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: subpixel-antialiased;
     -moz-osx-font-smoothing: grayscale;
+    scrollbar-gutter: stable;
+    overflow-y: scroll;
   }
   body {
     @apply font-sans;

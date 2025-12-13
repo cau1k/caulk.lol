@@ -22,7 +22,30 @@ export const Route = createRootRoute({
         title: "caulk.lol",
       },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      {
+        rel: "preload",
+        href: "/fonts/cmu-serif/cmunbx-webfont.woff",
+        as: "font",
+        type: "font/woff",
+        crossOrigin: "anonymous",
+      },
+      {
+        rel: "preload",
+        href: "/fonts/cmu-serif/cmunrm-webfont.woff",
+        as: "font",
+        type: "font/woff",
+        crossOrigin: "anonymous",
+      },
+      {
+        rel: "preload",
+        href: "/fonts/cmu-sans/cmunss-webfont.woff",
+        as: "font",
+        type: "font/woff",
+        crossOrigin: "anonymous",
+      },
+      { rel: "stylesheet", href: appCss },
+    ],
   }),
   component: RootComponent,
 });
@@ -39,6 +62,24 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <script>
+          {`(function () {
+  try {
+    var stored =
+      localStorage.getItem('theme') ||
+      localStorage.getItem('fumadocs-theme') ||
+      localStorage.getItem('fd-theme');
+    var theme = stored === 'light' || stored === 'dark' ? stored : null;
+    if (!theme) {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
+    }
+    if (theme === 'dark') document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
+  } catch (e) {}
+})();`}
+        </script>
         <HeadContent />
       </head>
       <body className="flex flex-col min-h-screen">
