@@ -98,7 +98,7 @@ function SidebarTOC() {
 
   return (
     <TOCProvider toc={toc}>
-      <aside className="fixed top-24 right-[max(1rem,calc((100vw-42rem)/2-16rem))] hidden h-fit max-h-[calc(100vh-8rem)] w-56 xl:block">
+      <aside className="fixed top-44 right-[max(1rem,calc((100vw-42rem)/2-16rem))] hidden h-fit max-h-[calc(100vh-12rem)] w-56 xl:block">
         <p className="mb-2 text-sm font-medium text-fd-muted-foreground">
           On this page
         </p>

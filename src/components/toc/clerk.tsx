@@ -73,37 +73,48 @@ export function TOCItems({ ref, className, ...props }: ComponentProps<"div">) {
   return (
     <>
       {svg && (
-        <div
-          className="absolute start-0 top-0 rtl:-scale-x-100"
-          style={{
-            width: svg.width,
-            height: svg.height,
-            maskImage: `url("data:image/svg+xml,${
-              // Inline SVG
-              encodeURIComponent(
+        <>
+          {/* Background line (always visible) */}
+          <svg
+            aria-hidden="true"
+            className="absolute start-0 top-0 rtl:-scale-x-100 pointer-events-none"
+            width={svg.width}
+            height={svg.height}
+            viewBox={`0 0 ${svg.width} ${svg.height}`}
+          >
+            <path
+              d={svg.path}
+              stroke="currentColor"
+              strokeWidth="1"
+              fill="none"
+              className="text-fd-foreground/10"
+            />
+          </svg>
+          {/* Highlight overlay (masked by SVG path) */}
+          <div
+            className="absolute start-0 top-0 rtl:-scale-x-100"
+            style={{
+              width: svg.width,
+              height: svg.height,
+              maskImage: `url("data:image/svg+xml,${encodeURIComponent(
                 `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svg.width} ${svg.height}"><path d="${svg.path}" stroke="black" stroke-width="1" fill="none" /></svg>`,
-              )
-            }")`,
-          }}
-        >
-          <TocThumb
-            containerRef={containerRef}
-            className="mt-(--fd-top) h-(--fd-height) bg-fd-primary transition-all"
-          />
-        </div>
+              )}")`,
+            }}
+          >
+            <TocThumb
+              containerRef={containerRef}
+              className="mt-(--fd-top) h-(--fd-height) bg-fd-primary transition-all"
+            />
+          </div>
+        </>
       )}
       <div
         ref={mergeRefs(containerRef, ref)}
         className={cn("flex flex-col", className)}
         {...props}
       >
-        {items.map((item, i) => (
-          <TOCItem
-            key={item.url}
-            item={item}
-            upper={items[i - 1]?.depth}
-            lower={items[i + 1]?.depth}
-          />
+        {items.map((item) => (
+          <TOCItem key={item.url} item={item} />
         ))}
       </div>
     </>
@@ -120,19 +131,7 @@ function getLineOffset(depth: number): number {
   return depth >= 3 ? 10 : 0;
 }
 
-function TOCItem({
-  item,
-  upper = item.depth,
-  lower = item.depth,
-}: {
-  item: Primitive.TOCItemType;
-  upper?: number;
-  lower?: number;
-}) {
-  const offset = getLineOffset(item.depth),
-    upperOffset = getLineOffset(upper),
-    lowerOffset = getLineOffset(lower);
-
+function TOCItem({ item }: { item: Primitive.TOCItemType }) {
   return (
     <Primitive.TOCItem
       href={item.url}
@@ -141,32 +140,6 @@ function TOCItem({
       }}
       className="prose relative py-1.5 text-sm text-fd-muted-foreground hover:text-fd-accent-foreground transition-colors wrap-anywhere first:pt-0 last:pb-0 data-[active=true]:text-fd-primary"
     >
-      {offset !== upperOffset && (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 16 16"
-          className="absolute -top-1.5 start-0 size-4 rtl:-scale-x-100"
-        >
-          <line
-            x1={upperOffset}
-            y1="0"
-            x2={offset}
-            y2="12"
-            className="stroke-fd-foreground/10"
-            strokeWidth="1"
-          />
-        </svg>
-      )}
-      <div
-        className={cn(
-          "absolute inset-y-0 w-px bg-fd-foreground/10",
-          offset !== upperOffset && "top-1.5",
-          offset !== lowerOffset && "bottom-1.5",
-        )}
-        style={{
-          insetInlineStart: offset,
-        }}
-      />
       {item.title}
     </Primitive.TOCItem>
   );
