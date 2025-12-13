@@ -3,6 +3,7 @@
 @import "fumadocs-ui/css/solar.css";
 @import "fumadocs-ui/css/preset.css";
 @import "fumadocs-twoslash/twoslash.css";
+@import "./monoglow.css";
 
 @custom-variant dark (&:is(.dark *));
 

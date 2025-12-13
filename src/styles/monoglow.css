@@ -1,0 +1,20 @@
+/* Monoglow "z" variant theme for Twoslash */
+.twoslash-monoglow,
+.twoslash.twoslash-monoglow {
+  --color-twoslash-error-foreground: #ffc0b9;
+  --color-twoslash-error: #ffc0b920;
+  --color-twoslash-tag-foreground: #aaaaaa;
+  --color-twoslash-tag: #1a1a1a;
+  --color-twoslash-tag-warn-foreground: #fce094;
+  --color-twoslash-tag-warn: #fce09420;
+  --color-twoslash-tag-annotate-foreground: #aaaaaa;
+  --color-twoslash-tag-annotate: #1a1a1a;
+  --twoslash-error-bg: #2a2a2a;
+
+  --color-fd-popover: #1a1a1a;
+  --color-fd-popover-foreground: #cccccc;
+  --color-fd-border: #444444;
+  --color-fd-muted-foreground: #7a7a7a;
+  --color-fd-primary: #1bfd9c;
+  --color-fd-primary-foreground: #121212;
+}
