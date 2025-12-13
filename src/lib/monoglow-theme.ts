@@ -52,7 +52,6 @@ export const monoGlowTheme: ThemeRegistration = {
       scope: [
         "keyword",
         "keyword.control",
-        "keyword.operator",
         "storage",
         "storage.type",
         "storage.modifier",
@@ -62,9 +61,19 @@ export const monoGlowTheme: ThemeRegistration = {
       },
     },
     {
-      scope: ["keyword.operator.assignment", "keyword.operator.arithmetic"],
+      scope: [
+        "keyword.operator",
+        "keyword.operator.assignment",
+        "keyword.operator.arithmetic",
+        "keyword.operator.comparison",
+        "keyword.operator.logical",
+        "keyword.operator.type",
+        "keyword.operator.arrow",
+        "punctuation.definition.arrow",
+        "storage.type.function.arrow",
+      ],
       settings: {
-        foreground: "#666666",
+        foreground: "#1bfd9c",
       },
     },
     {
