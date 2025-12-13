@@ -1,4 +1,5 @@
 /* Monoglow "z" variant theme for Twoslash */
+.twoslash,
 .twoslash-monoglow,
 .twoslash.twoslash-monoglow {
   --color-twoslash-error-foreground: #ffc0b9;
