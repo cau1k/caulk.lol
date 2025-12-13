@@ -115,10 +115,13 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
     [items],
   );
 
-  // Subscribe to scroll position changes during user control
+  // Subscribe to scroll position changes during active dragging only
+  // (not during release animation - we handle that separately)
   useEffect(() => {
+    if (!isDragging) return;
+
     const unsubscribe = scrollPosition.on("change", (value) => {
-      if (!isUserControlling.current || items.length === 0) return;
+      if (items.length === 0) return;
 
       const nearestIndex = Math.round(value);
       const clampedIndex = Math.max(
@@ -133,7 +136,7 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
     });
 
     return unsubscribe;
-  }, [scrollPosition, items.length, scrollToItem]);
+  }, [isDragging, scrollPosition, items.length, scrollToItem]);
 
   // Animate wheel to position with wobble effect
   const animateToPosition = useCallback(
@@ -178,12 +181,12 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
     const targetIndex = Math.round(projectedEnd);
     const clampedTarget = Math.max(0, Math.min(items.length - 1, targetIndex));
 
-    // Animate with spring physics (wobble effect)
+    // Animate with spring physics (smooth settle)
     animate(scrollPosition, clampedTarget, {
       type: "spring",
-      stiffness: 300,
-      damping: 20,
-      mass: 1,
+      stiffness: 180,
+      damping: 26,
+      mass: 0.8,
       velocity: velocity * SPRING_VELOCITY_SCALE,
       onComplete: () => {
         // Delay releasing user control to let page scroll settle
