@@ -4,7 +4,7 @@ import browserCollections from "fumadocs-mdx:collections/browser";
 import type { TOCItemType } from "fumadocs-core/toc";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useEffect } from "react";
-import { formatDate } from "@/lib/format-date";
+import { formatDateTime, formatRelativeTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
 import { posts } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
@@ -78,13 +78,13 @@ function PostContent({
   toc,
   children,
 }: {
-  toc: TOCItemType[];
+  toc?: TOCItemType[];
   children: React.ReactNode;
 }) {
   const { setToc } = usePostTOC();
 
   useEffect(() => {
-    setToc(toc);
+    setToc(toc ?? []);
     return () => setToc([]);
   }, [toc, setToc]);
 
@@ -95,11 +95,12 @@ function PostContent({
   );
 }
 
-function SidebarTOC({ toc }: { toc: TOCItemType[] }) {
-  if (toc.length === 0) return null;
+function SidebarTOC({ toc }: { toc?: TOCItemType[] }) {
+  const items = toc ?? [];
+  if (items.length === 0) return null;
 
   return (
-    <TOCProvider toc={toc}>
+    <TOCProvider toc={items}>
       <aside className="fixed right-[max(1rem,calc((100vw-48rem)/2-14rem-2rem))] top-24 hidden h-fit max-h-[calc(100vh-8rem)] w-56 xl:block">
         <p className="mb-2 text-sm font-medium text-fd-muted-foreground">
           On this page
@@ -163,13 +164,28 @@ function Post() {
   const data = Route.useLoaderData();
   const Content = clientLoader.getComponent(data.path);
 
+  const dateTime = data.date ? formatDateTime(data.date) : "";
+  const relative = data.date ? formatRelativeTime(data.date) : "";
+  const machineDateTime = data.date
+    ? new Date(data.date).toISOString()
+    : undefined;
+
   return (
     <PostLayout {...baseOptions()}>
       <article className="mx-auto w-full max-w-2xl px-4 py-12">
         <header className="mb-8">
           <h1 className="text-3xl font-bold mb-3 sm:text-4xl">{data.title}</h1>
           <div className="mb-2 flex gap-4 text-sm text-fd-muted-foreground">
-            {data.date && <time>{formatDate(data.date)}</time>}
+            {data.date && (
+              <time
+                className="tabular-nums"
+                dateTime={machineDateTime}
+                title={dateTime}
+              >
+                {dateTime}
+                {relative ? ` · ${relative}` : ""}
+              </time>
+            )}
           </div>
           {/* <div className="mt-4 flex items-center justify-between gap-4"> */}
           {/*   {data.author && <span>by {data.author}</span>} */}

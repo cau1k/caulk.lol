@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
-import { formatDate } from "@/lib/format-date";
+import { formatDate, formatDateTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
 import { posts } from "@/lib/source";
 import { TagBadge } from "@/components/tag-badge";
@@ -80,7 +80,10 @@ function BlogIndex() {
               className="group block -mx-4 px-4 py-4 rounded-lg transition-colors hover:bg-fd-accent/50"
             >
               <article className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
-                <time className="text-sm text-fd-muted-foreground shrink-0 tabular-nums sm:w-28">
+                <time
+                  className="text-sm text-fd-muted-foreground shrink-0 tabular-nums sm:w-28"
+                  title={post.date ? formatDateTime(post.date) : undefined}
+                >
                   {post.date && formatDate(post.date)}
                 </time>
                 <div className="flex-1 min-w-0">

@@ -4,7 +4,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { posts } from "@/lib/source";
 import { baseOptions } from "@/lib/layout.shared";
 import { LinkItem } from "@/components/layout/link-item";
-import { formatDate } from "@/lib/format-date";
+import { formatDate, formatDateTime } from "@/lib/format-date";
 
 export const Route = createFileRoute("/")({
   loader: () => serverLoader(),
@@ -52,7 +52,12 @@ function Home() {
           <section className="mb-16">
             <Link to={featured.url} className="group block">
               <article>
-                <time className="text-sm text-fd-muted-foreground">
+                <time
+                  className="text-sm text-fd-muted-foreground"
+                  title={
+                    featured.date ? formatDateTime(featured.date) : undefined
+                  }
+                >
                   {featured.date && formatDate(featured.date)}
                 </time>
                 <h2 className="text-2xl font-semibold mt-2 group-hover:text-fd-primary transition-colors">
@@ -86,7 +91,10 @@ function Home() {
                   <span className="font-medium group-hover:text-fd-primary transition-colors truncate">
                     {post.title}
                   </span>
-                  <time className="text-sm text-fd-muted-foreground shrink-0">
+                  <time
+                    className="text-sm text-fd-muted-foreground shrink-0"
+                    title={post.date ? formatDateTime(post.date) : undefined}
+                  >
                     {post.date && formatDate(post.date)}
                   </time>
                 </Link>
