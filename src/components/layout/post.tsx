@@ -61,7 +61,7 @@ function MobileTOCBar({ items }: { items: TOCItemType[] }) {
       <Collapsible
         open={isOpen}
         onOpenChange={setIsOpen}
-        className="sticky top-14 z-30 border-b bg-background xl:hidden data-[state=open]:overflow-hidden data-[state=open]:overscroll-none data-[state=open]:touch-none"
+        className="sticky top-14 z-20 border-b bg-background xl:hidden isolate"
       >
         <div className="mx-auto w-full max-w-2xl px-4">
           <CollapsibleTrigger className="group flex w-full items-center gap-2 py-2.5 text-sm font-medium">
@@ -70,7 +70,16 @@ function MobileTOCBar({ items }: { items: TOCItemType[] }) {
             <ChevronDown className="ml-auto size-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
           </CollapsibleTrigger>
           <CollapsibleContent>
-            <div className="pb-4 overflow-y-auto overscroll-contain touch-pan-y max-h-[60vh]">
+            {/* Containment wrapper: clips 3D transforms, creates stacking context */}
+            <div
+              className="pb-4 max-h-[60vh] overflow-hidden overscroll-contain"
+              style={{
+                contain: "paint layout",
+                isolation: "isolate",
+                transformStyle: "flat",
+                transform: "translateZ(0)",
+              }}
+            >
               <WheelTOCItems />
             </div>
           </CollapsibleContent>

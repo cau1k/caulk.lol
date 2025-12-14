@@ -94,7 +94,7 @@ export function WheelTOCItems({
 
   // Scroll page to item using motion animate for cancellable smooth scrolling
   const scrollToItem = useCallback(
-    (index: number) => {
+    (index: number, isTouch = false) => {
       const clampedIndex = Math.max(0, Math.min(items.length - 1, index));
       const item = items[clampedIndex];
       if (!item) return;
@@ -110,12 +110,15 @@ export function WheelTOCItems({
         scrollAnimationRef.current.stop();
       }
 
+      // Slower, gentler scroll on mobile to prevent glitchy behavior
+      const springConfig = isTouch
+        ? { stiffness: 80, damping: 25, mass: 1 }
+        : { stiffness: 200, damping: 30, mass: 0.5 };
+
       // Animate scroll with motion - this is cancellable and doesn't queue
       scrollAnimationRef.current = animate(window.scrollY, targetY, {
         type: "spring",
-        stiffness: 200,
-        damping: 30,
-        mass: 0.5,
+        ...springConfig,
         onUpdate: (value) => window.scrollTo(0, value),
       });
     },
@@ -155,7 +158,7 @@ export function WheelTOCItems({
         });
       }
 
-      scrollToItem(clampedTarget);
+      scrollToItem(clampedTarget, isTouchInput.current);
     },
     [scrollPosition, items.length, scrollToItem],
   );
@@ -195,7 +198,7 @@ export function WheelTOCItems({
       },
     });
 
-    scrollToItem(clampedTarget);
+    scrollToItem(clampedTarget, isTouchInput.current);
   }, [scrollPosition, items.length, scrollToItem]);
 
   // Drag handlers
