@@ -8,7 +8,7 @@ tags: ["opencode", "plugins", "agents", "guide"]
 
 # Introduction
 
-OpenCode plugins are Bun/TypeScript modules that run inside the harness process. This guide shows every feature you can use: manifests, hooks, tools, auth, permissions, events, cancellation, testing, and packaging—plus MDX components you can copy into your own docs.
+OpenCode plugins are Bun/TypeScript modules running in the harness process. This guide covers everything: manifests, hooks, tools, auth, permissions, events, cancellation, testing, packaging.
 
 <Callout type="info" title="What this guide covers">
   - Manifest/config formats (config files + env)
@@ -17,11 +17,11 @@ OpenCode plugins are Bun/TypeScript modules that run inside the harness process.
   - Packaging, hot reload, testing, safety limits
 </Callout>
 
-<Callout type="warning" title="Reality check">
-  Plugins run in the same Bun process as OpenCode. No sandbox. Validate inputs, respect AbortSignals, and avoid unsafe shell calls.
+<Callout type="warning" title="No sandbox">
+  Plugins run in the same Bun process. Validate inputs, respect AbortSignals, don't do dumb shit with shell calls.
 </Callout>
 
-## Fast path: scaffold in 6 steps
+## Scaffold in 6 steps
 
 <Steps>
   <Step>
@@ -78,7 +78,7 @@ OpenCode plugins are Bun/TypeScript modules that run inside the harness process.
   <Step>
     <strong>Reload</strong>
     <br />
-    Restart the session; local file plugins reload on restart.
+    Restart the session. Local file plugins reload on restart.
   </Step>
   <Step>
     <strong>Test</strong>
@@ -197,7 +197,7 @@ OpenCode plugins are Bun/TypeScript modules that run inside the harness process.
     ```
   </Tab>
   <Tab>
-    Unknowns: no direct UI/MDX injection from plugins; streaming tool outputs are not exposed; telemetry hooks are not published.
+    Unknowns: no direct UI/MDX injection from plugins. Streaming tool outputs not exposed. Telemetry hooks not published.
   </Tab>
 </Tabs>
 
@@ -216,7 +216,7 @@ OpenCode plugins are Bun/TypeScript modules that run inside the harness process.
       required: true,
     },
     directory: {
-      description: "Current working directory for this invocation.",
+      description: "CWD for this invocation.",
       type: <code>string</code>,
       required: true,
     },
@@ -246,9 +246,9 @@ const files = await input.$
 
 - `quiet()` buffers output only.
 - `nothrow()` lets you handle non-zero exits.
-- Use template literals; each substitution is shell-escaped.
+- Template literals auto-escape substitutions.
 
-## Hooks (full coverage)
+## Hooks
 
 <Accordions type="multiple">
   <Accordion title="config" id="hook-config">
@@ -258,19 +258,19 @@ const files = await input.$
     Receives all bus events (see list below). Filter on `event.type`.
   </Accordion>
   <Accordion title="tool" id="hook-tool">
-    Register tools via `tool()` helper; each must return a string.
+    Register tools via `tool()` helper. Each must return a string.
   </Accordion>
   <Accordion title="auth" id="hook-auth">
     Provide OAuth/API auth flows for a provider. Prompts support text/select fields.
   </Accordion>
   <Accordion title="chat.message" id="hook-chat-message">
-    Runs when a user message is created; can inspect `parts`.
+    Runs when a user message is created. Can inspect `parts`.
   </Accordion>
   <Accordion title="chat.params" id="hook-chat-params">
     Adjust model params (temperature/topP/options) before LLM call.
   </Accordion>
   <Accordion title="permission.ask" id="hook-permission">
-    Intercept permission requests and allow/deny/ask.
+    Intercept permission requests. Allow/deny/ask.
   </Accordion>
   <Accordion title="tool.execute.before/after" id="hook-tool-execute">
     Wrap tool execution for logging/metrics.
@@ -396,8 +396,8 @@ export default async function plugin() {
 }
 ```
 
-- Permission types include `bash`, `edit`, `webfetch`, `doom_loop`, `external_directory`.
-- Use to auto-allow safe patterns and deny risky ones.
+- Permission types: `bash`, `edit`, `webfetch`, `doom_loop`, `external_directory`.
+- Auto-allow safe patterns, deny risky ones.
 
 ## Error handling, timeouts, cancellation
 
@@ -414,12 +414,12 @@ async function withTimeout<T>(ms: number, task: () => Promise<T>): Promise<T> {
 ```
 
 - Respect `ctx.abort` in tools.
-- Throw informative errors; they surface in tool output.
-- No built-in retries or streaming for tools—implement manually if needed.
+- Throw informative errors. They surface in tool output.
+- No built-in retries or streaming. Implement yourself if needed.
 
 ## Logging & telemetry
 
-- Use `console.log/warn/error`; logs land in `~/.local/share/opencode/log/`.
+- Use `console.log/warn/error`. Logs land in `~/.local/share/opencode/log/`.
 - Wrap `tool.execute.before/after` to log tool inputs/outputs.
 
 ## Testing patterns
@@ -450,7 +450,7 @@ bun build ./src/index.ts --outdir ./dist --target node
 npm publish --access public
 ```
 
-- Export ESM; ship `dist/index.js` and `dist/index.d.ts`.
+- Export ESM. Ship `dist/index.js` and `dist/index.d.ts`.
 - Use peerDependency on `@opencode-ai/plugin`.
 
 ## Limitations & unknowns
@@ -458,7 +458,7 @@ npm publish --access public
 <Callout type="error" title="Known gaps">
   - No plugin APIs for streaming tool output.
   - No UI/MDX injection from plugins.
-  - Telemetry hooks are not documented; rely on your own logging.
+  - Telemetry hooks undocumented. Roll your own logging.
 </Callout>
 
 ## Mermaid: request → tool → result
@@ -521,8 +521,8 @@ export function WithActions() {
 
 ## Final reminders
 
-- Keep handlers pure; avoid mutable singletons.
+- Keep handlers pure. No mutable singletons.
 - Validate every input via `tool.schema`.
-- Respect `ctx.abort`; implement your own timeouts.
-- Log what you execute; prefer narrow permission grants.
+- Respect `ctx.abort`. Implement your own timeouts.
+- Log what you execute. Prefer narrow permission grants.
 - Ship small ESM bundles with types.
