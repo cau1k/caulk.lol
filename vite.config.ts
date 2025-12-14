@@ -19,7 +19,7 @@ export default defineConfig({
     alchemy(),
     tanstackStart({
       prerender: {
-        enabled: true,
+        enabled: false,
       },
     }),
     react(),
