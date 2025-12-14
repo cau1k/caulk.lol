@@ -1,5 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/cn";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 type TagBadgeBaseProps = {
   tag: string;
@@ -67,9 +72,7 @@ export function TagBadge({
 
   const baseStyles = cn(
     "border border-border bg-muted font-sans transition-colors",
-    !isScaled &&
-      size === "sm" &&
-      "px-2 py-0.5 text-xs text-muted-foreground",
+    !isScaled && size === "sm" && "px-2 py-0.5 text-xs text-muted-foreground",
     !isScaled && size === "md" && "px-3 py-1 text-xs",
     linked && "hover:bg-accent",
     className,
@@ -105,5 +108,60 @@ export function TagBadge({
     >
       {content}
     </Link>
+  );
+}
+
+type TagBadgeListProps = {
+  tags: string[];
+  mobileLimit?: number;
+  className?: string;
+  size?: "sm" | "md" | "inline";
+};
+
+export function TagBadgeList({
+  tags,
+  mobileLimit = 2,
+  className,
+  size,
+}: TagBadgeListProps) {
+  if (tags.length === 0) return null;
+
+  const visibleTags = tags.slice(0, mobileLimit);
+  const overflowTags = tags.slice(mobileLimit);
+  const hasOverflow = overflowTags.length > 0;
+
+  return (
+    <div className={cn("flex flex-wrap gap-2", className)}>
+      {/* mobile: show limited tags */}
+      <div className="flex flex-wrap gap-2 sm:hidden">
+        {visibleTags.map((tag) => (
+          <TagBadge key={tag} tag={tag} />
+        ))}
+        {hasOverflow && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                className="flex aspect-square items-center justify-center border border-border bg-muted px-2 py-1 text-xs transition-colors hover:bg-accent"
+              >
+                +
+              </button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <TagBadge key={tag} tag={tag} size={size} />
+              ))}
+            </PopoverContent>
+          </Popover>
+        )}
+      </div>
+
+      {/* desktop: show all tags */}
+      <div className="hidden sm:flex sm:flex-wrap sm:gap-2">
+        {tags.map((tag) => (
+          <TagBadge key={tag} tag={tag} />
+        ))}
+      </div>
+    </div>
   );
 }

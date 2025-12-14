@@ -6,7 +6,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { PostLayout, usePostTOC } from "@/components/layout/post";
 import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
-import { TagBadge } from "@/components/tag-badge";
+import { TagBadgeList } from "@/components/tag-badge";
 import { TOCProvider } from "@/components/toc";
 import { WheelTOCItems } from "@/components/toc/wheel";
 import { cn } from "@/lib/cn";
@@ -206,11 +206,7 @@ function Post() {
           <div className="mt-8 h-px w-full bg-border" />
           <div className="mt-4 flex items-center justify-between gap-4">
             {data.tags.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {data.tags.map((tag) => (
-                  <TagBadge key={tag} tag={tag} />
-                ))}
-              </div>
+              <TagBadgeList tags={data.tags} mobileLimit={2} size="inline" />
             ) : (
               <div />
             )}
