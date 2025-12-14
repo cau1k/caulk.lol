@@ -17,9 +17,9 @@ import {
 import { cn } from "../../lib/cn";
 import { useTOCItems } from "./index";
 
-const ITEM_HEIGHT = 32;
-const MIN_VISIBLE = 4;
-const MAX_VISIBLE = 9;
+const DEFAULT_ITEM_HEIGHT = 32;
+const DEFAULT_MIN_VISIBLE = 4;
+const DEFAULT_MAX_VISIBLE = 9;
 
 // Velocity tuning - adjust these to change drag/release feel
 const VELOCITY_MULTIPLIER = 2.0; // Amplifies drag velocity
@@ -32,7 +32,19 @@ function getItemOffset(depth: number): number {
   return 36;
 }
 
-export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
+export type WheelTOCItemsProps = ComponentProps<"div"> & {
+  itemHeight?: number;
+  minVisible?: number;
+  maxVisible?: number;
+};
+
+export function WheelTOCItems({
+  className,
+  itemHeight = DEFAULT_ITEM_HEIGHT,
+  minVisible = DEFAULT_MIN_VISIBLE,
+  maxVisible = DEFAULT_MAX_VISIBLE,
+  ...props
+}: WheelTOCItemsProps) {
   const items = useTOCItems();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -56,16 +68,16 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
 
   // Adjust visible count based on number of items (between MIN and MAX)
   const visibleCount = Math.max(
-    MIN_VISIBLE,
-    Math.min(MAX_VISIBLE, items.length + 2),
+    minVisible,
+    Math.min(maxVisible, items.length + 2),
   );
 
   // Calculate wheel geometry
   const itemAngle = 360 / Math.max(visibleCount * 2, items.length + 4);
-  const radius = ITEM_HEIGHT / Math.tan((itemAngle * Math.PI) / 180);
+  const radius = itemHeight / Math.tan((itemAngle * Math.PI) / 180);
   const containerHeight = Math.min(
-    visibleCount * ITEM_HEIGHT,
-    Math.round(radius * 2 + ITEM_HEIGHT * 0.25),
+    visibleCount * itemHeight,
+    Math.round(radius * 2 + itemHeight * 0.25),
   );
   const quarterCount = Math.floor(visibleCount / 2);
 
@@ -215,7 +227,7 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
       // Calculate velocity with multiplier
       if (deltaTime > 0) {
         const instantVelocity =
-          (-deltaY / ITEM_HEIGHT) * (16 / deltaTime) * VELOCITY_MULTIPLIER;
+          (-deltaY / itemHeight) * (16 / deltaTime) * VELOCITY_MULTIPLIER;
         velocityRef.current = velocityRef.current * 0.7 + instantVelocity * 0.3;
       }
 
@@ -224,7 +236,7 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
 
       // Update scroll position with soft boundaries (rubber band at edges)
       const totalDeltaY = clientY - dragStartY.current;
-      const scrollDelta = -totalDeltaY / ITEM_HEIGHT;
+      const scrollDelta = -totalDeltaY / itemHeight;
       let newScroll = dragStartScroll.current + scrollDelta;
 
       // Soft clamp with resistance at edges
@@ -238,7 +250,7 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
 
       scrollPosition.set(newScroll);
     },
-    [scrollPosition, items.length],
+    [scrollPosition, items.length, itemHeight],
   );
 
   const handleDragEnd = useCallback(() => {
@@ -405,6 +417,7 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
             itemAngle={itemAngle}
             radius={radius}
             quarterCount={quarterCount}
+            itemHeight={itemHeight}
             onItemClick={handleItemClick}
           />
         ))}
@@ -430,6 +443,7 @@ function WheelItem({
   itemAngle,
   radius,
   quarterCount,
+  itemHeight,
   onItemClick,
 }: {
   item: TOCItemType;
@@ -438,6 +452,7 @@ function WheelItem({
   itemAngle: number;
   radius: number;
   quarterCount: number;
+  itemHeight: number;
   onItemClick: (index: number) => void;
 }) {
   const opacity = useTransform(scrollPosition, (scroll) => {
@@ -463,8 +478,8 @@ function WheelItem({
         active ? "font-medium text-primary" : "text-muted-foreground",
       )}
       style={{
-        height: ITEM_HEIGHT,
-        top: -ITEM_HEIGHT / 2,
+        height: itemHeight,
+        top: -itemHeight / 2,
         transform: `rotateX(${-itemAngle * index}deg) translateZ(${radius}px)`,
         paddingInlineStart: getItemOffset(item.depth),
         opacity,

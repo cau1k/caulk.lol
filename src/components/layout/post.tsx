@@ -59,14 +59,14 @@ function MobileTOCBar({ items }: { items: TOCItemType[] }) {
   return (
     <TOCProvider toc={items}>
       <Collapsible className="sticky top-14 z-30 border-b bg-background/95 backdrop-blur-sm xl:hidden">
-        <CollapsibleTrigger className="group flex w-full items-center gap-2 px-4 py-2.5 text-sm font-medium">
+        <CollapsibleTrigger className="group mx-auto flex w-full max-w-[1400px] items-center gap-2 px-4 py-2.5 text-sm font-medium">
           <List className="size-4 text-muted-foreground" />
           On this page
           <ChevronDown className="ml-auto size-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
         </CollapsibleTrigger>
         <CollapsibleContent>
           <div
-            className="px-4 pb-4"
+            className="mx-auto max-w-[1400px] px-4 pb-4"
             onPointerEnter={() => setIsFocused(true)}
             onPointerLeave={() => setIsFocused(false)}
             onWheel={(e) => isFocused && e.stopPropagation()}
