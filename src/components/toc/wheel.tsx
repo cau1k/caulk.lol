@@ -21,10 +21,15 @@ const DEFAULT_ITEM_HEIGHT = 32;
 const DEFAULT_MIN_VISIBLE = 4;
 const DEFAULT_MAX_VISIBLE = 9;
 
-// Velocity tuning - adjust these to change drag/release feel
-const VELOCITY_MULTIPLIER = 2.0; // Amplifies drag velocity
-const RELEASE_PROJECTION = 8; // How far ahead to project on release
-const SPRING_VELOCITY_SCALE = 10; // Initial velocity for spring animation
+// Detect mobile/touch device
+const isTouchDevice =
+  typeof window !== "undefined" &&
+  ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+
+// Velocity tuning - dumbed down on mobile to prevent glitchy behavior
+const VELOCITY_MULTIPLIER = isTouchDevice ? 0.5 : 2.0;
+const RELEASE_PROJECTION = isTouchDevice ? 2 : 8;
+const SPRING_VELOCITY_SCALE = isTouchDevice ? 2 : 10;
 
 function getItemOffset(depth: number): number {
   if (depth <= 2) return 12;
@@ -117,28 +122,8 @@ export function WheelTOCItems({
     [items],
   );
 
-  // Subscribe to scroll position changes during active dragging only
-  // (not during release animation - we handle that separately)
-  useEffect(() => {
-    if (!isDragging) return;
-
-    const unsubscribe = scrollPosition.on("change", (value) => {
-      if (items.length === 0) return;
-
-      const nearestIndex = Math.round(value);
-      const clampedIndex = Math.max(
-        0,
-        Math.min(items.length - 1, nearestIndex),
-      );
-
-      if (clampedIndex !== lastScrolledIndex.current) {
-        lastScrolledIndex.current = clampedIndex;
-        scrollToItem(clampedIndex);
-      }
-    });
-
-    return unsubscribe;
-  }, [isDragging, scrollPosition, items.length, scrollToItem]);
+  // Don't scroll page during drag - only on release
+  // This prevents the glitchy fighting between touch gesture and programmatic scroll on mobile Safari
 
   // Animate wheel to position with wobble effect
   const animateToPosition = useCallback(
@@ -282,7 +267,7 @@ export function WheelTOCItems({
     };
   }, [isDragging, handleDragMove, handleDragEnd]);
 
-  // Touch events
+  // Touch events - use native listeners for non-passive touchmove
   const handleTouchStart = useCallback(
     (e: React.TouchEvent) => {
       const touch = e.touches[0];
@@ -291,17 +276,34 @@ export function WheelTOCItems({
     [handleDragStart],
   );
 
-  const handleTouchMove = useCallback(
-    (e: React.TouchEvent) => {
+  // Native touch listeners to prevent page scroll during wheel interaction
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (!isUserControlling.current) return;
+      e.preventDefault(); // Stop page from scrolling
       const touch = e.touches[0];
       if (touch) handleDragMove(touch.clientY);
-    },
-    [handleDragMove],
-  );
+    };
 
-  const handleTouchEnd = useCallback(() => {
-    handleDragEnd();
-  }, [handleDragEnd]);
+    const onTouchEnd = () => {
+      if (!isUserControlling.current) return;
+      handleDragEnd();
+    };
+
+    // Must be non-passive to allow preventDefault
+    container.addEventListener("touchmove", onTouchMove, { passive: false });
+    container.addEventListener("touchend", onTouchEnd);
+    container.addEventListener("touchcancel", onTouchEnd);
+
+    return () => {
+      container.removeEventListener("touchmove", onTouchMove);
+      container.removeEventListener("touchend", onTouchEnd);
+      container.removeEventListener("touchcancel", onTouchEnd);
+    };
+  }, [handleDragMove, handleDragEnd]);
 
   // Calculate continuous scroll position based on progress through sections
   // This interpolates between headings rather than snapping
@@ -385,7 +387,7 @@ export function WheelTOCItems({
       role="listbox"
       tabIndex={0}
       className={cn(
-        "relative overflow-hidden",
+        "relative overflow-hidden touch-none",
         isDragging ? "cursor-grabbing" : "cursor-grab",
         className,
       )}
@@ -395,8 +397,6 @@ export function WheelTOCItems({
       }}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
       {...props}
     >
       {/* 3D wheel */}
