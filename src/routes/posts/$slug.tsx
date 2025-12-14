@@ -118,7 +118,8 @@ function SidebarTOC() {
 
   return (
     <TOCProvider toc={toc}>
-      <aside className="fixed top-16 right-[max(1rem,calc((100vw-42rem)/2-16rem))] hidden w-56 xl:flex xl:flex-col">
+      // TODO: remove shadow
+      <aside className="fixed top-16 right-[max(1rem,calc((100vw-42rem)/2-16rem))] hidden w-56 xl:flex xl:flex-col shadow-none">
         {/* <p className="mb-2 text-sm font-medium text-fd-muted-foreground"> */}
         {/*   On this page */}
         {/* </p> */}

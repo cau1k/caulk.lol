@@ -415,7 +415,7 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "linear-gradient(to bottom, var(--color-fd-background) 0%, transparent 20%, transparent 80%, var(--color-fd-background) 100%)",
+            "linear-gradient(to bottom, var(--color-background) 0%, transparent 20%, transparent 80%, var(--color-background) 100%)",
         }}
       />
     </div>

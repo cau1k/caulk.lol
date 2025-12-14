@@ -42,7 +42,7 @@ export function PostLayout({ children, ...props }: PostLayoutProps) {
   const [contentVisible, setContentVisible] = useState(false);
   const hasToc = toc.length > 0;
 
-  console.log("[PostLayout] toc length:", toc.length, "hasToc:", hasToc);
+  // console.log("[PostLayout] toc length:", toc.length, "hasToc:", hasToc);
 
   return (
     <PostTOCContext value={{ toc, setToc, contentVisible, setContentVisible }}>
