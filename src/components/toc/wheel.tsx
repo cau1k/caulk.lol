@@ -21,14 +21,15 @@ const DEFAULT_ITEM_HEIGHT = 32;
 const DEFAULT_MIN_VISIBLE = 4;
 const DEFAULT_MAX_VISIBLE = 9;
 
-// Velocity tuning - base values, scaled down for touch devices
+// Velocity tuning
 const DESKTOP_VELOCITY_MULTIPLIER = 2.0;
 const DESKTOP_RELEASE_PROJECTION = 8;
 const DESKTOP_SPRING_VELOCITY_SCALE = 10;
 
-const MOBILE_VELOCITY_MULTIPLIER = 0.5;
-const MOBILE_RELEASE_PROJECTION = 2;
-const MOBILE_SPRING_VELOCITY_SCALE = 2;
+// Mobile: higher values for more responsive feel
+const MOBILE_VELOCITY_MULTIPLIER = 1.5;
+const MOBILE_RELEASE_PROJECTION = 5;
+const MOBILE_SPRING_VELOCITY_SCALE = 6;
 
 function getItemOffset(depth: number): number {
   if (depth <= 2) return 12;
@@ -228,10 +229,13 @@ export function WheelTOCItems({
         : DESKTOP_VELOCITY_MULTIPLIER;
 
       // Calculate velocity with multiplier
+      // Use less smoothing on touch for more responsive feel
       if (deltaTime > 0) {
         const instantVelocity =
           (-deltaY / itemHeight) * (16 / deltaTime) * velocityMultiplier;
-        velocityRef.current = velocityRef.current * 0.7 + instantVelocity * 0.3;
+        const smoothing = isTouchInput.current ? 0.4 : 0.7;
+        velocityRef.current =
+          velocityRef.current * smoothing + instantVelocity * (1 - smoothing);
       }
 
       lastDragY.current = clientY;
