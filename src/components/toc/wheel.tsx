@@ -21,15 +21,14 @@ const DEFAULT_ITEM_HEIGHT = 32;
 const DEFAULT_MIN_VISIBLE = 4;
 const DEFAULT_MAX_VISIBLE = 9;
 
-// Detect mobile/touch device
-const isTouchDevice =
-  typeof window !== "undefined" &&
-  ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+// Velocity tuning - base values, scaled down for touch devices
+const DESKTOP_VELOCITY_MULTIPLIER = 2.0;
+const DESKTOP_RELEASE_PROJECTION = 8;
+const DESKTOP_SPRING_VELOCITY_SCALE = 10;
 
-// Velocity tuning - dumbed down on mobile to prevent glitchy behavior
-const VELOCITY_MULTIPLIER = isTouchDevice ? 0.5 : 2.0;
-const RELEASE_PROJECTION = isTouchDevice ? 2 : 8;
-const SPRING_VELOCITY_SCALE = isTouchDevice ? 2 : 10;
+const MOBILE_VELOCITY_MULTIPLIER = 0.5;
+const MOBILE_RELEASE_PROJECTION = 2;
+const MOBILE_SPRING_VELOCITY_SCALE = 2;
 
 function getItemOffset(depth: number): number {
   if (depth <= 2) return 12;
@@ -64,6 +63,7 @@ export function WheelTOCItems({
   const lastDragY = useRef(0);
   const lastDragTime = useRef(0);
   const velocityRef = useRef(0);
+  const isTouchInput = useRef(false); // Track if current interaction is touch
 
   // Track last scrolled item to avoid redundant scrolls
   const lastScrolledIndex = useRef(-1);
@@ -135,13 +135,17 @@ export function WheelTOCItems({
         Math.min(items.length - 1, targetIndex),
       );
 
+      const springVelocityScale = isTouchInput.current
+        ? MOBILE_SPRING_VELOCITY_SCALE
+        : DESKTOP_SPRING_VELOCITY_SCALE;
+
       if (withWobble) {
         animate(scrollPosition, clampedTarget, {
           type: "spring",
           stiffness: 400,
           damping: 25,
           mass: 0.8,
-          velocity: velocityRef.current * SPRING_VELOCITY_SCALE,
+          velocity: velocityRef.current * springVelocityScale,
         });
       } else {
         animate(scrollPosition, clampedTarget, {
@@ -163,8 +167,15 @@ export function WheelTOCItems({
     const currentPos = scrollPosition.get();
     const velocity = velocityRef.current;
 
+    const releaseProjection = isTouchInput.current
+      ? MOBILE_RELEASE_PROJECTION
+      : DESKTOP_RELEASE_PROJECTION;
+    const springVelocityScale = isTouchInput.current
+      ? MOBILE_SPRING_VELOCITY_SCALE
+      : DESKTOP_SPRING_VELOCITY_SCALE;
+
     // Project where we'd end up based on velocity, then snap to nearest item
-    const projectedEnd = currentPos + velocity * RELEASE_PROJECTION;
+    const projectedEnd = currentPos + velocity * releaseProjection;
     const targetIndex = Math.round(projectedEnd);
     const clampedTarget = Math.max(0, Math.min(items.length - 1, targetIndex));
 
@@ -175,7 +186,7 @@ export function WheelTOCItems({
       stiffness: 120,
       damping: 14,
       mass: 0.6,
-      velocity: velocity * SPRING_VELOCITY_SCALE,
+      velocity: velocity * springVelocityScale,
       onComplete: () => {
         setTimeout(() => {
           isUserControlling.current = false;
@@ -209,10 +220,14 @@ export function WheelTOCItems({
       const deltaY = clientY - lastDragY.current;
       const deltaTime = now - lastDragTime.current;
 
+      const velocityMultiplier = isTouchInput.current
+        ? MOBILE_VELOCITY_MULTIPLIER
+        : DESKTOP_VELOCITY_MULTIPLIER;
+
       // Calculate velocity with multiplier
       if (deltaTime > 0) {
         const instantVelocity =
-          (-deltaY / itemHeight) * (16 / deltaTime) * VELOCITY_MULTIPLIER;
+          (-deltaY / itemHeight) * (16 / deltaTime) * velocityMultiplier;
         velocityRef.current = velocityRef.current * 0.7 + instantVelocity * 0.3;
       }
 
@@ -247,6 +262,7 @@ export function WheelTOCItems({
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
+      isTouchInput.current = false;
       handleDragStart(e.clientY);
     },
     [handleDragStart],
@@ -270,6 +286,7 @@ export function WheelTOCItems({
   // Touch events - use native listeners for non-passive touchmove
   const handleTouchStart = useCallback(
     (e: React.TouchEvent) => {
+      isTouchInput.current = true;
       const touch = e.touches[0];
       if (touch) handleDragStart(touch.clientY);
     },
