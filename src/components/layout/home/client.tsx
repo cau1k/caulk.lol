@@ -198,13 +198,15 @@ function HeaderNavigationMenu({
       <header
         id="nd-nav"
         {...props}
-        className={cn("sticky h-14 top-0 z-40", props.className)}
+        className={cn(
+          "sticky h-14 top-0 z-40 bg-background! opacity-100!",
+          props.className,
+        )}
       >
         <div
           className={cn(
-            "backdrop-blur-lg border-b transition-colors *:mx-auto *:max-w-(--fd-layout-width)",
-            value.length > 0 && "max-lg:shadow-lg max-lg:rounded-b-2xl",
-            (!isTransparent || value.length > 0) && "bg-background/80",
+            "bg-background *:mx-auto *:max-w-(--fd-layout-width)",
+            value.length > 0 && "",
           )}
         >
           <NavigationMenuList
@@ -238,7 +240,7 @@ function NavigationMenuLinkItem({
 
       const {
         banner = child.icon ? (
-          <div className="w-fit rounded-md border bg-muted p-1 [&_svg]:size-4">
+          <div className="w-fit rounded-md border bg-background p-1 [&_svg]:size-4">
             {child.icon}
           </div>
         ) : null,
