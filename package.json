@@ -46,6 +46,7 @@
     "scroll-into-view-if-needed": "^3.1.0",
     "tailwind-merge": "^3.4.0",
     "twoslash": "^0.3.4",
+    "vaul": "^1.1.2",
     "vite": "^7.2.7",
     "zod": "^4.1.13"
   },
