@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/cn";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type TagBadgeBaseProps = {
   tag: string;
@@ -71,7 +71,7 @@ export function TagBadge({
   }
 
   const baseStyles = cn(
-    "border border-border bg-muted font-sans transition-colors",
+    "border border-border bg-muted font-sans outline-ring transition-colors focus-visible:outline-2",
     !isScaled && size === "sm" && "px-2 py-0.5 text-xs text-muted-foreground",
     !isScaled && size === "md" && "px-3 py-1 text-xs",
     linked && "hover:bg-accent",
@@ -138,21 +138,19 @@ export function TagBadgeList({
           <TagBadge key={tag} tag={tag} />
         ))}
         {hasOverflow && (
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                type="button"
-                className="flex aspect-square items-center justify-center border border-border bg-muted px-2 py-1 text-xs transition-colors hover:bg-accent"
-              >
-                +
-              </button>
-            </PopoverTrigger>
-            <PopoverContent align="end" className="flex flex-wrap gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex aspect-square items-center justify-center border border-border bg-muted px-2 py-1 text-xs outline-ring/50 transition-colors hover:bg-accent focus-visible:outline-2">
+              +
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="flex max-w-[50vw] flex-wrap gap-2 p-2"
+            >
               {tags.map((tag) => (
                 <TagBadge key={tag} tag={tag} size={size} />
               ))}
-            </PopoverContent>
-          </Popover>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
       </div>
 
