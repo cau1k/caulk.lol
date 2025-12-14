@@ -54,11 +54,15 @@ export function PostLayout({ children, ...props }: PostLayoutProps) {
 }
 
 function MobileTOCBar({ items }: { items: TOCItemType[] }) {
-  const [isFocused, setIsFocused] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <TOCProvider toc={items}>
-      <Collapsible className="sticky top-14 z-50 border-b bg-background xl:hidden">
+      <Collapsible
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        className="sticky top-14 border-b bg-background xl:hidden data-[state=open]:overflow-hidden data-[state=open]:overscroll-none data-[state=open]:touch-none"
+      >
         <div className="mx-auto w-full max-w-2xl px-4">
           <CollapsibleTrigger className="group flex w-full items-center gap-2 py-2.5 text-sm font-medium">
             <List className="size-4 text-muted-foreground" />
@@ -66,12 +70,7 @@ function MobileTOCBar({ items }: { items: TOCItemType[] }) {
             <ChevronDown className="ml-auto size-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
           </CollapsibleTrigger>
           <CollapsibleContent>
-            <div
-              className="pb-4"
-              onPointerEnter={() => setIsFocused(true)}
-              onPointerLeave={() => setIsFocused(false)}
-              onWheel={(e) => isFocused && e.stopPropagation()}
-            >
+            <div className="pb-4 overflow-y-auto overscroll-contain touch-pan-y max-h-[60vh]">
               <WheelTOCItems />
             </div>
           </CollapsibleContent>
