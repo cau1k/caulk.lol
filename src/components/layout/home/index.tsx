@@ -3,7 +3,7 @@ import { cn } from "../../../lib/cn";
 import type { BaseLayoutProps, NavOptions } from "../shared";
 import { Header } from "./client";
 
-export interface HomeLayoutProps extends BaseLayoutProps {
+export type HomeLayoutProps = BaseLayoutProps & {
   nav?: Partial<
     NavOptions & {
       /**
@@ -12,7 +12,7 @@ export interface HomeLayoutProps extends BaseLayoutProps {
       enableHoverToOpen?: boolean;
     }
   >;
-}
+};
 
 export function HomeLayout(props: HomeLayoutProps & ComponentProps<"main">) {
   const {

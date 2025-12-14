@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { HomeLayout } from "fumadocs-ui/layouts/home";
+import { HomeLayout } from "@/components/layout/home";
 import { TagBadge } from "@/components/tag-badge";
 import { formatDate, formatDateTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";

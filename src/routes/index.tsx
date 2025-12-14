@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { HomeLayout } from "fumadocs-ui/layouts/home";
+import { HomeLayout } from "@/components/layout/home";
 import { LinkItem } from "@/components/layout/link-item";
 import { formatDate, formatDateTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";

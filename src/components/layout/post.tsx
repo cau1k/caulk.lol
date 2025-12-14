@@ -1,7 +1,7 @@
 "use client";
 
 import type { TOCItemType } from "fumadocs-core/toc";
-import { HomeLayout, type HomeLayoutProps } from "fumadocs-ui/layouts/home";
+import { HomeLayout, type HomeLayoutProps } from "@/components/layout/home";
 import { ChevronDown, List } from "lucide-react";
 import {
   createContext,
