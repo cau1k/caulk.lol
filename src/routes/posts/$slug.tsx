@@ -120,7 +120,7 @@ function SidebarTOC() {
     <TOCProvider toc={toc}>
       // TODO: remove shadow
       <aside className="fixed top-16 right-[max(1rem,calc((100vw-42rem)/2-16rem))] hidden w-56 xl:flex xl:flex-col shadow-none">
-        {/* <p className="mb-2 text-sm font-medium text-fd-muted-foreground"> */}
+        {/* <p className="mb-2 text-sm font-medium text-muted-foreground"> */}
         {/*   On this page */}
         {/* </p> */}
         <WheelTOCItems />
@@ -139,16 +139,16 @@ function PostNavigation({
   if (!previous && !next) return null;
 
   return (
-    <nav className="mt-12 grid grid-cols-2 gap-4 border-t border-fd-border pt-8">
+    <nav className="mt-12 grid grid-cols-2 gap-4 border-t border-border pt-8">
       {previous ? (
         <Link
           to={previous.url}
-          className="group flex items-center gap-2 text-sm text-fd-muted-foreground transition-colors hover:text-fd-foreground"
+          className="group flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
           <ChevronLeftIcon className="size-4 transition-transform group-hover:-translate-x-0.5" />
           <div className="min-w-0">
             <div className="text-xs uppercase tracking-wide">Previous</div>
-            <div className="truncate font-medium text-fd-foreground">
+            <div className="truncate font-medium text-foreground">
               {previous.title}
             </div>
           </div>
@@ -159,11 +159,11 @@ function PostNavigation({
       {next ? (
         <Link
           to={next.url}
-          className="group flex items-center justify-end gap-2 text-right text-sm text-fd-muted-foreground transition-colors hover:text-fd-foreground"
+          className="group flex items-center justify-end gap-2 text-right text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
           <div className="min-w-0">
             <div className="text-xs uppercase tracking-wide">Next</div>
-            <div className="truncate font-medium text-fd-foreground">
+            <div className="truncate font-medium text-foreground">
               {next.title}
             </div>
           </div>
@@ -191,7 +191,7 @@ function Post() {
       <article className="relative mx-auto w-full max-w-2xl px-4 py-12">
         <header className="mb-8">
           <h1 className="text-3xl font-bold mb-3 sm:text-4xl">{data.title}</h1>
-          <div className="mb-2 flex gap-4 text-sm text-fd-muted-foreground">
+          <div className="mb-2 flex gap-4 text-sm text-muted-foreground">
             {data.date && (
               <time
                 className="tabular-nums"
@@ -204,7 +204,7 @@ function Post() {
             )}
           </div>
 
-          <div className="mt-8 h-px w-full bg-fd-border" />
+          <div className="mt-8 h-px w-full bg-border" />
           <div className="mt-4 flex items-center justify-between gap-4">
             {data.tags.length > 0 ? (
               <div className="flex flex-wrap gap-2">
@@ -224,7 +224,7 @@ function Post() {
               />
             </div>
           </div>
-          <div className="my-4 h-px w-full bg-fd-border" />
+          <div className="my-4 h-px w-full bg-border" />
         </header>
         <Content />
         <PostNavigation previous={data.previous} next={data.next} />

@@ -81,13 +81,13 @@ function BlogIndex() {
             >
               <article className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
                 <time
-                  className="text-sm text-fd-muted-foreground shrink-0 tabular-nums sm:w-28"
+                  className="text-sm text-muted-foreground shrink-0 tabular-nums sm:w-28"
                   title={post.date ? formatDateTime(post.date) : undefined}
                 >
                   {post.date && formatDate(post.date)}
                 </time>
                 <div className="flex-1 min-w-0">
-                  <h2 className="font-medium font-sans group-hover/item:text-fd-primary transition-colors">
+                  <h2 className="font-medium font-sans group-hover/item:text-primary transition-colors">
                     {post.title}
                   </h2>
                   {post.tags.length > 0 && (
@@ -98,7 +98,7 @@ function BlogIndex() {
                     </div>
                   )}
                   {post.excerpt && (
-                    <p className="mt-1 text-sm text-fd-muted-foreground line-clamp-1 group-hover/item:text-fd-muted-foreground/80">
+                    <p className="mt-1 text-sm text-muted-foreground line-clamp-1 group-hover/item:text-muted-foreground/80">
                       {post.excerpt}
                     </p>
                   )}
@@ -109,7 +109,7 @@ function BlogIndex() {
         </div>
 
         {posts.length === 0 && (
-          <p className="text-fd-muted-foreground">No posts yet.</p>
+          <p className="text-muted-foreground">No posts yet.</p>
         )}
       </main>
     </HomeLayout>

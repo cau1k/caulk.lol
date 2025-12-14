@@ -28,7 +28,7 @@ export function DocsPage({ toc = [], ...props }: DocsPageProps) {
       </main>
       {toc.length > 0 && (
         <div className="sticky top-(--fd-nav-height) w-[286px] shrink-0 h-[calc(100dvh-var(--fd-nav-height))] p-4 overflow-auto max-xl:hidden">
-          <p className="text-sm text-fd-muted-foreground mb-2">On this page</p>
+          <p className="text-sm text-muted-foreground mb-2">On this page</p>
           <div className="flex flex-col">
             {toc.map((item) => (
               <TocItem key={item.url} item={item} />
@@ -55,7 +55,7 @@ export function DocsDescription(props: ComponentProps<"p">) {
   return (
     <p
       {...props}
-      className={cn("mb-8 text-lg text-fd-muted-foreground", props.className)}
+      className={cn("mb-8 text-lg text-muted-foreground", props.className)}
     >
       {props.children}
     </p>
@@ -77,8 +77,8 @@ function TocItem({ item }: { item: TOCItemType }) {
     <a
       href={item.url}
       className={cn(
-        "text-sm text-fd-foreground/80 py-1",
-        isActive && "text-fd-primary",
+        "text-sm text-foreground/80 py-1",
+        isActive && "text-primary",
       )}
       style={{
         paddingLeft: Math.max(0, item.depth - 2) * 16,

@@ -12,10 +12,10 @@
   --color-twoslash-tag-annotate: #1a1a1a;
   --twoslash-error-bg: #2a2a2a;
 
-  --color-fd-popover: #1a1a1a;
-  --color-fd-popover-foreground: #cccccc;
-  --color-fd-border: #444444;
-  --color-fd-muted-foreground: #7a7a7a;
-  --color-fd-primary: #1bfd9c;
-  --color-fd-primary-foreground: #121212;
+  --color-popover: #1a1a1a;
+  --color-popover-foreground: #cccccc;
+  --color-border: #444444;
+  --color-muted-foreground: #7a7a7a;
+  --color-primary: #1bfd9c;
+  --color-primary-foreground: #121212;
 }

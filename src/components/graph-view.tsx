@@ -118,7 +118,7 @@ function ClientOnly({
       hoverNode?.neighbors?.includes(node.id as string);
 
     ctx.fillStyle = isActive
-      ? style.getPropertyValue("--color-fd-primary")
+      ? style.getPropertyValue("--color-primary")
       : style.getPropertyValue("--color-purple-300");
     ctx.fill();
 
@@ -142,10 +142,10 @@ function ClientOnly({
       typeof link.target === "object" &&
       (hoverNode.id === link.source.id || hoverNode.id === link.target.id)
     ) {
-      return style.getPropertyValue("--color-fd-primary");
+      return style.getPropertyValue("--color-primary");
     }
 
-    return `color-mix(in oklab, ${style.getPropertyValue("--color-fd-muted-foreground")} 50%, transparent)`;
+    return `color-mix(in oklab, ${style.getPropertyValue("--color-muted-foreground")} 50%, transparent)`;
   };
 
   // Enrich nodes with neighbors for hover effects
@@ -179,7 +179,7 @@ function ClientOnly({
       />
       {tooltip && (
         <div
-          className="absolute bg-fd-popover text-fd-popover-foreground size-fit p-2 border rounded-xl shadow-lg text-sm max-w-xs"
+          className="absolute bg-popover text-popover-foreground size-fit p-2 border rounded-xl shadow-lg text-sm max-w-xs"
           style={{ top: tooltip.y, left: tooltip.x }}
         >
           {tooltip.content}

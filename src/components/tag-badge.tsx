@@ -49,8 +49,8 @@ export function TagBadge({
   if (isInline) {
     const inlineContent = `${tag}`;
     const inlineStyles = cn(
-      "font-mono text-xs text-fd-muted-foreground transition-colors",
-      linked && "hover:text-fd-foreground",
+      "font-mono text-xs text-muted-foreground transition-colors",
+      linked && "hover:text-foreground",
       className,
     );
 
@@ -66,12 +66,12 @@ export function TagBadge({
   }
 
   const baseStyles = cn(
-    "border border-fd-border bg-fd-muted font-sans transition-colors",
+    "border border-border bg-muted font-sans transition-colors",
     !isScaled &&
       size === "sm" &&
-      "px-2 py-0.5 text-xs text-fd-muted-foreground",
+      "px-2 py-0.5 text-xs text-muted-foreground",
     !isScaled && size === "md" && "px-3 py-1 text-xs",
-    linked && "hover:bg-fd-accent",
+    linked && "hover:bg-accent",
     className,
   );
 

@@ -52,7 +52,7 @@ export const Accordions = forwardRef<
       onValueChange={setValue}
       collapsible={type === "single" ? true : undefined}
       className={cn(
-        "divide-y divide-fd-border overflow-hidden rounded-lg border bg-fd-card",
+        "divide-y divide-border overflow-hidden rounded-lg border bg-card",
         className,
       )}
       {...props}
@@ -86,10 +86,10 @@ export const Accordion = forwardRef<
         <AccordionPrimitive.Header
           id={id}
           data-accordion-value={value}
-          className="not-prose flex flex-row items-center text-fd-card-foreground font-medium has-focus-visible:bg-fd-accent"
+          className="not-prose flex flex-row items-center text-card-foreground font-medium has-focus-visible:bg-accent"
         >
           <AccordionPrimitive.Trigger className="group flex flex-1 items-center gap-2 px-3 py-2.5 text-start focus-visible:outline-none">
-            <ChevronRight className="size-4 shrink-0 text-fd-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-90" />
+            <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-90" />
             {title}
           </AccordionPrimitive.Trigger>
           {id ? <CopyButton id={id} /> : null}
@@ -119,7 +119,7 @@ function CopyButton({ id }: { id: string }) {
       className={cn(
         buttonVariants({
           color: "ghost",
-          className: "text-fd-muted-foreground me-2",
+          className: "text-muted-foreground me-2",
         }),
       )}
       onClick={onClick}

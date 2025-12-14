@@ -15,8 +15,8 @@ const rateButtonVariants = cva(
   {
     variants: {
       active: {
-        true: "bg-fd-accent text-fd-accent-foreground [&_svg]:fill-current",
-        false: "text-fd-muted-foreground",
+        true: "bg-accent text-accent-foreground [&_svg]:fill-current",
+        false: "text-muted-foreground",
       },
     },
   },
@@ -126,7 +126,7 @@ export function Feedback({
       </div>
       <CollapsibleContent className="mt-3">
         {previous ? (
-          <div className="px-3 py-6 flex flex-col items-center gap-3 bg-fd-card text-fd-muted-foreground text-sm text-center rounded-xl">
+          <div className="px-3 py-6 flex flex-col items-center gap-3 bg-card text-muted-foreground text-sm text-center rounded-xl">
             <p>Thank you for your feedback!</p>
             <div className="flex flex-row items-center gap-2">
               <a
@@ -166,7 +166,7 @@ export function Feedback({
               required
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="border rounded-lg bg-fd-secondary text-fd-secondary-foreground p-3 resize-none focus-visible:outline-none placeholder:text-fd-muted-foreground"
+              className="border rounded-lg bg-secondary text-secondary-foreground p-3 resize-none focus-visible:outline-none placeholder:text-muted-foreground"
               placeholder="Leave your feedback..."
               onKeyDown={(e) => {
                 if (!e.shiftKey && e.key === "Enter") {

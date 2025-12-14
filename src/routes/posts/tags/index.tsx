@@ -38,7 +38,7 @@ function TagsIndex() {
       <main className="mx-auto w-full max-w-2xl px-4 py-16">
         <header className="mb-12">
           <h1 className="text-3xl font-bold tracking-tight">Tags</h1>
-          <p className="mt-2 text-fd-muted-foreground">Browse posts by topic</p>
+          <p className="mt-2 text-muted-foreground">Browse posts by topic</p>
         </header>
 
         <div className="flex flex-wrap items-center gap-3">
@@ -55,7 +55,7 @@ function TagsIndex() {
         </div>
 
         {tags.length === 0 && (
-          <p className="text-fd-muted-foreground">No tags yet.</p>
+          <p className="text-muted-foreground">No tags yet.</p>
         )}
       </main>
     </HomeLayout>

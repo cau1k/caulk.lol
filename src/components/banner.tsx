@@ -57,8 +57,8 @@ export function Banner({
       {...props}
       className={cn(
         "sticky top-0 z-40 flex flex-row items-center justify-center px-4 text-center text-sm font-medium",
-        variant === "normal" && "bg-fd-secondary",
-        variant === "rainbow" && "bg-fd-background",
+        variant === "normal" && "bg-secondary",
+        variant === "rainbow" && "bg-background",
         !open && "hidden",
         props.className,
       )}
@@ -102,7 +102,7 @@ export function Banner({
             buttonVariants({
               color: "ghost",
               className:
-                "absolute end-2 top-1/2 -translate-y-1/2 text-fd-muted-foreground/50",
+                "absolute end-2 top-1/2 -translate-y-1/2 text-muted-foreground/50",
               size: "icon-sm",
             }),
           )}

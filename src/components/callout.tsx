@@ -10,7 +10,7 @@ export type CalloutType =
   | "warning"
   | "idea";
 
-const iconClass = "size-5 -me-0.5 fill-(--callout-color) text-fd-card";
+const iconClass = "size-5 -me-0.5 fill-(--callout-color) text-card";
 
 export function Callout({
   children,
@@ -56,12 +56,12 @@ export function CalloutContainer({
   return (
     <div
       className={cn(
-        "flex gap-2 my-4 rounded-xl border bg-fd-card p-3 ps-1 text-sm text-fd-card-foreground shadow-md",
+        "flex gap-2 my-4 rounded-xl border bg-card p-3 ps-1 text-sm text-card-foreground shadow-md",
         className,
       )}
       style={
         {
-          "--callout-color": `var(--color-fd-${type}, var(--color-fd-muted))`,
+          "--callout-color": `var(--color-${type}, var(--color-muted))`,
           ...style,
         } as object
       }
@@ -101,7 +101,7 @@ export function CalloutDescription({
   return (
     <div
       className={cn(
-        "text-fd-muted-foreground prose-no-margin empty:hidden",
+        "text-muted-foreground prose-no-margin empty:hidden",
         className,
       )}
       {...props}

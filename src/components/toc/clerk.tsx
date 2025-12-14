@@ -65,7 +65,7 @@ export function TOCItems({ ref, className, ...props }: ComponentProps<"div">) {
 
   if (items.length === 0)
     return (
-      <div className="rounded-lg border bg-fd-card p-3 text-xs text-fd-muted-foreground">
+      <div className="rounded-lg border bg-card p-3 text-xs text-muted-foreground">
         {text.tocNoHeadings}
       </div>
     );
@@ -87,7 +87,7 @@ export function TOCItems({ ref, className, ...props }: ComponentProps<"div">) {
               stroke="currentColor"
               strokeWidth="1"
               fill="none"
-              className="text-fd-foreground/10"
+              className="text-foreground/10"
             />
           </svg>
           {/* Highlight overlay (masked by SVG path) */}
@@ -103,7 +103,7 @@ export function TOCItems({ ref, className, ...props }: ComponentProps<"div">) {
           >
             <TocThumb
               containerRef={containerRef}
-              className="mt-(--fd-top) h-(--fd-height) bg-fd-primary transition-all"
+              className="mt-(--fd-top) h-(--fd-height) bg-primary transition-all"
             />
           </div>
         </>
@@ -138,7 +138,7 @@ function TOCItem({ item }: { item: Primitive.TOCItemType }) {
       style={{
         paddingInlineStart: getItemOffset(item.depth),
       }}
-      className="prose relative py-1.5 text-sm text-fd-muted-foreground hover:text-fd-accent-foreground transition-colors wrap-anywhere first:pt-0 last:pb-0 data-[active=true]:text-fd-primary"
+      className="prose relative py-1.5 text-sm text-muted-foreground hover:text-accent-foreground transition-colors wrap-anywhere first:pt-0 last:pb-0 data-[active=true]:text-primary"
     >
       {item.title}
     </Primitive.TOCItem>

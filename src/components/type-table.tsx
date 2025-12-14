@@ -47,20 +47,20 @@ export interface TypeNode {
   returns?: ReactNode;
 }
 
-const keyVariants = cva("text-fd-primary", {
+const keyVariants = cva("text-primary", {
   variants: {
     deprecated: {
-      true: "line-through text-fd-primary/50",
+      true: "line-through text-primary/50",
     },
   },
 });
 
-const fieldVariants = cva("text-fd-muted-foreground not-prose pe-2");
+const fieldVariants = cva("text-muted-foreground not-prose pe-2");
 
 export function TypeTable({ type }: { type: Record<string, TypeNode> }) {
   return (
-    <div className="@container flex flex-col p-1 bg-fd-card text-fd-card-foreground rounded-2xl border my-6 text-sm overflow-hidden">
-      <div className="flex font-medium items-center px-3 py-1 not-prose text-fd-muted-foreground">
+    <div className="@container flex flex-col p-1 bg-card text-card-foreground rounded-2xl border my-6 text-sm overflow-hidden">
+      <div className="flex font-medium items-center px-3 py-1 not-prose text-muted-foreground">
         <p className="w-[25%]">Prop</p>
         <p className="@max-xl:hidden">Type</p>
       </div>
@@ -97,11 +97,11 @@ function Item({
       className={cn(
         "rounded-xl border overflow-hidden transition-all",
         open
-          ? "shadow-sm bg-fd-background not-last:mb-2"
+          ? "shadow-sm bg-background not-last:mb-2"
           : "border-transparent",
       )}
     >
-      <CollapsibleTrigger className="relative flex flex-row items-center w-full group text-start px-3 py-2 not-prose hover:bg-fd-accent">
+      <CollapsibleTrigger className="relative flex flex-row items-center w-full group text-start px-3 py-2 not-prose hover:bg-accent">
         <code
           className={cn(
             keyVariants({
@@ -120,7 +120,7 @@ function Item({
         ) : (
           <span className="@max-xl:hidden">{type}</span>
         )}
-        <ChevronDown className="absolute end-2 size-4 text-fd-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+        <ChevronDown className="absolute end-2 size-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
       </CollapsibleTrigger>
       <CollapsibleContent>
         <div className="grid grid-cols-[1fr_3fr] gap-y-4 text-sm p-3 overflow-auto fd-scroll-container border-t">

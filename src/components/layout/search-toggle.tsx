@@ -55,7 +55,7 @@ export function LargeSearchToggle({
       data-search-full=""
       {...props}
       className={cn(
-        "inline-flex items-center gap-2 border bg-fd-secondary/50 p-1.5 text-sm text-fd-muted-foreground transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground",
+        "inline-flex items-center gap-2 border bg-secondary/50 p-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
         props.className,
       )}
       onClick={() => {
@@ -63,7 +63,7 @@ export function LargeSearchToggle({
       }}
     >
       <Search className="size-4" />
-      <kbd className="border bg-fd-background px-1.5">
+      <kbd className="border bg-background px-1.5">
         {hotKey[0]?.display ?? "/"}
       </kbd>
     </button>

@@ -41,7 +41,7 @@ export function SidebarTabsDropdown({
       </div>
       <div>
         <p className="text-sm font-medium">{selected.title}</p>
-        <p className="text-sm text-fd-muted-foreground empty:hidden md:hidden">
+        <p className="text-sm text-muted-foreground empty:hidden md:hidden">
           {selected.description}
         </p>
       </div>
@@ -56,12 +56,12 @@ export function SidebarTabsDropdown({
         <PopoverTrigger
           {...props}
           className={cn(
-            "flex items-center gap-2 rounded-lg p-2 border bg-fd-secondary/50 text-start text-fd-secondary-foreground transition-colors hover:bg-fd-accent data-[state=open]:bg-fd-accent data-[state=open]:text-fd-accent-foreground",
+            "flex items-center gap-2 rounded-lg p-2 border bg-secondary/50 text-start text-secondary-foreground transition-colors hover:bg-accent data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
             props.className,
           )}
         >
           {item}
-          <ChevronsUpDown className="shrink-0 ms-auto size-4 text-fd-muted-foreground" />
+          <ChevronsUpDown className="shrink-0 ms-auto size-4 text-muted-foreground" />
         </PopoverTrigger>
       )}
       <PopoverContent className="flex flex-col gap-1 w-(--radix-popover-trigger-width) p-1 fd-scroll-container">
@@ -76,7 +76,7 @@ export function SidebarTabsDropdown({
               onClick={onClick}
               {...item.props}
               className={cn(
-                "flex items-center gap-2 rounded-lg p-1.5 hover:bg-fd-accent hover:text-fd-accent-foreground",
+                "flex items-center gap-2 rounded-lg p-1.5 hover:bg-accent hover:text-accent-foreground",
                 item.props?.className,
               )}
             >
@@ -85,14 +85,14 @@ export function SidebarTabsDropdown({
               </div>
               <div>
                 <p className="text-sm font-medium">{item.title}</p>
-                <p className="text-[0.8125rem] text-fd-muted-foreground empty:hidden">
+                <p className="text-[0.8125rem] text-muted-foreground empty:hidden">
                   {item.description}
                 </p>
               </div>
 
               <Check
                 className={cn(
-                  "shrink-0 ms-auto size-3.5 text-fd-primary",
+                  "shrink-0 ms-auto size-3.5 text-primary",
                   !isActive && "invisible",
                 )}
               />

@@ -31,7 +31,7 @@ export function DocsLayout({ tree, children }: DocsLayoutProps) {
   return (
     <TreeContextProvider tree={tree}>
       <SidebarProvider>
-        <header className="sticky top-0 bg-fd-background h-14 z-20">
+        <header className="sticky top-0 bg-background h-14 z-20">
           <nav className="flex flex-row items-center gap-2 size-full px-4">
             <Link href="/" className="font-medium mr-auto">
               My Docs
@@ -120,7 +120,7 @@ function Sidebar() {
     <aside
       className={cn(
         "fixed flex flex-col shrink-0 p-4 top-14 z-20 text-sm overflow-auto md:sticky md:h-[calc(100dvh-56px)] md:w-[300px]",
-        "max-md:inset-x-0 max-md:bottom-0 max-md:bg-fd-background",
+        "max-md:inset-x-0 max-md:bottom-0 max-md:bg-background",
         !open && "max-md:invisible",
       )}
     >
@@ -130,12 +130,12 @@ function Sidebar() {
 }
 
 const linkVariants = cva(
-  "flex items-center gap-2 w-full py-1.5 rounded-lg text-fd-foreground/80 [&_svg]:size-4",
+  "flex items-center gap-2 w-full py-1.5 rounded-lg text-foreground/80 [&_svg]:size-4",
   {
     variants: {
       active: {
-        true: "text-fd-primary font-medium",
-        false: "hover:text-fd-accent-foreground",
+        true: "text-primary font-medium",
+        false: "hover:text-accent-foreground",
       },
     },
   },
@@ -166,7 +166,7 @@ function SidebarItem({
 
   if (item.type === "separator") {
     return (
-      <p className="text-fd-muted-foreground mt-6 mb-2 first:mt-0">
+      <p className="text-muted-foreground mt-6 mb-2 first:mt-0">
         {item.icon}
         {item.name}
       </p>

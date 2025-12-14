@@ -56,11 +56,11 @@ export function PostLayout({ children, ...props }: PostLayoutProps) {
 
 function MobileTOCBar({ items }: { items: TOCItemType[] }) {
   return (
-    <Collapsible className="sticky top-14 z-30 border-b bg-fd-background/95 backdrop-blur-sm xl:hidden">
+    <Collapsible className="sticky top-14 z-30 border-b bg-background/95 backdrop-blur-sm xl:hidden">
       <CollapsibleTrigger className="group flex w-full items-center gap-2 px-4 py-2.5 text-sm font-medium">
-        <List className="size-4 text-fd-muted-foreground" />
+        <List className="size-4 text-muted-foreground" />
         On this page
-        <ChevronDown className="ml-auto size-4 text-fd-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
+        <ChevronDown className="ml-auto size-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
       </CollapsibleTrigger>
       <CollapsibleContent>
         <nav className="flex flex-col gap-1 px-4 pb-3 text-sm">
@@ -69,7 +69,7 @@ function MobileTOCBar({ items }: { items: TOCItemType[] }) {
               key={item.url}
               href={item.url}
               className={cn(
-                "py-1 text-fd-muted-foreground transition-colors hover:text-fd-foreground",
+                "py-1 text-muted-foreground transition-colors hover:text-foreground",
               )}
               style={{
                 paddingInlineStart: 12 * Math.max(item.depth - 1, 0),

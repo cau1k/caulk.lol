@@ -29,7 +29,7 @@ import type { HomeLayoutProps } from "./index";
 export const navItemVariants = cva("[&_svg]:size-4", {
   variants: {
     variant: {
-      main: "inline-flex items-center gap-1 p-2 text-fd-muted-foreground transition-colors hover:text-fd-accent-foreground data-[active=true]:text-fd-primary",
+      main: "inline-flex items-center gap-1 p-2 text-muted-foreground transition-colors hover:text-accent-foreground data-[active=true]:text-primary",
       button: buttonVariants({
         color: "secondary",
         className: "gap-1.5",
@@ -161,7 +161,7 @@ export function Header({
                 <LanguageToggle>
                   <Languages className="size-5" />
                   <LanguageToggleText />
-                  <ChevronDown className="size-3 text-fd-muted-foreground" />
+                  <ChevronDown className="size-3 text-muted-foreground" />
                 </LanguageToggle>
               )}
               {themeSwitch.enabled !== false &&
@@ -204,7 +204,7 @@ function HeaderNavigationMenu({
           className={cn(
             "backdrop-blur-lg border-b transition-colors *:mx-auto *:max-w-(--fd-layout-width)",
             value.length > 0 && "max-lg:shadow-lg max-lg:rounded-b-2xl",
-            (!isTransparent || value.length > 0) && "bg-fd-background/80",
+            (!isTransparent || value.length > 0) && "bg-background/80",
           )}
         >
           <NavigationMenuList
@@ -238,7 +238,7 @@ function NavigationMenuLinkItem({
 
       const {
         banner = child.icon ? (
-          <div className="w-fit rounded-md border bg-fd-muted p-1 [&_svg]:size-4">
+          <div className="w-fit rounded-md border bg-muted p-1 [&_svg]:size-4">
             {child.icon}
           </div>
         ) : null,
@@ -252,7 +252,7 @@ function NavigationMenuLinkItem({
             external={child.external}
             {...rest}
             className={cn(
-              "flex flex-col gap-2 rounded-lg border bg-fd-card p-3 transition-colors hover:bg-fd-accent/80 hover:text-fd-accent-foreground",
+              "flex flex-col gap-2 rounded-lg border bg-card p-3 transition-colors hover:bg-accent/80 hover:text-accent-foreground",
               rest.className,
             )}
           >
@@ -260,7 +260,7 @@ function NavigationMenuLinkItem({
               <>
                 {banner}
                 <p className="text-base font-medium">{child.text}</p>
-                <p className="text-sm text-fd-muted-foreground empty:hidden">
+                <p className="text-sm text-muted-foreground empty:hidden">
                   {child.description}
                 </p>
               </>
@@ -323,7 +323,7 @@ function MobileNavigationMenuLinkItem({
 
     return (
       <div className={cn("mb-4 flex flex-col", props.className)}>
-        <p className="text-sm text-fd-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           {item.url ? (
             <NavigationMenuLink asChild>
               <Link href={item.url} external={item.external}>
@@ -347,7 +347,7 @@ function MobileNavigationMenuLinkItem({
         item={item}
         className={cn(
           {
-            main: "inline-flex items-center gap-2 py-1.5 transition-colors hover:text-fd-popover-foreground/50 data-[active=true]:font-medium data-[active=true]:text-fd-primary [&_svg]:size-4",
+            main: "inline-flex items-center gap-2 py-1.5 transition-colors hover:text-popover-foreground/50 data-[active=true]:font-medium data-[active=true]:text-primary [&_svg]:size-4",
             icon: buttonVariants({
               size: "icon",
               color: "ghost",

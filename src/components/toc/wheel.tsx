@@ -361,7 +361,7 @@ export function WheelTOCItems({ className, ...props }: ComponentProps<"div">) {
 
   if (items.length === 0) {
     return (
-      <div className="rounded-lg border bg-fd-card p-3 text-xs text-fd-muted-foreground">
+      <div className="rounded-lg border bg-card p-3 text-xs text-muted-foreground">
         No headings found
       </div>
     );
@@ -460,7 +460,7 @@ function WheelItem({
     <motion.li
       className={cn(
         "pointer-events-auto absolute inset-x-0 flex items-center text-sm transition-colors",
-        active ? "font-medium text-fd-primary" : "text-fd-muted-foreground",
+        active ? "font-medium text-primary" : "text-muted-foreground",
       )}
       style={{
         height: ITEM_HEIGHT,
@@ -476,7 +476,7 @@ function WheelItem({
           e.stopPropagation();
           onItemClick(index);
         }}
-        className="truncate text-left transition-colors hover:text-fd-foreground"
+        className="truncate text-left transition-colors hover:text-foreground"
       >
         {item.title}
       </button>

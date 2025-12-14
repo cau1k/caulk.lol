@@ -13,7 +13,7 @@ export function TOCItems({ ref, className, ...props }: ComponentProps<"div">) {
 
   if (items.length === 0)
     return (
-      <div className="rounded-lg border bg-fd-card p-3 text-xs text-fd-muted-foreground">
+      <div className="rounded-lg border bg-card p-3 text-xs text-muted-foreground">
         {text.tocNoHeadings}
       </div>
     );
@@ -22,12 +22,12 @@ export function TOCItems({ ref, className, ...props }: ComponentProps<"div">) {
     <>
       <TocThumb
         containerRef={containerRef}
-        className="absolute top-(--fd-top) h-(--fd-height) w-px bg-fd-primary transition-all"
+        className="absolute top-(--fd-top) h-(--fd-height) w-px bg-primary transition-all"
       />
       <div
         ref={mergeRefs(ref, containerRef)}
         className={cn(
-          "flex flex-col border-s border-fd-foreground/10",
+          "flex flex-col border-s border-foreground/10",
           className,
         )}
         {...props}
@@ -45,7 +45,7 @@ function TOCItem({ item }: { item: Primitive.TOCItemType }) {
     <Primitive.TOCItem
       href={item.url}
       className={cn(
-        "prose py-1.5 text-sm text-fd-muted-foreground transition-colors wrap-anywhere first:pt-0 last:pb-0 data-[active=true]:text-fd-primary",
+        "prose py-1.5 text-sm text-muted-foreground transition-colors wrap-anywhere first:pt-0 last:pb-0 data-[active=true]:text-primary",
         item.depth <= 2 && "ps-3",
         item.depth === 3 && "ps-6",
         item.depth >= 4 && "ps-8",

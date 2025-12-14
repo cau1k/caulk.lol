@@ -43,7 +43,7 @@ function Home() {
               @zerocaulk
             </LinkItem>
           </h1>
-          <p className="text-fd-muted-foreground text-lg">
+          <p className="text-muted-foreground text-lg">
             Thoughts on software, philosophy, and hacking on agent harnesses.
           </p>
         </header>
@@ -53,22 +53,22 @@ function Home() {
             <Link to={featured.url} className="group block">
               <article>
                 <time
-                  className="text-sm text-fd-muted-foreground"
+                  className="text-sm text-muted-foreground"
                   title={
                     featured.date ? formatDateTime(featured.date) : undefined
                   }
                 >
                   {featured.date && formatDate(featured.date)}
                 </time>
-                <h2 className="text-2xl font-semibold mt-2 group-hover:text-fd-primary transition-colors">
+                <h2 className="text-2xl font-semibold mt-2 group-hover:text-primary transition-colors">
                   {featured.title}
                 </h2>
                 {featured.description && (
-                  <p className="mt-3 text-fd-muted-foreground leading-relaxed">
+                  <p className="mt-3 text-muted-foreground leading-relaxed">
                     {featured.description}
                   </p>
                 )}
-                <span className="inline-block mt-4 text-sm font-medium text-fd-primary group-hover:underline">
+                <span className="inline-block mt-4 text-sm font-medium text-primary group-hover:underline">
                   Read more
                 </span>
               </article>
@@ -78,7 +78,7 @@ function Home() {
 
         {rest.length > 0 && (
           <section>
-            <h2 className="text-sm font-medium text-fd-muted-foreground uppercase tracking-wider mb-6">
+            <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-6">
               Recent
             </h2>
             <div className="group/list space-y-1">
@@ -88,11 +88,11 @@ function Home() {
                   to={post.url}
                   className="group/item flex items-baseline justify-between gap-4 py-3 -mx-3 px-3 rounded-lg transition-all duration-200 ease-out group-has-hover/list:opacity-50 hover:!opacity-100"
                 >
-                  <span className="font-medium group-hover/item:text-fd-primary transition-colors truncate">
+                  <span className="font-medium group-hover/item:text-primary transition-colors truncate">
                     {post.title}
                   </span>
                   <time
-                    className="text-sm text-fd-muted-foreground shrink-0"
+                    className="text-sm text-muted-foreground shrink-0"
                     title={post.date ? formatDateTime(post.date) : undefined}
                   >
                     {post.date && formatDate(post.date)}
@@ -103,11 +103,11 @@ function Home() {
           </section>
         )}
 
-        <footer className="mt-20 pt-8 border-t border-fd-border">
-          <div className="flex gap-6 text-sm text-fd-muted-foreground">
+        <footer className="mt-20 pt-8 border-t border-border">
+          <div className="flex gap-6 text-sm text-muted-foreground">
             <Link
               to="/posts"
-              className="hover:text-fd-foreground transition-colors"
+              className="hover:text-foreground transition-colors"
             >
               All writing
             </Link>

@@ -5,11 +5,11 @@ import { useTheme } from "next-themes";
 import { type ComponentProps, useEffect, useState } from "react";
 import { cn } from "../../lib/cn";
 
-const itemVariants = cva("size-6.5 p-1.5 text-fd-muted-foreground", {
+const itemVariants = cva("size-6.5 p-1.5 text-muted-foreground", {
   variants: {
     active: {
-      true: "bg-fd-accent text-fd-accent-foreground",
-      false: "text-fd-muted-foreground",
+      true: "bg-accent text-accent-foreground",
+      false: "text-muted-foreground",
     },
   },
 });

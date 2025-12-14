@@ -50,7 +50,7 @@ function TagPosts() {
         <header className="mb-12">
           {/* <Link */}
           {/*   to="/posts/tags" */}
-          {/*   className="mb-4 inline-flex items-center text-sm text-fd-muted-foreground hover:text-fd-foreground transition-colors" */}
+          {/*   className="mb-4 inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors" */}
           {/* > */}
           {/*   <span className="mr-1">&larr;</span> All tags */}
           {/* </Link> */}
@@ -65,21 +65,21 @@ function TagPosts() {
             <Link
               key={post.url}
               to={post.url}
-              className="group block -mx-4 px-4 py-4 rounded-lg transition-colors hover:bg-fd-accent/50"
+              className="group block -mx-4 px-4 py-4 rounded-lg transition-colors hover:bg-accent/50"
             >
               <article className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
                 <time
-                  className="text-sm text-fd-muted-foreground shrink-0 tabular-nums sm:w-28"
+                  className="text-sm text-muted-foreground shrink-0 tabular-nums sm:w-28"
                   title={post.date ? formatDateTime(post.date) : undefined}
                 >
                   {post.date && formatDate(post.date)}
                 </time>
                 <div className="flex-1 min-w-0">
-                  <h2 className="font-medium group-hover:text-fd-primary transition-colors">
+                  <h2 className="font-medium group-hover:text-primary transition-colors">
                     {post.title}
                   </h2>
                   {/* {post.description && ( */}
-                  {/*   <p className="mt-1 text-sm text-fd-muted-foreground line-clamp-1 group-hover:text-fd-muted-foreground/80"> */}
+                  {/*   <p className="mt-1 text-sm text-muted-foreground line-clamp-1 group-hover:text-muted-foreground/80"> */}
                   {/*     {post.description} */}
                   {/*   </p> */}
                   {/* )} */}

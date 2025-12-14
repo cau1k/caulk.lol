@@ -19,7 +19,7 @@ export function InlineTOC({ items, ...props }: InlineTocProps) {
     <Collapsible
       {...props}
       className={cn(
-        "not-prose rounded-lg border bg-fd-card text-fd-card-foreground",
+        "not-prose rounded-lg border bg-card text-card-foreground",
         props.className,
       )}
     >
@@ -28,12 +28,12 @@ export function InlineTOC({ items, ...props }: InlineTocProps) {
         <ChevronDown className="size-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <div className="flex flex-col p-4 pt-0 text-sm text-fd-muted-foreground">
+        <div className="flex flex-col p-4 pt-0 text-sm text-muted-foreground">
           {items.map((item) => (
             <a
               key={item.url}
               href={item.url}
-              className="border-s py-1.5 hover:text-fd-accent-foreground"
+              className="border-s py-1.5 hover:text-accent-foreground"
               style={{
                 paddingInlineStart: 12 * Math.max(item.depth - 1, 0),
               }}

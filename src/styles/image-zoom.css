@@ -44,7 +44,7 @@
 }
 
 [data-rmiz-modal-overlay="visible"] {
-  background-color: var(--color-fd-background);
+  background-color: var(--color-background);
 }
 
 [data-rmiz-modal-overlay="hidden"] {
