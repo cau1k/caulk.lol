@@ -11,12 +11,13 @@ import {
   use,
   useState,
 } from "react";
+import { TOCProvider } from "@/components/toc";
+import { WheelTOCItems } from "@/components/toc/wheel";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { cn } from "@/lib/cn";
 
 type PostTOCContextType = {
   toc: TOCItemType[];
@@ -42,8 +43,6 @@ export function PostLayout({ children, ...props }: PostLayoutProps) {
   const [contentVisible, setContentVisible] = useState(false);
   const hasToc = toc.length > 0;
 
-  // console.log("[PostLayout] toc length:", toc.length, "hasToc:", hasToc);
-
   return (
     <PostTOCContext value={{ toc, setToc, contentVisible, setContentVisible }}>
       <HomeLayout {...props}>
@@ -55,31 +54,27 @@ export function PostLayout({ children, ...props }: PostLayoutProps) {
 }
 
 function MobileTOCBar({ items }: { items: TOCItemType[] }) {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
-    <Collapsible className="sticky top-14 z-30 border-b bg-background/95 backdrop-blur-sm xl:hidden">
-      <CollapsibleTrigger className="group flex w-full items-center gap-2 px-4 py-2.5 text-sm font-medium">
-        <List className="size-4 text-muted-foreground" />
-        On this page
-        <ChevronDown className="ml-auto size-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <nav className="flex flex-col gap-1 px-4 pb-3 text-sm">
-          {items.map((item) => (
-            <a
-              key={item.url}
-              href={item.url}
-              className={cn(
-                "py-1 text-muted-foreground transition-colors hover:text-foreground",
-              )}
-              style={{
-                paddingInlineStart: 12 * Math.max(item.depth - 1, 0),
-              }}
-            >
-              {item.title}
-            </a>
-          ))}
-        </nav>
-      </CollapsibleContent>
-    </Collapsible>
+    <TOCProvider toc={items}>
+      <Collapsible className="sticky top-14 z-30 border-b bg-background/95 backdrop-blur-sm xl:hidden">
+        <CollapsibleTrigger className="group flex w-full items-center gap-2 px-4 py-2.5 text-sm font-medium">
+          <List className="size-4 text-muted-foreground" />
+          On this page
+          <ChevronDown className="ml-auto size-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <div
+            className="px-4 pb-4"
+            onPointerEnter={() => setIsFocused(true)}
+            onPointerLeave={() => setIsFocused(false)}
+            onWheel={(e) => isFocused && e.stopPropagation()}
+          >
+            <WheelTOCItems />
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+    </TOCProvider>
   );
 }

@@ -2,41 +2,55 @@
 
 import { Link, usePathname } from "fumadocs-core/framework";
 import type * as PageTree from "fumadocs-core/page-tree";
-import {
-  AnchorProvider,
-  type TOCItemType,
-  useActiveAnchors,
-} from "fumadocs-core/toc";
+import { AnchorProvider, type TOCItemType } from "fumadocs-core/toc";
 import { useTreeContext } from "fumadocs-ui/contexts/tree";
-import { type ComponentProps, type ReactNode, useMemo } from "react";
+import { type ComponentProps, type ReactNode, useMemo, useState } from "react";
 import { cn } from "../../../lib/cn";
+import { TOCProvider } from "../../toc";
+import { WheelTOCItems } from "../../toc/wheel";
 
-export interface DocsPageProps {
+export type DocsPageProps = {
   toc?: TOCItemType[];
-
   children: ReactNode;
-}
+};
 
 export function DocsPage({ toc = [], ...props }: DocsPageProps) {
   return (
     <AnchorProvider toc={toc}>
-      <main className="flex w-full min-w-0 flex-col">
-        <article className="flex flex-1 flex-col w-full max-w-[860px] gap-6 px-4 py-8 md:px-6 md:mx-auto">
-          {props.children}
-          <Footer />
-        </article>
-      </main>
-      {toc.length > 0 && (
-        <div className="sticky top-(--fd-nav-height) w-[286px] shrink-0 h-[calc(100dvh-var(--fd-nav-height))] p-4 overflow-auto max-xl:hidden">
-          <p className="text-sm text-muted-foreground mb-2">On this page</p>
-          <div className="flex flex-col">
-            {toc.map((item) => (
-              <TocItem key={item.url} item={item} />
-            ))}
-          </div>
-        </div>
-      )}
+      <TOCProvider toc={toc}>
+        <main className="flex w-full min-w-0 flex-col">
+          <article className="flex flex-1 flex-col w-full max-w-[860px] gap-6 px-4 py-8 md:px-6 md:mx-auto">
+            {props.children}
+            <Footer />
+          </article>
+        </main>
+        {toc.length > 0 && <DocsTOCSidebar />}
+      </TOCProvider>
     </AnchorProvider>
+  );
+}
+
+function DocsTOCSidebar() {
+  const [isFocused, setIsFocused] = useState(false);
+
+  // Lock page scroll when interacting with the wheel
+  // biome-ignore lint: scroll lock needs these listeners
+  const scrollLockProps = {
+    onPointerEnter: () => setIsFocused(true),
+    onPointerLeave: () => setIsFocused(false),
+    onWheel: (e: React.WheelEvent) => {
+      if (isFocused) e.stopPropagation();
+    },
+  };
+
+  return (
+    <div
+      className="sticky top-(--fd-nav-height) w-[286px] shrink-0 h-[calc(100dvh-var(--fd-nav-height))] p-4 overflow-hidden max-xl:hidden"
+      {...scrollLockProps}
+    >
+      <p className="text-sm text-muted-foreground mb-2">On this page</p>
+      <WheelTOCItems />
+    </div>
   );
 }
 
@@ -67,25 +81,6 @@ export function DocsTitle(props: ComponentProps<"h1">) {
     <h1 {...props} className={cn("text-3xl font-semibold", props.className)}>
       {props.children}
     </h1>
-  );
-}
-
-function TocItem({ item }: { item: TOCItemType }) {
-  const isActive = useActiveAnchors().includes(item.url.slice(1));
-
-  return (
-    <a
-      href={item.url}
-      className={cn(
-        "text-sm text-foreground/80 py-1",
-        isActive && "text-primary",
-      )}
-      style={{
-        paddingLeft: Math.max(0, item.depth - 2) * 16,
-      }}
-    >
-      {item.title}
-    </a>
   );
 }
 
