@@ -9,7 +9,7 @@ type TagBadgeBaseProps = {
 };
 
 type TagBadgeFixedSize = TagBadgeBaseProps & {
-  size?: "sm" | "md";
+  size?: "sm" | "md" | "inline";
   count?: never;
   maxCount?: never;
 };
@@ -42,8 +42,28 @@ export function TagBadge({
   className,
   ...rest
 }: TagBadgeProps) {
+  const isInline = size === "inline";
   const isScaled = size === "scaled";
   const scaledProps = rest as { count?: number; maxCount?: number };
+
+  if (isInline) {
+    const inlineContent = `${tag}`;
+    const inlineStyles = cn(
+      "font-mono text-xs text-fd-muted-foreground transition-colors",
+      linked && "hover:text-fd-foreground",
+      className,
+    );
+
+    if (!linked) {
+      return <span className={inlineStyles}>{inlineContent}</span>;
+    }
+
+    return (
+      <Link to="/posts/tags/$tag" params={{ tag }} className={inlineStyles}>
+        {inlineContent}
+      </Link>
+    );
+  }
 
   const baseStyles = cn(
     "border border-fd-border bg-fd-muted font-sans transition-colors",

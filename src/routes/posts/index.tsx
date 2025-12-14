@@ -77,7 +77,7 @@ function BlogIndex() {
             <Link
               key={post.url}
               to={post.url}
-              className="group/item block -mx-4 px-4 py-4 rounded-lg transition-all duration-200 ease-out group-has-hover/list:opacity-50 hover:!opacity-100"
+              className="group/item block -mx-4 px-4 py-4 rounded-lg transition-all duration-200 ease-out group-has-hover/list:opacity-50 hover:opacity-100!"
             >
               <article className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
                 <time
@@ -93,7 +93,7 @@ function BlogIndex() {
                   {post.tags.length > 0 && (
                     <div className="mt-1 flex flex-wrap gap-2">
                       {post.tags.map((tag) => (
-                        <TagBadge key={tag} tag={tag} size="sm" />
+                        <TagBadge key={tag} tag={tag} size="inline" />
                       ))}
                     </div>
                   )}

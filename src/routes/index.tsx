@@ -81,14 +81,14 @@ function Home() {
             <h2 className="text-sm font-medium text-fd-muted-foreground uppercase tracking-wider mb-6">
               Recent
             </h2>
-            <div className="space-y-1">
+            <div className="group/list space-y-1">
               {rest.map((post) => (
                 <Link
                   key={post.url}
                   to={post.url}
-                  className="group flex items-baseline justify-between gap-4 py-3 -mx-3 px-3 rounded-lg transition-colors hover:bg-fd-accent/50"
+                  className="group/item flex items-baseline justify-between gap-4 py-3 -mx-3 px-3 rounded-lg transition-all duration-200 ease-out group-has-hover/list:opacity-50 hover:!opacity-100"
                 >
-                  <span className="font-medium group-hover:text-fd-primary transition-colors truncate">
+                  <span className="font-medium group-hover/item:text-fd-primary transition-colors truncate">
                     {post.title}
                   </span>
                   <time
