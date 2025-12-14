@@ -61,7 +61,7 @@ function MobileTOCBar({ items }: { items: TOCItemType[] }) {
       <Collapsible
         open={isOpen}
         onOpenChange={setIsOpen}
-        className="sticky top-14 border-b bg-background xl:hidden data-[state=open]:overflow-hidden data-[state=open]:overscroll-none data-[state=open]:touch-none"
+        className="sticky top-14 z-30 border-b bg-background xl:hidden data-[state=open]:overflow-hidden data-[state=open]:overscroll-none data-[state=open]:touch-none"
       >
         <div className="mx-auto w-full max-w-2xl px-4">
           <CollapsibleTrigger className="group flex w-full items-center gap-2 py-2.5 text-sm font-medium">
