@@ -59,21 +59,23 @@ function MobileTOCBar({ items }: { items: TOCItemType[] }) {
   return (
     <TOCProvider toc={items}>
       <Collapsible className="sticky top-14 z-30 border-b bg-background/95 backdrop-blur-sm xl:hidden">
-        <CollapsibleTrigger className="group mx-auto flex w-full max-w-[1400px] items-center gap-2 px-4 py-2.5 text-sm font-medium">
-          <List className="size-4 text-muted-foreground" />
-          On this page
-          <ChevronDown className="ml-auto size-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div
-            className="mx-auto max-w-[1400px] px-4 pb-4"
-            onPointerEnter={() => setIsFocused(true)}
-            onPointerLeave={() => setIsFocused(false)}
-            onWheel={(e) => isFocused && e.stopPropagation()}
-          >
-            <WheelTOCItems />
-          </div>
-        </CollapsibleContent>
+        <div className="mx-auto w-full max-w-2xl px-4">
+          <CollapsibleTrigger className="group flex w-full items-center gap-2 py-2.5 text-sm font-medium">
+            <List className="size-4 text-muted-foreground" />
+            On this page
+            <ChevronDown className="ml-auto size-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div
+              className="pb-4"
+              onPointerEnter={() => setIsFocused(true)}
+              onPointerLeave={() => setIsFocused(false)}
+              onWheel={(e) => isFocused && e.stopPropagation()}
+            >
+              <WheelTOCItems />
+            </div>
+          </CollapsibleContent>
+        </div>
       </Collapsible>
     </TOCProvider>
   );

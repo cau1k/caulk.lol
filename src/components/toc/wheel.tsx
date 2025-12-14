@@ -366,7 +366,7 @@ export function WheelTOCItems({
       animateToPosition(index, true);
       setTimeout(() => {
         isUserControlling.current = false;
-      }, 500);
+      }, 100);
     },
     [animateToPosition],
   );
