@@ -205,7 +205,7 @@ function HeaderNavigationMenu({
       >
         <div
           className={cn(
-            "bg-background *:mx-auto *:max-w-(--fd-layout-width)",
+            "bg-background! *:mx-auto *:max-w-(--fd-layout-width) border-b border-border",
             value.length > 0 && "",
           )}
         >
