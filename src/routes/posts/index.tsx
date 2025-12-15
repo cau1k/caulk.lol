@@ -95,7 +95,12 @@ function BlogIndex() {
                   {post.tags.length > 0 && (
                     <div className="mt-1 flex flex-wrap gap-2">
                       {post.tags.map((tag) => (
-                        <TagBadge key={tag} tag={tag} size="inline" />
+                        <TagBadge
+                          key={tag}
+                          tag={tag}
+                          size="inline"
+                          linked={false}
+                        />
                       ))}
                     </div>
                   )}
