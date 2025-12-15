@@ -32,12 +32,19 @@ const serverLoader = createServerFn({ method: "GET" })
     const page = posts.getPage([slug]);
     if (!page) throw notFound();
 
-    // sort all posts by date ascending (oldest first)
-    const allPages = posts.getPages().sort((a, b) => {
-      const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
-      const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
-      return dateA - dateB;
-    });
+    // Block draft posts in production
+    const isDev = process.env.NODE_ENV === "development";
+    if (page.data.draft && !isDev) throw notFound();
+
+    // sort all posts by date ascending (oldest first), exclude drafts in prod
+    const allPages = posts
+      .getPages()
+      .filter((p) => isDev || !p.data.draft)
+      .sort((a, b) => {
+        const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
+        const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
+        return dateA - dateB;
+      });
 
     const currentIndex = allPages.findIndex((p) => p.url === page.url);
     const prevPage = currentIndex > 0 ? allPages[currentIndex - 1] : null;
@@ -55,6 +62,7 @@ const serverLoader = createServerFn({ method: "GET" })
       title: page.data.title,
       description: page.data.description,
       date: page.data.date,
+      updatedAt: page.data.updatedAt,
       author: page.data.author,
       tags: page.data.tags ?? [],
       previous: toLink(prevPage),
@@ -184,6 +192,12 @@ function Post() {
   const machineDateTime = data.date
     ? new Date(data.date).toISOString()
     : undefined;
+  const updatedAtDateTime = data.updatedAt
+    ? formatDateTime(data.updatedAt)
+    : "";
+  const machineUpdatedAt = data.updatedAt
+    ? new Date(data.updatedAt).toISOString()
+    : undefined;
 
   return (
     <PostLayout {...baseOptions()}>
@@ -199,6 +213,15 @@ function Post() {
               >
                 {dateTime}
                 {relative ? ` · ${relative}` : ""}
+              </time>
+            )}
+            {data.updatedAt && (
+              <time
+                className="tabular-nums text-muted-foreground/70"
+                dateTime={machineUpdatedAt}
+                title={`Updated: ${updatedAtDateTime}`}
+              >
+                (updated {updatedAtDateTime})
               </time>
             )}
           </div>

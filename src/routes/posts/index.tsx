@@ -41,7 +41,8 @@ export const Route = createFileRoute("/posts/")({
 });
 
 const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
-  const pages = posts.getPages();
+  const isDev = process.env.NODE_ENV === "development";
+  const pages = posts.getPages().filter((p) => isDev || !p.data.draft);
   const sorted = pages.sort((a, b) => {
     const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
     const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;

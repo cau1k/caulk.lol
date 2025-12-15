@@ -21,6 +21,8 @@ export const posts = defineCollections({
   schema: frontmatterSchema.extend({
     author: z.string().optional(),
     date: z.coerce.date().optional(),
+    updatedAt: z.coerce.date().optional(),
+    draft: z.boolean(),
     tags: z.array(z.string().trim().toLowerCase()).default([]),
   }),
   postprocess: {
