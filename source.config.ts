@@ -14,6 +14,7 @@ import { transformerTwoslash } from "fumadocs-twoslash";
 import { createFileSystemTypesCache } from "fumadocs-twoslash/cache-fs";
 import { z } from "zod";
 import { monoGlowLightTheme, monoGlowTheme } from "./src/lib/monoglow-theme";
+import { rehypeExternalRef } from "./src/lib/rehype-external-ref";
 
 export const posts = defineCollections({
   type: "doc",
@@ -30,7 +31,13 @@ export const posts = defineCollections({
   },
   mdxOptions: applyMdxPreset({
     remarkPlugins: [remarkMdxMermaid, remarkHeading],
-    rehypePlugins: [[rehypeToc, { exportToc: true }]],
+    rehypePlugins: [
+      [rehypeToc, { exportToc: true }],
+      [
+        rehypeExternalRef,
+        { exclude: ["caulk.lol", "localhost", "github.com"] },
+      ],
+    ],
     rehypeCodeOptions: {
       ...rehypeCodeDefaultOptions,
       themes: {
