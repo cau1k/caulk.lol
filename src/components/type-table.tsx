@@ -96,9 +96,7 @@ function Item({
       onOpenChange={setOpen}
       className={cn(
         "rounded-xl border overflow-hidden transition-all",
-        open
-          ? "shadow-sm bg-background not-last:mb-2"
-          : "border-transparent",
+        open ? "shadow-sm bg-background not-last:mb-2" : "border-transparent",
       )}
     >
       <CollapsibleTrigger className="relative flex flex-row items-center w-full group text-start px-3 py-2 not-prose hover:bg-accent">
