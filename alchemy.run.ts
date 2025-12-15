@@ -7,6 +7,7 @@ const app = await alchemy("caulk-lol", {
 
 export const site = await TanStackStart("site", {
   name: `${app.name}-${app.stage}-site`,
+  domains: ["caulk.lol"],
   dev: { command: "vite dev --port 3000" },
 });
 
