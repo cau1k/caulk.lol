@@ -36,9 +36,6 @@ function UpcomingPosts() {
           <h1 className="text-3xl font-bold font-serif tracking-tight">
             Upcoming
           </h1>
-          <p className="mt-2 text-muted-foreground">
-            Posts in the works. Titles and descriptions may change.
-          </p>
         </header>
 
         {posts.length === 0 ? (
