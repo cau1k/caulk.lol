@@ -119,12 +119,18 @@ function Home() {
         )}
 
         <footer className="mt-20 pt-8 border-t border-border">
-          <div className="flex gap-6 text-sm text-muted-foreground">
+          <div className="flex justify-between text-sm text-muted-foreground">
             <Link
               to="/posts"
               className="hover:text-foreground transition-colors"
             >
               All writing
+            </Link>
+            <Link
+              to="/posts/upcoming"
+              className="hover:text-foreground transition-colors"
+            >
+              Upcoming
             </Link>
           </div>
         </footer>

@@ -13,6 +13,7 @@ import { Route as LlmsFullDottxtRouteImport } from './routes/llms-full[.]txt'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PostsIndexRouteImport } from './routes/posts/index'
+import { Route as PostsUpcomingRouteImport } from './routes/posts/upcoming'
 import { Route as PostsSlugRouteImport } from './routes/posts/$slug'
 import { Route as LlmsDotmdxSplatRouteImport } from './routes/llms[.]mdx.$'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
@@ -37,6 +38,11 @@ const IndexRoute = IndexRouteImport.update({
 const PostsIndexRoute = PostsIndexRouteImport.update({
   id: '/posts/',
   path: '/posts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostsUpcomingRoute = PostsUpcomingRouteImport.update({
+  id: '/posts/upcoming',
+  path: '/posts/upcoming',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PostsSlugRoute = PostsSlugRouteImport.update({
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/posts/$slug': typeof PostsSlugRoute
+  '/posts/upcoming': typeof PostsUpcomingRoute
   '/posts': typeof PostsIndexRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
   '/posts/tags': typeof PostsTagsIndexRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByTo {
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/posts/$slug': typeof PostsSlugRoute
+  '/posts/upcoming': typeof PostsUpcomingRoute
   '/posts': typeof PostsIndexRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
   '/posts/tags': typeof PostsTagsIndexRoute
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/posts/$slug': typeof PostsSlugRoute
+  '/posts/upcoming': typeof PostsUpcomingRoute
   '/posts/': typeof PostsIndexRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
   '/posts/tags/': typeof PostsTagsIndexRoute
@@ -108,6 +117,7 @@ export interface FileRouteTypes {
     | '/api/search'
     | '/llms.mdx/$'
     | '/posts/$slug'
+    | '/posts/upcoming'
     | '/posts'
     | '/posts/tags/$tag'
     | '/posts/tags'
@@ -119,6 +129,7 @@ export interface FileRouteTypes {
     | '/api/search'
     | '/llms.mdx/$'
     | '/posts/$slug'
+    | '/posts/upcoming'
     | '/posts'
     | '/posts/tags/$tag'
     | '/posts/tags'
@@ -130,6 +141,7 @@ export interface FileRouteTypes {
     | '/api/search'
     | '/llms.mdx/$'
     | '/posts/$slug'
+    | '/posts/upcoming'
     | '/posts/'
     | '/posts/tags/$tag'
     | '/posts/tags/'
@@ -142,6 +154,7 @@ export interface RootRouteChildren {
   ApiSearchRoute: typeof ApiSearchRoute
   LlmsDotmdxSplatRoute: typeof LlmsDotmdxSplatRoute
   PostsSlugRoute: typeof PostsSlugRoute
+  PostsUpcomingRoute: typeof PostsUpcomingRoute
   PostsIndexRoute: typeof PostsIndexRoute
   PostsTagsTagRoute: typeof PostsTagsTagRoute
   PostsTagsIndexRoute: typeof PostsTagsIndexRoute
@@ -175,6 +188,13 @@ declare module '@tanstack/react-router' {
       path: '/posts'
       fullPath: '/posts'
       preLoaderRoute: typeof PostsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/posts/upcoming': {
+      id: '/posts/upcoming'
+      path: '/posts/upcoming'
+      fullPath: '/posts/upcoming'
+      preLoaderRoute: typeof PostsUpcomingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/posts/$slug': {
@@ -222,6 +242,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSearchRoute: ApiSearchRoute,
   LlmsDotmdxSplatRoute: LlmsDotmdxSplatRoute,
   PostsSlugRoute: PostsSlugRoute,
+  PostsUpcomingRoute: PostsUpcomingRoute,
   PostsIndexRoute: PostsIndexRoute,
   PostsTagsTagRoute: PostsTagsTagRoute,
   PostsTagsIndexRoute: PostsTagsIndexRoute,
