@@ -13,10 +13,12 @@ export const Route = createFileRoute("/posts/tags/$tag")({
 const serverLoader = createServerFn({ method: "GET" })
   .inputValidator((tag: string) => tag)
   .handler(async ({ data: tag }) => {
+    const isDev = import.meta.env.DEV;
     const normalized = tag.toLowerCase();
     const pages = posts
       .getPages()
       .filter((p) => {
+        if (!isDev && p.data.draft) return false;
         const tags = p.data.tags ?? [];
         return tags.some((t) => t.toLowerCase() === normalized);
       })

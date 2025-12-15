@@ -11,7 +11,8 @@ export const Route = createFileRoute("/posts/tags/")({
 });
 
 const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
-  const pages = posts.getPages();
+  const isDev = import.meta.env.DEV;
+  const pages = posts.getPages().filter((p) => isDev || !p.data.draft);
   const counts = new Map<string, number>();
 
   for (const page of pages) {
