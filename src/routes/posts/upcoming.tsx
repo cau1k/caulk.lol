@@ -132,7 +132,7 @@ function SwitchboardReveal({
       <div className="relative h-[52px] overflow-hidden">
         {/* Pixelated grid */}
         <div
-          className={`absolute inset-0 flex flex-col gap-[3px] transition-opacity duration-300 ${
+          className={`absolute inset-0 flex flex-col justify-center gap-[3px] transition-opacity duration-300 ${
             showContent ? "opacity-0" : "opacity-100"
           }`}
         >
