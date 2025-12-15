@@ -92,7 +92,7 @@ function Home() {
                 <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-6">
                   Recent
                 </h2>
-                <div className="group/list space-y-1">
+                <div className="group/list">
                   {rest.map((post) => (
                     <Link
                       key={post.url}

@@ -74,14 +74,14 @@ function BlogIndex() {
           <h1 className="text-3xl font-bold tracking-tight">Archive</h1>
         </header>
 
-        <div className="group/list space-y-1">
+        <div className="group/list">
           {posts.map((post) => (
             <Link
               key={post.url}
               to={post.url}
-              className="group/item block -mx-4 px-4 py-4 rounded-lg transition-all duration-200 ease-out group-has-hover/list:opacity-50 hover:opacity-100!"
+              className="group/item block -mx-3 px-4 py-4 rounded-lg transition-all duration-200 ease-out group-has-hover/list:opacity-50 hover:opacity-100!"
             >
-              <article className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+              <article className="flex flex-col sm:flex-row sm:items-baseline -gap-1 sm:gap-6">
                 <time
                   className="text-sm text-muted-foreground shrink-0 tabular-nums sm:w-28"
                   title={post.date ? formatDateTime(post.date) : undefined}
