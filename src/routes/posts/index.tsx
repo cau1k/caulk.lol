@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import { EmptyState } from "@/components/empty-state";
 import { HomeLayout } from "@/components/layout/home";
 import { TagBadge } from "@/components/tag-badge";
 import { formatDate, formatDateTime } from "@/lib/format-date";
@@ -41,7 +42,7 @@ export const Route = createFileRoute("/posts/")({
 });
 
 const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
-  const isDev = process.env.NODE_ENV === "development";
+  const isDev = import.meta.env.DEV;
   const pages = posts.getPages().filter((p) => isDev || !p.data.draft);
   const sorted = pages.sort((a, b) => {
     const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
@@ -110,7 +111,11 @@ function BlogIndex() {
         </div>
 
         {posts.length === 0 && (
-          <p className="text-muted-foreground">No posts yet.</p>
+          <EmptyState
+            title="Nothing here yet"
+            description="New posts are on the way. Check back soon."
+            action={{ label: "Back to home", to: "/" }}
+          />
         )}
       </main>
     </HomeLayout>

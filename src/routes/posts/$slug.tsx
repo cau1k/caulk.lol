@@ -33,7 +33,7 @@ const serverLoader = createServerFn({ method: "GET" })
     if (!page) throw notFound();
 
     // Block draft posts in production
-    const isDev = process.env.NODE_ENV === "development";
+    const isDev = import.meta.env.DEV;
     if (page.data.draft && !isDev) throw notFound();
 
     // sort all posts by date ascending (oldest first), exclude drafts in prod
