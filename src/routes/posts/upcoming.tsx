@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { motion, useAnimationControls } from "motion/react";
+import { RotateCcw } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { HomeLayout } from "@/components/layout/home";
 import { baseOptions } from "@/lib/layout.shared";
@@ -49,19 +50,47 @@ function generateGrid(): Cell[][] {
 function SwitchboardCell({
   cell,
   revealed,
+  resetting,
   index,
 }: {
   cell: Cell;
   revealed: boolean;
+  resetting: boolean;
   index: number;
 }) {
   const controls = useAnimationControls();
   const [currentState, setCurrentState] = useState(cell.state);
 
+  // Reset animation - fade in with shuffle
   useEffect(() => {
-    if (!revealed) return;
+    if (!resetting) return;
 
-    // Shuffle animation - cells randomly change states before fading
+    const baseDelay = index * 0.002;
+    controls.set({ opacity: 0 });
+
+    const timeout = setTimeout(
+      () => {
+        controls.start({
+          opacity: 1,
+          transition: { duration: 0.2 },
+        });
+
+        // Shuffle to new random state
+        const r = Math.random();
+        if (r < 0.12) setCurrentState("active");
+        else if (r < 0.4) setCurrentState("muted");
+        else setCurrentState("empty");
+      },
+      baseDelay * 1000 + Math.random() * 150,
+    );
+
+    return () => clearTimeout(timeout);
+  }, [resetting, controls, index]);
+
+  // Reveal animation - shuffle then fade out
+  useEffect(() => {
+    if (!revealed || resetting) return;
+
     const shuffleCount = 3 + Math.floor(Math.random() * 4);
     const baseDelay = index * 0.003;
     let step = 0;
@@ -87,7 +116,7 @@ function SwitchboardCell({
     );
 
     return () => clearInterval(interval);
-  }, [revealed, controls, index]);
+  }, [revealed, resetting, controls, index]);
 
   return (
     <motion.div
@@ -106,19 +135,39 @@ function SwitchboardCell({
 function SwitchboardReveal({
   title,
   description,
+  revealed,
+  resetting,
+  onReveal,
 }: {
   title: string;
   description?: string;
+  revealed: boolean;
+  resetting: boolean;
+  onReveal: () => void;
 }) {
-  const [revealed, setRevealed] = useState(false);
   const [showContent, setShowContent] = useState(false);
-  const grid = useMemo(() => generateGrid(), []);
+  const [grid, setGrid] = useState(() => generateGrid());
+
+  // Handle reveal animation timing
+  useEffect(() => {
+    if (revealed && !resetting) {
+      const timeout = setTimeout(() => setShowContent(true), 600);
+      return () => clearTimeout(timeout);
+    }
+  }, [revealed, resetting]);
+
+  // Handle reset
+  useEffect(() => {
+    if (resetting) {
+      setShowContent(false);
+      setGrid(generateGrid());
+    }
+  }, [resetting]);
 
   const handleReveal = () => {
-    if (revealed) return;
-    setRevealed(true);
-    // Delay content reveal until shuffle animation completes
-    setTimeout(() => setShowContent(true), 600);
+    if (!revealed && !resetting) {
+      onReveal();
+    }
   };
 
   return (
@@ -133,7 +182,7 @@ function SwitchboardReveal({
         {/* Pixelated grid */}
         <div
           className={`absolute inset-0 flex flex-col justify-center gap-[3px] transition-opacity duration-300 ${
-            showContent ? "opacity-0" : "opacity-100"
+            showContent ? "opacity-0 pointer-events-none" : "opacity-100"
           }`}
         >
           {grid.map((row) => (
@@ -143,6 +192,7 @@ function SwitchboardReveal({
                   key={cell.id}
                   cell={cell}
                   revealed={revealed}
+                  resetting={resetting}
                   index={Number(cell.id.split("-")[0]) * COLS + colIdx}
                 />
               ))}
@@ -172,6 +222,22 @@ function SwitchboardReveal({
 
 function UpcomingPosts() {
   const { posts } = Route.useLoaderData();
+  const [revealedSet, setRevealedSet] = useState<Set<string>>(new Set());
+  const [resetting, setResetting] = useState(false);
+
+  const allRevealed = posts.length > 0 && revealedSet.size === posts.length;
+
+  const handleReveal = useCallback((title: string) => {
+    setRevealedSet((prev) => new Set([...prev, title]));
+  }, []);
+
+  const handleReset = useCallback(() => {
+    setResetting(true);
+    setRevealedSet(new Set());
+
+    // Allow reset animation to complete
+    setTimeout(() => setResetting(false), 400);
+  }, []);
 
   return (
     <HomeLayout {...baseOptions()}>
@@ -195,18 +261,36 @@ function UpcomingPosts() {
                 key={post.title}
                 title={post.title}
                 description={post.description}
+                revealed={revealedSet.has(post.title)}
+                resetting={resetting}
+                onReveal={() => handleReveal(post.title)}
               />
             ))}
           </div>
         )}
 
         <footer className="mt-16 pt-8 border-t border-border">
-          <Link
-            to="/posts"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            ← All writing
-          </Link>
+          <div className="flex justify-between text-sm text-muted-foreground">
+            <Link
+              to="/posts"
+              className="hover:text-foreground transition-colors"
+            >
+              ← All writing
+            </Link>
+            <motion.button
+              type="button"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: allRevealed ? 1 : 0 }}
+              transition={{ duration: 0.3 }}
+              className={`flex items-center gap-1.5 hover:text-foreground transition-colors ${
+                allRevealed ? "pointer-events-auto" : "pointer-events-none"
+              }`}
+              onClick={handleReset}
+            >
+              <RotateCcw className="w-3 h-3" />
+              Refresh
+            </motion.button>
+          </div>
         </footer>
       </main>
     </HomeLayout>
