@@ -33,6 +33,7 @@ const COLS = 48;
 const ROWS = 4;
 
 type CellState = "empty" | "muted" | "active";
+type Post = { title: string; description?: string };
 
 function generateGrid(): CellState[][] {
   return Array.from({ length: ROWS }, () =>
@@ -45,18 +46,27 @@ function generateGrid(): CellState[][] {
   );
 }
 
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 function SwitchboardReveal({
-  title,
-  description,
+  post,
   revealed,
-  resetting,
   onReveal,
+  disabled,
+  layoutId,
 }: {
-  title: string;
-  description?: string;
+  post: Post;
   revealed: boolean;
-  resetting: boolean;
   onReveal: () => void;
+  disabled: boolean;
+  layoutId: string;
 }) {
   const [grid, setGrid] = useState(() => generateGrid());
   const [clearedCols, setClearedCols] = useState<Set<number>>(new Set());
@@ -65,19 +75,19 @@ function SwitchboardReveal({
   );
   const [revealProgress, setRevealProgress] = useState(0);
 
+  const { title, description } = post;
   const fullText = description ? `${title}|${description}` : title;
   const totalChars = fullText.length;
 
   // Reveal animation
   useEffect(() => {
-    if (!revealed || resetting) return;
+    if (!revealed) return;
 
     const totalDuration = 900;
     const colDelay = totalDuration / COLS;
     const timeouts: ReturnType<typeof setTimeout>[] = [];
 
     for (let col = 0; col < COLS; col++) {
-      // Shuffle cells in column
       const shuffleTimeout = setTimeout(
         () => {
           for (let row = 0; row < ROWS; row++) {
@@ -94,11 +104,9 @@ function SwitchboardReveal({
       );
       timeouts.push(shuffleTimeout);
 
-      // Clear column
       const clearTimeout = setTimeout(
         () => {
           setClearedCols((prev) => new Set([...prev, col]));
-          // Update text reveal progress based on column progress
           const progress = Math.floor(((col + 1) / COLS) * totalChars);
           setRevealProgress(progress);
         },
@@ -107,37 +115,44 @@ function SwitchboardReveal({
       timeouts.push(clearTimeout);
     }
 
-    // Final reveal
     const finalTimeout = setTimeout(() => {
       setRevealProgress(totalChars);
     }, totalDuration + 100);
     timeouts.push(finalTimeout);
 
     return () => timeouts.forEach(clearTimeout);
-  }, [revealed, resetting, totalChars]);
+  }, [revealed, totalChars]);
 
-  // Reset
+  // Reset grid when not revealed (for shuffle)
   useEffect(() => {
-    if (!resetting) return;
-    setClearedCols(new Set());
-    setShufflingCells(new Map());
-    setRevealProgress(0);
-    setGrid(generateGrid());
-  }, [resetting]);
+    if (!revealed) {
+      setClearedCols(new Set());
+      setShufflingCells(new Map());
+      setRevealProgress(0);
+      setGrid(generateGrid());
+    }
+  }, [revealed]);
 
-  const handleReveal = () => {
-    if (!revealed && !resetting) onReveal();
+  const handleClick = () => {
+    if (!revealed && !disabled) onReveal();
   };
 
   const titleChars = title.split("");
   const descChars = description?.split("") ?? [];
 
   return (
-    <button
+    <motion.button
       type="button"
-      className="group cursor-pointer w-full text-left"
-      onClick={handleReveal}
-      onMouseEnter={handleReveal}
+      layout
+      layoutId={layoutId}
+      className={`group w-full text-left transition-opacity ${
+        disabled && !revealed
+          ? "opacity-40 cursor-not-allowed"
+          : "cursor-pointer"
+      }`}
+      onClick={handleClick}
+      disabled={disabled && !revealed}
+      transition={{ type: "spring", stiffness: 350, damping: 30 }}
     >
       <div className="relative h-[52px] overflow-hidden">
         {/* Pixelated grid */}
@@ -204,26 +219,55 @@ function SwitchboardReveal({
           )}
         </div>
       </div>
-    </button>
+    </motion.button>
   );
 }
 
 function UpcomingPosts() {
-  const { posts } = Route.useLoaderData();
+  const { posts: originalPosts } = Route.useLoaderData();
   const [revealedSet, setRevealedSet] = useState<Set<string>>(new Set());
-  const [resetting, setResetting] = useState(false);
+  const [shuffledOrder, setShuffledOrder] = useState<Post[]>([]);
 
-  const allRevealed = posts.length > 0 && revealedSet.size === posts.length;
+  const maxReveals = Math.max(1, Math.ceil(originalPosts.length * 0.33));
+  const revealsRemaining = maxReveals - revealedSet.size;
+  const outOfReveals = revealsRemaining <= 0;
 
-  const handleReveal = useCallback((title: string) => {
-    setRevealedSet((prev) => new Set([...prev, title]));
-  }, []);
+  // Initial shuffle
+  useEffect(() => {
+    setShuffledOrder(shuffleArray(originalPosts));
+  }, [originalPosts]);
+
+  // Shuffle unrevealed posts after a reveal
+  const handleReveal = useCallback(
+    (title: string) => {
+      setRevealedSet((prev) => new Set([...prev, title]));
+
+      // Shuffle positions after reveal animation completes
+      setTimeout(() => {
+        setShuffledOrder((current) => {
+          const revealed: Post[] = [];
+          const unrevealed: Post[] = [];
+
+          for (const post of current) {
+            if (revealedSet.has(post.title) || post.title === title) {
+              revealed.push(post);
+            } else {
+              unrevealed.push(post);
+            }
+          }
+
+          // Revealed posts sink to bottom, unrevealed get shuffled
+          return [...shuffleArray(unrevealed), ...revealed];
+        });
+      }, 1000);
+    },
+    [revealedSet],
+  );
 
   const handleReset = useCallback(() => {
-    setResetting(true);
     setRevealedSet(new Set());
-    setTimeout(() => setResetting(false), 100);
-  }, []);
+    setShuffledOrder(shuffleArray(originalPosts));
+  }, [originalPosts]);
 
   return (
     <HomeLayout {...baseOptions()}>
@@ -232,9 +276,16 @@ function UpcomingPosts() {
           <h1 className="text-3xl font-bold font-serif tracking-tight">
             Upcoming
           </h1>
+          {originalPosts.length > 0 && (
+            <p className="mt-2 text-sm text-muted-foreground">
+              {outOfReveals
+                ? "No reveals left"
+                : `${revealsRemaining} reveal${revealsRemaining === 1 ? "" : "s"} remaining`}
+            </p>
+          )}
         </header>
 
-        {posts.length === 0 ? (
+        {originalPosts.length === 0 ? (
           <EmptyState
             title="Nothing in the pipeline"
             description="All caught up! Check back later for new content."
@@ -242,13 +293,13 @@ function UpcomingPosts() {
           />
         ) : (
           <div className="space-y-2">
-            {posts.map((post) => (
+            {shuffledOrder.map((post) => (
               <SwitchboardReveal
                 key={post.title}
-                title={post.title}
-                description={post.description}
+                layoutId={post.title}
+                post={post}
                 revealed={revealedSet.has(post.title)}
-                resetting={resetting}
+                disabled={outOfReveals}
                 onReveal={() => handleReveal(post.title)}
               />
             ))}
@@ -266,15 +317,17 @@ function UpcomingPosts() {
             <motion.button
               type="button"
               initial={{ opacity: 0 }}
-              animate={{ opacity: allRevealed ? 1 : 0 }}
+              animate={{ opacity: revealedSet.size > 0 ? 1 : 0 }}
               transition={{ duration: 0.3 }}
               className={`flex items-center gap-1.5 hover:text-foreground transition-colors ${
-                allRevealed ? "pointer-events-auto" : "pointer-events-none"
+                revealedSet.size > 0
+                  ? "pointer-events-auto"
+                  : "pointer-events-none"
               }`}
               onClick={handleReset}
             >
               <RotateCcw className="w-3 h-3" />
-              Refresh
+              Reset
             </motion.button>
           </div>
         </footer>
