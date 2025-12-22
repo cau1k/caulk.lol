@@ -105,26 +105,19 @@ Final usage looks like:
 
 ```bash
 # upload and run
-./snorkel-helper oracle -p tasks/my-benchmark
+./bench-runner oracle -p tasks/my-benchmark --no-debug
 
 # stream logs
-./snorkel-helper oracle -p tasks/my-benchmark --stream
+./bench-runner oracle -p tasks/my-benchmark --stream
 
 # kill session
-./snorkel-helper oracle -p tasks/my-benchmark --kill
+./bench-runner oracle -p tasks/my-benchmark --kill
 ```
 
 ## Caveats
 
 **This is duct tape, not infrastructure.** For real CI/CD you'd use ~~GitHub Actions~~[Forgejo Actions](https://docs.codeberg.org/ci/actions/), [Buildkite](https://buildkite.com/), or whatever your org already has. But when you need something working in under 10 minutes, Bun's shell API is hard to beat.
 
-**SSH multiplexing helps.** If you're making many SSH calls, add this to your `~/.ssh/config`:
-```
-Host your-server
-  ControlMaster auto
-  ControlPath ~/.ssh/sockets/%r@%h-%p
-  ControlPersist 600
-```
 **Error handling is minimal.** The script assumes SSH works, the remote has tmux, Docker is configured, etc. Production code would need actual error handling.
 
 **Tmux capture-pane has limits.** The scrollback buffer is finite. For long-running tasks, you'd want to pipe output to a file and tail that instead.
