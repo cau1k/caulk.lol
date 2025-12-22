@@ -1,5 +1,5 @@
 ---
-title: TypeScript is now a scripting language
+title: TypeScript is a scripting language
 description: A look into how Bun has made TypeScript the language of the future
 author: Caulk
 date: "2025-12-22T14:46:50-05:00"
@@ -7,19 +7,25 @@ draft: true
 tags: [typescript, bun, scripting]
 ---
 
-# building a remote task runner in 10 minutes with bun
-i needed a quick way to upload benchmark tasks to a remote server and run them in tmux sessions i could monitor. the goal: one command to sync files, spin up a background process, and stream logs back - all without blocking my terminal or losing output when i disconnect.
-turns out bun makes this stupidly easy.
-## the problem
-i'm working on a custom benchmark suite that runs containerized tasks. the workflow is:
-1. edit task locally
-2. upload to remote server
-3. run the benchmark runner (which orchestrates docker containers)
-4. monitor output
-5. iterate
-doing this manually means a lot of `scp`, `ssh`, `tmux attach`, copy-pasting commands. tedious.
-## bun's shell api
-bun ships with a built-in shell API that feels like writing bash, but with typescript's type safety and async/await. here's the core of the upload function:
+I needed a quick way to upload benchmark tasks to a remote server and run them in tmux sessions I could monitor. I just wanted a quick, single command way to sync files, spin up a background process, and stream logs back - all without blocking my terminal or losing output when I disconnect. It has to play well with my agents.
+
+As some of you may already know, Bun makes this stupidly easy.
+
+## The Problem
+
+I'm working on a custom benchmark suite that runs containerized tasks. The workflow is:
+
+1. Edit task locally
+2. Upload to remote server
+3. Run the benchmark runner (which orchestrates docker containers)
+4. Monitor output
+5. Iterate
+
+Doing this manually means a lot of `scp`, `ssh`, `tmux attach`, copy-pasting commands. Tedious.
+
+## Bun's Shell API
+
+Bun ships with a built-in shell API that feels like writing bash, but with TypeScript's type safety and async/await. Here's the core of the upload function:
 ```typescript
 import { $ } from "bun";
 async function uploadTask(localPath: string, taskId: string) {
@@ -28,9 +34,11 @@ async function uploadTask(localPath: string, taskId: string) {
   await $`scp -r ${localPath} ${REMOTE_HOST}:${remotePath}`.quiet();
 }
 ```
-that's it. no child_process spawning, no callback hell, no shell escaping nightmares. the template literal syntax handles interpolation safely, and `.quiet()` suppresses stdout when you don't need it.
-## tmux orchestration
-the interesting part is managing remote tmux sessions. i generate a bash script, write it to the remote, then execute it in a detached tmux session:
+That's it. No child_process spawning, no callback hell, no shell escaping nightmares. The template literal syntax handles interpolation safely, and `.quiet()` suppresses stdout when you don't need it.
+
+## Tmux Orchestration
+
+The interesting part is managing remote tmux sessions. I generate a bash script, write it to the remote, then execute it in a detached tmux session:
 ```typescript
 const script = `#!/bin/bash
 source ~/.local/bin/env
@@ -45,9 +53,11 @@ await $`ssh ${HOST} "cat > /tmp/run-${taskId}.sh << 'SCRIPT'\n${script}\nSCRIPT"
 await $`ssh ${HOST} chmod +x /tmp/run-${taskId}.sh`;
 await $`ssh ${HOST} tmux new-session -d -s ${sessionName} /tmp/run-${taskId}.sh`;
 ```
-the `exec bash` at the end keeps the session alive after the task completes - useful for debugging failures. the `sg docker -c` trick runs the command with docker group permissions without requiring a full logout/login after adding a user to the group.
-## streaming logs
-polling tmux's capture-pane gives you a poor man's log stream:
+The `exec bash` at the end keeps the session alive after the task completes - useful for debugging failures. The `sg docker -c` trick runs the command with docker group permissions without requiring a full logout/login after adding a user to the group.
+
+## Streaming Logs
+
+Polling tmux's capture-pane gives you a poor man's log stream:
 ```typescript
 async function streamSession(sessionName: string) {
   let lastLineCount = 0;
@@ -65,9 +75,11 @@ async function streamSession(sessionName: string) {
   setInterval(poll, 500);
 }
 ```
-not as elegant as a proper websocket stream, but it works and took 30 seconds to write.
-## the cli
-bun's `parseArgs` from `util` handles the argument parsing:
+Not as elegant as a proper websocket stream, but it works and took 30 seconds to write.
+
+## The CLI
+
+Bun's `parseArgs` from `util` handles the argument parsing:
 ```typescript
 const { values, positionals } = parseArgs({
   args: Bun.argv.slice(2),
@@ -80,31 +92,43 @@ const { values, positionals } = parseArgs({
   allowPositionals: true,
 });
 ```
-final usage looks like:
+Final usage looks like:
+
 ```bash
 # upload and run
 ./snorkel-helper oracle -p tasks/my-benchmark
+
 # stream logs
 ./snorkel-helper oracle -p tasks/my-benchmark --stream
+
 # kill session
 ./snorkel-helper oracle -p tasks/my-benchmark --kill
 ```
-## caveats
-**this is duct tape, not infrastructure.** for real CI/CD you'd use github actions, buildkite, or whatever your org already has. but when you need something working in 10 minutes for a specific workflow, bun's shell API is hard to beat.
-**ssh multiplexing helps.** if you're making many ssh calls, add this to your `~/.ssh/config`:
+
+## Caveats
+
+**This is duct tape, not infrastructure.** For real CI/CD you'd use GitHub Actions, Buildkite, or whatever your org already has. But when you need something working in 10 minutes for a specific workflow, Bun's shell API is hard to beat.
+
+**SSH multiplexing helps.** If you're making many SSH calls, add this to your `~/.ssh/config`:
 ```
 Host your-server
   ControlMaster auto
   ControlPath ~/.ssh/sockets/%r@%h-%p
   ControlPersist 600
 ```
-**error handling is minimal.** the script assumes ssh works, the remote has tmux, docker is configured, etc. production code would need actual error handling.
-**tmux capture-pane has limits.** the scrollback buffer is finite. for long-running tasks, you'd want to pipe output to a file and tail that instead.
-## why bun?
-i could've written this in bash. but:
-- bun's shell escaping is safer than string concatenation in bash
-- async/await makes sequential operations readable
-- typescript catches typos before runtime
-- single file, no build step, runs directly with `bun run script.ts`
-the whole thing is ~200 lines and took maybe 15 minutes including debugging ssh/tmux quoting issues. most of that time was figuring out that the benchmark runner expected a specific directory structure - nothing to do with bun.
-for quick automation scripts that shell out a lot, bun hits a sweet spot between "bash script that grows out of control" and "proper application that needs a build system."
+**Error handling is minimal.** The script assumes SSH works, the remote has tmux, Docker is configured, etc. Production code would need actual error handling.
+
+**Tmux capture-pane has limits.** The scrollback buffer is finite. For long-running tasks, you'd want to pipe output to a file and tail that instead.
+
+## Why Bun?
+
+I could've written this in bash. But:
+
+- Bun's shell escaping is safer than string concatenation in bash
+- Async/await makes sequential operations readable
+- TypeScript catches typos before runtime
+- Single file, no build step, runs directly with `bun run script.ts`
+
+The whole thing is ~200 lines and took maybe 15 minutes including debugging SSH/tmux quoting issues. Most of that time was figuring out that the benchmark runner expected a specific directory structure - nothing to do with Bun.
+
+For quick automation scripts that shell out a lot, Bun hits a sweet spot between "bash script that grows out of control" and "proper application that needs a build system."
