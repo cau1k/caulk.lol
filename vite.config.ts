@@ -9,6 +9,7 @@ import tsConfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   server: {
     port: 3000,
+    allowedHosts: ["arch.catla-justice.ts.net"],
   },
   plugins: [
     mdx(await import("./source.config")),
