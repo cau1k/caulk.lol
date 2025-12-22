@@ -16,18 +16,27 @@ As some of you may already know, Bun makes this stupidly easy.
 I'm working on a custom benchmark suite that runs containerized tasks. The workflow is:
 
 1. Edit task locally
-2. Upload to remote server
-3. Run the benchmark runner (which orchestrates docker containers)
+2. Run the task locally (often blocking my own compute)
+3. Run the benchmark runner (which orchestrates docker containers, asciinema, tmux, etc.)
 4. Monitor output
 5. Iterate
 
-Doing this manually means a lot of `scp`, `ssh`, `tmux attach`, copy-pasting commands. Tedious.
+I'm usually working on >1 tasks at a time, so again, compute gets tied up.
+
+So I started uploading to my servers, but doing this manually means a lot of `scp`, `ssh`, `tmux attach`, copy-pasting commands. 
+
+Tedious. 
+
+Let me get back to work.
+
+Now I'm certain there's an easier way to do this. But I'm too lazy to setup a file syncing service as my boxes change often. So, I reached for Bun after initially considering Python.
 
 ## Bun's Shell API
 
-Bun ships with a built-in shell API that feels like writing bash, but with TypeScript's type safety and async/await. Here's the core of the upload function:
+The buntime [shell API](https://bun.com/docs/runtime/shell) feels like writing bash, but with TypeScript's type safety and async/await. Here's the core of the upload function:
 ```typescript
 import { $ } from "bun";
+
 async function uploadTask(localPath: string, taskId: string) {
   await $`ssh ${REMOTE_HOST} mkdir -p ${REMOTE_DIR}`.quiet();
   await $`ssh ${REMOTE_HOST} rm -rf ${remotePath}`.quiet();
@@ -75,7 +84,7 @@ async function streamSession(sessionName: string) {
   setInterval(poll, 500);
 }
 ```
-Not as elegant as a proper websocket stream, but it works and took 30 seconds to write.
+Not as elegant as a proper websocket stream, but it works and took 30 seconds to ~~write~~prompt.
 
 ## The CLI
 
@@ -107,7 +116,7 @@ Final usage looks like:
 
 ## Caveats
 
-**This is duct tape, not infrastructure.** For real CI/CD you'd use GitHub Actions, Buildkite, or whatever your org already has. But when you need something working in 10 minutes for a specific workflow, Bun's shell API is hard to beat.
+**This is duct tape, not infrastructure.** For real CI/CD you'd use ~~GitHub Actions~~[Forgejo Actions](https://docs.codeberg.org/ci/actions/), [Buildkite](https://buildkite.com/), or whatever your org already has. But when you need something working in under 10 minutes, Bun's shell API is hard to beat.
 
 **SSH multiplexing helps.** If you're making many SSH calls, add this to your `~/.ssh/config`:
 ```
