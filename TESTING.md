@@ -60,7 +60,7 @@ This PR adds the ability to write blog posts from a phone using multiple approac
 title: Test Post from Mobile
 description: Testing mobile posting
 author: Caulk
-date: "2025-12-23T15:00:00-05:00"
+date: "2024-12-23T15:00:00-05:00"
 draft: true
 tags: [test]
 ---

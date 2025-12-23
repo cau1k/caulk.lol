@@ -29,9 +29,9 @@ For a user-friendly interface optimized for mobile, set up Decap CMS with GitHub
 Since this site runs on Cloudflare Workers, you need an external OAuth provider. Options:
 
 **A. Use a Free OAuth Gateway Service:**
-   - [Decap CMS GitHub OAuth Provider](https://github.com/StaticKit/statickit-provider) (recommended)
-   - [Netlify OAuth Provider](https://github.com/vencax/netlify-cms-github-oauth-provider)
-   - Deploy one of these to Vercel/Netlify for free
+   - [Decap CMS OAuth Provider on Render](https://github.com/StaticJsCMS/static-cms-proxy-server) (recommended)
+   - [Cloudflare Workers OAuth Provider](https://github.com/i40west/netlify-cms-cloudflare-pages)
+   - Deploy one of these to Vercel/Netlify/Render for free
 
 **B. Set Up Your Own OAuth Gateway:**
    - See [Decap CMS OAuth Documentation](https://decapcms.org/docs/authentication-backends/#github-backend)
