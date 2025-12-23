@@ -5,7 +5,7 @@ import { CloudflareStateStore } from "alchemy/state";
 const app = await alchemy("caulk-lol", {
   stage: process.env.STAGE ?? "prod",
   stateStore: process.env.CI
-    ? (scope) => new CloudflareStateStore(scope)
+    ? (scope) => new CloudflareStateStore(scope, { forceUpdate: true })
     : undefined,
 });
 
