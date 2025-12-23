@@ -7,6 +7,7 @@ const app = await alchemy("caulk-lol", {
   stateStore: process.env.CI
     ? (scope) => new CloudflareStateStore(scope, { forceUpdate: true })
     : undefined,
+  adopt: true,
 });
 
 export const site = await TanStackStart("site", {
