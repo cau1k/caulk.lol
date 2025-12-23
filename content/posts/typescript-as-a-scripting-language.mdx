@@ -131,6 +131,6 @@ I could've written this in bash. But:
 - TypeScript catches typos before runtime
 - Single file, no build step, runs directly with `bun run script.ts`
 
-The whole thing is ~200 lines and took maybe 15 minutes including debugging SSH/tmux quoting issues. Most of that time was figuring out that the benchmark runner expected a specific directory structure - nothing to do with Bun.
+The whole thing is ~200 lines and took maybe 15 minutes including debugging tmux output issues. Most of that time was figuring out runner permissions issues on my Azure VM - nothing to do with Bun.
 
 For quick automation scripts that shell out a lot, Bun hits a sweet spot between "bash script that grows out of control" and "proper application that needs a build system."
