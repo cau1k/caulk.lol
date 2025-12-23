@@ -1,11 +1,18 @@
 backend:
+  # For production: Use git-gateway or a third-party OAuth provider
+  # Option 1: GitHub backend (requires OAuth setup - see ADMIN_SETUP.md)
   name: github
   repo: cau1k/caulk.lol
   branch: main
-  base_url: https://caulk.lol
-  auth_endpoint: /api/auth/callback
+  # Uncomment and configure when OAuth is set up:
+  # base_url: https://your-oauth-provider.com
+  # auth_endpoint: /auth
+  
+  # For local testing only (allows editing without auth):
+  # Uncomment the line below and comment out the github backend above
+  # name: test-repo
 
-# Uncomment below to enable drafts
+# Enable draft workflow (optional)
 # publish_mode: editorial_workflow
 
 media_folder: "public/images/uploads"

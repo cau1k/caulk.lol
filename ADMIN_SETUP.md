@@ -4,72 +4,117 @@ This site includes a Decap CMS admin interface for managing blog posts from any 
 
 ## Access the Admin
 
-Visit `/admin` or `/admin/index.html` to access the content management interface.
+Visit `https://caulk.lol/admin/` to access the content management interface.
 
-## Setup Required
+## Quick Start Options
 
-To use the admin interface, you need to set up GitHub OAuth:
+### Option 1: Use GitHub's Native Interface (Easiest)
 
-### 1. Create a GitHub OAuth App
+The simplest way to write posts from your phone:
+
+1. Open the GitHub mobile app or https://github.com/cau1k/caulk.lol on your phone
+2. Navigate to `content/posts/`
+3. Click the "+" button to create a new file
+4. Name it `my-post-title.mdx`
+5. Write your post with frontmatter (see format below)
+6. Commit directly to the `main` branch
+7. The site will automatically rebuild and deploy
+
+### Option 2: Use Decap CMS with OAuth (Better UX)
+
+For a user-friendly interface optimized for mobile, set up Decap CMS with GitHub OAuth:
+
+#### Step 1: Choose an OAuth Provider
+
+Since this site runs on Cloudflare Workers, you need an external OAuth provider. Options:
+
+**A. Use a Free OAuth Gateway Service:**
+   - [Decap CMS GitHub OAuth Provider](https://github.com/StaticKit/statickit-provider) (recommended)
+   - [Netlify OAuth Provider](https://github.com/vencax/netlify-cms-github-oauth-provider)
+   - Deploy one of these to Vercel/Netlify for free
+
+**B. Set Up Your Own OAuth Gateway:**
+   - See [Decap CMS OAuth Documentation](https://decapcms.org/docs/authentication-backends/#github-backend)
+
+#### Step 2: Create a GitHub OAuth App
 
 1. Go to GitHub Settings → Developer settings → OAuth Apps
 2. Click "New OAuth App"
 3. Fill in the details:
    - **Application name**: caulk.lol CMS
    - **Homepage URL**: https://caulk.lol
-   - **Authorization callback URL**: https://caulk.lol/api/auth/callback
+   - **Authorization callback URL**: Use the callback URL from your OAuth provider (e.g., `https://your-oauth-gateway.vercel.app/callback`)
 4. Click "Register application"
 5. Note your **Client ID** and generate a **Client Secret**
 
-### 2. Configure Environment Variables
+#### Step 3: Configure Your OAuth Provider
 
-Add the following to your `.env` file (or Cloudflare Workers secrets):
+Follow the setup instructions for your chosen OAuth provider to configure it with your GitHub OAuth App credentials.
 
-```bash
-GITHUB_OAUTH_CLIENT_ID=your_client_id_here
-GITHUB_OAUTH_CLIENT_SECRET=your_client_secret_here
+#### Step 4: Update Decap CMS Configuration
+
+Edit `public/admin/config.yml` and update the backend section:
+
+```yaml
+backend:
+  name: github
+  repo: cau1k/caulk.lol
+  branch: main
+  base_url: https://your-oauth-provider.vercel.app  # Your OAuth gateway URL
+  auth_endpoint: /auth                               # Usually /auth or /oauth/authorize
 ```
 
-For Cloudflare Workers, set these as secrets:
+#### Step 5: Deploy and Use
 
-```bash
-npx wrangler secret put GITHUB_OAUTH_CLIENT_ID
-npx wrangler secret put GITHUB_OAUTH_CLIENT_SECRET
-```
+1. Commit your changes and push to GitHub
+2. Visit https://caulk.lol/admin/ on any device
+3. Click "Login with GitHub"
+4. Authorize the app
+5. Start writing posts with the visual editor!
 
-### 3. Deploy
+### Option 3: Use Test Backend (Local Development Only)
 
-After setting up the OAuth app and environment variables, deploy your site. The admin interface will be available at `/admin`.
+For local testing without setting up OAuth:
 
-## Writing Posts from Your Phone
-
-1. Open https://caulk.lol/admin on your phone's browser
-2. Click "Login with GitHub"
-3. Authorize the app
-4. You'll see a list of your blog posts
-5. Click "New Post" to create a new post
-6. Fill in the title, description, tags, and content
-7. Click "Publish" to commit the new post directly to GitHub
-8. The site will automatically rebuild and deploy your new post
+1. Edit `public/admin/config.yml`
+2. Change the backend to:
+   ```yaml
+   backend:
+     name: test-repo
+   ```
+3. Access http://localhost:3000/admin/ during development
+4. Note: This won't save to GitHub, it's for testing the UI only
 
 ## Post Format
 
-Posts are stored as MDX files in `content/posts/` with the following frontmatter:
+Posts are MDX files in `content/posts/` with YAML frontmatter:
 
-```yaml
+```mdx
 ---
-title: Post Title
-description: A brief description
+title: My Awesome Post
+description: A brief description of the post
 author: Caulk
 date: "2025-12-23T12:00:00-05:00"
 draft: false
-tags: [tag1, tag2]
+tags: [tech, programming]
 ---
+
+## Your Content Here
+
+Write your blog post content in **Markdown** or MDX format.
+
+You can use React components, code blocks, and all MDX features!
 ```
 
-## Alternative: GitHub Mobile
+## Mobile Writing Tips
 
-If you prefer not to set up OAuth, you can also write posts directly using:
-- GitHub's mobile website (github.com)
-- GitHub's mobile app
-- Navigate to `content/posts/` and create a new `.mdx` file
+- **Decap CMS**: Provides a rich text editor with preview, making it easy to write on mobile
+- **GitHub Mobile**: Good for quick edits and simple posts
+- **GitHub.dev**: Press `.` on any GitHub page to open VS Code in the browser - great for mobile writing!
+
+## Recommended Setup
+
+For the best mobile writing experience, we recommend:
+1. Set up Option 2 (Decap CMS with OAuth) for the best UX
+2. Use GitHub's mobile app (Option 1) as a backup for quick edits
+3. For longer posts, use GitHub.dev for a full editor experience

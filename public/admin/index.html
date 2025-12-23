@@ -4,10 +4,54 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
-    <title>Content Manager</title>
+    <title>Content Manager - caulk.lol</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+      .setup-notice {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 16px;
+        margin: 20px;
+        border-radius: 4px;
+        display: none;
+      }
+      .setup-notice h3 {
+        margin: 0 0 8px 0;
+        font-size: 18px;
+      }
+      .setup-notice p {
+        margin: 4px 0;
+        font-size: 14px;
+      }
+      .setup-notice a {
+        color: #0066cc;
+      }
+    </style>
   </head>
   <body>
+    <div class="setup-notice" id="setupNotice">
+      <h3>⚠️ OAuth Not Configured</h3>
+      <p>To use this admin interface, you need to set up GitHub OAuth authentication.</p>
+      <p>See <a href="https://github.com/cau1k/caulk.lol/blob/main/ADMIN_SETUP.md" target="_blank">ADMIN_SETUP.md</a> for instructions.</p>
+      <p><strong>Quick alternative:</strong> Use <a href="https://github.com/cau1k/caulk.lol/tree/main/content/posts" target="_blank">GitHub's interface</a> to create posts directly.</p>
+    </div>
     <!-- Include the script that builds the page and powers Decap CMS -->
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <script>
+      // Show setup notice if authentication fails
+      if (typeof CMS !== 'undefined') {
+        CMS.registerEventListener({
+          name: 'error',
+          handler: (event) => {
+            if (event.type === 'error' && event.message.includes('auth')) {
+              document.getElementById('setupNotice').style.display = 'block';
+            }
+          }
+        });
+      }
+    </script>
   </body>
 </html>
