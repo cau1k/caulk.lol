@@ -1,6 +1,6 @@
 # Admin Interface Setup
 
-This site includes a Decap CMS admin interface for managing blog posts from any device, including phones.
+This site includes a Decap CMS admin interface for managing blog posts from any device, including phones. The CMS is loaded from a CDN (no npm installation required) and provides a mobile-optimized interface.
 
 ## Access the Admin
 

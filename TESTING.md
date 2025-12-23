@@ -6,7 +6,7 @@ This PR adds the ability to write blog posts from a phone using multiple approac
 
 ### 1. Admin Interface (Decap CMS)
 - Location: `/admin` (public/admin/index.html)
-- A mobile-optimized CMS interface
+- A mobile-optimized CMS interface loaded from CDN
 - Requires OAuth setup for production use
 - Works with GitHub to commit posts directly
 
@@ -24,14 +24,15 @@ This PR adds the ability to write blog posts from a phone using multiple approac
 ## Files Added/Modified
 
 ### New Files:
-- `public/admin/index.html` - Decap CMS admin interface
+- `public/admin/index.html` - Decap CMS admin interface (loads from CDN)
 - `public/admin/config.yml` - CMS configuration for blog posts
+- `public/images/uploads/README.md` - Directory for uploaded media
 - `ADMIN_SETUP.md` - Comprehensive setup and usage guide
 - `TESTING.md` - This file
 
 ### Modified Files:
 - `README.md` - Updated with blog writing options
-- `package.json` - Added decap-cms-app dependency
+- `package.json` - Removed decap-cms-app (using CDN instead)
 - `.env.example` - Kept clean (no OAuth vars needed initially)
 
 ## How to Test
