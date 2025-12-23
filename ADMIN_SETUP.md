@@ -81,11 +81,26 @@ Deploy your site with the new environment variables configured.
    - **Slug**: URL-friendly identifier (auto-generated from title)
    - **Description**: Brief summary of the post
    - **Tags**: Comma-separated list of tags
-   - **Draft**: Check to mark as draft (won't appear in production)
+   - **Draft**: Check to mark as draft
    - **Content**: Write your post in Markdown format
-3. Click "Create Pull Request"
-4. A new PR will be created with your post
-5. Review and merge the PR on GitHub
+3. Submit:
+   - **If draft is checked**: Post commits directly to main branch (immediate publish)
+   - **If draft is unchecked**: Creates a pull request for review
+4. For PRs: Review and merge the PR on GitHub to publish
+
+### Draft vs. Published Posts
+
+- **Draft posts** (`draft: true`): 
+  - Commit directly to main branch
+  - No PR created
+  - Immediately available on the site
+  - Useful for quick posts or work-in-progress content
+  
+- **Published posts** (`draft: false`):
+  - Creates a pull request
+  - Allows for review before publishing
+  - Merge PR to publish the post
+  - Recommended for finalized content
 
 ### Post Format
 
@@ -97,7 +112,7 @@ title: Your Title
 description: Your description
 author: Your GitHub username
 date: "2025-12-23T17:00:00.000Z"
-draft: false
+draft: true  # or false
 tags: [tag1, tag2]
 ---
 ```
@@ -107,7 +122,7 @@ tags: [tag1, tag2]
 - Only users with the GitHub username specified in `ALLOWED_GITHUB_USERNAME` can access the admin panel
 - Authentication is handled via GitHub OAuth
 - Sessions are stored in memory/cookies (database-less)
-- All post creations go through pull requests (not direct commits)
+- Draft posts commit directly to main; published posts go through pull requests
 
 ## Troubleshooting
 

@@ -22,8 +22,10 @@ type CreatePRInput = {
 };
 
 type CreatePRResult = {
-  prUrl: string;
-  prNumber: number;
+  prUrl?: string;
+  prNumber?: number;
+  commitUrl?: string;
+  isDraft: boolean;
 };
 
 const checkAuth = createServerFn({ method: "GET" }).handler(
@@ -60,6 +62,37 @@ const createPR = createServerFn({ method: "POST" })
     const { data: repoData } = await octokit.rest.repos.get(repo);
     const baseBranch = repoData.default_branch;
 
+    // Create the MDX file content
+    const now = new Date().toISOString();
+    const mdxContent = `---
+title: ${data.title}
+description: ${data.description}
+author: ${session.user.name}
+date: "${now}"
+draft: ${data.draft}
+tags: [${data.tags.join(", ")}]
+---
+
+${data.content}
+`;
+
+    // If draft is true, commit directly to main
+    if (data.draft) {
+      const { data: commit } = await octokit.rest.repos.createOrUpdateFileContents({
+        ...repo,
+        path: `content/posts/${data.slug}.mdx`,
+        message: `Add draft post: ${data.title}`,
+        content: Buffer.from(mdxContent).toString("base64"),
+        branch: baseBranch,
+      });
+
+      return {
+        commitUrl: commit.commit.html_url,
+        isDraft: true,
+      };
+    }
+
+    // Otherwise, create a PR for non-draft posts
     // Get the latest commit SHA from main
     const { data: refData } = await octokit.rest.git.getRef({
       ...repo,
@@ -75,20 +108,6 @@ const createPR = createServerFn({ method: "POST" })
       ref: `refs/heads/${branchName}`,
       sha: baseSha,
     });
-
-    // Create the MDX file content
-    const now = new Date().toISOString();
-    const mdxContent = `---
-title: ${data.title}
-description: ${data.description}
-author: ${session.user.name}
-date: "${now}"
-draft: ${data.draft}
-tags: [${data.tags.join(", ")}]
----
-
-${data.content}
-`;
 
     // Create the file
     await octokit.rest.repos.createOrUpdateFileContents({
@@ -109,13 +128,16 @@ ${data.content}
 
 **Title:** ${data.title}
 **Description:** ${data.description}
-**Draft:** ${data.draft ? "Yes" : "No"}
 **Tags:** ${data.tags.join(", ")}
 
 This PR was created automatically from the admin interface.`,
     });
 
-    return { prUrl: pr.html_url, prNumber: pr.number };
+    return { 
+      prUrl: pr.html_url, 
+      prNumber: pr.number,
+      isDraft: false,
+    };
   });
 
 export const Route = createFileRoute("/admin/new-post")({
@@ -173,12 +195,18 @@ function NewPostPage() {
         },
       });
 
-      alert(
-        `Pull request created successfully! PR #${result.prNumber}\n\n${result.prUrl}`
-      );
+      if (result.isDraft) {
+        alert(
+          `Draft post committed directly to main!\n\nCommit: ${result.commitUrl}\n\nYour draft post is now live on the site.`
+        );
+      } else {
+        alert(
+          `Pull request created successfully! PR #${result.prNumber}\n\n${result.prUrl}\n\nReview and merge the PR to publish your post.`
+        );
+      }
       navigate({ to: "/admin" });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create PR");
+      setError(err instanceof Error ? err.message : "Failed to create post");
     } finally {
       setIsSubmitting(false);
     }
@@ -265,17 +293,22 @@ function NewPostPage() {
             />
           </div>
 
-          <div className="flex items-center gap-2">
-            <input
-              id="draft"
-              type="checkbox"
-              checked={draft}
-              onChange={(e) => setDraft(e.target.checked)}
-              className="rounded border border-border"
-            />
-            <label htmlFor="draft" className="text-sm font-medium">
-              Save as draft
-            </label>
+          <div>
+            <div className="flex items-center gap-2">
+              <input
+                id="draft"
+                type="checkbox"
+                checked={draft}
+                onChange={(e) => setDraft(e.target.checked)}
+                className="rounded border border-border"
+              />
+              <label htmlFor="draft" className="text-sm font-medium">
+                Save as draft
+              </label>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Draft posts commit directly to main (no PR). Non-draft posts create a PR for review.
+            </p>
           </div>
 
           <div>
@@ -317,7 +350,9 @@ You can use:
               disabled={isSubmitting}
               className="rounded-lg bg-primary px-6 py-2 font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
             >
-              {isSubmitting ? "Creating PR..." : "Create Pull Request"}
+              {isSubmitting 
+                ? (draft ? "Committing..." : "Creating PR...") 
+                : (draft ? "Commit to Main" : "Create Pull Request")}
             </button>
             <Link
               to="/admin"

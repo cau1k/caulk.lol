@@ -24,13 +24,17 @@ Access the admin interface at `/admin`:
 1. Sign in with your GitHub account (only authorized user)
 2. Click "Create New Post"
 3. Fill in the title, description, tags, and content
-4. Submit to create a pull request
-5. The PR will merge your post into the main branch
+4. Choose workflow:
+   - **Draft posts** (`draft: true`): Commit directly to main branch
+   - **Published posts** (`draft: false`): Create a pull request for review
+5. Submit to create PR or commit directly
 
 **Requirements:**
 - GitHub OAuth app (client ID and secret)
 - GitHub personal access token with repo permissions
 - Set environment variables (see `.env.example`)
+
+**Note:** Draft posts skip the PR workflow and commit directly to main, making them immediately available on the site.
 
 ### Option 2: GitHub Mobile
 
