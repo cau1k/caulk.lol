@@ -15,24 +15,33 @@ pnpm dev
 yarn dev
 ```
 
-## Writing Blog Posts
+## Writing Blog Posts from Mobile
 
-Blog posts are MDX files stored in `content/posts/`. You can create and edit posts in several ways:
+You can write blog posts from your phone using GitHub's mobile interface:
 
-### Option 1: GitHub Interface (Easiest for Mobile)
-- Use GitHub's mobile app or website
-- Navigate to `content/posts/` and create a new `.mdx` file
-- Perfect for quick posts on-the-go
+1. Open the GitHub mobile app or visit github.com on your phone
+2. Navigate to this repository: `cau1k/caulk.lol`
+3. Go to the `content/posts/` directory
+4. Tap the `+` button to create a new file
+5. Name your file `post-title.mdx`
+6. Write your post in MDX format with frontmatter:
 
-### Option 2: Decap CMS Admin Interface (Best UX)
-- Visit `/admin` for a user-friendly content management interface
-- Optimized for mobile devices with rich text editing
-- Requires OAuth setup - see [ADMIN_SETUP.md](./ADMIN_SETUP.md) for instructions
+```mdx
+---
+title: Post Title
+description: Post description
+author: Caulk
+date: "2025-12-23T15:00:00-05:00"
+draft: false
+tags: [tag1, tag2]
+---
 
-### Option 3: Local Editor
-- Clone the repository
-- Edit files in `content/posts/`
-- Use your favorite code editor
+## Your Content
 
-See [ADMIN_SETUP.md](./ADMIN_SETUP.md) for detailed instructions on all options.
+Write your post content here using Markdown.
+```
 
+7. Commit directly to the `main` branch
+8. Your post will be automatically deployed via CI
+
+The site uses Server-Side Rendering (SSR) with Tanstack Start, so posts are rendered dynamically from the git-tracked content in `content/posts/`.
