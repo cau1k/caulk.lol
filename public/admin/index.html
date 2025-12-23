@@ -45,17 +45,23 @@
       crossorigin="anonymous"
     ></script>
     <script>
-      // Show setup notice if authentication fails
-      if (typeof CMS !== 'undefined') {
-        CMS.registerEventListener({
-          name: 'error',
-          handler: (event) => {
-            if (event.type === 'error' && event.message.includes('auth')) {
-              document.getElementById('setupNotice').style.display = 'block';
+      // Wait for CMS to load before registering event listeners
+      (function checkCMS() {
+        if (typeof CMS !== 'undefined') {
+          CMS.registerEventListener({
+            name: 'error',
+            handler: (event) => {
+              if (event.type === 'error' && event.message && event.message.includes('auth')) {
+                const notice = document.getElementById('setupNotice');
+                if (notice) notice.style.display = 'block';
+              }
             }
-          }
-        });
-      }
+          });
+        } else {
+          // CMS not loaded yet, check again in 100ms
+          setTimeout(checkCMS, 100);
+        }
+      })();
     </script>
   </body>
 </html>

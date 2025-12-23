@@ -18,8 +18,8 @@ backend:
 media_folder: "public/images/uploads"
 public_folder: "/images/uploads"
 
-# Shared datetime configuration
-x-datetime-config: &datetime-config
+# Reusable datetime field configuration
+datetime-config: &datetime-config
   widget: "datetime"
   date_format: "YYYY-MM-DD"
   time_format: "HH:mm:ssZ"
