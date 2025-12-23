@@ -15,9 +15,36 @@ pnpm dev
 yarn dev
 ```
 
-## Writing Blog Posts from Mobile
+## Writing Blog Posts
 
-You can write blog posts from your phone using GitHub's mobile interface:
+### Option 1: Admin Interface (Recommended)
+
+Access the admin interface at `/admin`:
+
+1. Sign in with your GitHub account (uses better-auth OAuth)
+2. Click "Create New Post"
+3. Use the WYSIWYG editor or switch to raw MDX
+4. Fill in title, description, tags, and content
+5. Choose workflow:
+   - **Draft posts** (`draft: true`): Commit directly to main branch
+   - **Published posts** (`draft: false`): Create a pull request for review
+6. Submit to create PR or commit directly
+
+**Requirements:**
+- GitHub OAuth app (client ID and secret)
+- GitHub personal access token with repo permissions
+- Set environment variables (see `.env.example`)
+
+**Features:**
+- Better-auth 1.4 database-less OAuth (secure session handling)
+- Tiptap WYSIWYG editor with toggle to raw MDX
+- Zod validation for input
+- Draft mode: commits directly to main
+- Published mode: creates PR for review
+
+### Option 2: GitHub Mobile
+
+You can also write blog posts from your phone using GitHub's mobile interface:
 
 1. Open the GitHub mobile app or visit github.com on your phone
 2. Navigate to this repository: `cau1k/caulk.lol`
@@ -44,4 +71,8 @@ Write your post content here using Markdown.
 7. Commit directly to the `main` branch
 8. Your post will be automatically deployed via CI
 
+## Architecture
+
 The site uses Server-Side Rendering (SSR) with Tanstack Start, so posts are rendered dynamically from the git-tracked content in `content/posts/`.
+
+Authentication is handled by better-auth 1.4 with GitHub OAuth in database-less/stateless mode using secure cookie-based sessions.
