@@ -1,8 +1,10 @@
 import alchemy from "alchemy";
 import { TanStackStart } from "alchemy/cloudflare";
+import { CloudflareStateStore } from "alchemy/state";
 
 const app = await alchemy("caulk-lol", {
   stage: process.env.STAGE ?? "prod",
+  stateStore: (scope) => new CloudflareStateStore(scope),
 });
 
 export const site = await TanStackStart("site", {
