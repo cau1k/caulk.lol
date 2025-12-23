@@ -1,0 +1,30 @@
+backend:
+  name: github
+  repo: cau1k/caulk.lol
+  branch: main
+  base_url: https://caulk.lol
+  auth_endpoint: /api/auth/callback
+
+# Uncomment below to enable drafts
+# publish_mode: editorial_workflow
+
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "posts"
+    label: "Blog Posts"
+    folder: "content/posts"
+    create: true
+    slug: "{{slug}}"
+    extension: "mdx"
+    format: "frontmatter"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "string" }
+      - { label: "Author", name: "author", widget: "string", default: "Caulk", required: false }
+      - { label: "Publish Date", name: "date", widget: "datetime", date_format: "YYYY-MM-DD", time_format: "HH:mm:ssZ", format: "YYYY-MM-DDTHH:mm:ssZ" }
+      - { label: "Updated Date", name: "updatedAt", widget: "datetime", date_format: "YYYY-MM-DD", time_format: "HH:mm:ssZ", format: "YYYY-MM-DDTHH:mm:ssZ", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+      - { label: "Tags", name: "tags", widget: "list", default: [] }
+      - { label: "Body", name: "body", widget: "markdown" }
