@@ -13,12 +13,16 @@ import { Route as LlmsFullDottxtRouteImport } from './routes/llms-full[.]txt'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PostsIndexRouteImport } from './routes/posts/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as PostsUpcomingRouteImport } from './routes/posts/upcoming'
 import { Route as PostsSlugRouteImport } from './routes/posts/$slug'
 import { Route as LlmsDotmdxSplatRouteImport } from './routes/llms[.]mdx.$'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
+import { Route as AdminNewPostRouteImport } from './routes/admin/new-post'
+import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as PostsTagsIndexRouteImport } from './routes/posts/tags/index'
 import { Route as PostsTagsTagRouteImport } from './routes/posts/tags/$tag'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const LlmsFullDottxtRoute = LlmsFullDottxtRouteImport.update({
   id: '/llms-full.txt',
@@ -38,6 +42,11 @@ const IndexRoute = IndexRouteImport.update({
 const PostsIndexRoute = PostsIndexRouteImport.update({
   id: '/posts/',
   path: '/posts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PostsUpcomingRoute = PostsUpcomingRouteImport.update({
@@ -60,6 +69,16 @@ const ApiSearchRoute = ApiSearchRouteImport.update({
   path: '/api/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminNewPostRoute = AdminNewPostRouteImport.update({
+  id: '/admin/new-post',
+  path: '/admin/new-post',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PostsTagsIndexRoute = PostsTagsIndexRouteImport.update({
   id: '/posts/tags/',
   path: '/posts/tags/',
@@ -70,16 +89,25 @@ const PostsTagsTagRoute = PostsTagsTagRouteImport.update({
   path: '/posts/tags/$tag',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/llms-full.txt': typeof LlmsFullDottxtRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/new-post': typeof AdminNewPostRoute
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/posts/upcoming': typeof PostsUpcomingRoute
+  '/admin': typeof AdminIndexRoute
   '/posts': typeof PostsIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
   '/posts/tags': typeof PostsTagsIndexRoute
 }
@@ -87,11 +115,15 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/llms-full.txt': typeof LlmsFullDottxtRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/new-post': typeof AdminNewPostRoute
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/posts/upcoming': typeof PostsUpcomingRoute
+  '/admin': typeof AdminIndexRoute
   '/posts': typeof PostsIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
   '/posts/tags': typeof PostsTagsIndexRoute
 }
@@ -100,11 +132,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/llms-full.txt': typeof LlmsFullDottxtRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/new-post': typeof AdminNewPostRoute
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/posts/upcoming': typeof PostsUpcomingRoute
+  '/admin/': typeof AdminIndexRoute
   '/posts/': typeof PostsIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
   '/posts/tags/': typeof PostsTagsIndexRoute
 }
@@ -114,11 +150,15 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/llms-full.txt'
+    | '/admin/login'
+    | '/admin/new-post'
     | '/api/search'
     | '/llms.mdx/$'
     | '/posts/$slug'
     | '/posts/upcoming'
+    | '/admin'
     | '/posts'
+    | '/api/auth/$'
     | '/posts/tags/$tag'
     | '/posts/tags'
   fileRoutesByTo: FileRoutesByTo
@@ -126,11 +166,15 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/llms-full.txt'
+    | '/admin/login'
+    | '/admin/new-post'
     | '/api/search'
     | '/llms.mdx/$'
     | '/posts/$slug'
     | '/posts/upcoming'
+    | '/admin'
     | '/posts'
+    | '/api/auth/$'
     | '/posts/tags/$tag'
     | '/posts/tags'
   id:
@@ -138,11 +182,15 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/llms-full.txt'
+    | '/admin/login'
+    | '/admin/new-post'
     | '/api/search'
     | '/llms.mdx/$'
     | '/posts/$slug'
     | '/posts/upcoming'
+    | '/admin/'
     | '/posts/'
+    | '/api/auth/$'
     | '/posts/tags/$tag'
     | '/posts/tags/'
   fileRoutesById: FileRoutesById
@@ -151,11 +199,15 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   LlmsFullDottxtRoute: typeof LlmsFullDottxtRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminNewPostRoute: typeof AdminNewPostRoute
   ApiSearchRoute: typeof ApiSearchRoute
   LlmsDotmdxSplatRoute: typeof LlmsDotmdxSplatRoute
   PostsSlugRoute: typeof PostsSlugRoute
   PostsUpcomingRoute: typeof PostsUpcomingRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   PostsIndexRoute: typeof PostsIndexRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   PostsTagsTagRoute: typeof PostsTagsTagRoute
   PostsTagsIndexRoute: typeof PostsTagsIndexRoute
 }
@@ -190,6 +242,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PostsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/posts/upcoming': {
       id: '/posts/upcoming'
       path: '/posts/upcoming'
@@ -218,6 +277,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/new-post': {
+      id: '/admin/new-post'
+      path: '/admin/new-post'
+      fullPath: '/admin/new-post'
+      preLoaderRoute: typeof AdminNewPostRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/posts/tags/': {
       id: '/posts/tags/'
       path: '/posts/tags'
@@ -232,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PostsTagsTagRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -239,11 +319,15 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   LlmsFullDottxtRoute: LlmsFullDottxtRoute,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminNewPostRoute: AdminNewPostRoute,
   ApiSearchRoute: ApiSearchRoute,
   LlmsDotmdxSplatRoute: LlmsDotmdxSplatRoute,
   PostsSlugRoute: PostsSlugRoute,
   PostsUpcomingRoute: PostsUpcomingRoute,
+  AdminIndexRoute: AdminIndexRoute,
   PostsIndexRoute: PostsIndexRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
   PostsTagsTagRoute: PostsTagsTagRoute,
   PostsTagsIndexRoute: PostsTagsIndexRoute,
 }
