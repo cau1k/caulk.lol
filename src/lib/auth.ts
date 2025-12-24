@@ -1,12 +1,15 @@
 import { betterAuth } from "better-auth";
 
 export const auth = betterAuth({
-  // Database-less/stateless mode
+  secret: process.env.BETTER_AUTH_SECRET,
   session: {
     cookieCache: {
       enabled: true,
       maxAge: 60 * 60 * 24 * 7, // 7 days
     },
+  },
+  account: {
+    storeAccountCookie: true,
   },
   socialProviders: {
     github: {
@@ -14,7 +17,6 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   },
-  // Trust our domain
   trustedOrigins: [
     "http://localhost:3000",
     "https://caulk.lol",

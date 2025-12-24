@@ -4,7 +4,7 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "bun --env-file=.env vite dev",
     "build": "vite build",
     "start": "vite preview",
     "deploy": "alchemy deploy",
@@ -33,6 +33,7 @@
     "better-auth": "^1.4.9",
     "class-variance-authority": "^0.7.1",
     "d3-force": "^3.0.0",
+    "dotenv": "^17.2.3",
     "fumadocs-core": "16.2.4",
     "fumadocs-mdx": "14.1.0",
     "fumadocs-twoslash": "^3.1.10",
