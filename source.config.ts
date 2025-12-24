@@ -4,6 +4,8 @@ import {
   remarkHeading,
   remarkMdxMermaid,
 } from "fumadocs-core/mdx-plugins";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
 import {
   applyMdxPreset,
   defineCollections,
@@ -30,8 +32,9 @@ export const posts = defineCollections({
     includeProcessedMarkdown: true,
   },
   mdxOptions: applyMdxPreset({
-    remarkPlugins: [remarkMdxMermaid, remarkHeading],
+    remarkPlugins: [remarkMath, remarkMdxMermaid, remarkHeading],
     rehypePlugins: [
+      rehypeKatex,
       [rehypeToc, { exportToc: true }],
       [
         rehypeExternalRef,
