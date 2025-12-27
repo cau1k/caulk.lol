@@ -8,7 +8,7 @@ type QuoteProps = {
 export function Quote({ children, author }: QuoteProps) {
   return (
     <figure>
-      <blockquote className="[&_p]:inline [&_p]:before:content-['\201C'] [&_p]:after:content-['\201D']">
+      <blockquote className="bg-fd-muted/50 rounded-sm py-2 pr-3 [&_p]:inline [&_p]:before:content-['\201C'] [&_p]:after:content-['\201D']">
         {children}
       </blockquote>
       {author && (
