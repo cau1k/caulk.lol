@@ -8,26 +8,96 @@ type ExcalidrawProps = {
   className?: string;
 };
 
-// Semantic colors to preserve (green=good, red=bad)
-const PRESERVE_COLORS = new Set([
-  "#2f9e44", "#40c057", "#69db7c", "#b2f2bb", // greens
-  "#e03131", "#f03e3e", "#ff8787", // reds
-]);
+// Map Excalidraw colors to CSS variables
+const COLOR_MAP: Record<string, string> = {
+  // Greens -> primary
+  "#2f9e44": "var(--primary)",
+  "#40c057": "var(--primary)",
+  "#69db7c": "var(--primary)",
+  "#b2f2bb": "var(--primary)",
+  "#087f5b": "var(--primary)",
+  "#0ca678": "var(--primary)",
+  "#38d9a9": "var(--primary)",
+  "#96f2d7": "var(--primary)",
 
-// Grays/blacks -> foreground
-const NEUTRAL_COLORS = new Set([
-  "#1e1e1e", "#202020", "#000000", "#212529", "#343a40", "#495057",
-]);
+  // Reds -> destructive
+  "#e03131": "var(--destructive)",
+  "#f03e3e": "var(--destructive)",
+  "#ff8787": "var(--destructive)",
+  "#c92a2a": "var(--destructive)",
+  "#fa5252": "var(--destructive)",
+  "#ffc9c9": "var(--destructive)",
 
-// Light grays -> muted
-const MUTED_COLORS = new Set([
-  "#ced4da", "#868e96", "#adb5bd",
-]);
+  // Blues -> chart-1
+  "#1864ab": "var(--chart-1)",
+  "#1971c2": "var(--chart-1)",
+  "#228be6": "var(--chart-1)",
+  "#4dabf7": "var(--chart-1)",
+  "#a5d8ff": "var(--chart-1)",
+  "#1c7ed6": "var(--chart-1)",
 
-// Background grays
-const BG_COLORS = new Set([
-  "#e9ecef", "#f8f9fa", "#dee2e6",
-]);
+  // Oranges -> chart-2
+  "#d9480f": "var(--chart-2)",
+  "#e8590c": "var(--chart-2)",
+  "#f76707": "var(--chart-2)",
+  "#fd7e14": "var(--chart-2)",
+  "#ff922b": "var(--chart-2)",
+  "#ffc078": "var(--chart-2)",
+
+  // Yellows -> chart-1
+  "#e67700": "var(--chart-1)",
+  "#f59f00": "var(--chart-1)",
+  "#fab005": "var(--chart-1)",
+  "#fcc419": "var(--chart-1)",
+  "#ffd43b": "var(--chart-1)",
+  "#ffe066": "var(--chart-1)",
+
+  // Violets/purples -> chart-3
+  "#5f3dc4": "var(--chart-3)",
+  "#6741d9": "var(--chart-3)",
+  "#7048e8": "var(--chart-3)",
+  "#7950f2": "var(--chart-3)",
+  "#845ef7": "var(--chart-3)",
+  "#9775fa": "var(--chart-3)",
+  "#b197fc": "var(--chart-3)",
+
+  // Pinks -> chart-4
+  "#a61e4d": "var(--chart-4)",
+  "#c2255c": "var(--chart-4)",
+  "#d6336c": "var(--chart-4)",
+  "#e64980": "var(--chart-4)",
+  "#f06595": "var(--chart-4)",
+  "#f783ac": "var(--chart-4)",
+
+  // Cyans -> chart-5
+  "#0b7285": "var(--chart-5)",
+  "#0c8599": "var(--chart-5)",
+  "#1098ad": "var(--chart-5)",
+  "#15aabf": "var(--chart-5)",
+  "#22b8cf": "var(--chart-5)",
+  "#3bc9db": "var(--chart-5)",
+
+  // Grays/blacks -> foreground
+  "#1e1e1e": "var(--foreground)",
+  "#202020": "var(--foreground)",
+  "#000000": "var(--foreground)",
+  "#212529": "var(--foreground)",
+  "#343a40": "var(--foreground)",
+  "#495057": "var(--foreground)",
+
+  // Light grays -> muted-foreground
+  "#ced4da": "var(--muted-foreground)",
+  "#868e96": "var(--muted-foreground)",
+  "#adb5bd": "var(--muted-foreground)",
+
+  // Background grays -> muted
+  "#e9ecef": "var(--muted)",
+  "#f8f9fa": "var(--muted)",
+  "#dee2e6": "var(--muted)",
+
+  // White -> background
+  "#ffffff": "var(--background)",
+};
 
 function transformSvgStyles(svg: SVGSVGElement): void {
   // Replace Excalidraw fonts with theme font
@@ -41,24 +111,12 @@ function transformSvgStyles(svg: SVGSVGElement): void {
     const stroke = el.getAttribute("stroke")?.toLowerCase();
     const fill = el.getAttribute("fill")?.toLowerCase();
 
-    if (stroke && !PRESERVE_COLORS.has(stroke)) {
-      if (NEUTRAL_COLORS.has(stroke)) {
-        el.setAttribute("stroke", "var(--foreground)");
-      } else if (MUTED_COLORS.has(stroke)) {
-        el.setAttribute("stroke", "var(--muted-foreground)");
-      }
+    if (stroke && COLOR_MAP[stroke]) {
+      el.setAttribute("stroke", COLOR_MAP[stroke]);
     }
 
-    if (fill && fill !== "none" && !PRESERVE_COLORS.has(fill)) {
-      if (NEUTRAL_COLORS.has(fill)) {
-        el.setAttribute("fill", "var(--foreground)");
-      } else if (MUTED_COLORS.has(fill)) {
-        el.setAttribute("fill", "var(--muted-foreground)");
-      } else if (BG_COLORS.has(fill)) {
-        el.setAttribute("fill", "var(--muted)");
-      } else if (fill === "#ffffff") {
-        el.setAttribute("fill", "var(--background)");
-      }
+    if (fill && fill !== "none" && COLOR_MAP[fill]) {
+      el.setAttribute("fill", COLOR_MAP[fill]);
     }
   }
 
@@ -66,12 +124,8 @@ function transformSvgStyles(svg: SVGSVGElement): void {
   const texts = svg.querySelectorAll("text");
   for (const text of texts) {
     const fill = text.getAttribute("fill")?.toLowerCase();
-    if (fill && !PRESERVE_COLORS.has(fill)) {
-      if (NEUTRAL_COLORS.has(fill)) {
-        text.setAttribute("fill", "var(--foreground)");
-      } else if (MUTED_COLORS.has(fill)) {
-        text.setAttribute("fill", "var(--muted-foreground)");
-      }
+    if (fill && COLOR_MAP[fill]) {
+      text.setAttribute("fill", COLOR_MAP[fill]);
     }
   }
 }
