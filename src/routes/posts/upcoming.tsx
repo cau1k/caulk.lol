@@ -61,12 +61,14 @@ function SwitchboardReveal({
   onReveal,
   disabled,
   layoutId,
+  onResetComplete,
 }: {
   post: Post;
   revealed: boolean;
   onReveal: () => void;
   disabled: boolean;
   layoutId: string;
+  onResetComplete?: () => void;
 }) {
   const [grid, setGrid] = useState(() => generateGrid());
   const [clearedCols, setClearedCols] = useState<Set<number>>(new Set());
@@ -123,14 +125,40 @@ function SwitchboardReveal({
     return () => timeouts.forEach(clearTimeout);
   }, [revealed, totalChars]);
 
-  // Reset grid when not revealed (for shuffle)
+  // Reset animation (reverse of reveal)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally only trigger on revealed change
   useEffect(() => {
-    if (!revealed) {
-      setClearedCols(new Set());
+    if (revealed) return;
+    
+    // If we have cleared columns, animate them back
+    if (clearedCols.size === 0) return;
+    
+    const totalDuration = 600;
+    const colDelay = totalDuration / COLS;
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+    const sortedCols = Array.from(clearedCols).sort((a, b) => b - a); // right to left
+    
+    sortedCols.forEach((col, i) => {
+      const timeout = setTimeout(() => {
+        setClearedCols((prev) => {
+          const next = new Set(prev);
+          next.delete(col);
+          return next;
+        });
+        setRevealProgress((prev) => Math.max(0, prev - Math.ceil(totalChars / COLS)));
+      }, i * colDelay);
+      timeouts.push(timeout);
+    });
+    
+    const finalTimeout = setTimeout(() => {
       setShufflingCells(new Map());
       setRevealProgress(0);
       setGrid(generateGrid());
-    }
+      onResetComplete?.();
+    }, totalDuration + 100);
+    timeouts.push(finalTimeout);
+    
+    return () => timeouts.forEach(clearTimeout);
   }, [revealed]);
 
   const handleClick = () => {
@@ -226,6 +254,7 @@ function SwitchboardReveal({
 function UpcomingPosts() {
   const { posts: originalPosts } = Route.useLoaderData();
   const [revealedSet, setRevealedSet] = useState<Set<string>>(new Set());
+  const [resettingQueue, setResettingQueue] = useState<string[]>([]);
   const [shuffledOrder, setShuffledOrder] = useState<Post[]>([]);
 
   const maxReveals = 2;
@@ -242,8 +271,51 @@ function UpcomingPosts() {
   }, []);
 
   const handleReset = useCallback(() => {
-    setRevealedSet(new Set());
-    setShuffledOrder(shuffleArray(originalPosts));
+    // Queue revealed posts for staggered reset
+    const revealed = Array.from(revealedSet);
+    if (revealed.length === 0) return;
+    
+    // Start resetting one at a time
+    const resetNext = (index: number) => {
+      if (index >= revealed.length) {
+        setShuffledOrder(shuffleArray(originalPosts));
+        return;
+      }
+      
+      const title = revealed[index];
+      setRevealedSet((prev) => {
+        const next = new Set(prev);
+        next.delete(title);
+        return next;
+      });
+      setResettingQueue((prev) => [...prev, title]);
+    };
+    
+    resetNext(0);
+  }, [revealedSet, originalPosts]);
+
+  const handleResetComplete = useCallback((title: string) => {
+    setResettingQueue((prev) => prev.filter((t) => t !== title));
+    
+    // Check if more to reset
+    setRevealedSet((current) => {
+      if (current.size > 0) {
+        const nextTitle = Array.from(current)[0];
+        setTimeout(() => {
+          setRevealedSet((prev) => {
+            const next = new Set(prev);
+            next.delete(nextTitle);
+            return next;
+          });
+        }, 200); // small delay between resets
+      } else {
+        // All done, shuffle
+        setTimeout(() => {
+          setShuffledOrder(shuffleArray(originalPosts));
+        }, 300);
+      }
+      return current;
+    });
   }, [originalPosts]);
 
   return (
@@ -278,6 +350,7 @@ function UpcomingPosts() {
                 revealed={revealedSet.has(post.title)}
                 disabled={outOfReveals}
                 onReveal={() => handleReveal(post.title)}
+                onResetComplete={() => handleResetComplete(post.title)}
               />
             ))}
           </div>
