@@ -20,21 +20,19 @@ We, as humans, operate on a "best effort" basis. We rarely have a perfect unders
 
 <Excalidraw src="/media/dynamic-context.excalidraw" alt="Dynamic context diagram" subtitle="Dynamic vs. cached prompts" />
 
-But what this graphic doesn't show is the cost of invalidating the cache. Let's assume the 10x savings is a legitimate claim.
+This is a very dumb diagram. But it shows the cost of your tokens. Do you think your LLM will perform better with three different versions of a file in its context window? Or would it make more sense to only have the most up-to-date file? More on this later.
 
-<br />
-<br />
-<br />
+---
 
-# Why we cache prompts the way we do
+# Why we cache
 
 Providers, like OpenAI, Anthropic et al. all implement this at a "root" level. You'll pay the standard price per million (PPM) tokens if you invalidate any cache.
 
-Cache hits require **exact prefix matches**. Change a single token anywhere in your cached prefix? Miss. The savings evaporate. And here's the kicker: Anthropic charges **1.25x base input price** just to *write* to cache. So you're paying a premium upfront, gambling that you'll reuse that prefix enough times to break even.
+Cache hits require **exact prefix matches**. Change a single token anywhere in your cached prefix? Miss. The savings evaporate. This can hurt, especially when: (a) Anthropic charges **1.25x base input price** just to *write* to cache, and (b) your harness assumes you want to cache your tokens. So, in most cases, you're blindly paying a premium upfront and gambling that you'll reuse them enough times to break even. Which, in most cases, you do.
 
-For coding agents, this is a losing bet.
+But, for coding agents, I think this is a losing bet. Codebases change drastically. And in multi-agent systems, shit changes often.
 
-## The prefix-chaos problem
+## The prefix problem
 
 Coding agents are prefix-chaos machines. They continuously inject tool outputs: file reads, diffs, search results, build logs, stack traces. They re-read the same file after edits, creating near-duplicates. They change tool schemas. They prepend timestamps, environment info, session banners.
 
@@ -46,23 +44,26 @@ The ugly choice:
 
 Most of the time, pruning wins anyway.
 
-## Why you shouldn't care about caching on subscription plans
+## Why you you should care if you're on a subscription plan
 
 If you're using GitHub Copilot, Claude Code, Codex, or any flat-rate coding assistant, prompt caching is *their* problem, not yours. You don't pay per-token. What you *do* care about is whether the model stays coherent over long sessions.
 
-Here's the thing: caching incentivizes keeping history unmodified. But that's often worse for *you*:
+Caching incentivizes keeping history unmodified. But that's often worse for *you*:
 
-1. **Caching doesn't reduce context window usage**. Even cheap cached tokens occupy context. Long sessions still hit the limit, forcing summarization, message dropping, or session resets. You experience this as the model "forgetting" what you told it.
+1. Caching doesn't increase your context window. Every token eats at it like it's a piggy bank.
 
-2. **Bloated context degrades model behavior**. When context gets noisy with stale file reads, old diffs, and superseded tool outputs, models miss details, loop, redo work, run unnecessary tools. You experience this as wasted time and frustration.
+2. With stale file reads, old diffs, and superseded tool outputs, models miss details, loop, redo work, run unnecessary tools, fail edits. Wastes more time than you could save with faster TTFT that comes with caching.
 
 3. **Cache retention is short**. OpenAI's is often minutes. You tab away, come back, cache is gone anyway. The provider eats full price—but more importantly, if they optimized for caching over pruning, your context is now bloated *and* uncached.
 
 The providers who understand this will prioritize **context quality over cache hits**. As a user, that's what you want.
 
-## The alternative: dynamic context pruning
+## Dynamic Context Pruning
 
-Enter [opencode-dynamic-context-pruning](https://github.com/Opencode-DCP/opencode-dynamic-context-pruning), a plugin for OpenCode that gives models tools to manage their own context.
+> I think of DCP like a benevolent blacking out. You only forget the pieces you didn't need anyway.
+-- snugglespud
+
+Re: [opencode-dynamic-context-pruning](https://github.com/Opencode-DCP/opencode-dynamic-context-pruning), a plugin that gives models tools to manage their own context.
 
 The approach:
 - Inject a numbered list of prunable tool outputs into the conversation
