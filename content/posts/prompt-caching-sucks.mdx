@@ -18,7 +18,7 @@ We, as humans, operate on a "best effort" basis. We rarely have a perfect unders
 flowchart TB
     subgraph current["What You Actually Need"]
         direction TB
-        need["edit: file.ts [v3]"]
+        v1ghost["edit: file.ts [v1]"] --> v2ghost["edit: file.ts [v2]"] --> need["edit: file.ts [v3]"]
     end
 
     subgraph cached["Cached"]
@@ -28,6 +28,9 @@ flowchart TB
 
     need -. "1x tokens" .-> LLM
     v3 -. "3x tokens" .-> LLM
+
+    classDef ghost fill:transparent,stroke:#8c8c8c,color:#8c8c8c,stroke-dasharray:4 4,opacity:0.5
+    class v1ghost,v2ghost ghost
 
     style current fill:none,stroke:none
     style cached fill:none,stroke:none
