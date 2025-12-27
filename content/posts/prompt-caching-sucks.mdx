@@ -8,11 +8,11 @@ draft: true
 ---
 import { Excalidraw } from "../../src/components/excalidraw";
 
-A lot of people rely on prompt caching--namely those doing multi-turn tasks--as it can save **a lot** on inference costs. I believe coding agents benefit the most even though everyone sees savings. In sum, any time you send multiple "user" messages to an LLM API, prompt caching is already enabled and saving your wallet.
+A lot of people rely on prompt caching, namely those doing multi-turn tasks, as it can save **a lot** on inference costs. I believe coding agents benefit the most even though everyone sees savings. In sum, any time you send multiple "user" messages to an LLM API, prompt caching is already enabled and saving your wallet.
 
 > Why do we cache pompts?
 
-For reference, cached tokens are both 10x cheaper and, according to Anthropic, can reduce time to first token (TTFT) by up to 85%. This is a fantasetic bargain for the end user.
+For reference, cached tokens are both 10x cheaper and, according to Anthropic, can reduce time to first token (TTFT) by up to 85%. This is a fantastic bargain for the end user.
 
 However, this whole scheme assumes context is static. Now, it mostly is, but **hear me out**: does a project not change over its lifecycle? I mean, hollistically, do plans change? Yes, always. Do design requirements change? Yep. Do technical requirements change? Absolutely.
 
@@ -36,7 +36,7 @@ For coding agents, this is a losing bet.
 
 ## The prefix-chaos problem
 
-Coding agents are prefix-chaos machines. They continuously inject tool outputs—file reads, diffs, search results, build logs, stack traces. They re-read the same file after edits, creating near-duplicates. They change tool schemas. They prepend timestamps, environment info, session banners.
+Coding agents are prefix-chaos machines. They continuously inject tool outputs: file reads, diffs, search results, build logs, stack traces. They re-read the same file after edits, creating near-duplicates. They change tool schemas. They prepend timestamps, environment info, session banners.
 
 Prompt caching wants static instructions at the beginning, variable stuff at the end. Coding agents produce variable stuff *everywhere*.
 
@@ -48,7 +48,7 @@ Most of the time, pruning wins anyway.
 
 ## Why you shouldn't care about caching on subscription plans
 
-If you're using GitHub Copilot, Claude Code, Codex, or any flat-rate coding assistant—prompt caching is *their* problem, not yours. You don't pay per-token. What you *do* care about is whether the model stays coherent over long sessions.
+If you're using GitHub Copilot, Claude Code, Codex, or any flat-rate coding assistant, prompt caching is *their* problem, not yours. You don't pay per-token. What you *do* care about is whether the model stays coherent over long sessions.
 
 Here's the thing: caching incentivizes keeping history unmodified. But that's often worse for *you*:
 
@@ -62,7 +62,7 @@ The providers who understand this will prioritize **context quality over cache h
 
 ## The alternative: dynamic context pruning
 
-Enter [opencode-dynamic-context-pruning](https://github.com/Opencode-DCP/opencode-dynamic-context-pruning)—a plugin for OpenCode that gives models tools to manage their own context.
+Enter [opencode-dynamic-context-pruning](https://github.com/Opencode-DCP/opencode-dynamic-context-pruning), a plugin for OpenCode that gives models tools to manage their own context.
 
 The approach:
 - Inject a numbered list of prunable tool outputs into the conversation
@@ -73,34 +73,24 @@ This explicitly trades cache hits for smaller prompts and better model behavior.
 
 **The punchline**: prompt caching optimizes for reusing the same big prefix. Coding agents are a war of attrition against ever-growing, ever-changing context. If you're paying per-token, caching matters. If you're on a subscription, you want a tool that prioritizes context hygiene over cache hit rates—because that's what keeps the model useful over long sessions.
 
-## An even better alternative: smarter cache invalidation
+## An even better alternative: rethinking cache invalidation
 
-The real problem isn't caching—it's that current implementations require **exact prefix matches**. Change anything early in your context and the entire cache invalidates. This is a design choice, not a fundamental constraint.
+The real problem isn't caching itself. It's that current implementations require exact prefix matches. Change anything early in your context and the entire cache invalidates. This is a design choice, not a fundamental constraint.
 
-Researchers have been working on position-independent KV cache reuse. The core insight: instead of caching the entire prefix as one monolithic blob, cache **chunks** independently and reconnect them at inference time.
+There's been a lot of recent work on position-independent KV cache reuse. The core insight: instead of caching the entire prefix as one monolithic blob, cache chunks independently and reconnect them at inference time.
 
-### Chunk caching with selective recompute
+Yuhan Liu et al. explore this in "[CacheBlend](https://arxiv.org/abs/2405.16444)," where they precompute KV tensors per chunk (think: per file, per tool output, per document). At runtime, they concatenate chunk KVs, even if they weren't originally a prefix, and selectively recompute a small subset of tokens to recover cross-chunk attention. They report 2-3x faster TTFT and 3-5x throughput with negligible quality loss.
 
-[CacheBlend](https://arxiv.org/abs/2405.16444) precomputes KV tensors per chunk (think: per file, per tool output, per document). At runtime, it concatenates chunk KVs—even if they weren't originally a prefix—and selectively recomputes a small subset of tokens to recover cross-chunk attention. The result: **2-3x faster TTFT** and **3-5x throughput** with negligible quality loss.
+Shuowei Jin et al. formalize this as "position-independent caching" in "[EPIC](https://arxiv.org/abs/2410.15332)" and introduce LegoLink: recompute only the first ~32 tokens at each chunk boundary to fix attention sink artifacts. They report up to 8x TTFT improvement.
 
-[EPIC](https://arxiv.org/abs/2410.15332) formalizes this as "position-independent caching" and introduces LegoLink: recompute only the first ~32 tokens at each chunk boundary to fix attention sink artifacts. They report **up to 8x TTFT improvement**.
+The pattern here is straightforward: cache chunks independently, pay a small recompute tax at boundaries, skip the full prefill.
 
-The pattern: cache chunks independently, pay a small recompute tax at boundaries, skip the full prefill.
+Some researchers take a more radical approach. Sungjin Lee et al. in "[Block-Attention](https://arxiv.org/abs/2409.15355)" change the attention mask so retrieved passages are independent blocks with no cross-block attention. Only the final block (your query) attends to everything. This requires fine-tuning, but cached passage KVs become reusable across any context. They report 98.7% TTFT reduction in their benchmarks.
 
-### Making segments independent by design
+Xinhao Chen et al. in "[KVLink](https://arxiv.org/abs/2502.16002)" store KV without baked-in positional encoding (RoPE), then reapply correct positions at inference and insert trainable "link tokens" between segments. 85-96% TTFT reduction with precomputed caches.
 
-[Block-Attention](https://arxiv.org/abs/2409.15355) takes a more radical approach: change the attention mask so retrieved passages are independent blocks with no cross-block attention. Only the final block (your query) attends to everything. This requires fine-tuning, but cached passage KVs become reusable across *any* context—**98.7% TTFT reduction** in their benchmarks.
+What would this mean for coding agents? Your system prompt gets cached once. Each file read is cached independently. Tool outputs are cached as reusable chunks. Reordering, inserting, or removing chunks doesn't invalidate everything.
 
-[KVLink](https://arxiv.org/abs/2502.16002) stores KV without baked-in positional encoding (RoPE), then reapplies correct positions at inference and inserts trainable "link tokens" between segments. **85-96% TTFT reduction** with precomputed caches.
+The implementations are complex. You need hierarchical KV storage, position re-encoding, custom attention kernels. But the frameworks are catching up. vLLM already does [hash-based block caching](https://docs.vllm.ai/en/stable/design/prefix_caching). Lianmin Zheng et al. store prompts in a radix tree for fast prefix reuse with SGLang's "[RadixAttention](https://arxiv.org/abs/2312.07104)."
 
-### What this means for coding agents
-
-Imagine a world where:
-- Your system prompt is cached once
-- Each file read is cached independently
-- Tool outputs are cached as reusable chunks
-- Reordering, inserting, or removing chunks doesn't invalidate everything
-
-This is the direction research is heading. The implementations are complex—you need hierarchical KV storage, position re-encoding, custom attention kernels—but the frameworks are catching up. vLLM already does [hash-based block caching](https://docs.vllm.ai/en/stable/design/prefix_caching). SGLang's [RadixAttention](https://arxiv.org/abs/2312.07104) stores prompts in a radix tree for fast prefix reuse.
-
-Until providers adopt these approaches, dynamic context pruning remains the pragmatic choice. But the future isn't "cache everything as a prefix"—it's modular, position-independent chunk caching that doesn't punish you for having a dynamic workflow.
+Until providers adopt these approaches, dynamic context pruning remains the pragmatic choice. But the future isn't "cache everything as a prefix." It's modular, position-independent chunk caching that doesn't punish you for having a dynamic workflow.
