@@ -28,4 +28,49 @@ But what this graphic doesn't show is the cost of invalidating the cache. Let's 
 
 # Why we cache prompts the way we do
 
-Providers, like OpenAI, Anthropic et al. all implement this at a "root" level. You'll pay a the standard price per million (PPM) tokens if you invalidate any cache.
+Providers, like OpenAI, Anthropic et al. all implement this at a "root" level. You'll pay the standard price per million (PPM) tokens if you invalidate any cache.
+
+Cache hits require **exact prefix matches**. Change a single token anywhere in your cached prefix? Miss. The savings evaporate. And here's the kicker: Anthropic charges **1.25x base input price** just to *write* to cache. So you're paying a premium upfront, gambling that you'll reuse that prefix enough times to break even.
+
+For coding agents, this is a losing bet.
+
+## The prefix-chaos problem
+
+Coding agents are prefix-chaos machines. They continuously inject tool outputs—file reads, diffs, search results, build logs, stack traces. They re-read the same file after edits, creating near-duplicates. They change tool schemas. They prepend timestamps, environment info, session banners.
+
+Prompt caching wants static instructions at the beginning, variable stuff at the end. Coding agents produce variable stuff *everywhere*.
+
+The ugly choice:
+- Keep history unmodified → better cache hit rates, but **context bloat**, **context poisoning**, and eventual **context window death**
+- Prune history → better model behavior and token counts, but you "break" caching
+
+Most of the time, pruning wins anyway.
+
+## Why subscription providers shouldn't rely on caching
+
+If you're selling a flat-rate coding assistant, your unit economics problem is simple: you earn fixed revenue per user; you pay variable cost per token.
+
+Caching sounds like a silver bullet. It's not.
+
+1. **Cache savings are probabilistic**. OpenAI retention is often minutes, not days. Users tab away, come back later, caches gone—you eat full price again.
+
+2. **Caching doesn't reduce context window usage**. Even cheap cached tokens occupy context. Long sessions still hit the limit, forcing summarization, message dropping, or session resets.
+
+3. **Output tokens and extra turns are where agents bleed**. When context gets bloated and noisy, models miss details, loop, redo work, run unnecessary tools, take more turns. Caching doesn't fix that.
+
+4. **Anthropic's cache writes can penalize churn**. An agent that keeps producing "new cacheable prefixes" pays write premiums repeatedly without enough reuse before TTL eviction.
+
+A subscription provider wants **deterministic token shrinkage per step**, not "maybe we get a cache hit if the user doesn't go make coffee."
+
+## The alternative: dynamic context pruning
+
+Enter [opencode-dynamic-context-pruning](https://github.com/Opencode-DCP/opencode-dynamic-context-pruning)—a plugin for OpenCode that gives models tools to manage their own context.
+
+The approach:
+- Inject a numbered list of prunable tool outputs into the conversation
+- Give the model two tools: `discard` (remove completed/noisy content) and `extract` (distill findings, then remove raw output)
+- Run automatic zero-LLM-cost strategies: deduplication, superseding writes, purging errors
+
+This explicitly trades cache hits for smaller prompts and better model behavior. And for a subscription provider, that's usually the right trade.
+
+**The economic punchline**: prompt caching optimizes for reusing the same big prefix. Coding agents are a war of attrition against ever-growing, ever-changing context. A provider wants guaranteed smaller prompts and predictable costs—not discounts that vanish when you most need them.
