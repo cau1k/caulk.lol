@@ -72,3 +72,35 @@ The approach:
 This explicitly trades cache hits for smaller prompts and better model behavior. For subscription users, that means longer coherent sessions and fewer "the model forgot everything" moments.
 
 **The punchline**: prompt caching optimizes for reusing the same big prefix. Coding agents are a war of attrition against ever-growing, ever-changing context. If you're paying per-token, caching matters. If you're on a subscription, you want a tool that prioritizes context hygiene over cache hit rates—because that's what keeps the model useful over long sessions.
+
+## An even better alternative: smarter cache invalidation
+
+The real problem isn't caching—it's that current implementations require **exact prefix matches**. Change anything early in your context and the entire cache invalidates. This is a design choice, not a fundamental constraint.
+
+Researchers have been working on position-independent KV cache reuse. The core insight: instead of caching the entire prefix as one monolithic blob, cache **chunks** independently and reconnect them at inference time.
+
+### Chunk caching with selective recompute
+
+[CacheBlend](https://arxiv.org/abs/2405.16444) precomputes KV tensors per chunk (think: per file, per tool output, per document). At runtime, it concatenates chunk KVs—even if they weren't originally a prefix—and selectively recomputes a small subset of tokens to recover cross-chunk attention. The result: **2-3x faster TTFT** and **3-5x throughput** with negligible quality loss.
+
+[EPIC](https://arxiv.org/abs/2410.15332) formalizes this as "position-independent caching" and introduces LegoLink: recompute only the first ~32 tokens at each chunk boundary to fix attention sink artifacts. They report **up to 8x TTFT improvement**.
+
+The pattern: cache chunks independently, pay a small recompute tax at boundaries, skip the full prefill.
+
+### Making segments independent by design
+
+[Block-Attention](https://arxiv.org/abs/2409.15355) takes a more radical approach: change the attention mask so retrieved passages are independent blocks with no cross-block attention. Only the final block (your query) attends to everything. This requires fine-tuning, but cached passage KVs become reusable across *any* context—**98.7% TTFT reduction** in their benchmarks.
+
+[KVLink](https://arxiv.org/abs/2502.16002) stores KV without baked-in positional encoding (RoPE), then reapplies correct positions at inference and inserts trainable "link tokens" between segments. **85-96% TTFT reduction** with precomputed caches.
+
+### What this means for coding agents
+
+Imagine a world where:
+- Your system prompt is cached once
+- Each file read is cached independently
+- Tool outputs are cached as reusable chunks
+- Reordering, inserting, or removing chunks doesn't invalidate everything
+
+This is the direction research is heading. The implementations are complex—you need hierarchical KV storage, position re-encoding, custom attention kernels—but the frameworks are catching up. vLLM already does [hash-based block caching](https://docs.vllm.ai/en/stable/design/prefix_caching). SGLang's [RadixAttention](https://arxiv.org/abs/2312.07104) stores prompts in a radix tree for fast prefix reuse.
+
+Until providers adopt these approaches, dynamic context pruning remains the pragmatic choice. But the future isn't "cache everything as a prefix"—it's modular, position-independent chunk caching that doesn't punish you for having a dynamic workflow.
