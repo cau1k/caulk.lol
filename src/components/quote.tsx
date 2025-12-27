@@ -12,7 +12,7 @@ export function Quote({ children, author }: QuoteProps) {
         {children}
       </blockquote>
       {author && (
-        <figcaption className="!mt-0 pl-4 text-sm italic text-fd-muted-foreground">
+        <figcaption className="mt-2 pl-4 text-sm italic text-fd-muted-foreground">
           — {author}
         </figcaption>
       )}
