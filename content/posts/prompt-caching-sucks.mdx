@@ -14,10 +14,23 @@ However, this assumes context is static. Now, it mostly is, but **hear me out**:
 We, as humans, operate on a "best effort" basis. We rarely have a perfect understanding of a project from the start.
 
 ```mermaid
----
-title: Context is dynamic
----
+%%{ init: { 'flowchart': { 'curve': 'stepBefore' } } }%%
+flowchart TB
+    subgraph current["What You Actually Need"]
+        direction TB
+        need["edit: file.ts [v3]"]
+    end
 
+    subgraph cached["Cached"]
+        direction TB
+        v1["edit: file.ts [v1]"] --> v2["edit: file.ts [v2]"] --> v3["edit: file.ts [v3]"]
+    end
+
+    need -. "1x tokens" .-> LLM
+    v3 -. "3x tokens" .-> LLM
+
+    style current fill:none,stroke:none
+    style cached fill:none,stroke:none
 ```
 <br />
 # Why we cache prompts the way we do
