@@ -58,15 +58,17 @@ Caching incentivizes keeping history unmodified. But that's often worse for *you
 
 3. **Cache retention is short**. OpenAI's is often minutes. You tab away, come back, cache is gone anyway. The provider eats full price—but more importantly, if they optimized for caching over pruning, your context is now bloated *and* uncached.
 
-The providers who understand this will prioritize **context quality over cache hits**. As a user, that's what you want.
+The providers who understand this should and will eventually prioritize context quality over cache hits. Quality over quantity.
 
 ## Dynamic Context Pruning
+
+Re: [opencode-dynamic-context-pruning](https://github.com/Opencode-DCP/opencode-dynamic-context-pruning), a plugin that gives models tools to manage their own context windows.
 
 <Quote author="snugglespud, Cicerone Certified Beer Server">
 I think of DCP like a benevolent blacking out. You only forget the pieces you didn't need anyway.
 </Quote>
 
-Re: [opencode-dynamic-context-pruning](https://github.com/Opencode-DCP/opencode-dynamic-context-pruning), a plugin that gives models tools to manage their own context windows. It feels like a more impact-ready version of Claude Code's own [awareness](https://cognition.ai/blog/devin-sonnet-4-5-lessons-and-challenges#the-model-is-aware-of-its-context-window) of its context window.
+Claude is already [aware](https://www.cognition.ai/blog/devin-sonnet-4-5-lessons-and-challenges#the-model-is-aware-of-its-context-window) of its context window, but awareness without agency is just watching yourself drown. DCP gives the model tools to perform like an endurance swimmer.
 
 The approach:
 - Inject a numbered list of prunable tool outputs into the conversation
