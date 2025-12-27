@@ -143,10 +143,7 @@ function transformSvgStyles(svg: SVGSVGElement): void {
 
 export function Excalidraw({ src, alt, subtitle, className }: ExcalidrawProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const modalRef = useRef<HTMLDialogElement>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isZoomed, setIsZoomed] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined" || !containerRef.current) return;
@@ -184,64 +181,18 @@ export function Excalidraw({ src, alt, subtitle, className }: ExcalidrawProps) {
     loadExcalidraw();
   }, [src, alt]);
 
-  const handleZoom = () => {
-    if (!containerRef.current || !modalRef.current) return;
-    const svg = containerRef.current.querySelector("svg");
-    if (!svg) return;
-
-    const modalContent = modalRef.current.querySelector("[data-modal-content]");
-    if (modalContent) {
-      const clonedSvg = svg.cloneNode(true) as SVGSVGElement;
-      clonedSvg.style.maxWidth = "90vw";
-      clonedSvg.style.maxHeight = "90vh";
-      clonedSvg.style.width = "auto";
-      clonedSvg.style.height = "auto";
-      modalContent.replaceChildren(clonedSvg);
-    }
-
-    modalRef.current.showModal();
-    setIsZoomed(true);
-  };
-
-  const handleClose = () => {
-    modalRef.current?.close();
-    setIsZoomed(false);
-  };
-
   if (error) {
     return <div className="text-destructive text-sm">{error}</div>;
   }
 
   return (
-    <>
-      <figure className={className}>
-        {/* biome-ignore lint/a11y/useSemanticElements: div needed for SVG injection */}
-        <div
-          ref={containerRef}
-          onClick={handleZoom}
-          onKeyDown={(e) => e.key === "Enter" && handleZoom()}
-          role="button"
-          tabIndex={0}
-          className="cursor-zoom-in"
-          aria-label={alt ? `Zoom ${alt}` : "Zoom diagram"}
-        />
-        {subtitle && (
-          <figcaption className="text-muted-foreground mt-2 text-center text-sm">
-            {subtitle}
-          </figcaption>
-        )}
-      </figure>
-
-      {/* biome-ignore lint/a11y/useKeyWithClickEvents: dialog handles escape natively */}
-      <dialog
-        ref={modalRef}
-        onClick={handleClose}
-        className="fixed inset-0 z-50 m-0 h-dvh max-h-none w-dvw max-w-none cursor-zoom-out border-none bg-transparent p-0 backdrop:bg-transparent"
-      >
-        <div className="bg-background/95 flex h-full w-full items-center justify-center transition-colors duration-300">
-          <div data-modal-content />
-        </div>
-      </dialog>
-    </>
+    <figure className={className}>
+      <div ref={containerRef} />
+      {subtitle && (
+        <figcaption className="text-muted-foreground mt-2 text-center text-sm">
+          {subtitle}
+        </figcaption>
+      )}
+    </figure>
   );
 }
