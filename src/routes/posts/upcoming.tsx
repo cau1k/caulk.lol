@@ -228,7 +228,7 @@ function UpcomingPosts() {
   const [revealedSet, setRevealedSet] = useState<Set<string>>(new Set());
   const [shuffledOrder, setShuffledOrder] = useState<Post[]>([]);
 
-  const maxReveals = Math.max(1, Math.ceil(originalPosts.length * 0.33));
+  const maxReveals = 2;
   const revealsRemaining = maxReveals - revealedSet.size;
   const outOfReveals = revealsRemaining <= 0;
 
