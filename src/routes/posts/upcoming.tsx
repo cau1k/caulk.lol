@@ -237,32 +237,9 @@ function UpcomingPosts() {
     setShuffledOrder(shuffleArray(originalPosts));
   }, [originalPosts]);
 
-  // Shuffle unrevealed posts after a reveal
-  const handleReveal = useCallback(
-    (title: string) => {
-      setRevealedSet((prev) => new Set([...prev, title]));
-
-      // Shuffle positions after reveal animation completes
-      setTimeout(() => {
-        setShuffledOrder((current) => {
-          const revealed: Post[] = [];
-          const unrevealed: Post[] = [];
-
-          for (const post of current) {
-            if (revealedSet.has(post.title) || post.title === title) {
-              revealed.push(post);
-            } else {
-              unrevealed.push(post);
-            }
-          }
-
-          // Revealed posts sink to bottom, unrevealed get shuffled
-          return [...shuffleArray(unrevealed), ...revealed];
-        });
-      }, 1000);
-    },
-    [revealedSet],
-  );
+  const handleReveal = useCallback((title: string) => {
+    setRevealedSet((prev) => new Set([...prev, title]));
+  }, []);
 
   const handleReset = useCallback(() => {
     setRevealedSet(new Set());
