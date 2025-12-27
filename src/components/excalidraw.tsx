@@ -29,7 +29,12 @@ const BG_COLORS = new Set([
   "#e9ecef", "#f8f9fa", "#dee2e6",
 ]);
 
-function transformSvgColors(svg: SVGSVGElement): void {
+function transformSvgStyles(svg: SVGSVGElement): void {
+  // Replace Excalidraw fonts with theme font
+  const style = document.createElement("style");
+  style.textContent = `text { font-family: "CMU Sans Serif", sans-serif !important; }`;
+  svg.prepend(style);
+
   const elements = svg.querySelectorAll("[stroke], [fill]");
 
   for (const el of elements) {
@@ -96,7 +101,7 @@ export function Excalidraw({ src, alt, className }: ExcalidrawProps) {
           },
         });
 
-        transformSvgColors(svg);
+        transformSvgStyles(svg);
 
         if (alt) svg.setAttribute("aria-label", alt);
         svg.style.width = "100%";
