@@ -1,0 +1,12 @@
+---
+title: Prompt caching sucks
+description: Prompt caching sucks (for coding agents)
+author: Caulk
+date: "2025-12-26T21:33:44-05:00"
+tags: ["ai", "prompt-caching", "infra"]
+draft: true
+---
+
+A lot of people rely on prompt caching, namely those doing multi-turn tasks. It can save **a lot** of inference costs if you take advantage of it. It is most beneficial, in terms of cost, in coding agents, but everyone benefits from it. Anytime you have to send multiple "user" messages to an API, prompt caching is already enabled and saving your wallet.
+
+# Why we cache prompts the way we do
