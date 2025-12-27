@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 type ExcalidrawProps = {
   src: string;
   alt?: string;
+  subtitle?: string;
   className?: string;
 };
 
@@ -102,8 +103,18 @@ const COLOR_MAP: Record<string, string> = {
 function transformSvgStyles(svg: SVGSVGElement): void {
   // Replace Excalidraw fonts with theme font
   const style = document.createElement("style");
-  style.textContent = `text { font-family: "CMU Sans Serif", sans-serif !important; }`;
+  style.textContent = `
+    text, tspan, [font-family] { 
+      font-family: var(--font-serif) !important; 
+    }
+  `;
   svg.prepend(style);
+
+  // Also strip inline font-family attributes
+  const textEls = svg.querySelectorAll("text, tspan, [font-family]");
+  for (const el of textEls) {
+    el.removeAttribute("font-family");
+  }
 
   const elements = svg.querySelectorAll("[stroke], [fill]");
 
@@ -130,7 +141,7 @@ function transformSvgStyles(svg: SVGSVGElement): void {
   }
 }
 
-export function Excalidraw({ src, alt, className }: ExcalidrawProps) {
+export function Excalidraw({ src, alt, subtitle, className }: ExcalidrawProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -174,5 +185,14 @@ export function Excalidraw({ src, alt, className }: ExcalidrawProps) {
     return <div className="text-destructive text-sm">{error}</div>;
   }
 
-  return <div ref={containerRef} className={className} />;
+  return (
+    <figure className={className}>
+      <div ref={containerRef} />
+      {subtitle && (
+        <figcaption className="text-muted-foreground mt-2 text-center text-sm">
+          {subtitle}
+        </figcaption>
+      )}
+    </figure>
+  );
 }

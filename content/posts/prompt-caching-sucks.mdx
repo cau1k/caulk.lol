@@ -14,38 +14,11 @@ However, this assumes context is static. Now, it mostly is, but **hear me out**:
 
 We, as humans, operate on a "best effort" basis. We rarely have a perfect understanding of a project from the start.
 
-```mermaid
-%%{ init: { 'flowchart': { 'curve': 'stepAfter', 'nodeSpacing': 80, 'rankSpacing': 44 } } }%%
-flowchart TB
-    subgraph current["What You Actually Need"]
-        direction TB
-        v1ghost["edit: file.ts [v1]"] --> v2ghost["edit: file.ts [v2]"] --> need["edit: file.ts [v3]"]
-    end
+<Excalidraw src="/media/dynamic-context.excalidraw" alt="Dynamic context diagram" subtitle="Dynamic vs. cached prompts" />
 
-    subgraph cached["What You Get (Cached)"]
-        direction TB
-        v1["edit: file.ts [v1]"] --> v2["edit: file.ts [v2]"] --> v3["edit: file.ts [v3]"]
-    end
-
-    need -.-> needTokens["1x tokens"]
-    v3 -.-> cachedTokens["3x tokens"]
-    needTokens --- join(( ))
-    cachedTokens --- join
-    join --> LLM
-
-    classDef ghost fill:transparent,stroke:#8c8c8c,color:#8c8c8c,stroke-dasharray:4 4,opacity:0.5
-    classDef token fill:none,stroke:none,color:#8c8c8c
-    class v1ghost,v2ghost ghost
-    class needTokens,cachedTokens token
-
-    style current fill:none,stroke:none
-    style cached fill:none,stroke:none
-    style join fill:none,stroke:none
-```
 <br />
-
-<Excalidraw src="/media/dynamic-context.excalidraw" alt="Dynamic context diagram" />
-
+<br />
+<br />
 # Why we cache prompts the way we do
 
-Providers, like OpenAI, Anthropic et al. all implement this at a "root" level. You'll pay a "premium" if you don't buy into prompt caching.
+Providers, like OpenAI, Anthropic et al. all implement this at a "root" level. You'll pay a the standard price per million (PPM) tokens if you invalidate any cache.
