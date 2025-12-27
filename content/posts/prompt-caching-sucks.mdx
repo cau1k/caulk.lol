@@ -46,21 +46,19 @@ The ugly choice:
 
 Most of the time, pruning wins anyway.
 
-## Why subscription providers shouldn't rely on caching
+## Why you shouldn't care about caching on subscription plans
 
-If you're selling a flat-rate coding assistant, your unit economics problem is simple: you earn fixed revenue per user; you pay variable cost per token.
+If you're using GitHub Copilot, Claude Code, Codex, or any flat-rate coding assistant—prompt caching is *their* problem, not yours. You don't pay per-token. What you *do* care about is whether the model stays coherent over long sessions.
 
-Caching sounds like a silver bullet. It's not.
+Here's the thing: caching incentivizes keeping history unmodified. But that's often worse for *you*:
 
-1. **Cache savings are probabilistic**. OpenAI retention is often minutes, not days. Users tab away, come back later, caches gone—you eat full price again.
+1. **Caching doesn't reduce context window usage**. Even cheap cached tokens occupy context. Long sessions still hit the limit, forcing summarization, message dropping, or session resets. You experience this as the model "forgetting" what you told it.
 
-2. **Caching doesn't reduce context window usage**. Even cheap cached tokens occupy context. Long sessions still hit the limit, forcing summarization, message dropping, or session resets.
+2. **Bloated context degrades model behavior**. When context gets noisy with stale file reads, old diffs, and superseded tool outputs, models miss details, loop, redo work, run unnecessary tools. You experience this as wasted time and frustration.
 
-3. **Output tokens and extra turns are where agents bleed**. When context gets bloated and noisy, models miss details, loop, redo work, run unnecessary tools, take more turns. Caching doesn't fix that.
+3. **Cache retention is short**. OpenAI's is often minutes. You tab away, come back, cache is gone anyway. The provider eats full price—but more importantly, if they optimized for caching over pruning, your context is now bloated *and* uncached.
 
-4. **Anthropic's cache writes can penalize churn**. An agent that keeps producing "new cacheable prefixes" pays write premiums repeatedly without enough reuse before TTL eviction.
-
-A subscription provider wants **deterministic token shrinkage per step**, not "maybe we get a cache hit if the user doesn't go make coffee."
+The providers who understand this will prioritize **context quality over cache hits**. As a user, that's what you want.
 
 ## The alternative: dynamic context pruning
 
@@ -71,6 +69,6 @@ The approach:
 - Give the model two tools: `discard` (remove completed/noisy content) and `extract` (distill findings, then remove raw output)
 - Run automatic zero-LLM-cost strategies: deduplication, superseding writes, purging errors
 
-This explicitly trades cache hits for smaller prompts and better model behavior. And for a subscription provider, that's usually the right trade.
+This explicitly trades cache hits for smaller prompts and better model behavior. For subscription users, that means longer coherent sessions and fewer "the model forgot everything" moments.
 
-**The economic punchline**: prompt caching optimizes for reusing the same big prefix. Coding agents are a war of attrition against ever-growing, ever-changing context. A provider wants guaranteed smaller prompts and predictable costs—not discounts that vanish when you most need them.
+**The punchline**: prompt caching optimizes for reusing the same big prefix. Coding agents are a war of attrition against ever-growing, ever-changing context. If you're paying per-token, caching matters. If you're on a subscription, you want a tool that prioritizes context hygiene over cache hit rates—because that's what keeps the model useful over long sessions.
