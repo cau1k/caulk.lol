@@ -6,6 +6,7 @@ date: "2025-12-26T21:33:44-05:00"
 tags: ["ai", "prompt-caching", "infra"]
 draft: true
 ---
+import { Excalidraw } from "../../src/components/excalidraw";
 
 A lot of people rely on prompt caching--namely those doing multi-turn tasks--as it can save **a lot** on inference costs. I believe coding agents benefit the most even though everyone sees savings. In sum, any time you send multiple "user" messages to an LLM API, prompt caching is already enabled and saving your wallet.
 
@@ -42,6 +43,9 @@ flowchart TB
     style join fill:none,stroke:none
 ```
 <br />
+
+<Excalidraw src="/media/dynamic-context.excalidraw" alt="Dynamic context diagram" />
+
 # Why we cache prompts the way we do
 
 Providers, like OpenAI, Anthropic et al. all implement this at a "root" level. You'll pay a "premium" if you don't buy into prompt caching.
