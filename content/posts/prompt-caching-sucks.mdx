@@ -14,7 +14,7 @@ However, this assumes context is static. Now, it mostly is, but **hear me out**:
 We, as humans, operate on a "best effort" basis. We rarely have a perfect understanding of a project from the start.
 
 ```mermaid
-%%{ init: { 'flowchart': { 'curve': 'stepBefore' } } }%%
+%%{ init: { 'flowchart': { 'curve': 'stepAfter', 'nodeSpacing': 80, 'rankSpacing': 44 } } }%%
 flowchart TB
     subgraph current["What You Actually Need"]
         direction TB
@@ -26,14 +26,20 @@ flowchart TB
         v1["edit: file.ts [v1]"] --> v2["edit: file.ts [v2]"] --> v3["edit: file.ts [v3]"]
     end
 
-    need -. "1x tokens" .-> LLM
-    v3 -. "3x tokens" .-> LLM
+    need -.-> needTokens["1x tokens"]
+    v3 -.-> cachedTokens["3x tokens"]
+    needTokens --- join(( ))
+    cachedTokens --- join
+    join --> LLM
 
     classDef ghost fill:transparent,stroke:#8c8c8c,color:#8c8c8c,stroke-dasharray:4 4,opacity:0.5
+    classDef token fill:none,stroke:none,color:#8c8c8c
     class v1ghost,v2ghost ghost
+    class needTokens,cachedTokens token
 
     style current fill:none,stroke:none
     style cached fill:none,stroke:none
+    style join fill:none,stroke:none
 ```
 <br />
 # Why we cache prompts the way we do
