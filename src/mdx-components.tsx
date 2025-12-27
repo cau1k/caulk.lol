@@ -11,6 +11,7 @@ import { Popup, PopupContent, PopupTrigger } from "fumadocs-twoslash/ui";
 import type { MDXComponents } from "mdx/types";
 import { CodeBlock, Pre } from "@/components/codeblock";
 import { Mermaid } from "@/components/mdx/mermaid";
+import { Quote } from "@/components/quote";
 
 /**
  * Returns MDX components with optional overrides.
@@ -38,6 +39,7 @@ export function getMDXComponents(overrides?: MDXComponents): MDXComponents {
     Tab,
     Tabs,
     TypeTable,
+    Quote,
     Popup,
     PopupContent,
     PopupTrigger,
