@@ -21,7 +21,7 @@ flowchart TB
         v1ghost["edit: file.ts [v1]"] --> v2ghost["edit: file.ts [v2]"] --> need["edit: file.ts [v3]"]
     end
 
-    subgraph cached["Cached"]
+    subgraph cached["What You Get (Cached)"]
         direction TB
         v1["edit: file.ts [v1]"] --> v2["edit: file.ts [v2]"] --> v3["edit: file.ts [v3]"]
     end
