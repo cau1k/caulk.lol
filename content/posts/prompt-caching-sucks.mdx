@@ -85,15 +85,31 @@ The real problem isn't caching itself. It's that current implementations require
 
 There's been a lot of recent work on position-independent caching. Most propose caching chunks independently recomputing vectors for each chunk. Most implementations of this, in practice, would improve speed and costs drastically. But why aren't they implemented, then?
 
-Yuhan Liu et al. explore this in "[CacheBlend](https://arxiv.org/abs/2405.16444)," where they precompute KV tensors per chunk (think: per file, per tool output, per document). At runtime, they concatenate chunk KVs, even if they weren't originally a prefix, and selectively recompute a small subset of tokens to recover cross-chunk attention. They report 2-3x faster TTFT and 3-5x throughput with negligible quality loss.
+<Accordions>
+  <Accordion title="CacheBlend (Liu et al.)">
+    Precompute KV tensors per chunk (per file, per tool output, per document). At runtime, concatenate chunk KVs—even if they weren't originally a prefix—and selectively recompute a small subset of tokens to recover cross-chunk attention. 2-3x faster TTFT, 3-5x throughput, negligible quality loss. [Paper](https://arxiv.org/abs/2405.16444)
+  </Accordion>
+</Accordions>
 
-Shuowei Jin et al. formalize this as "position-independent caching" in "[EPIC](https://arxiv.org/abs/2410.15332)" and introduce LegoLink: recompute only the first ~32 tokens at each chunk boundary to fix attention sink artifacts. They report up to 8x TTFT improvement.
+<Accordions>
+  <Accordion title="EPIC (Jin et al.)">
+    Formalizes "position-independent caching" and introduces LegoLink: recompute only the first ~32 tokens at each chunk boundary to fix attention sink artifacts. Up to 8x TTFT improvement. [Paper](https://arxiv.org/abs/2410.15332)
+  </Accordion>
+</Accordions>
 
-The pattern here is straightforward: cache chunks independently, pay a small recompute tax at boundaries, skip the full prefill.
+<Accordions>
+  <Accordion title="Block-Attention (Lee et al.)">
+    Changes the attention mask so retrieved passages are independent blocks with no cross-block attention. Only the final block (your query) attends to everything. Requires fine-tuning, but cached passage KVs become reusable across any context. 98.7% TTFT reduction. [Paper](https://arxiv.org/abs/2409.15355)
+  </Accordion>
+</Accordions>
 
-Some researchers take a more radical approach. Sungjin Lee et al. in "[Block-Attention](https://arxiv.org/abs/2409.15355)" change the attention mask so retrieved passages are independent blocks with no cross-block attention. Only the final block (your query) attends to everything. This requires fine-tuning, but cached passage KVs become reusable across any context. They report 98.7% TTFT reduction in their benchmarks.
+<Accordions>
+  <Accordion title="KVLink (Chen et al.)">
+    Store KV without baked-in positional encoding (RoPE), then reapply correct positions at inference and insert trainable "link tokens" between segments. 85-96% TTFT reduction with precomputed caches. [Paper](https://arxiv.org/abs/2502.16002)
+  </Accordion>
+</Accordions>
 
-Xinhao Chen et al. in "[KVLink](https://arxiv.org/abs/2502.16002)" store KV without baked-in positional encoding (RoPE), then reapply correct positions at inference and insert trainable "link tokens" between segments. 85-96% TTFT reduction with precomputed caches.
+The pattern is straightforward: cache chunks independently, pay a small recompute tax at boundaries, skip the full prefill.
 
 What would this mean for coding agents? Your system prompt gets cached once. Each file read is cached independently. Tool outputs are cached as reusable chunks. Reordering, inserting, or removing chunks doesn't invalidate everything.
 
