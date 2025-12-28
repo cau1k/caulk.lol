@@ -264,6 +264,7 @@ body {
 
 .prose :where(blockquote):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   @apply text-base;
+  --tw-prose-quote-borders: var(--primary);
 }
 
 /* Keep top navigation aligned with content width. */
