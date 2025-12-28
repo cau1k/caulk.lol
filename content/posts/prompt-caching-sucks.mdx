@@ -87,25 +87,25 @@ There's been a lot of recent work on position-independent caching. Most propose 
 
 <Accordions>
   <Accordion title="CacheBlend (Yao et al., 2025)">
-    Precompute KV tensors per chunk (per file, per tool output, per document). At runtime, concatenate chunk KVs—even if they weren't originally a prefix—and selectively recompute a small subset of tokens to recover cross-chunk attention. 2-3x faster TTFT, 3-5x throughput, negligible quality loss. [https://arxiv.org/abs/2405.16444](https://arxiv.org/abs/2405.16444)
+    Precompute KV tensors per chunk (per file, per tool output, per document). At runtime, concatenate chunk KVs—even if they weren't originally a prefix—and selectively recompute a small subset of tokens to recover cross-chunk attention. 2-3x faster TTFT, 3-5x throughput, negligible quality loss. <br />[https://arxiv.org/abs/2405.16444](https://arxiv.org/abs/2405.16444)
   </Accordion>
 </Accordions>
 
 <Accordions>
   <Accordion title="EPIC (Hu et al., 2025)">
-    Formalizes "position-independent caching" and introduces LegoLink: recompute only the first ~32 tokens at each chunk boundary to fix attention sink artifacts. Up to 8x TTFT improvement. [https://arxiv.org/abs/2410.15332](https://arxiv.org/abs/2410.15332)
+    Formalizes "position-independent caching" and introduces LegoLink: recompute only the first ~32 tokens at each chunk boundary to fix attention sink artifacts. Up to 8x TTFT improvement. <br />[https://arxiv.org/abs/2410.15332](https://arxiv.org/abs/2410.15332)
   </Accordion>
 </Accordions>
 
 <Accordions>
   <Accordion title="Block-Attention (Ma et al., 2025)">
-    Changes the attention mask so retrieved passages are independent blocks with no cross-block attention. Only the final block (your query) attends to everything. Requires fine-tuning, but cached passage KVs become reusable across any context. 98.7% TTFT reduction. [Paper](https://arxiv.org/abs/2409.15355)
+    Changes the attention mask so retrieved passages are independent blocks with no cross-block attention. Only the final block (your query) attends to everything. Requires fine-tuning, but cached passage KVs become reusable across any context. 98.7% TTFT reduction. <br />[https://arxiv.org/abs/2409.15355](https://arxiv.org/abs/2409.15355)
   </Accordion>
 </Accordions>
 
 <Accordions>
   <Accordion title="KVLink (Yang et al., 2025)">
-    Store KV without baked-in positional encoding (RoPE), then reapply correct positions at inference and insert trainable "link tokens" between segments. 85-96% TTFT reduction with precomputed caches. [Paper](https://arxiv.org/abs/2502.16002)
+    Store KV without baked-in positional encoding (RoPE), then reapply correct positions at inference and insert trainable "link tokens" between segments. 85-96% TTFT reduction with precomputed caches. <br />[https://arxiv.org/abs/2502.16002](https://arxiv.org/abs/2502.16002)
   </Accordion>
 </Accordions>
 
