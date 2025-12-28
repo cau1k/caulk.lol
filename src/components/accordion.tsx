@@ -88,7 +88,7 @@ export const Accordion = forwardRef<
           data-accordion-value={value}
           className="not-prose flex flex-row items-center text-card-foreground has-focus-visible:bg-accent"
         >
-          <AccordionPrimitive.Trigger className="group flex flex-1 items-center gap-2 px-3 py-2.5 text-start focus-visible:outline-none" style={{ fontFamily: '"CMU Sans Serif", system-ui, sans-serif', fontWeight: 600 }}>
+          <AccordionPrimitive.Trigger className="group flex flex-1 items-center gap-2 px-3 py-2.5 text-start focus-visible:outline-none" style={{ fontFamily: '"CMU Sans Serif", system-ui, sans-serif', fontWeight: 400 }}>
             <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-90" />
             {title}
           </AccordionPrimitive.Trigger>
