@@ -262,6 +262,10 @@ body {
   font-weight: 600;
 }
 
+.prose :where(blockquote):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  @apply text-base;
+}
+
 /* Keep top navigation aligned with content width. */
 #nd-nav > div {
   width: 100%;

@@ -30,7 +30,7 @@ This is a very dumb diagram. But it shows the cost of your tokens. Do you think 
 
 Providers, like OpenAI, Anthropic et al. all implement this at a "root" level. You'll pay the standard price per million (PPM) tokens if you invalidate any cache.
 
-Cache hits require **exact prefix matches**. Change a single token anywhere in your cached prefix? Miss. The savings evaporate. This can hurt, especially when: (a) Anthropic charges **1.25x base input price** just to *write* to cache, and (b) your harness assumes you want to cache your tokens. So, in most cases, you're blindly paying a premium upfront and gambling that you'll reuse them enough times to break even. Which, in most cases, you do.
+Cache hits require exact prefix matches. Change a single token anywhere in your cached prefix? Miss. The savings evaporate. This can hurt, especially when: (a) Anthropic charges 1.25x base input price just to *write* to cache, and (b) your harness assumes you want to cache your tokens. So, in most cases, you're blindly paying a premium upfront and gambling that you'll reuse them enough times to break even. Which, in most cases, you do.
 
 But, for coding agents, I think this is a losing bet. Codebases change drastically. And in multi-agent systems, shit changes often.
 
