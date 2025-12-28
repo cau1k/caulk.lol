@@ -83,7 +83,7 @@ This explicitly trades cache hits for smaller prompts and better model behavior.
 
 The real problem isn't caching itself. It's that current implementations require exact prefix matches. Change anything early in your context and the entire cache invalidates. This is a design choice, not a fundamental constraint.
 
-There's been a lot of recent work on position-independent KV cache reuse. The core insight: instead of caching the entire prefix as one monolithic blob, cache chunks independently and reconnect them at inference time.
+There's been a lot of recent work on position-independent caching. Most propose caching chunks independently recomputing vectors for each chunk. Most implementations of this, in practice, would improve speed and costs drastically. But why aren't they implemented, then?
 
 Yuhan Liu et al. explore this in "[CacheBlend](https://arxiv.org/abs/2405.16444)," where they precompute KV tensors per chunk (think: per file, per tool output, per document). At runtime, they concatenate chunk KVs, even if they weren't originally a prefix, and selectively recompute a small subset of tokens to recover cross-chunk attention. They report 2-3x faster TTFT and 3-5x throughput with negligible quality loss.
 
