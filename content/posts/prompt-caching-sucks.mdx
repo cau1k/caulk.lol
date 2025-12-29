@@ -87,25 +87,25 @@ There's been a lot of recent work on position-independent caching. Most propose 
 
 <Accordions>
   <Accordion title="CacheBlend (Yao et al., 2025)">
-    Precompute KV tensors per chunk (per file, per tool output, per document). At runtime, concatenate chunk KVs—even if they weren't originally a prefix—and selectively recompute a small subset of tokens to recover cross-chunk attention. 2-3x faster TTFT, 3-5x throughput, negligible quality loss. <br />[https://arxiv.org/abs/2405.16444](https://arxiv.org/abs/2405.16444)
+    CacheBlend enables reuse of precomputed KV caches for multiple retrieved chunks even when they are not a shared prompt prefix. It concatenates independently computed per-chunk KV caches (with positional alignment) and then selectively recomputes KV for a small subset of tokens per layer to recover the missing cross-chunk interactions. The recomputed tokens are chosen as high KV-deviation tokens using a progressive filtering scheme across layers, exploiting attention sparsity. 2.2-3.3x TTFT reduction, 2.8-5x throughput improvement versus full KV recompute, minimal quality loss. <br />[https://arxiv.org/abs/2405.16444](https://arxiv.org/abs/2405.16444)
   </Accordion>
 </Accordions>
 
 <Accordions>
   <Accordion title="EPIC (Hu et al., 2025)">
-    Formalizes "position-independent caching" and introduces LegoLink: recompute only the first ~32 tokens at each chunk boundary to fix attention sink artifacts. Up to 8x TTFT improvement. <br />[https://arxiv.org/abs/2410.15332](https://arxiv.org/abs/2410.15332)
+    EPIC formalizes position-independent caching (PIC) as a compile step that precomputes KV per immutable chunk (with local position IDs) and a link step that concatenates cached KV for the final prompt. Its LegoLink algorithm restores accuracy by recomputing only the first k tokens of each cached chunk (k ≤ 32, excluding the first chunk), targeting the attention sink behavior caused by chunk-initial tokens being encoded at position 0 during compilation. Up to 8x lower TTFT and up to 7x higher throughput than prior systems, negligible accuracy loss. <br />[https://arxiv.org/abs/2410.15332](https://arxiv.org/abs/2410.15332)
   </Accordion>
 </Accordions>
 
 <Accordions>
   <Accordion title="Block-Attention (Ma et al., 2025)">
-    Changes the attention mask so retrieved passages are independent blocks with no cross-block attention. Only the final block (your query) attends to everything. Requires fine-tuning, but cached passage KVs become reusable across any context. 98.7% TTFT reduction. <br />[https://arxiv.org/abs/2409.15355](https://arxiv.org/abs/2409.15355)
+    Block-Attention modifies the causal attention mask by partitioning the prompt into blocks (one retrieved passage per block plus a final query block). Each non-final block computes KV using full attention within the block only, with no attention to other blocks, making its KV cache reusable across requests. The final block uses a mask that allows it to attend to all prior blocks. Practical reuse requires position re-encoding (for RoPE) and block-aware fine-tuning. For a 32K prompt with cached passages: 98.7% TTFT reduction, 99.8% FLOPs-to-first-token reduction versus full attention. <br />[https://arxiv.org/abs/2409.15355](https://arxiv.org/abs/2409.15355)
   </Accordion>
 </Accordions>
 
 <Accordions>
   <Accordion title="KVLink (Yang et al., 2025)">
-    Store KV without baked-in positional encoding (RoPE), then reapply correct positions at inference and insert trainable "link tokens" between segments. 85-96% TTFT reduction with precomputed caches. <br />[https://arxiv.org/abs/2502.16002](https://arxiv.org/abs/2502.16002)
+    KVLink targets segment-level KV reuse by precomputing and storing the KV cache for each document independently, then concatenating cached segments at inference. To avoid positional mismatch under RoPE, it stores KV in a position-decoupled form (unrotated) and applies the correct global rotary rotation after concatenation. To recover cross-document dependencies lost under independent encoding, KVLink inserts trainable link tokens per segment and fine-tunes the model with a block-structured attention mask where link tokens attend to all preceding segments. 85-96% TTFT reduction versus standard decoding as context length grows, with improved QA accuracy over prior cache-reuse baselines. <br />[https://arxiv.org/abs/2502.16002](https://arxiv.org/abs/2502.16002)
   </Accordion>
 </Accordions>
 
