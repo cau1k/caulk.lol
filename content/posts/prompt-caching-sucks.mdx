@@ -20,7 +20,7 @@ We, as humans, operate on a "best effort" basis. We rarely have a perfect unders
 
 Let's assume that we are in an interative editing loop within Claude Code. Opus makes a bash call to build `file.ts` which errors due to a missing dependency. It repeats this loop but it errors again. Finally, it fixes the error and compiles it successfully (see below).
 
-<Excalidraw src="/media/context-pruning-sukcs/dynamic-context.excalidraw" alt="Dynamic context diagram" subtitle="Dynamic vs. cached prompts" />
+<Excalidraw src="/media/context-pruning-sucks/dynamic-context.excalidraw" alt="Dynamic context diagram" subtitle="Dynamic vs. cached prompts" />
 
 Now this is a very dumb diagram. But it shows the cost of your tokens. Do you think your LLM will perform better with three different file versions and errored bash calls in its context window? Or would it make more sense to only have the most up-to-date file and working calls?
 
@@ -70,10 +70,14 @@ I think of DCP like a benevolent blacking out. You only forget the pieces you di
 
 Claude is already [aware](https://www.cognition.ai/blog/devin-sonnet-4-5-lessons-and-challenges#the-model-is-aware-of-its-context-window) of its context window, but awareness without agency is just watching yourself drown. DCP gives the model tools to perform like an endurance swimmer.
 
-The approach is to give the model:
+The approach is to give the coding agent:
 - a list of prunable I/O
 - tools: `discard` (remove completed/noisy content) and `extract` (distill findings, then remove raw output)
 - Run automatic zero-LLM-cost strategies: deduplication, superseding writes, purging errors
+
+The result? A near infinite context window:
+
+<image src="/media/context-pruning-sucks/dcp-example.png" alt="Infinite context window" width="100%" />
 
 This explicitly trades cache hits for smaller prompts and better model behavior. For subscription users, that means longer coherent sessions and fewer "the model forgot everything" moments.
 
