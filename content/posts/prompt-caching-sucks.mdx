@@ -20,7 +20,7 @@ We, as humans, operate on a "best effort" basis. We rarely have a perfect unders
 
 Let's assume that we are in an interative editing loop within Claude Code. Opus makes a bash call to build `file.ts` which errors due to a missing dependency. It repeats this loop but it errors again. Finally, it fixes the error and compiles it successfully (see below).
 
-<Excalidraw src="/media/dynamic-context.excalidraw" alt="Dynamic context diagram" subtitle="Dynamic vs. cached prompts" />
+<Excalidraw src="/media/context-pruning-sukcs/dynamic-context.excalidraw" alt="Dynamic context diagram" subtitle="Dynamic vs. cached prompts" />
 
 Now this is a very dumb diagram. But it shows the cost of your tokens. Do you think your LLM will perform better with three different file versions and errored bash calls in its context window? Or would it make more sense to only have the most up-to-date file and working calls?
 
