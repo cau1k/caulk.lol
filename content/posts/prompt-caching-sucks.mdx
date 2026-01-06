@@ -1,11 +1,12 @@
 ---
 title: Prompt caching sucks
-description: Prompt caching sucks (for coding agents)
+description: (for coding agents)
 author: Caulk
-date: "2025-12-26T21:33:44-05:00"
+date: "2026-01-06T14:58:14-05:00"
 tags: ["ai", "prompt-caching", "infra"]
-draft: true
+draft: false
 ---
+
 import { Excalidraw } from "../../src/components/excalidraw";
 
 import { Quote } from "../../src/components/quote";
@@ -77,13 +78,15 @@ The approach is to give the coding agent:
 
 The result? A near infinite context window:
 
-<image src="/media/context-pruning-sucks/dcp-example.png" alt="Infinite context window" width="100%" />
+<img src="/media/context-pruning-sucks/dcp-example.png" alt="Infinite context window" width="100%" />
 
 This explicitly trades cache hits for smaller prompts and better model behavior. For subscription users, that means longer coherent sessions and fewer "the model forgot everything" moments.
 
-**The punchline**: prompt caching optimizes for reusing the same big prefix. Coding agents are a war of attrition against ever-growing, ever-changing context. If you're paying per-token, caching matters. If you're on a subscription, you want a tool that prioritizes context hygiene over cache hit rates—because that's what keeps the model useful over long sessions.
+{/** **The punchline**: prompt caching optimizes for reusing the same big prefix. Coding agents are a war of attrition against ever-growing, ever-changing context. If you're paying per-token, caching matters. If you're on a subscription, you want a tool that prioritizes context hygiene over cache hit rates—because that's what keeps the model useful over long sessions. **/}
 
-## An even better alternative: rethinking cache invalidation
+## The provider-level alternative 
+
+### Rethinking cache invalidation
 
 The real problem isn't caching itself. It's that current implementations require exact prefix matches. Change anything early in your context and the entire cache invalidates. This is a design choice, not a fundamental constraint.
 
@@ -119,4 +122,4 @@ What would this mean for coding agents? Your system prompt gets cached once. Eac
 
 The implementations are complex. You need hierarchical KV storage, position re-encoding, custom attention kernels. But the frameworks are catching up. vLLM already does [hash-based block caching](https://docs.vllm.ai/en/stable/design/prefix_caching). Lianmin Zheng et al. store prompts in a radix tree for fast prefix reuse with SGLang's "[RadixAttention](https://arxiv.org/abs/2312.07104)."
 
-Until providers adopt these approaches, dynamic context pruning remains the pragmatic choice. But the future isn't "cache everything as a prefix." It's modular, position-independent chunk caching that doesn't punish you for having a dynamic workflow.
+Until providers adopt these approaches, dynamic context pruning remains the pragmatic choice. But the future isn't "cache everything as a prefix." It's modular, position-independent chunk caching that doesn't punish you for wanting models to perform better.
