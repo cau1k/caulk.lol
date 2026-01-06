@@ -7,6 +7,7 @@ import {
 import { RootProvider } from "fumadocs-ui/provider/tanstack";
 import type * as React from "react";
 import { NotFound } from "@/components/not-found";
+import { TerminalFooter } from "@/components/terminal-footer";
 import appCss from "@/styles/app.css?url";
 
 export const Route = createRootRoute({
@@ -87,6 +88,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body className="flex flex-col min-h-screen">
         <RootProvider search={{ hotKey: [{ key: "/", display: "/" }] }}>
           {children}
+          <TerminalFooter />
         </RootProvider>
         <Scripts />
       </body>
