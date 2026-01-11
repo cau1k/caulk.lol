@@ -48,7 +48,7 @@ function PixelGrid({ color }: { color: string }) {
 
   return (
     <div
-      className="absolute bottom-0 right-0 grid pointer-events-none"
+      className="absolute bottom-0 left-0 grid pointer-events-none"
       style={{
         gridTemplateColumns: `repeat(${cols}, 1rem)`,
         gridTemplateRows: `repeat(${rows}, 1rem)`,
