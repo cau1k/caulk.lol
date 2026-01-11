@@ -26,7 +26,7 @@ export function TerminalFooter() {
       <div className="max-w-2xl mx-auto px-4 py-24">
         <div className="font-mono text-sm">
           {/* Main grid */}
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
+          <div className="flex justify-between">
             {/* Nav column */}
             <motion.div
               initial={{ opacity: 0, y: 8 }}
@@ -86,7 +86,6 @@ export function TerminalFooter() {
               initial={{ opacity: 0, y: 8 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.3, delay: 0.1 }}
-              className="col-span-2 sm:col-span-1"
             >
               <div className="text-muted-foreground text-xs uppercase tracking-wider mb-4">
                 status
