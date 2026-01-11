@@ -17,15 +17,17 @@ export type CalloutProps = Omit<ComponentProps<"aside">, "title"> & {
 };
 
 function PixelGrid({ color }: { color: string }) {
-  // 8x4 grid of pixels with decreasing opacity left to right
+  // 8x4 grid of pixels with decreasing opacity from bottom-right to center
   const rows = 4;
   const cols = 8;
   const pixels: React.ReactNode[] = [];
 
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
-      // Opacity decreases as we go right, with some randomness
-      const baseOpacity = 1 - col / cols;
+      // Opacity increases as we go right and down (toward corner)
+      const colProgress = col / (cols - 1);
+      const rowProgress = row / (rows - 1);
+      const baseOpacity = (colProgress + rowProgress) / 2;
       const opacity = Math.max(0, baseOpacity * (0.6 + Math.random() * 0.4) * 0.15);
       pixels.push(
         <div
@@ -42,7 +44,7 @@ function PixelGrid({ color }: { color: string }) {
 
   return (
     <div
-      className="absolute top-0 left-0 grid pointer-events-none"
+      className="absolute bottom-0 right-0 grid pointer-events-none"
       style={{
         gridTemplateColumns: `repeat(${cols}, 1rem)`,
         gridTemplateRows: `repeat(${rows}, 1rem)`,
