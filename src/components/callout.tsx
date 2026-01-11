@@ -28,9 +28,10 @@ export function Callout({
   return (
     <aside
       className={cn(
-        "my-6 py-2 text-sm",
+        "my-6 p-4 text-sm border",
         className,
       )}
+      style={{ borderColor: config.color }}
       {...props}
     >
       <div
