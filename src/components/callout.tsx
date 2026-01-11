@@ -87,7 +87,7 @@ export function Callout({
         className="border-t border-l border-b flex items-center"
         style={{ borderColor: config.color }}
       >
-        <div className="px-4 font-mono font-medium text-foreground text-sm">
+        <div className="px-4 font-mono font-medium text-foreground text-lg">
           {title}
         </div>
       </div>
