@@ -1,140 +1,37 @@
-import * as React from "react";
-export const Heart = (
-  props: React.SVGProps<SVGSVGElement>,
-  currentColor: string,
-) => (
+import type { SVGProps } from "react";
+
+export const Heart = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 32 32"
-    id="Social-Rewards-Heart-Like-Circle--Streamline-Pixel"
-    height={32}
-    width={32}
+    fill="currentColor"
     {...props}
   >
-    <desc>
-      {
-        "\n    Social Rewards Heart Like Circle Streamline Icon: https://streamlinehq.com\n  "
-      }
-    </desc>
-    <title>{"social-rewards-heart-like-circle"}</title>
-    <g>
-      <path
-        d="M30.47 12.19H32v7.62h-1.53Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M28.95 19.81h1.52v3.05h-1.52Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M28.95 9.14h1.52v3.05h-1.52Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M27.43 22.86h1.52v3.04h-1.52Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M27.43 6.09h1.52v3.05h-1.52Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M25.9 25.9h1.53v1.53H25.9Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M25.9 4.57h1.53v1.52H25.9Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M22.85 27.43h3.05v1.52h-3.05Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M24.38 10.67h-1.53V9.14h-4.57v1.53h-1.52v1.52h-1.53v-1.52h-1.52V9.14H9.14v1.53H7.62v1.52H6.09v4.57h1.53v1.53h1.52v1.52h1.52v1.52h1.53v1.53h1.52v1.52h1.52v1.52h1.53v-1.52h1.52v-1.52h1.53v-1.53h1.52v-1.52h1.52v-1.52h1.53v-1.53h1.52v-4.57h-1.52Zm-1.53 6.09h-1.52v-3.05h-3.05v-1.52h3.05v1.52h1.52Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M22.85 3.05h3.05v1.52h-3.05Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M19.81 28.95h3.04v1.53h-3.04Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M19.81 1.52h3.04v1.53h-3.04Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M12.19 30.48h7.62V32h-7.62Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path d="M12.19 0h7.62v1.52h-7.62Z" fill={currentColor} strokeWidth={1} />
-      <path
-        d="M9.14 28.95h3.05v1.53H9.14Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M9.14 1.52h3.05v1.53H9.14Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M6.09 27.43h3.05v1.52H6.09Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M6.09 3.05h3.05v1.52H6.09Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M4.57 25.9h1.52v1.53H4.57Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M4.57 4.57h1.52v1.52H4.57Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M3.04 22.86h1.53v3.04H3.04Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M3.04 6.09h1.53v3.05H3.04Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M1.52 19.81h1.52v3.05H1.52Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path
-        d="M1.52 9.14h1.52v3.05H1.52Z"
-        fill={currentColor}
-        strokeWidth={1}
-      />
-      <path d="M0 12.19h1.52v7.62H0Z" fill={currentColor} strokeWidth={1} />
-    </g>
+    <title>Heart</title>
+    <path d="M30.47 12.19H32v7.62h-1.53Z" />
+    <path d="M28.95 19.81h1.52v3.05h-1.52Z" />
+    <path d="M28.95 9.14h1.52v3.05h-1.52Z" />
+    <path d="M27.43 22.86h1.52v3.04h-1.52Z" />
+    <path d="M27.43 6.09h1.52v3.05h-1.52Z" />
+    <path d="M25.9 25.9h1.53v1.53H25.9Z" />
+    <path d="M25.9 4.57h1.53v1.52H25.9Z" />
+    <path d="M22.85 27.43h3.05v1.52h-3.05Z" />
+    <path d="M24.38 10.67h-1.53V9.14h-4.57v1.53h-1.52v1.52h-1.53v-1.52h-1.52V9.14H9.14v1.53H7.62v1.52H6.09v4.57h1.53v1.53h1.52v1.52h1.52v1.52h1.53v1.53h1.52v1.52h1.52v1.52h1.53v-1.52h1.52v-1.52h1.53v-1.53h1.52v-1.52h1.52v-1.52h1.53v-1.53h1.52v-4.57h-1.52Zm-1.53 6.09h-1.52v-3.05h-3.05v-1.52h3.05v1.52h1.52Z" />
+    <path d="M22.85 3.05h3.05v1.52h-3.05Z" />
+    <path d="M19.81 28.95h3.04v1.53h-3.04Z" />
+    <path d="M19.81 1.52h3.04v1.53h-3.04Z" />
+    <path d="M12.19 30.48h7.62V32h-7.62Z" />
+    <path d="M12.19 0h7.62v1.52h-7.62Z" />
+    <path d="M9.14 28.95h3.05v1.53H9.14Z" />
+    <path d="M9.14 1.52h3.05v1.53H9.14Z" />
+    <path d="M6.09 27.43h3.05v1.52H6.09Z" />
+    <path d="M6.09 3.05h3.05v1.52H6.09Z" />
+    <path d="M4.57 25.9h1.52v1.53H4.57Z" />
+    <path d="M4.57 4.57h1.52v1.52H4.57Z" />
+    <path d="M3.04 22.86h1.53v3.04H3.04Z" />
+    <path d="M3.04 6.09h1.53v3.05H3.04Z" />
+    <path d="M1.52 19.81h1.52v3.05H1.52Z" />
+    <path d="M1.52 9.14h1.52v3.05H1.52Z" />
+    <path d="M0 12.19h1.52v7.62H0Z" />
   </svg>
 );
