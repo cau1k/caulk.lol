@@ -1,5 +1,5 @@
 import { Accordion, Accordions } from "@/components/accordion";
-import { Callout } from "fumadocs-ui/components/callout";
+import { Callout } from "@/components/callout";
 import { Card, Cards } from "fumadocs-ui/components/card";
 import { File, Files, Folder } from "fumadocs-ui/components/files";
 import { ImageZoom } from "fumadocs-ui/components/image-zoom";

@@ -1,112 +1,52 @@
-import { CircleCheck, CircleX, Info, Sun, TriangleAlert } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "../lib/cn";
 
-export type CalloutType =
-  | "info"
-  | "warn"
-  | "error"
-  | "success"
-  | "warning"
-  | "idea";
+export type CalloutType = "info" | "warn" | "warning" | "error" | "note";
 
-const iconClass = "size-5 -me-0.5 fill-(--callout-color) text-card";
+const typeConfig = {
+  info: { label: "INFO", color: "var(--color-primary)" },
+  note: { label: "NOTE", color: "var(--color-muted-foreground)" },
+  warn: { label: "WARN", color: "var(--color-chart-2)" },
+  warning: { label: "WARN", color: "var(--color-chart-2)" },
+  error: { label: "ERROR", color: "var(--color-destructive)" },
+} as const;
+
+export type CalloutProps = Omit<ComponentProps<"aside">, "title"> & {
+  type?: CalloutType;
+  title?: ReactNode;
+};
 
 export function Callout({
-  children,
+  type = "note",
   title,
-  ...props
-}: { title?: ReactNode } & Omit<CalloutContainerProps, "title">) {
-  return (
-    <CalloutContainer {...props}>
-      {title && <CalloutTitle>{title}</CalloutTitle>}
-      <CalloutDescription>{children}</CalloutDescription>
-    </CalloutContainer>
-  );
-}
-
-export interface CalloutContainerProps extends ComponentProps<"div"> {
-  /**
-   * @defaultValue info
-   */
-  type?: CalloutType;
-
-  /**
-   * Force an icon
-   */
-  icon?: ReactNode;
-}
-
-function resolveAlias(type: CalloutType) {
-  if (type === "warn") return "warning";
-  if ((type as unknown) === "tip") return "info";
-  return type;
-}
-
-export function CalloutContainer({
-  type: inputType = "info",
-  icon,
   children,
   className,
-  style,
   ...props
-}: CalloutContainerProps) {
-  const type = resolveAlias(inputType);
+}: CalloutProps) {
+  const config = typeConfig[type] ?? typeConfig.note;
 
   return (
-    <div
+    <aside
       className={cn(
-        "flex gap-2 my-4 rounded-xl border bg-card p-3 ps-1 text-sm text-card-foreground shadow-md",
-        className,
-      )}
-      style={
-        {
-          "--callout-color": `var(--color-${type}, var(--color-muted))`,
-          ...style,
-        } as object
-      }
-      {...props}
-    >
-      <div role="none" className="w-0.5 bg-(--callout-color)/50 rounded-sm" />
-      {icon ??
-        {
-          info: <Info className={iconClass} />,
-          warning: <TriangleAlert className={iconClass} />,
-          error: <CircleX className={iconClass} />,
-          success: <CircleCheck className={iconClass} />,
-          idea: <Sun className={iconClass} />,
-        }[type]}
-      <div className="flex flex-col gap-2 min-w-0 flex-1">{children}</div>
-    </div>
-  );
-}
-
-export function CalloutTitle({
-  children,
-  className,
-  ...props
-}: ComponentProps<"p">) {
-  return (
-    <p className={cn("font-medium my-0!", className)} {...props}>
-      {children}
-    </p>
-  );
-}
-
-export function CalloutDescription({
-  children,
-  className,
-  ...props
-}: ComponentProps<"p">) {
-  return (
-    <div
-      className={cn(
-        "text-muted-foreground prose-no-margin empty:hidden",
+        "my-6 py-2 text-sm",
         className,
       )}
       {...props}
     >
-      {children}
-    </div>
+      <div
+        className="font-mono text-xs tracking-wide mb-1"
+        style={{ color: config.color }}
+      >
+        [{config.label}]
+        {title && (
+          <span className="font-mono font-medium text-foreground text-sm ml-2">
+            {title}
+          </span>
+        )}
+      </div>
+      <div className="font-mono text-muted-foreground prose-no-margin [&>p]:my-0">
+        {children}
+      </div>
+    </aside>
   );
 }
