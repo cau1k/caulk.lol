@@ -85,7 +85,11 @@ export function Callout({
           </span>
         )}
       </div>
-      <div className="font-mono text-muted-foreground prose-no-margin [&>p]:my-0 relative">
+      <div
+        className="font-mono text-muted-foreground prose-no-margin [&>p]:my-0 [&_a]:underline relative"
+        style={{ "--callout-link-color": config.color } as React.CSSProperties}
+      >
+        <style>{`aside:has(> [style*="--callout-link-color"]) a { text-decoration-color: var(--callout-link-color); }`}</style>
         {children}
       </div>
     </aside>
