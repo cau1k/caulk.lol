@@ -20,46 +20,6 @@ export type CalloutProps = Omit<ComponentProps<"aside">, "title"> & {
   title?: ReactNode;
 };
 
-function PixelGrid({ color }: { color: string }) {
-  // Right triangle: top-left corner, hypotenuse from top-right to bottom-left
-  const rows = 12;
-  const cols = 24;
-  const pixels: React.ReactNode[] = [];
-
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      // Triangle: show if left of diagonal going from top-right to bottom-left
-      // col/cols < row/rows
-      const rowNorm = row / (rows - 1);
-      const colNorm = col / (cols - 1);
-      if (colNorm > rowNorm) continue;
-
-      // Opacity strongest at top-left corner, fading toward hypotenuse
-      const distFromCorner = Math.sqrt(colNorm * colNorm + rowNorm * rowNorm);
-      const baseOpacity = 1 - distFromCorner;
-      const opacity = Math.max(0, baseOpacity * (0.5 + Math.random() * 0.5) * 0.12);
-      pixels.push(
-        <div
-          key={`${row}-${col}`}
-          className="absolute w-4 h-4"
-          style={{
-            backgroundColor: color,
-            opacity,
-            left: `${col}rem`,
-            top: `${row}rem`,
-          }}
-        />
-      );
-    }
-  }
-
-  return (
-    <div className="absolute top-0 left-0 pointer-events-none">
-      {pixels}
-    </div>
-  );
-}
-
 export function Callout({
   type = "note",
   title,
@@ -107,10 +67,9 @@ export function Callout({
       </div>
       {/* Bottom - main content spans full width */}
       <div
-        className="border-l border-r border-b relative overflow-hidden col-span-2"
+        className="border-l border-r border-b col-span-2"
         style={{ borderColor: config.color }}
       >
-        <PixelGrid color={config.color} />
         <div
           className="p-4 font-mono text-muted-foreground prose-no-margin [&>p]:my-0 [&_a]:underline relative"
           style={{ "--callout-link-color": config.color } as React.CSSProperties}
