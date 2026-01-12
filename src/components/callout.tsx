@@ -74,7 +74,12 @@ export function Callout({
           className="p-4 font-mono text-muted-foreground prose-no-margin [&>p]:my-0 [&_a]:underline relative"
           style={{ "--callout-link-color": config.color } as React.CSSProperties}
         >
-          <style>{`aside:has([style*="--callout-link-color"]) a { text-decoration-color: var(--callout-link-color); }`}</style>
+          <style>{`aside:has([style*="--callout-link-color"]) a { 
+            text-decoration-color: var(--callout-link-color); 
+            background-color: color-mix(in oklch, var(--callout-link-color) 15%, transparent);
+            padding-block: 0.1em;
+            margin-block: -0.1em;
+          }`}</style>
           {children}
         </div>
       </div>

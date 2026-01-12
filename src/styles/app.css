@@ -267,6 +267,10 @@ body {
   --tw-prose-quote-borders: var(--primary);
 }
 
+.prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background: linear-gradient(to top, oklch(from var(--primary) l c h / 0.15) 0.15em, transparent 0.15em);
+}
+
 /* Keep top navigation aligned with content width. */
 #nd-nav > div {
   width: 100%;
