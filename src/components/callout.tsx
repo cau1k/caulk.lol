@@ -21,25 +21,32 @@ export type CalloutProps = Omit<ComponentProps<"aside">, "title"> & {
 };
 
 function PixelGrid({ color }: { color: string }) {
-  // 8x4 grid of pixels with decreasing opacity from bottom-right to center
-  const rows = 4;
-  const cols = 8;
+  // Right triangle in bottom-left, opacity fades toward hypotenuse
+  const rows = 6;
+  const cols = 12;
   const pixels: React.ReactNode[] = [];
 
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
-      // Opacity increases as we go right and down (toward corner)
-      const colProgress = col / (cols - 1);
-      const rowProgress = row / (rows - 1);
-      const baseOpacity = (colProgress + rowProgress) / 2;
+      // Triangle: only show if below diagonal from top-left to bottom-right
+      // row/rows should be >= 1 - col/cols (i.e. bottom-left triangle)
+      const rowNorm = row / (rows - 1);
+      const colNorm = col / (cols - 1);
+      if (rowNorm < 1 - colNorm) continue;
+
+      // Opacity strongest at bottom-left corner, fading toward hypotenuse
+      const distFromCorner = Math.sqrt(colNorm * colNorm + (1 - rowNorm) * (1 - rowNorm));
+      const baseOpacity = 1 - distFromCorner;
       const opacity = Math.max(0, baseOpacity * (0.6 + Math.random() * 0.4) * 0.15);
       pixels.push(
         <div
           key={`${row}-${col}`}
-          className="w-4 h-4"
+          className="absolute w-4 h-4"
           style={{
             backgroundColor: color,
             opacity,
+            left: `${col}rem`,
+            bottom: `${rows - 1 - row}rem`,
           }}
         />
       );
@@ -47,13 +54,7 @@ function PixelGrid({ color }: { color: string }) {
   }
 
   return (
-    <div
-      className="absolute bottom-0 left-0 grid pointer-events-none"
-      style={{
-        gridTemplateColumns: `repeat(${cols}, 1rem)`,
-        gridTemplateRows: `repeat(${rows}, 1rem)`,
-      }}
-    >
+    <div className="absolute bottom-0 left-0 pointer-events-none">
       {pixels}
     </div>
   );
