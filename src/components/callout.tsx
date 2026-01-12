@@ -9,7 +9,7 @@ export type CalloutType = "info" | "warn" | "warning" | "error" | "note";
 
 const typeConfig = {
   info: { label: "INFO", color: "var(--color-primary)", Icon: AlertCircle },
-  note: { label: "NOTE", color: "var(--color-muted-foreground)", Icon: Heart },
+  note: { label: "NOTE", color: "oklch(0.75 0.08 350)", Icon: Heart },
   warn: { label: "WARN", color: "var(--color-chart-2)", Icon: WarningTriangle },
   warning: { label: "WARN", color: "var(--color-chart-2)", Icon: WarningTriangle },
   error: { label: "ERROR", color: "var(--color-destructive)", Icon: CloudError },
