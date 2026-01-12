@@ -21,23 +21,23 @@ export type CalloutProps = Omit<ComponentProps<"aside">, "title"> & {
 };
 
 function PixelGrid({ color }: { color: string }) {
-  // Right triangle in bottom-left, opacity fades toward hypotenuse
-  const rows = 6;
-  const cols = 12;
+  // Right triangle: top-left corner, hypotenuse from top-right to bottom-left
+  const rows = 12;
+  const cols = 24;
   const pixels: React.ReactNode[] = [];
 
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
-      // Triangle: only show if below diagonal from top-left to bottom-right
-      // row/rows should be >= 1 - col/cols (i.e. bottom-left triangle)
+      // Triangle: show if left of diagonal going from top-right to bottom-left
+      // col/cols < row/rows
       const rowNorm = row / (rows - 1);
       const colNorm = col / (cols - 1);
-      if (rowNorm < 1 - colNorm) continue;
+      if (colNorm > rowNorm) continue;
 
-      // Opacity strongest at bottom-left corner, fading toward hypotenuse
-      const distFromCorner = Math.sqrt(colNorm * colNorm + (1 - rowNorm) * (1 - rowNorm));
+      // Opacity strongest at top-left corner, fading toward hypotenuse
+      const distFromCorner = Math.sqrt(colNorm * colNorm + rowNorm * rowNorm);
       const baseOpacity = 1 - distFromCorner;
-      const opacity = Math.max(0, baseOpacity * (0.6 + Math.random() * 0.4) * 0.15);
+      const opacity = Math.max(0, baseOpacity * (0.5 + Math.random() * 0.5) * 0.12);
       pixels.push(
         <div
           key={`${row}-${col}`}
@@ -46,7 +46,7 @@ function PixelGrid({ color }: { color: string }) {
             backgroundColor: color,
             opacity,
             left: `${col}rem`,
-            bottom: `${rows - 1 - row}rem`,
+            top: `${row}rem`,
           }}
         />
       );
@@ -54,7 +54,7 @@ function PixelGrid({ color }: { color: string }) {
   }
 
   return (
-    <div className="absolute bottom-0 left-0 pointer-events-none">
+    <div className="absolute top-0 left-0 pointer-events-none">
       {pixels}
     </div>
   );
