@@ -26,3 +26,4 @@ dist/
 .tmp/
 
 .opencode/plans
+.ignore
