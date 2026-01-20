@@ -11,7 +11,7 @@ const NAV_LINKS = [
 
 const SOCIAL_LINKS = [
   { label: "twitter", href: "https://x.com/zerocaulk" },
-  { label: "github", href: "https://github.com/zerocaulk" },
+  { label: "github", href: "https://github.com/cau1k" },
 ] as const;
 
 export function TerminalFooter() {
