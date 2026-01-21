@@ -12,7 +12,7 @@ export default defineConfig({
     allowedHosts: ["arch.catla-justice.ts.net"],
   },
   ssr: {
-    external: ["@takumi-rs/image-response"],
+    external: [],
   },
   plugins: [
     mdx(await import("./source.config")),

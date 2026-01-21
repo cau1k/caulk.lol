@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ImageResponse } from "@takumi-rs/image-response";
+import { ImageResponse } from "@takumi-rs/image-response/wasm";
+import takumiModule from "@takumi-rs/wasm/next";
 import { getOgFonts } from "@/lib/og/fonts";
 import { PostImage } from "@/lib/og/post-image";
 import { posts } from "@/lib/source";
@@ -25,32 +26,43 @@ export const Route = createFileRoute("/og/posts/$")({
   server: {
     handlers: {
       GET: async ({ request, params }) => {
-        const slug = getSlugFromParams(params);
-        if (!slug) {
-          return new Response("Not found", { status: 404 });
+        try {
+          const slug = getSlugFromParams(params);
+          if (!slug) {
+            return new Response("Not found", { status: 404 });
+          }
+
+          const page = posts.getPage([slug]);
+          if (!page) {
+            return new Response("Not found", { status: 404 });
+          }
+
+          const fonts = await getOgFonts(new URL(request.url));
+          const image = new ImageResponse(
+            <PostImage
+              title={page.data.title}
+              description={page.data.description}
+            />,
+            {
+              width: 1200,
+              height: 630,
+              format: "webp",
+              module: takumiModule,
+              fonts,
+            },
+          );
+
+          image.headers.set("Cache-Control", cacheControlValue);
+          return image;
+        } catch (error) {
+          console.error("OG image error", error);
+          const message =
+            error instanceof Error ? error.message : "Unknown error";
+          return new Response(JSON.stringify({ error: message }), {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          });
         }
-
-        const page = posts.getPage([slug]);
-        if (!page) {
-          return new Response("Not found", { status: 404 });
-        }
-
-        const fonts = await getOgFonts(new URL(request.url));
-        const image = new ImageResponse(
-          <PostImage
-            title={page.data.title}
-            description={page.data.description}
-          />,
-          {
-            width: 1200,
-            height: 630,
-            format: "webp",
-            fonts,
-          },
-        );
-
-        image.headers.set("Cache-Control", cacheControlValue);
-        return image;
       },
     },
   },

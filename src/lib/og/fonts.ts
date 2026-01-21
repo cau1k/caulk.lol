@@ -1,4 +1,4 @@
-import type { Font } from "@takumi-rs/core";
+import type { Font } from "@takumi-rs/wasm";
 
 type FontConfig = {
   name: string;
