@@ -63,7 +63,10 @@ let cachedFonts: Promise<Font[]> | null = null;
 
 export function getOgFonts(requestUrl: URL): Promise<Font[]> {
   if (!cachedFonts) {
-    cachedFonts = buildFonts(requestUrl);
+    cachedFonts = buildFonts(requestUrl).catch((error) => {
+      cachedFonts = null;
+      throw error;
+    });
   }
 
   return cachedFonts;
