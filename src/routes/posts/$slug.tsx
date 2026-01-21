@@ -9,9 +9,9 @@ import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
 import { TagBadgeList } from "@/components/tag-badge";
 import { TOCProvider } from "@/components/toc";
 import { WheelTOCItems } from "@/components/toc/wheel";
-import { cn } from "@/lib/cn";
 import { formatDateTime, formatRelativeTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
+import { getPostOgImageUrl } from "@/lib/og/urls";
 import { posts } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
@@ -20,6 +20,29 @@ export const Route = createFileRoute("/posts/$slug")({
     const data = await serverLoader({ data: params.slug });
     await clientLoader.preload(data.path);
     return data;
+  },
+  head: ({ loaderData }) => {
+    if (!loaderData) {
+      return { meta: [] };
+    }
+
+    const ogImage = getPostOgImageUrl(loaderData.slug);
+    const description = loaderData.description ?? "";
+
+    return {
+      meta: [
+        { title: loaderData.title },
+        { name: "description", content: description },
+        { property: "og:title", content: loaderData.title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "article" },
+        { property: "og:image", content: ogImage },
+        { property: "og:image:width", content: "1200" },
+        { property: "og:image:height", content: "630" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:image", content: ogImage },
+      ],
+    };
   },
   component: Post,
 });

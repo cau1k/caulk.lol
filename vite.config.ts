@@ -11,6 +11,9 @@ export default defineConfig({
     port: 3000,
     allowedHosts: ["arch.catla-justice.ts.net"],
   },
+  ssr: {
+    external: ["@takumi-rs/image-response"],
+  },
   plugins: [
     mdx(await import("./source.config")),
     tailwindcss(),

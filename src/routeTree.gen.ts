@@ -19,6 +19,7 @@ import { Route as LlmsDotmdxSplatRouteImport } from './routes/llms[.]mdx.$'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
 import { Route as PostsTagsIndexRouteImport } from './routes/posts/tags/index'
 import { Route as PostsTagsTagRouteImport } from './routes/posts/tags/$tag'
+import { Route as OgPostsSplatRouteImport } from './routes/og/posts/$'
 
 const LlmsFullDottxtRoute = LlmsFullDottxtRouteImport.update({
   id: '/llms-full.txt',
@@ -70,6 +71,11 @@ const PostsTagsTagRoute = PostsTagsTagRouteImport.update({
   path: '/posts/tags/$tag',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OgPostsSplatRoute = OgPostsSplatRouteImport.update({
+  id: '/og/posts/$',
+  path: '/og/posts/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/posts/$slug': typeof PostsSlugRoute
   '/posts/upcoming': typeof PostsUpcomingRoute
   '/posts': typeof PostsIndexRoute
+  '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
   '/posts/tags': typeof PostsTagsIndexRoute
 }
@@ -92,6 +99,7 @@ export interface FileRoutesByTo {
   '/posts/$slug': typeof PostsSlugRoute
   '/posts/upcoming': typeof PostsUpcomingRoute
   '/posts': typeof PostsIndexRoute
+  '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
   '/posts/tags': typeof PostsTagsIndexRoute
 }
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/posts/$slug': typeof PostsSlugRoute
   '/posts/upcoming': typeof PostsUpcomingRoute
   '/posts/': typeof PostsIndexRoute
+  '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
   '/posts/tags/': typeof PostsTagsIndexRoute
 }
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
     | '/posts/$slug'
     | '/posts/upcoming'
     | '/posts'
+    | '/og/posts/$'
     | '/posts/tags/$tag'
     | '/posts/tags'
   fileRoutesByTo: FileRoutesByTo
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
     | '/posts/$slug'
     | '/posts/upcoming'
     | '/posts'
+    | '/og/posts/$'
     | '/posts/tags/$tag'
     | '/posts/tags'
   id:
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '/posts/$slug'
     | '/posts/upcoming'
     | '/posts/'
+    | '/og/posts/$'
     | '/posts/tags/$tag'
     | '/posts/tags/'
   fileRoutesById: FileRoutesById
@@ -156,6 +168,7 @@ export interface RootRouteChildren {
   PostsSlugRoute: typeof PostsSlugRoute
   PostsUpcomingRoute: typeof PostsUpcomingRoute
   PostsIndexRoute: typeof PostsIndexRoute
+  OgPostsSplatRoute: typeof OgPostsSplatRoute
   PostsTagsTagRoute: typeof PostsTagsTagRoute
   PostsTagsIndexRoute: typeof PostsTagsIndexRoute
 }
@@ -232,6 +245,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PostsTagsTagRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/og/posts/$': {
+      id: '/og/posts/$'
+      path: '/og/posts/$'
+      fullPath: '/og/posts/$'
+      preLoaderRoute: typeof OgPostsSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -244,19 +264,10 @@ const rootRouteChildren: RootRouteChildren = {
   PostsSlugRoute: PostsSlugRoute,
   PostsUpcomingRoute: PostsUpcomingRoute,
   PostsIndexRoute: PostsIndexRoute,
+  OgPostsSplatRoute: OgPostsSplatRoute,
   PostsTagsTagRoute: PostsTagsTagRoute,
   PostsTagsIndexRoute: PostsTagsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
