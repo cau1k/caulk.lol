@@ -37,7 +37,8 @@ export const Route = createFileRoute("/og/posts/$")({
             return new Response("Not found", { status: 404 });
           }
 
-          const fonts = await getOgFonts(new URL(request.url));
+          const requestUrl = new URL(request.url);
+          const fonts = await getOgFonts(requestUrl);
           const image = new ImageResponse(
             <PostImage
               title={page.data.title}

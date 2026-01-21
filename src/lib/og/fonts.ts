@@ -2,40 +2,86 @@ import type { Font } from "@takumi-rs/wasm";
 
 type FontConfig = {
   name: string;
-  url: string;
+  path: string;
   weight: number;
   style: "normal" | "italic";
+};
+
+type FetchFunction = (
+  input: RequestInfo | URL,
+  init?: RequestInit,
+) => Promise<Response>;
+
+type AssetsFetcher = {
+  fetch: FetchFunction;
 };
 
 const fontConfigs: FontConfig[] = [
   {
     name: "CMU Serif",
-    url: "/fonts/cmu-serif/cmunrm-webfont.ttf",
+    path: "/fonts/cmu-serif/cmunrm-webfont.ttf",
     weight: 400,
     style: "normal",
   },
   {
     name: "CMU Serif",
-    url: "/fonts/cmu-serif/cmunbx-webfont.ttf",
+    path: "/fonts/cmu-serif/cmunbx-webfont.ttf",
     weight: 700,
     style: "normal",
   },
   {
     name: "CMU Sans Serif",
-    url: "/fonts/cmu-sans/cmunss-webfont.ttf",
+    path: "/fonts/cmu-sans/cmunss-webfont.ttf",
     weight: 400,
     style: "normal",
   },
   {
     name: "CMU Sans Serif",
-    url: "/fonts/cmu-sans/cmunsx-webfont.ttf",
+    path: "/fonts/cmu-sans/cmunsx-webfont.ttf",
     weight: 700,
     style: "normal",
   },
 ];
 
-async function loadFont(url: URL): Promise<ArrayBuffer> {
-  const response = await fetch(url);
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isAssetsFetcher(value: unknown): value is AssetsFetcher {
+  return isRecord(value) && typeof value.fetch === "function";
+}
+
+function getAssetsFetch(request: Request): FetchFunction | null {
+  if (!("runtime" in request)) {
+    return null;
+  }
+
+  const runtime = request.runtime;
+  if (!isRecord(runtime)) {
+    return null;
+  }
+
+  const cloudflare = runtime.cloudflare;
+  if (!isRecord(cloudflare)) {
+    return null;
+  }
+
+  const env = cloudflare.env;
+  if (!isRecord(env)) {
+    return null;
+  }
+
+  const assets = env.ASSETS;
+  if (!isAssetsFetcher(assets)) {
+    return null;
+  }
+
+  return assets.fetch;
+}
+
+async function loadFont(url: URL, fetcher: FetchFunction): Promise<ArrayBuffer> {
+  const response = await fetcher(url);
   if (!response.ok) {
     throw new Error(`Failed to load font: ${url}`);
   }
@@ -43,10 +89,13 @@ async function loadFont(url: URL): Promise<ArrayBuffer> {
   return response.arrayBuffer();
 }
 
-async function buildFonts(requestUrl: URL): Promise<Font[]> {
+async function buildFonts(request: Request): Promise<Font[]> {
+  const requestUrl = new URL(request.url);
+  const assetsFetch = getAssetsFetch(request);
+  const fetcher = assetsFetch ?? fetch;
   const fonts = await Promise.all(
     fontConfigs.map(async (config) => {
-      const data = await loadFont(new URL(config.url, requestUrl));
+      const data = await loadFont(new URL(config.path, requestUrl), fetcher);
       return {
         name: config.name,
         data,
@@ -59,15 +108,20 @@ async function buildFonts(requestUrl: URL): Promise<Font[]> {
   return fonts;
 }
 
-let cachedFonts: Promise<Font[]> | null = null;
+const fontsCache = new Map<string, Promise<Font[]>>();
 
-export function getOgFonts(requestUrl: URL): Promise<Font[]> {
-  if (!cachedFonts) {
-    cachedFonts = buildFonts(requestUrl).catch((error) => {
-      cachedFonts = null;
-      throw error;
-    });
+export function getOgFonts(request: Request): Promise<Font[]> {
+  const requestUrl = new URL(request.url);
+  const cacheKey = requestUrl.origin;
+  const cached = fontsCache.get(cacheKey);
+  if (cached) {
+    return cached;
   }
 
-  return cachedFonts;
+  const pending = buildFonts(request).catch((error) => {
+    fontsCache.delete(cacheKey);
+    throw error;
+  });
+  fontsCache.set(cacheKey, pending);
+  return pending;
 }
