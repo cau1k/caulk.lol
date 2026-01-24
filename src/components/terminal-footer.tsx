@@ -21,7 +21,7 @@ export function TerminalFooter() {
   return (
     <footer
       ref={ref}
-      className="bg-background mt-auto"
+      className="mt-auto"
     >
       <div className="max-w-2xl mx-auto px-4 py-24">
         <div className="font-mono text-sm">
