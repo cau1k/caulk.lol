@@ -1,49 +1,14 @@
 /* Physical toggle switch - horizontal (rotated 90deg from vertical original) */
+/* Always uses light appearance regardless of theme */
 .theme-toggle {
   position: relative;
   display: inline-block;
   width: 52px;
   height: 32px;
-  background-color: var(--toggle-bg, #9a9a9a);
+  background-color: #bbb;
   border-radius: 4px;
   text-align: center;
   vertical-align: middle;
-}
-
-:root.dark .theme-toggle {
-  --toggle-bg: #4a4a4a;
-  --toggle-label-bg-off: linear-gradient(to right, #3a3a3a 0%, #2a2a2a 50%, #3a3a3a 50%, #333 100%);
-  --toggle-label-bg-on: linear-gradient(to right, #333 0%, #252525 50%, #3a3a3a 50%, #333 100%);
-  --toggle-shadow-off: 2px 0 3px rgba(0,0,0,0.5),
-    inset -1px 0 1px #222,
-    inset -5px 0 1px #3a3a3a,
-    inset -6px 0 0 #4a4a4a;
-  --toggle-shadow-on: 0 0 1px rgba(0,0,0,0.5),
-    inset 1px 0 7px -1px #1a1a1a,
-    inset 5px 0 1px #3a3a3a,
-    inset 6px 0 0 #4a4a4a;
-  --toggle-text: #888;
-  --toggle-text-active: #bbb;
-  --toggle-text-shadow: 0 1px 0 #222;
-  --toggle-text-shadow-active: none;
-}
-
-:root:not(.dark) .theme-toggle {
-  --toggle-bg: #bbb;
-  --toggle-label-bg-off: linear-gradient(to right, #fff 0%, #ddd 50%, #fff 50%, #eee 100%);
-  --toggle-label-bg-on: linear-gradient(to right, #eee 0%, #ccc 50%, #fff 50%, #eee 100%);
-  --toggle-shadow-off: 2px 0 3px rgba(0,0,0,0.4),
-    inset -1px 0 1px #888,
-    inset -5px 0 1px #bbb,
-    inset -6px 0 0 white;
-  --toggle-shadow-on: 0 0 1px rgba(0,0,0,0.4),
-    inset 1px 0 7px -1px #ccc,
-    inset 5px 0 1px #fafafa,
-    inset 6px 0 0 white;
-  --toggle-text: #666;
-  --toggle-text-active: #888;
-  --toggle-text-shadow: 0 1px 0 white;
-  --toggle-text-shadow-active: 0 -1px 0 #eee;
 }
 
 .theme-toggle input {
@@ -68,12 +33,15 @@
   right: 1px;
   bottom: 1px;
   left: 1px;
-  background-image: var(--toggle-label-bg-off);
-  box-shadow: var(--toggle-shadow-off);
+  background-image: linear-gradient(to right, #fff 0%, #ddd 50%, #fff 50%, #eee 100%);
+  box-shadow: 2px 0 3px rgba(0,0,0,0.4),
+    inset -1px 0 1px #888,
+    inset -5px 0 1px #bbb,
+    inset -6px 0 0 white;
   border-radius: 3px;
   font: normal 12px Arial, sans-serif;
-  color: var(--toggle-text);
-  text-shadow: var(--toggle-text-shadow);
+  color: #666;
+  text-shadow: 0 1px 0 white;
   cursor: pointer;
 }
 
@@ -95,15 +63,18 @@
   right: 6px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--toggle-text);
-  text-shadow: var(--toggle-text-shadow-active);
+  color: #666;
+  text-shadow: 0 -1px 0 #eee;
   font-size: 13px;
 }
 
 /* Checked state (dark mode) */
 .theme-toggle input:checked + label {
-  background-image: var(--toggle-label-bg-on);
-  box-shadow: var(--toggle-shadow-on);
+  background-image: linear-gradient(to right, #eee 0%, #ccc 50%, #fff 50%, #eee 100%);
+  box-shadow: 0 0 1px rgba(0,0,0,0.4),
+    inset 1px 0 7px -1px #ccc,
+    inset 5px 0 1px #fafafa,
+    inset 6px 0 0 white;
 }
 
 .theme-toggle input:checked + label::before {
@@ -113,7 +84,7 @@
 
 .theme-toggle input:checked + label::after {
   right: 8px;
-  color: var(--toggle-text-active);
+  color: #888;
   text-shadow: none;
   z-index: 4;
 }
@@ -126,23 +97,9 @@
     inset -6px 0 0 white;
 }
 
-:root.dark .theme-toggle:hover label {
-  box-shadow: 2px 0 4px rgba(0,0,0,0.6),
-    inset -1px 0 1px #222,
-    inset -5px 0 1px #3a3a3a,
-    inset -6px 0 0 #4a4a4a;
-}
-
 .theme-toggle input:checked:hover + label {
   box-shadow: 1px 0 3px rgba(0,0,0,0.4),
     inset 1px 0 7px -1px #ccc,
     inset 5px 0 1px #fafafa,
     inset 6px 0 0 white;
-}
-
-:root.dark .theme-toggle input:checked:hover + label {
-  box-shadow: 1px 0 3px rgba(0,0,0,0.5),
-    inset 1px 0 7px -1px #1a1a1a,
-    inset 5px 0 1px #3a3a3a,
-    inset 6px 0 0 #4a4a4a;
 }
