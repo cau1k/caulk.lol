@@ -6,7 +6,6 @@ import {
 } from "@tanstack/react-router";
 import { RootProvider } from "fumadocs-ui/provider/tanstack";
 import type * as React from "react";
-import { DarkVeil } from "@/components/dark-veil";
 import { NotFound } from "@/components/not-found";
 import { TerminalFooter } from "@/components/terminal-footer";
 import appCss from "@/styles/app.css?url";
@@ -89,7 +88,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body className="flex flex-col min-h-screen">
         <RootProvider search={{ hotKey: [{ key: "/", display: "/" }] }}>
           {children}
-          <DarkVeil height={300} speed={0.3} />
           <TerminalFooter />
         </RootProvider>
         <Scripts />
