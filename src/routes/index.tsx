@@ -37,17 +37,17 @@ function Home() {
   const [featured, ...rest] = posts;
 
   return (
-    <HomeLayout {...baseOptions()}>
-      <main className="mx-auto w-full max-w-2xl px-4 py-16">
+    <HomeLayout {...baseOptions()} className="pt-24 sm:pt-32">
+      <main className="mx-auto w-full max-w-2xl px-4 pt-16 py-0!">
+        <p className="text-muted-foreground text-lg">
+          Thoughts on software, philosophy, and hacking on agent harnesses.
+        </p>
         <header className="mb-16">
-          <h1 className="text-4xl font-bold font-serif! tracking-tight mb-4">
-            <LinkItem item={{ url: "https://x.com/zerocaulk" }}>
-              zerocaulk
-            </LinkItem>
-          </h1>
-          <p className="text-muted-foreground text-lg">
-            Thoughts on software, philosophy, and hacking on agent harnesses.
-          </p>
+          {/* <h1 className="text-4xl font-bold font-serif! tracking-tight mb-4"> */}
+          {/*   <LinkItem item={{ url: "https://x.com/zerocaulk" }}> */}
+          {/*     zerocaulk */}
+          {/*   </LinkItem> */}
+          {/* </h1> */}
         </header>
 
         {posts.length === 0 ? (
@@ -93,7 +93,7 @@ function Home() {
                   Recent
                 </h2>
                 <div className="group/list">
-                  {rest.map((post) => (
+                  {rest.slice(0, 3).map((post) => (
                     <Link
                       key={post.url}
                       to={post.url}
@@ -125,12 +125,6 @@ function Home() {
               className="hover:text-foreground transition-colors"
             >
               All writing
-            </Link>
-            <Link
-              to="/posts/upcoming"
-              className="hover:text-foreground transition-colors"
-            >
-              Upcoming
             </Link>
           </div>
         </footer>
