@@ -26,7 +26,7 @@ export const posts = defineCollections({
     date: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional(),
     draft: z.boolean(),
-    tags: z.array(z.string().trim().toLowerCase()).default([]),
+    tags: z.array(z.string().trim()).default([]),
   }),
   postprocess: {
     includeProcessedMarkdown: true,

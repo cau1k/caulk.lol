@@ -231,9 +231,11 @@ function Post() {
     ? new Date(data.date).toISOString()
     : undefined;
 
-  // Capitalize first letter of category
+  // Capitalize first letter only if tag is all lowercase, otherwise preserve original
   const category = data.category
-    ? data.category.charAt(0).toUpperCase() + data.category.slice(1)
+    ? data.category === data.category.toLowerCase()
+      ? data.category.charAt(0).toUpperCase() + data.category.slice(1)
+      : data.category
     : null;
 
   return (
