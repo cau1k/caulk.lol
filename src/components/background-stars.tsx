@@ -53,7 +53,7 @@ const SHOOTING_STAR_CONFIG = {
   minSpeed: 2,
   maxSpeed: 4,
   pixelSize: 3,
-  trailSpacing: 6,
+  trailSpacing: 12,
   trailFadeRate: 0.025,
 } as const;
 
