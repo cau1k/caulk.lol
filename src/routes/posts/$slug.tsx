@@ -8,7 +8,6 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { PostLayout, usePostTOC } from "@/components/layout/post";
 import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
-import { TagBadgeList } from "@/components/tag-badge";
 import { TOCProvider } from "@/components/toc";
 import { WheelTOCItems } from "@/components/toc/wheel";
 import { formatDateTime } from "@/lib/format-date";
@@ -276,15 +275,15 @@ function Post() {
             </p>
           )}
 
-          {/* Actions row */}
-          <div className="mt-8 flex items-center justify-between gap-4 border-t border-border pt-6">
-            {data.tags.length > 0 ? (
-              <TagBadgeList tags={data.tags} mobileLimit={2} size="inline" />
-            ) : (
-              <div />
+          {/* Author + Actions row */}
+          <div className="mt-8 flex items-center justify-between gap-4">
+            {data.author && (
+              <span className="text-sm text-muted-foreground">
+                By {data.author}
+              </span>
             )}
 
-            <div className="flex items-center gap-2">
+            <div className="ml-auto flex items-center gap-2">
               <LLMCopyButton markdownUrl={`/posts/${data.slug}.mdx`} />
               <ViewOptions
                 markdownUrl={`/posts/${data.slug}.mdx`}
@@ -292,6 +291,7 @@ function Post() {
               />
             </div>
           </div>
+          <div className="mt-6 h-px w-full bg-border" />
         </header>
         <Content />
         <PostNavigation previous={data.previous} next={data.next} />
