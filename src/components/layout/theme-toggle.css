@@ -4,7 +4,7 @@
   position: relative;
   display: inline-block;
   width: 52px;
-  height: 32px;
+  height: 20px;
   background-color: #bbb;
   border-radius: 4px;
   text-align: center;
@@ -49,23 +49,23 @@
 .theme-toggle label::before {
   content: attr(data-off);
   position: absolute;
-  left: 6px;
+  left: 5px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 4;
-  font-size: 14px;
+  font-size: 11px;
 }
 
 /* Moon icon - right side (dark mode indicator) */
 .theme-toggle label::after {
   content: attr(data-on);
   position: absolute;
-  right: 6px;
+  right: 5px;
   top: 50%;
   transform: translateY(-50%);
   color: #666;
   text-shadow: 0 -1px 0 #eee;
-  font-size: 13px;
+  font-size: 10px;
 }
 
 /* Checked state (dark mode) */
