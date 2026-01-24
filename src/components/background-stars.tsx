@@ -18,16 +18,19 @@ type Star = {
   color: StarColor;
 };
 
+type TrailPoint = {
+  x: number;
+  y: number;
+  opacity: number;
+};
+
 type ShootingStar = {
   x: number;
   y: number;
-  vx: number;
-  vy: number;
-  length: number;
-  opacity: number;
+  angle: number;
   speed: number;
-  life: number;
-  maxLife: number;
+  distance: number;
+  trail: TrailPoint[];
 };
 
 type StarColor = "muted" | "accent" | "primary";
@@ -46,12 +49,11 @@ const STAR_CONFIG = {
 const SHOOTING_STAR_CONFIG = {
   minInterval: 3000,
   maxInterval: 8000,
-  minSpeed: 8,
-  maxSpeed: 14,
-  minLength: 80,
-  maxLength: 160,
-  fadeInDuration: 0.1,
-  fadeOutStart: 0.6,
+  minSpeed: 4,
+  maxSpeed: 7,
+  pixelSize: 2,
+  trailSpacing: 6,
+  trailFadeRate: 0.08,
 } as const;
 
 function getStarColor(color: StarColor, isDark: boolean): string {
@@ -93,30 +95,40 @@ function createStar(width: number, height: number): Star {
   };
 }
 
-function createShootingStar(width: number, height: number): ShootingStar {
-  const startX = Math.random() * width * 0.8;
-  const startY = -20;
-
-  const angle = (Math.PI / 4) + (Math.random() * Math.PI / 6);
-  const speed =
-    SHOOTING_STAR_CONFIG.minSpeed +
-    Math.random() * (SHOOTING_STAR_CONFIG.maxSpeed - SHOOTING_STAR_CONFIG.minSpeed);
-
-  const maxLife = (Math.max(width, height) * 1.5) / speed;
+function createShootingStar(width: number): ShootingStar {
+  const x = Math.random() * width * 0.8;
+  const angle = 45 + Math.random() * 45;
 
   return {
-    x: startX,
-    y: startY,
-    vx: Math.cos(angle) * speed,
-    vy: Math.sin(angle) * speed,
-    length:
-      SHOOTING_STAR_CONFIG.minLength +
-      Math.random() * (SHOOTING_STAR_CONFIG.maxLength - SHOOTING_STAR_CONFIG.minLength),
-    opacity: 0,
-    speed,
-    life: 0,
-    maxLife,
+    x,
+    y: 0,
+    angle,
+    speed:
+      SHOOTING_STAR_CONFIG.minSpeed +
+      Math.random() * (SHOOTING_STAR_CONFIG.maxSpeed - SHOOTING_STAR_CONFIG.minSpeed),
+    distance: 0,
+    trail: [],
   };
+}
+
+function updateShootingStar(star: ShootingStar): void {
+  const radians = (star.angle * Math.PI) / 180;
+  star.x += star.speed * Math.cos(radians);
+  star.y += star.speed * Math.sin(radians);
+  star.distance += star.speed;
+
+  if (star.distance % SHOOTING_STAR_CONFIG.trailSpacing < star.speed) {
+    star.trail.push({
+      x: star.x,
+      y: star.y,
+      opacity: 1.0,
+    });
+  }
+
+  for (const point of star.trail) {
+    point.opacity -= SHOOTING_STAR_CONFIG.trailFadeRate;
+  }
+  star.trail = star.trail.filter((p) => p.opacity > 0);
 }
 
 function drawShootingStar(
@@ -124,40 +136,35 @@ function drawShootingStar(
   star: ShootingStar,
   isDark: boolean
 ): void {
-  const progress = star.life / star.maxLife;
+  const px = SHOOTING_STAR_CONFIG.pixelSize;
+  const radians = (star.angle * Math.PI) / 180;
 
-  let opacity = star.opacity;
-  if (progress < SHOOTING_STAR_CONFIG.fadeInDuration) {
-    opacity = progress / SHOOTING_STAR_CONFIG.fadeInDuration;
-  } else if (progress > SHOOTING_STAR_CONFIG.fadeOutStart) {
-    opacity = 1 - (progress - SHOOTING_STAR_CONFIG.fadeOutStart) / (1 - SHOOTING_STAR_CONFIG.fadeOutStart);
-  } else {
-    opacity = 1;
+  for (const point of star.trail) {
+    ctx.save();
+    ctx.translate(point.x, point.y);
+    ctx.rotate(radians);
+    ctx.translate(-point.x, -point.y);
+
+    ctx.globalAlpha = point.opacity * (isDark ? 0.7 : 0.5);
+    ctx.fillStyle = isDark ? "rgba(180, 220, 240, 1)" : "rgba(60, 80, 100, 1)";
+    ctx.fillRect(point.x, point.y, px, px);
+
+    ctx.restore();
   }
 
-  const tailX = star.x - (star.vx / star.speed) * star.length;
-  const tailY = star.y - (star.vy / star.speed) * star.length;
+  ctx.save();
+  ctx.translate(star.x, star.y);
+  ctx.rotate(radians);
+  ctx.translate(-star.x, -star.y);
 
-  const gradient = ctx.createLinearGradient(tailX, tailY, star.x, star.y);
-  const baseColor = isDark ? "200, 210, 220" : "60, 70, 80";
-  gradient.addColorStop(0, `rgba(${baseColor}, 0)`);
-  gradient.addColorStop(0.7, `rgba(${baseColor}, ${opacity * 0.4})`);
-  gradient.addColorStop(1, `rgba(${baseColor}, ${opacity * 0.8})`);
+  ctx.globalAlpha = isDark ? 0.95 : 0.8;
+  ctx.fillStyle = isDark ? "#ffffff" : "#3a3a3a";
 
-  ctx.beginPath();
-  ctx.moveTo(tailX, tailY);
-  ctx.lineTo(star.x, star.y);
-  ctx.strokeStyle = gradient;
-  ctx.lineWidth = 1.5;
-  ctx.lineCap = "round";
-  ctx.stroke();
+  ctx.fillRect(star.x, star.y, px * 2, px);
+  ctx.fillRect(star.x + px * 2, star.y + px, px, px);
+  ctx.fillRect(star.x + px, star.y + px, px, px);
 
-  ctx.beginPath();
-  ctx.arc(star.x, star.y, 1.5, 0, Math.PI * 2);
-  ctx.fillStyle = isDark
-    ? `rgba(255, 255, 255, ${opacity * 0.9})`
-    : `rgba(40, 50, 60, ${opacity * 0.7})`;
-  ctx.fill();
+  ctx.restore();
 }
 
 export const BackgroundStars = memo(
@@ -216,9 +223,7 @@ export const BackgroundStars = memo(
       ctx.globalAlpha = 1;
 
       if (time > nextShootingStarRef.current) {
-        shootingStarsRef.current.push(
-          createShootingStar(canvas.width, canvas.height)
-        );
+        shootingStarsRef.current.push(createShootingStar(canvas.width));
         nextShootingStarRef.current =
           time +
           SHOOTING_STAR_CONFIG.minInterval +
@@ -226,11 +231,15 @@ export const BackgroundStars = memo(
       }
 
       shootingStarsRef.current = shootingStarsRef.current.filter((star) => {
-        star.x += star.vx;
-        star.y += star.vy;
-        star.life += 1;
+        updateShootingStar(star);
 
-        if (star.life > star.maxLife) return false;
+        const outOfBounds =
+          star.x < -50 ||
+          star.x > canvas.width + 50 ||
+          star.y < -50 ||
+          star.y > canvas.height + 50;
+
+        if (outOfBounds && star.trail.length === 0) return false;
 
         drawShootingStar(ctx, star, isDark);
         return true;
