@@ -2,6 +2,8 @@ import browserCollections from "fumadocs-mdx:collections/browser";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import type { TOCItemType } from "fumadocs-core/toc";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { PostLayout, usePostTOC } from "@/components/layout/post";
@@ -9,9 +11,10 @@ import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
 import { TagBadgeList } from "@/components/tag-badge";
 import { TOCProvider } from "@/components/toc";
 import { WheelTOCItems } from "@/components/toc/wheel";
-import { formatDateTime, formatRelativeTime } from "@/lib/format-date";
+import { formatDateTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
 import { getPostOgImageUrl } from "@/lib/og/urls";
+import { calculateReadingTime, formatReadingTime } from "@/lib/reading-time";
 import { posts } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
@@ -59,6 +62,16 @@ const serverLoader = createServerFn({ method: "GET" })
     const isDev = import.meta.env.DEV;
     if (page.data.draft && !isDev) throw notFound();
 
+    // Calculate reading time from MDX file content
+    const mdxPath = join(process.cwd(), "content/posts", `${slug}.mdx`);
+    let readingTime = 1;
+    try {
+      const content = await readFile(mdxPath, "utf-8");
+      readingTime = calculateReadingTime(content);
+    } catch {
+      // Default to 1 min if file read fails
+    }
+
     // sort all posts by date ascending (oldest first), exclude drafts in prod
     const allPages = posts
       .getPages()
@@ -79,6 +92,8 @@ const serverLoader = createServerFn({ method: "GET" })
       return { url: p.url, title: p.data.title };
     };
 
+    const tags = page.data.tags ?? [];
+
     return {
       slug,
       path: page.path,
@@ -87,7 +102,9 @@ const serverLoader = createServerFn({ method: "GET" })
       date: page.data.date,
       updatedAt: page.data.updatedAt,
       author: page.data.author,
-      tags: page.data.tags ?? [],
+      tags,
+      category: tags[0] ?? null,
+      readingTime: formatReadingTime(readingTime),
       previous: toLink(prevPage),
       next: toLink(nextPage),
     };
@@ -211,46 +228,56 @@ function Post() {
   const Content = clientLoader.getComponent(data.path);
 
   const dateTime = data.date ? formatDateTime(data.date) : "";
-  const relative = data.date ? formatRelativeTime(data.date) : "";
   const machineDateTime = data.date
     ? new Date(data.date).toISOString()
     : undefined;
-  const updatedAtDateTime = data.updatedAt
-    ? formatDateTime(data.updatedAt)
-    : "";
-  const machineUpdatedAt = data.updatedAt
-    ? new Date(data.updatedAt).toISOString()
-    : undefined;
+
+  // Capitalize first letter of category
+  const category = data.category
+    ? data.category.charAt(0).toUpperCase() + data.category.slice(1)
+    : null;
 
   return (
     <PostLayout {...baseOptions()}>
-      <article className="relative mx-auto w-full max-w-2xl px-4 py-12">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold mb-3 sm:text-4xl">{data.title}</h1>
-          <div className="mb-2 flex gap-4 text-sm text-muted-foreground">
+      <article className="relative mx-auto w-full max-w-2xl px-4 py-16 sm:py-20">
+        <header className="mb-12">
+          {/* Metadata line: Category · Date · Read time */}
+          <div className="mb-6 flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
+            {category && (
+              <>
+                <span className="font-medium text-foreground">{category}</span>
+                <span className="text-muted-foreground/50" aria-hidden>
+                  ·
+                </span>
+              </>
+            )}
             {data.date && (
-              <time
-                className="tabular-nums"
-                dateTime={machineDateTime}
-                title={dateTime}
-              >
-                {dateTime}
-                {relative ? ` · ${relative}` : ""}
-              </time>
+              <>
+                <time className="tabular-nums" dateTime={machineDateTime}>
+                  {dateTime}
+                </time>
+                <span className="text-muted-foreground/50" aria-hidden>
+                  ·
+                </span>
+              </>
             )}
-            {data.updatedAt && (
-              <time
-                className="tabular-nums text-muted-foreground/70"
-                dateTime={machineUpdatedAt}
-                title={`Updated: ${updatedAtDateTime}`}
-              >
-                (updated {updatedAtDateTime})
-              </time>
-            )}
+            <span>{data.readingTime}</span>
           </div>
 
-          <div className="mt-8 h-px w-full bg-border" />
-          <div className="mt-4 flex items-center justify-between gap-4">
+          {/* Title */}
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+            {data.title}
+          </h1>
+
+          {/* Description */}
+          {data.description && (
+            <p className="mt-6 text-lg leading-relaxed text-muted-foreground sm:text-xl">
+              {data.description}
+            </p>
+          )}
+
+          {/* Actions row */}
+          <div className="mt-8 flex items-center justify-between gap-4 border-t border-border pt-6">
             {data.tags.length > 0 ? (
               <TagBadgeList tags={data.tags} mobileLimit={2} size="inline" />
             ) : (
@@ -265,7 +292,6 @@ function Post() {
               />
             </div>
           </div>
-          <div className="my-4 h-px w-full bg-border" />
         </header>
         <Content />
         <PostNavigation previous={data.previous} next={data.next} />
