@@ -278,10 +278,10 @@ function Post() {
           )}
 
           {/* Author + Actions row */}
-          <div className="mt-8 flex items-center justify-between gap-4">
+          <div className="mt-8 mb-6 flex items-center justify-between gap-4">
             {data.author && (
               <span className="text-sm text-muted-foreground">
-                By {data.author}
+                {data.author}
               </span>
             )}
 
@@ -293,7 +293,7 @@ function Post() {
               />
             </div>
           </div>
-          <div className="mt-6 h-px w-full bg-border" />
+          <div className="mt-8 h-px w-full bg-border" />
         </header>
         <Content />
         <PostNavigation previous={data.previous} next={data.next} />
