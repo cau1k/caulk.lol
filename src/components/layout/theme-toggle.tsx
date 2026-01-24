@@ -1,6 +1,6 @@
 "use client";
 import { useTheme } from "next-themes";
-import { type ComponentProps, useEffect, useState } from "react";
+import { type ComponentProps, useCallback, useEffect, useState } from "react";
 import { cn } from "../../lib/cn";
 
 import "./theme-toggle.css";
@@ -21,6 +21,18 @@ export function ThemeToggle({
 
   const isDark = mounted ? resolvedTheme === "dark" : false;
 
+  const handleToggle = useCallback(() => {
+    const newTheme = isDark ? "light" : "dark";
+
+    if (document.startViewTransition) {
+      document.startViewTransition(() => {
+        setTheme(newTheme);
+      });
+    } else {
+      setTheme(newTheme);
+    }
+  }, [isDark, setTheme]);
+
   return (
     <span
       className={cn("theme-toggle", className)}
@@ -30,7 +42,7 @@ export function ThemeToggle({
         id="theme-toggle-input"
         type="checkbox"
         checked={isDark}
-        onChange={() => setTheme(isDark ? "light" : "dark")}
+        onChange={handleToggle}
         aria-label="Toggle theme"
       />
       <label htmlFor="theme-toggle-input" data-off="☀" data-on="☾">

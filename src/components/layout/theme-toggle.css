@@ -43,6 +43,7 @@
   color: #666;
   text-shadow: 0 1px 0 white;
   cursor: pointer;
+  transition: box-shadow 0.15s ease-out, background-image 0.15s ease-out;
 }
 
 /* Sun icon - left side (light mode indicator) */
