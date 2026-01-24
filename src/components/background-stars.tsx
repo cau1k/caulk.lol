@@ -18,6 +18,18 @@ type Star = {
   color: StarColor;
 };
 
+type ShootingStar = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  length: number;
+  opacity: number;
+  speed: number;
+  life: number;
+  maxLife: number;
+};
+
 type StarColor = "muted" | "accent" | "primary";
 
 const STAR_CONFIG = {
@@ -29,6 +41,17 @@ const STAR_CONFIG = {
   twinkleChance: 0.4,
   primaryChance: 0.03,
   accentChance: 0.08,
+} as const;
+
+const SHOOTING_STAR_CONFIG = {
+  minInterval: 3000,
+  maxInterval: 8000,
+  minSpeed: 8,
+  maxSpeed: 14,
+  minLength: 80,
+  maxLength: 160,
+  fadeInDuration: 0.1,
+  fadeOutStart: 0.6,
 } as const;
 
 function getStarColor(color: StarColor, isDark: boolean): string {
@@ -70,12 +93,81 @@ function createStar(width: number, height: number): Star {
   };
 }
 
+function createShootingStar(width: number, height: number): ShootingStar {
+  const startX = Math.random() * width * 0.8;
+  const startY = -20;
+
+  const angle = (Math.PI / 4) + (Math.random() * Math.PI / 6);
+  const speed =
+    SHOOTING_STAR_CONFIG.minSpeed +
+    Math.random() * (SHOOTING_STAR_CONFIG.maxSpeed - SHOOTING_STAR_CONFIG.minSpeed);
+
+  const maxLife = (Math.max(width, height) * 1.5) / speed;
+
+  return {
+    x: startX,
+    y: startY,
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed,
+    length:
+      SHOOTING_STAR_CONFIG.minLength +
+      Math.random() * (SHOOTING_STAR_CONFIG.maxLength - SHOOTING_STAR_CONFIG.minLength),
+    opacity: 0,
+    speed,
+    life: 0,
+    maxLife,
+  };
+}
+
+function drawShootingStar(
+  ctx: CanvasRenderingContext2D,
+  star: ShootingStar,
+  isDark: boolean
+): void {
+  const progress = star.life / star.maxLife;
+
+  let opacity = star.opacity;
+  if (progress < SHOOTING_STAR_CONFIG.fadeInDuration) {
+    opacity = progress / SHOOTING_STAR_CONFIG.fadeInDuration;
+  } else if (progress > SHOOTING_STAR_CONFIG.fadeOutStart) {
+    opacity = 1 - (progress - SHOOTING_STAR_CONFIG.fadeOutStart) / (1 - SHOOTING_STAR_CONFIG.fadeOutStart);
+  } else {
+    opacity = 1;
+  }
+
+  const tailX = star.x - (star.vx / star.speed) * star.length;
+  const tailY = star.y - (star.vy / star.speed) * star.length;
+
+  const gradient = ctx.createLinearGradient(tailX, tailY, star.x, star.y);
+  const baseColor = isDark ? "200, 210, 220" : "60, 70, 80";
+  gradient.addColorStop(0, `rgba(${baseColor}, 0)`);
+  gradient.addColorStop(0.7, `rgba(${baseColor}, ${opacity * 0.4})`);
+  gradient.addColorStop(1, `rgba(${baseColor}, ${opacity * 0.8})`);
+
+  ctx.beginPath();
+  ctx.moveTo(tailX, tailY);
+  ctx.lineTo(star.x, star.y);
+  ctx.strokeStyle = gradient;
+  ctx.lineWidth = 1.5;
+  ctx.lineCap = "round";
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(star.x, star.y, 1.5, 0, Math.PI * 2);
+  ctx.fillStyle = isDark
+    ? `rgba(255, 255, 255, ${opacity * 0.9})`
+    : `rgba(40, 50, 60, ${opacity * 0.7})`;
+  ctx.fill();
+}
+
 export const BackgroundStars = memo(
   function BackgroundStars() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const starsRef = useRef<Star[]>([]);
+    const shootingStarsRef = useRef<ShootingStar[]>([]);
     const animationRef = useRef<number | null>(null);
     const isDarkRef = useRef<boolean>(true);
+    const nextShootingStarRef = useRef<number>(0);
 
     const initStars = useCallback(() => {
       const canvas = canvasRef.current;
@@ -122,6 +214,28 @@ export const BackgroundStars = memo(
       }
 
       ctx.globalAlpha = 1;
+
+      if (time > nextShootingStarRef.current) {
+        shootingStarsRef.current.push(
+          createShootingStar(canvas.width, canvas.height)
+        );
+        nextShootingStarRef.current =
+          time +
+          SHOOTING_STAR_CONFIG.minInterval +
+          Math.random() * (SHOOTING_STAR_CONFIG.maxInterval - SHOOTING_STAR_CONFIG.minInterval);
+      }
+
+      shootingStarsRef.current = shootingStarsRef.current.filter((star) => {
+        star.x += star.vx;
+        star.y += star.vy;
+        star.life += 1;
+
+        if (star.life > star.maxLife) return false;
+
+        drawShootingStar(ctx, star, isDark);
+        return true;
+      });
+
       animationRef.current = requestAnimationFrame(animate);
     }, []);
 
@@ -137,6 +251,7 @@ export const BackgroundStars = memo(
 
       resize();
       updateTheme();
+      nextShootingStarRef.current = performance.now() + 1000 + Math.random() * 2000;
       animationRef.current = requestAnimationFrame(animate);
 
       const themeObserver = new MutationObserver(updateTheme);
