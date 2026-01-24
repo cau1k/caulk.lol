@@ -1,5 +1,4 @@
 import type { ComponentProps } from "react";
-import { BackgroundStars } from "../../background-stars";
 import { cn } from "../../../lib/cn";
 import type { BaseLayoutProps, NavOptions } from "../shared";
 import { Header } from "./client";
@@ -27,29 +26,26 @@ export function HomeLayout(props: HomeLayoutProps & ComponentProps<"main">) {
   } = props;
 
   return (
-    <>
-      <BackgroundStars />
-      <main
-        id="nd-home-layout"
-        {...rest}
-        className={cn(
-          "flex flex-1 flex-col [--fd-layout-width:1400px]",
-          rest.className,
-        )}
-      >
-        {nav.enabled !== false &&
-          (nav.component ?? (
-            <Header
-              links={links}
-              nav={nav}
-              themeSwitch={themeSwitch}
-              searchToggle={searchToggle}
-              i18n={i18n}
-              githubUrl={githubUrl}
-            />
-          ))}
-        {props.children}
-      </main>
-    </>
+    <main
+      id="nd-home-layout"
+      {...rest}
+      className={cn(
+        "flex flex-1 flex-col [--fd-layout-width:1400px]",
+        rest.className,
+      )}
+    >
+      {nav.enabled !== false &&
+        (nav.component ?? (
+          <Header
+            links={links}
+            nav={nav}
+            themeSwitch={themeSwitch}
+            searchToggle={searchToggle}
+            i18n={i18n}
+            githubUrl={githubUrl}
+          />
+        ))}
+      {props.children}
+    </main>
   );
 }

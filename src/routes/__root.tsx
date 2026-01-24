@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-router";
 import { RootProvider } from "fumadocs-ui/provider/tanstack";
 import type * as React from "react";
+import { BackgroundStars } from "@/components/background-stars";
 import { NotFound } from "@/components/not-found";
 import { TerminalFooter } from "@/components/terminal-footer";
 import appCss from "@/styles/app.css?url";
@@ -86,6 +87,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="flex flex-col min-h-screen">
+        <BackgroundStars />
         <RootProvider search={{ hotKey: [{ key: "/", display: "/" }] }}>
           {children}
           <TerminalFooter />
