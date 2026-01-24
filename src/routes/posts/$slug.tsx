@@ -266,7 +266,7 @@ function Post() {
           </div>
 
           {/* Title */}
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+          <h1 className="py-2 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
             {data.title}
           </h1>
 
