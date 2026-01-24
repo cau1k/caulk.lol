@@ -52,9 +52,9 @@ const SHOOTING_STAR_CONFIG = {
   maxInterval: 8000,
   minSpeed: 2,
   maxSpeed: 4,
-  pixelSize: 2,
+  pixelSize: 3,
   trailSpacing: 6,
-  trailFadeRate: 0.05,
+  trailFadeRate: 0.025,
 } as const;
 
 function getStarColor(color: StarColor, isDark: boolean): string {
