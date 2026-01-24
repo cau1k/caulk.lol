@@ -1,83 +1,41 @@
 "use client";
-import { cva } from "class-variance-authority";
-import { Airplay, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { type ComponentProps, useEffect, useState } from "react";
 import { cn } from "../../lib/cn";
 
-const itemVariants = cva("size-6.5 p-1.5 text-muted-foreground", {
-  variants: {
-    active: {
-      true: "bg-accent text-accent-foreground",
-      false: "text-muted-foreground",
-    },
-  },
-});
-
-const full = [
-  ["light", Sun] as const,
-  ["dark", Moon] as const,
-  ["system", Airplay] as const,
-];
+import "./theme-toggle.css";
 
 export function ThemeToggle({
   className,
-  mode = "light-dark",
+  mode: _mode = "light-dark",
   ...props
 }: ComponentProps<"div"> & {
   mode?: "light-dark" | "light-dark-system";
 }) {
-  const { setTheme, theme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const container = cn(
-    "inline-flex items-center border px-1 py-1 rounded-none",
-    className,
-  );
-
-  if (mode === "light-dark") {
-    const value = mounted ? resolvedTheme : null;
-
-    return (
-      <button
-        className={container}
-        aria-label={`Toggle Theme`}
-        onClick={() => setTheme(value === "light" ? "dark" : "light")}
-        data-theme-toggle=""
-      >
-        {full.map(([key, Icon]) => {
-          if (key === "system") return;
-
-          return (
-            <Icon
-              key={key}
-              fill="currentColor"
-              className={cn(itemVariants({ active: value === key }))}
-            />
-          );
-        })}
-      </button>
-    );
-  }
-
-  const value = mounted ? theme : null;
+  const isDark = mounted ? resolvedTheme === "dark" : false;
 
   return (
-    <div className={container} data-theme-toggle="" {...props}>
-      {full.map(([key, Icon]) => (
-        <button
-          key={key}
-          aria-label={key}
-          className={cn(itemVariants({ active: value === key }))}
-          onClick={() => setTheme(key)}
-        >
-          <Icon className="size-5" fill="currentColor" />
-        </button>
-      ))}
-    </div>
+    <span
+      className={cn("theme-toggle", className)}
+      {...props}
+    >
+      <input
+        id="theme-toggle-input"
+        type="checkbox"
+        checked={isDark}
+        onChange={() => setTheme(isDark ? "light" : "dark")}
+        aria-label="Toggle theme"
+      />
+      <label htmlFor="theme-toggle-input" data-off="☀" data-on="☾">
+        <span className="sr-only">Toggle theme</span>
+      </label>
+    </span>
   );
 }
