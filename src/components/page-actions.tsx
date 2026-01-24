@@ -12,8 +12,11 @@ import {
   Copy,
   ExternalLinkIcon,
   MessageCircleIcon,
+  Pause,
+  Play,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useBackgroundStarsOptional } from "./background-stars-context";
 import { cn } from "../lib/cn";
 import { buttonVariants } from "./ui/button";
 
@@ -180,5 +183,33 @@ export function ViewOptions({
         ))}
       </PopoverContent>
     </Popover>
+  );
+}
+
+export function StarsToggle() {
+  const ctx = useBackgroundStarsOptional();
+
+  if (!ctx) return null;
+
+  const { paused, setPaused } = ctx;
+
+  return (
+    <button
+      type="button"
+      onClick={() => setPaused((p) => !p)}
+      className={cn(
+        buttonVariants({
+          color: "ghost",
+          size: "icon-sm",
+        }),
+      )}
+      title={paused ? "Resume stars animation" : "Pause stars animation"}
+    >
+      {paused ? (
+        <Play className="size-3.5" />
+      ) : (
+        <Pause className="size-3.5" />
+      )}
+    </button>
   );
 }

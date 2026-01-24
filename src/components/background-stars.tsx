@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useCallback, useEffect, useRef } from "react";
+import { useBackgroundStarsOptional } from "./background-stars-context";
 
 /**
  * Refined star background that integrates with the site's academic aesthetic.
@@ -167,14 +168,50 @@ function drawShootingStar(
   ctx.restore();
 }
 
+function drawStaticFrame(
+  ctx: CanvasRenderingContext2D,
+  stars: Star[],
+  shootingStars: ShootingStar[],
+  isDark: boolean
+): void {
+  for (const star of stars) {
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+    ctx.fillStyle = getStarColor(star.color, isDark);
+    ctx.globalAlpha = star.opacity;
+    ctx.fill();
+  }
+
+  ctx.globalAlpha = 1;
+
+  for (const star of shootingStars) {
+    drawShootingStar(ctx, star, isDark);
+  }
+}
+
 export const BackgroundStars = memo(
   function BackgroundStars() {
+    const ctx = useBackgroundStarsOptional();
+    const paused = ctx?.paused ?? false;
+
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const starsRef = useRef<Star[]>([]);
     const shootingStarsRef = useRef<ShootingStar[]>([]);
     const animationRef = useRef<number | null>(null);
     const isDarkRef = useRef<boolean>(true);
     const nextShootingStarRef = useRef<number>(0);
+    const pausedRef = useRef(paused);
+
+    useEffect(() => {
+      pausedRef.current = paused;
+
+      if (paused) {
+        if (animationRef.current) {
+          cancelAnimationFrame(animationRef.current);
+          animationRef.current = null;
+        }
+      }
+    }, [paused]);
 
     const initStars = useCallback(() => {
       const canvas = canvasRef.current;
@@ -190,17 +227,35 @@ export const BackgroundStars = memo(
     const updateTheme = useCallback(() => {
       isDarkRef.current =
         document.documentElement.classList.contains("dark");
+
+      if (pausedRef.current) {
+        const canvas = canvasRef.current;
+        const ctxCanvas = canvas?.getContext("2d");
+        if (canvas && ctxCanvas) {
+          ctxCanvas.clearRect(0, 0, canvas.width, canvas.height);
+          drawStaticFrame(
+            ctxCanvas,
+            starsRef.current,
+            shootingStarsRef.current,
+            isDarkRef.current
+          );
+        }
+      }
     }, []);
 
     const animate = useCallback((time: number) => {
+      if (pausedRef.current) {
+        return;
+      }
+
       const canvas = canvasRef.current;
-      const ctx = canvas?.getContext("2d");
-      if (!canvas || !ctx) {
+      const ctxCanvas = canvas?.getContext("2d");
+      if (!canvas || !ctxCanvas) {
         animationRef.current = requestAnimationFrame(animate);
         return;
       }
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctxCanvas.clearRect(0, 0, canvas.width, canvas.height);
 
       const isDark = isDarkRef.current;
       const timeSeconds = time / 1000;
@@ -213,14 +268,14 @@ export const BackgroundStars = memo(
           star.opacity = star.baseOpacity * (0.6 + 0.4 * twinkle);
         }
 
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-        ctx.fillStyle = getStarColor(star.color, isDark);
-        ctx.globalAlpha = star.opacity;
-        ctx.fill();
+        ctxCanvas.beginPath();
+        ctxCanvas.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctxCanvas.fillStyle = getStarColor(star.color, isDark);
+        ctxCanvas.globalAlpha = star.opacity;
+        ctxCanvas.fill();
       }
 
-      ctx.globalAlpha = 1;
+      ctxCanvas.globalAlpha = 1;
 
       if (time > nextShootingStarRef.current) {
         shootingStarsRef.current.push(createShootingStar(canvas.width));
@@ -241,7 +296,7 @@ export const BackgroundStars = memo(
 
         if (outOfBounds && star.trail.length === 0) return false;
 
-        drawShootingStar(ctx, star, isDark);
+        drawShootingStar(ctxCanvas, star, isDark);
         return true;
       });
 
@@ -261,7 +316,20 @@ export const BackgroundStars = memo(
       resize();
       updateTheme();
       nextShootingStarRef.current = performance.now() + 1000 + Math.random() * 2000;
-      animationRef.current = requestAnimationFrame(animate);
+
+      if (!pausedRef.current) {
+        animationRef.current = requestAnimationFrame(animate);
+      } else {
+        const ctxCanvas = canvas.getContext("2d");
+        if (ctxCanvas) {
+          drawStaticFrame(
+            ctxCanvas,
+            starsRef.current,
+            shootingStarsRef.current,
+            isDarkRef.current
+          );
+        }
+      }
 
       const themeObserver = new MutationObserver(updateTheme);
       themeObserver.observe(document.documentElement, {
@@ -279,6 +347,12 @@ export const BackgroundStars = memo(
         window.removeEventListener("resize", resize);
       };
     }, [animate, initStars, updateTheme]);
+
+    useEffect(() => {
+      if (!paused && !animationRef.current) {
+        animationRef.current = requestAnimationFrame(animate);
+      }
+    }, [paused, animate]);
 
     return (
       <canvas

@@ -7,6 +7,7 @@ import {
 import { RootProvider } from "fumadocs-ui/provider/tanstack";
 import type * as React from "react";
 import { BackgroundStars } from "@/components/background-stars";
+import { BackgroundStarsProvider } from "@/components/background-stars-context";
 import { NotFound } from "@/components/not-found";
 import { TerminalFooter } from "@/components/terminal-footer";
 import appCss from "@/styles/app.css?url";
@@ -87,11 +88,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="flex flex-col min-h-screen">
-        <BackgroundStars />
-        <RootProvider search={{ hotKey: [{ key: "/", display: "/" }] }}>
-          {children}
-          <TerminalFooter />
-        </RootProvider>
+        <BackgroundStarsProvider>
+          <BackgroundStars />
+          <RootProvider search={{ hotKey: [{ key: "/", display: "/" }] }}>
+            {children}
+            <TerminalFooter />
+          </RootProvider>
+        </BackgroundStarsProvider>
         <Scripts />
       </body>
     </html>

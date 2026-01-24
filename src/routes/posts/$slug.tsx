@@ -6,8 +6,9 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { useBackgroundStarsOptional } from "@/components/background-stars-context";
 import { PostLayout, usePostTOC } from "@/components/layout/post";
-import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
+import { LLMCopyButton, StarsToggle, ViewOptions } from "@/components/page-actions";
 import { TOCProvider } from "@/components/toc";
 import { WheelTOCItems } from "@/components/toc/wheel";
 import { formatDateTime } from "@/lib/format-date";
@@ -225,6 +226,15 @@ function PostNavigation({
 function Post() {
   const data = Route.useLoaderData();
   const Content = clientLoader.getComponent(data.path);
+  const starsCtx = useBackgroundStarsOptional();
+
+  useEffect(() => {
+    if (!starsCtx) return;
+    starsCtx.setPaused(true);
+    return () => {
+      starsCtx.setPaused(false);
+    };
+  }, [starsCtx]);
 
   const dateTime = data.date ? formatDateTime(data.date) : "";
   const machineDateTime = data.date
@@ -286,6 +296,7 @@ function Post() {
             )}
 
             <div className="ml-auto flex items-center gap-2">
+              <StarsToggle />
               <LLMCopyButton markdownUrl={`/posts/${data.slug}.mdx`} />
               <ViewOptions
                 markdownUrl={`/posts/${data.slug}.mdx`}
