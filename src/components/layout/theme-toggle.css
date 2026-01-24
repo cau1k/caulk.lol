@@ -46,28 +46,7 @@
   transition: box-shadow 0.15s ease-out, background-image 0.15s ease-out;
 }
 
-/* Sun icon - left side (light mode indicator) */
-.theme-toggle label::before {
-  content: attr(data-off);
-  position: absolute;
-  left: 5px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 4;
-  font-size: 11px;
-}
 
-/* Moon icon - right side (dark mode indicator) */
-.theme-toggle label::after {
-  content: attr(data-on);
-  position: absolute;
-  right: 5px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #666;
-  text-shadow: 0 -1px 0 #eee;
-  font-size: 10px;
-}
 
 /* Checked state (dark mode) */
 .theme-toggle input:checked + label {
@@ -78,17 +57,7 @@
     inset 6px 0 0 white;
 }
 
-.theme-toggle input:checked + label::before {
-  z-index: 1;
-  left: 8px;
-}
 
-.theme-toggle input:checked + label::after {
-  right: 8px;
-  color: #888;
-  text-shadow: none;
-  z-index: 4;
-}
 
 /* Hover states */
 .theme-toggle:hover label {

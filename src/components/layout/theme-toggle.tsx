@@ -45,7 +45,7 @@ export function ThemeToggle({
         onChange={handleToggle}
         aria-label="Toggle theme"
       />
-      <label htmlFor="theme-toggle-input" data-off="☀" data-on="☾">
+      <label htmlFor="theme-toggle-input">
         <span className="sr-only">Toggle theme</span>
       </label>
     </span>
