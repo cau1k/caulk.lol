@@ -3,6 +3,7 @@
 import { Link } from "@tanstack/react-router";
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
+import { usePageTiming } from "@/lib/use-page-timing";
 
 const NAV_LINKS = [
   { label: "posts", href: "/posts" as const },
@@ -17,6 +18,7 @@ const SOCIAL_LINKS = [
 export function TerminalFooter() {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-20px" });
+  const timing = usePageTiming();
 
   return (
     <footer
@@ -110,8 +112,19 @@ export function TerminalFooter() {
             className="mt-12 pt-6 border-t border-border flex items-center justify-between text-xs text-muted-foreground"
           >
             <span>zerocaulk</span>
-            <span className="flex items-center gap-1">
-              <span className="inline-block w-1.5 h-3 bg-foreground/60 animate-pulse" />
+            <span className="flex items-center gap-3 font-mono">
+              {timing.initialLoad !== null && (
+                <span>
+                  <span className="text-foreground/60">load:</span>{" "}
+                  <span className="text-foreground/80">{timing.initialLoad}ms</span>
+                </span>
+              )}
+              {timing.navigation !== null && (
+                <span>
+                  <span className="text-foreground/60">page:</span>{" "}
+                  <span className="text-foreground/80">{timing.navigation}ms</span>
+                </span>
+              )}
             </span>
           </motion.div>
         </div>
