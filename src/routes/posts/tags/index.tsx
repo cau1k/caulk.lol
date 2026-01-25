@@ -7,6 +7,12 @@ import { posts } from "@/lib/source";
 
 export const Route = createFileRoute("/posts/tags/")({
   loader: () => serverLoader(),
+  staleTime: 5 * 60_000,
+  gcTime: 30 * 60_000,
+  headers: () => ({
+    "Cache-Control":
+      "public, max-age=0, s-maxage=300, stale-while-revalidate=3600",
+  }),
   component: TagsIndex,
 });
 

@@ -24,6 +24,14 @@ export const Route = createFileRoute("/posts/$slug")({
     await clientLoader.preload(data.path);
     return data;
   },
+  // Blog posts rarely change - aggressive caching
+  staleTime: Infinity,
+  gcTime: 30 * 60_000, // 30 min memory retention
+  headers: () => ({
+    // CDN cache 1h, serve stale up to 7d while revalidating
+    "Cache-Control":
+      "public, max-age=0, s-maxage=3600, stale-while-revalidate=604800",
+  }),
   head: ({ loaderData }) => {
     if (!loaderData) {
       return { meta: [] };

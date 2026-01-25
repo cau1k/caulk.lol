@@ -23,7 +23,8 @@ export default defineConfig({
     alchemy(),
     tanstackStart({
       prerender: {
-        enabled: false,
+        enabled: true,
+        crawlLinks: true,
       },
     }),
     react(),

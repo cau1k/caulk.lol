@@ -38,6 +38,13 @@ async function getExcerpt(absolutePath: string, maxLen = 100): Promise<string> {
 
 export const Route = createFileRoute("/posts/")({
   loader: () => serverLoader(),
+  // Post index updates when new posts are added
+  staleTime: 5 * 60_000, // 5 min
+  gcTime: 30 * 60_000,
+  headers: () => ({
+    "Cache-Control":
+      "public, max-age=0, s-maxage=300, stale-while-revalidate=3600",
+  }),
   component: BlogIndex,
 });
 
