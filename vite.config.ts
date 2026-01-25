@@ -22,9 +22,10 @@ export default defineConfig({
     }),
     alchemy(),
     tanstackStart({
+      // Prerender disabled - incompatible with Cloudflare Workers via alchemy
+      // CDN caching via Cache-Control headers provides similar benefits
       prerender: {
-        enabled: true,
-        crawlLinks: true,
+        enabled: false,
       },
     }),
     react(),
