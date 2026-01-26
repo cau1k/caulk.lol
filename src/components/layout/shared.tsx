@@ -1,12 +1,19 @@
 import type { I18nConfig } from "fumadocs-core/i18n";
-import type { ReactNode } from "react";
+import type { AnchorHTMLAttributes, DetailedHTMLProps, ReactNode } from "react";
 import type { LinkItemType } from "./link-item";
 
 export interface NavOptions {
   enabled: boolean;
   component: ReactNode;
 
-  title?: ReactNode;
+  title?:
+    | ReactNode
+    | ((
+        props: DetailedHTMLProps<
+          AnchorHTMLAttributes<HTMLAnchorElement>,
+          HTMLAnchorElement
+        >,
+      ) => ReactNode);
 
   /**
    * Redirect url of title
