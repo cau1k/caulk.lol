@@ -78,10 +78,10 @@ export interface FileRoutesByFullPath {
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/posts/$slug': typeof PostsSlugRoute
-  '/posts': typeof PostsIndexRoute
+  '/posts/': typeof PostsIndexRoute
   '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
-  '/posts/tags': typeof PostsTagsIndexRoute
+  '/posts/tags/': typeof PostsTagsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -117,10 +117,10 @@ export interface FileRouteTypes {
     | '/api/search'
     | '/llms.mdx/$'
     | '/posts/$slug'
-    | '/posts'
+    | '/posts/'
     | '/og/posts/$'
     | '/posts/tags/$tag'
-    | '/posts/tags'
+    | '/posts/tags/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -186,7 +186,7 @@ declare module '@tanstack/react-router' {
     '/posts/': {
       id: '/posts/'
       path: '/posts'
-      fullPath: '/posts'
+      fullPath: '/posts/'
       preLoaderRoute: typeof PostsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -214,7 +214,7 @@ declare module '@tanstack/react-router' {
     '/posts/tags/': {
       id: '/posts/tags/'
       path: '/posts/tags'
-      fullPath: '/posts/tags'
+      fullPath: '/posts/tags/'
       preLoaderRoute: typeof PostsTagsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
