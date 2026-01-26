@@ -357,7 +357,7 @@ export const BackgroundStars = memo(
     return (
       <canvas
         ref={canvasRef}
-        className="pointer-events-none fixed inset-0 -z-10"
+        className="pointer-events-none fixed inset-0 -z-10 opacity-0 motion-safe:animate-[fade-in_1500ms_cubic-bezier(0.215,0.61,0.355,1)_forwards] motion-reduce:opacity-100"
       />
     );
   },
