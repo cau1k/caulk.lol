@@ -12,7 +12,13 @@ export default defineConfig({
     allowedHosts: ["arch.catla-justice.ts.net"],
   },
   ssr: {
-    external: [],
+    // Exclude heavy client-only libs from server bundle
+    external: [
+      "mermaid",
+      "@excalidraw/excalidraw",
+      "react-force-graph-2d",
+      "d3-force",
+    ],
   },
   plugins: [
     mdx(await import("./source.config")),
