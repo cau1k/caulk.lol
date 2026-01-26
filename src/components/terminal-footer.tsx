@@ -97,7 +97,7 @@ export function TerminalFooter() {
                   <span className="inline-block w-2 h-2 bg-primary" />
                   <span>online</span>
                 </div>
-                <div className="text-muted-foreground text-xs">
+                <div className="text-muted-foreground text-xs" suppressHydrationWarning>
                   {new Date().getFullYear()}
                 </div>
               </div>
