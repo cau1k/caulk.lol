@@ -5,35 +5,58 @@ const WORDS_PER_MINUTE = 200;
  * Strips MDX/Markdown syntax before counting words
  */
 export function calculateReadingTime(content: string): number {
-  // Remove frontmatter
-  const withoutFrontmatter = content.replace(/^---[\s\S]*?---\n?/, "");
+  const withoutFrontmatter = content.replace(/^---[\s\S]*?---\s*/, "");
 
-  // Remove code blocks
-  const withoutCode = withoutFrontmatter.replace(/```[\s\S]*?```/g, "");
+  const codeBlocks: string[] = [];
 
-  // Remove inline code
-  const withoutInlineCode = withoutCode.replace(/`[^`]*`/g, "");
+  // Remove fenced code blocks from prose; we count them separately.
+  const proseSource = withoutFrontmatter.replace(
+    /```[^\n]*\n([\s\S]*?)```/g,
+    (_match, code: string) => {
+      codeBlocks.push(code);
+      return "\n";
+    },
+  );
 
-  // Remove JSX/MDX components
-  const withoutJsx = withoutInlineCode.replace(/<[^>]+>/g, "");
+  // Keep inline code content, drop backticks.
+  const proseWithInlineCode = proseSource.replace(/`([^`]*)`/g, "$1");
 
-  // Remove markdown links but keep text
-  const withoutLinks = withoutJsx.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+  // Preserve autolinks like <https://example.com>
+  const proseWithAutolinks = proseWithInlineCode.replace(
+    /<((?:https?:\/\/|mailto:)[^>\s]+)>/g,
+    "$1",
+  );
 
-  // Remove images
-  const withoutImages = withoutLinks.replace(/!\[[^\]]*\]\([^)]+\)/g, "");
+  // Strip HTML/JSX/MDX tags but keep inner text.
+  const proseWithoutTags = proseWithAutolinks.replace(/<\/?[A-Za-z][^>]*>/g, " ");
 
-  // Remove markdown formatting characters
-  const plainText = withoutImages
-    .replace(/[#*_~`]/g, "")
-    .replace(/\n+/g, " ")
+  // Remove markdown links but keep link text.
+  const proseWithoutLinks = proseWithoutTags.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+
+  // Replace images with their alt text (if any).
+  const proseWithoutImages = proseWithoutLinks.replace(
+    /!\[([^\]]*)\]\([^)]+\)/g,
+    "$1",
+  );
+
+  const plainText = proseWithoutImages
+    .replace(/[#*_~>|{}]/g, " ")
+    .replace(/\s+/g, " ")
     .trim();
 
-  // Count words
-  const wordCount = plainText.split(/\s+/).filter(Boolean).length;
+  const wordMatches = plainText.match(/[A-Za-z0-9]+(?:['-][A-Za-z0-9]+)*/g);
+  const proseWordCount = wordMatches?.length ?? 0;
 
-  // Calculate minutes, minimum 1
-  return Math.max(1, Math.ceil(wordCount / WORDS_PER_MINUTE));
+  const codeWordCount = codeBlocks.reduce((sum, code) => {
+    const matches = code.match(/[A-Za-z0-9_]+/g);
+    return sum + (matches?.length ?? 0);
+  }, 0);
+
+  const totalWordCount = proseWordCount + codeWordCount;
+
+  const minutes = Math.ceil(totalWordCount / WORDS_PER_MINUTE);
+
+  return Math.max(1, minutes);
 }
 
 export function formatReadingTime(minutes: number): string {

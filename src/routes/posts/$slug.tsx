@@ -2,8 +2,6 @@ import browserCollections from "fumadocs-mdx:collections/browser";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import type { TOCItemType } from "fumadocs-core/toc";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useBackgroundStarsOptional } from "@/components/background-stars-context";
@@ -70,14 +68,13 @@ const serverLoader = createServerFn({ method: "GET" })
     const isDev = import.meta.env.DEV;
     if (page.data.draft && !isDev) throw notFound();
 
-    // Calculate reading time from MDX file content
-    const mdxPath = join(process.cwd(), "content/posts", `${slug}.mdx`);
+    // Calculate reading time from processed markdown (doesn't rely on runtime FS)
     let readingTime = 1;
     try {
-      const content = await readFile(mdxPath, "utf-8");
+      const content = await page.data.getText("processed");
       readingTime = calculateReadingTime(content);
     } catch {
-      // Default to 1 min if file read fails
+      // Default to 1 min if reading time can't be computed
     }
 
     // sort all posts by date ascending (oldest first), exclude drafts in prod
