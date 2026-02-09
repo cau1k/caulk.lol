@@ -10,8 +10,6 @@ import { notes } from "@/lib/source";
 
 type NoteCategory = "predictions" | "thoughts";
 
-type CategoryFilter = "all" | NoteCategory;
-
 type NoteSummary = {
   url: string;
   title: string;
@@ -52,144 +50,70 @@ const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
 function NotesIndex() {
   const { notes } = Route.useLoaderData();
 
-  const [view, setView] = useState<"t" | "list">("t");
-  const [category, setCategory] = useState<CategoryFilter>("all");
-  const [since, setSince] = useState("");
-  const [q, setQ] = useState("");
+  const [sort, setSort] = useState<"newest" | "oldest">("newest");
 
-  const filtered = useMemo(() => {
-    const parseDateInput = (value: string): number | null => {
-      if (!value) return null;
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
-      const d = new Date(`${value}T00:00:00`);
-      const ts = d.getTime();
-      return Number.isNaN(ts) ? null : ts;
-    };
-
-    const query = q.trim().toLowerCase();
-    const sinceTs = parseDateInput(since);
-
-    const matchesCategory = (note: NoteSummary) =>
-      category === "all" ? true : note.category === category;
-
-    const matchesSince = (note: NoteSummary) => {
-      if (sinceTs == null) return true;
-      return note.date.getTime() >= sinceTs;
-    };
-
-    const matchesQuery = (note: NoteSummary) => {
-      if (!query) return true;
-      const haystack = `${note.title} ${note.description ?? ""} ${note.tags.join(" ")}`
-        .trim()
-        .toLowerCase();
-      return haystack.includes(query);
-    };
-
-    return notes
-      .filter(matchesCategory)
-      .filter(matchesSince)
-      .filter(matchesQuery)
-      .sort((a, b) => b.date.getTime() - a.date.getTime());
-  }, [category, notes, q, since]);
+  const sorted = useMemo(() => {
+    const list = [...notes];
+    list.sort((a, b) =>
+      sort === "newest"
+        ? b.date.getTime() - a.date.getTime()
+        : a.date.getTime() - b.date.getTime(),
+    );
+    return list;
+  }, [notes, sort]);
 
   const tChart = useMemo(() => {
-    const predictions = filtered.filter((n) => n.category === "predictions");
-    const thoughts = filtered.filter((n) => n.category === "thoughts");
+    const predictions = sorted.filter((n) => n.category === "predictions");
+    const thoughts = sorted.filter((n) => n.category === "thoughts");
     return { predictions, thoughts };
-  }, [filtered]);
+  }, [sorted]);
 
   return (
     <HomeLayout {...baseOptions()}>
-      <main className="mx-auto w-full max-w-5xl px-4 py-14">
+      <main className="mx-auto w-full max-w-2xl px-4 py-14">
         <header className="mb-10">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1 className="text-3xl font-semibold tracking-tight">Notes</h1>
               <p className="mt-3 max-w-xl text-muted-foreground">
                 Two columns: predictions and thoughts. Keep it small.
               </p>
             </div>
-
-            <Segmented
-              value={view}
-              onChange={setView}
-              options={[
-                { value: "t", label: "T" },
-                { value: "list", label: "List" },
-              ]}
-            />
           </div>
 
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-2">
-              <Segmented
-                value={category}
-                onChange={setCategory}
-                options={[
-                  { value: "all", label: "All" },
-                  { value: "predictions", label: "Predictions" },
-                  { value: "thoughts", label: "Thoughts" },
-                ]}
-              />
-              <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-background px-3 h-10">
-                <span className="text-xs text-muted-foreground">Since</span>
-                <input
-                  type="date"
-                  value={since}
-                  onChange={(e) => setSince(e.target.value)}
-                  className={cn(
-                    "bg-transparent text-sm outline-none",
-                    "[color-scheme:light] dark:[color-scheme:dark]",
-                  )}
-                />
-              </label>
+          <div className="mt-6 flex items-center justify-between gap-3">
+            <div className="text-xs text-muted-foreground">
+              <span className="tabular-nums">{sorted.length}</span> notes
+              {sorted[0]?.date && (
+                <span className="tabular-nums"> · latest {formatDate(sorted[0].date)}</span>
+              )}
             </div>
 
-            <div className="flex items-center gap-2">
-              <input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="Search"
+            <label className="inline-flex items-center gap-2 text-sm">
+              <span className="text-xs text-muted-foreground">Sort</span>
+              <select
+                value={sort}
+                onChange={(e) =>
+                  setSort(e.target.value === "oldest" ? "oldest" : "newest")
+                }
                 className={cn(
-                  "h-10 w-full sm:w-64 rounded-xl border border-border bg-background px-3",
-                  "text-sm outline-none",
-                  "focus-visible:ring-ring/40 focus-visible:ring-4",
-                )}
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  setCategory("all");
-                  setSince("");
-                  setQ("");
-                }}
-                className={cn(
-                  "h-10 rounded-xl border border-border bg-background px-3 text-sm",
-                  "text-muted-foreground hover:text-foreground transition-colors",
+                  "h-9 rounded-lg border border-border bg-background px-2 text-sm",
+                  "outline-none focus-visible:ring-ring/40 focus-visible:ring-4",
                 )}
               >
-                Reset
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-4 text-xs text-muted-foreground">
-            <span className="tabular-nums">{filtered.length}</span> notes
-            {filtered[0]?.date && (
-              <span className="tabular-nums"> · latest {formatDate(filtered[0].date)}</span>
-            )}
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+              </select>
+            </label>
           </div>
         </header>
 
         <section>
-          {filtered.length === 0 ? (
+          {sorted.length === 0 ? (
             <EmptyState
               title="No notes match"
-              description="Try clearing search or removing the date filter."
-              action={{ label: "Reset", to: "/notes" }}
+              description="Write a note and it will show up here."
             />
-          ) : view === "list" ? (
-            <ListView notes={filtered} />
           ) : (
             <TChartView
               predictions={tChart.predictions}
@@ -199,45 +123,6 @@ function NotesIndex() {
         </section>
       </main>
     </HomeLayout>
-  );
-}
-
-function ListView({ notes }: { notes: NoteSummary[] }) {
-  return (
-    <div className="rounded-2xl border border-border overflow-hidden">
-      <div className="divide-y divide-border">
-        {notes.map((note) => (
-          <Link
-            key={note.url}
-            to={note.url}
-            className={cn(
-              "block px-4 py-4 sm:px-6",
-              "bg-background hover:bg-accent/30 transition-colors",
-            )}
-          >
-            <article className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-6">
-              <time
-                className="text-xs text-muted-foreground tabular-nums shrink-0 sm:w-28"
-                title={formatDateTime(note.date)}
-              >
-                {formatDate(note.date)}
-              </time>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <CategoryStamp category={note.category} />
-                  <h2 className="font-medium truncate">{note.title}</h2>
-                </div>
-                {note.description && (
-                  <p className="mt-1 text-sm text-muted-foreground line-clamp-1">
-                    {note.description}
-                  </p>
-                )}
-              </div>
-            </article>
-          </Link>
-        ))}
-      </div>
-    </div>
   );
 }
 
@@ -306,48 +191,5 @@ function Column({ notes }: { notes: NoteSummary[] }) {
         </div>
       )}
     </div>
-  );
-}
-
-function Segmented<T extends string>({
-  value,
-  onChange,
-  options,
-}: {
-  value: T;
-  onChange: (value: T) => void;
-  options: Array<{ value: T; label: string }>;
-}) {
-  return (
-    <div className="inline-flex rounded-xl border border-border bg-background/70 p-1">
-      {options.map((opt) => (
-        <button
-          key={opt.value}
-          type="button"
-          onClick={() => onChange(opt.value)}
-          data-active={opt.value === value}
-          className={cn(
-            "h-9 rounded-lg px-3 text-sm transition-colors",
-            "text-muted-foreground hover:text-foreground",
-            "data-[active=true]:bg-accent/50 data-[active=true]:text-foreground",
-          )}
-        >
-          {opt.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function CategoryStamp({ category }: { category: NoteCategory }) {
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-full border border-border px-2 py-0.5",
-        "text-[0.70rem] tracking-wide uppercase text-muted-foreground",
-      )}
-    >
-      {category}
-    </span>
   );
 }
