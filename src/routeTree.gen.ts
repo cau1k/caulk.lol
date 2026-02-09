@@ -13,7 +13,9 @@ import { Route as LlmsFullDottxtRouteImport } from './routes/llms-full[.]txt'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PostsIndexRouteImport } from './routes/posts/index'
+import { Route as NotesIndexRouteImport } from './routes/notes/index'
 import { Route as PostsSlugRouteImport } from './routes/posts/$slug'
+import { Route as NotesSlugRouteImport } from './routes/notes/$slug'
 import { Route as LlmsDotmdxSplatRouteImport } from './routes/llms[.]mdx.$'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
 import { Route as PostsTagsIndexRouteImport } from './routes/posts/tags/index'
@@ -40,9 +42,19 @@ const PostsIndexRoute = PostsIndexRouteImport.update({
   path: '/posts/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotesIndexRoute = NotesIndexRouteImport.update({
+  id: '/notes/',
+  path: '/notes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PostsSlugRoute = PostsSlugRouteImport.update({
   id: '/posts/$slug',
   path: '/posts/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotesSlugRoute = NotesSlugRouteImport.update({
+  id: '/notes/$slug',
+  path: '/notes/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LlmsDotmdxSplatRoute = LlmsDotmdxSplatRouteImport.update({
@@ -77,7 +89,9 @@ export interface FileRoutesByFullPath {
   '/llms-full.txt': typeof LlmsFullDottxtRoute
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
+  '/notes/$slug': typeof NotesSlugRoute
   '/posts/$slug': typeof PostsSlugRoute
+  '/notes/': typeof NotesIndexRoute
   '/posts/': typeof PostsIndexRoute
   '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
@@ -89,7 +103,9 @@ export interface FileRoutesByTo {
   '/llms-full.txt': typeof LlmsFullDottxtRoute
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
+  '/notes/$slug': typeof NotesSlugRoute
   '/posts/$slug': typeof PostsSlugRoute
+  '/notes': typeof NotesIndexRoute
   '/posts': typeof PostsIndexRoute
   '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
@@ -102,7 +118,9 @@ export interface FileRoutesById {
   '/llms-full.txt': typeof LlmsFullDottxtRoute
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
+  '/notes/$slug': typeof NotesSlugRoute
   '/posts/$slug': typeof PostsSlugRoute
+  '/notes/': typeof NotesIndexRoute
   '/posts/': typeof PostsIndexRoute
   '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
@@ -116,7 +134,9 @@ export interface FileRouteTypes {
     | '/llms-full.txt'
     | '/api/search'
     | '/llms.mdx/$'
+    | '/notes/$slug'
     | '/posts/$slug'
+    | '/notes/'
     | '/posts/'
     | '/og/posts/$'
     | '/posts/tags/$tag'
@@ -128,7 +148,9 @@ export interface FileRouteTypes {
     | '/llms-full.txt'
     | '/api/search'
     | '/llms.mdx/$'
+    | '/notes/$slug'
     | '/posts/$slug'
+    | '/notes'
     | '/posts'
     | '/og/posts/$'
     | '/posts/tags/$tag'
@@ -140,7 +162,9 @@ export interface FileRouteTypes {
     | '/llms-full.txt'
     | '/api/search'
     | '/llms.mdx/$'
+    | '/notes/$slug'
     | '/posts/$slug'
+    | '/notes/'
     | '/posts/'
     | '/og/posts/$'
     | '/posts/tags/$tag'
@@ -153,7 +177,9 @@ export interface RootRouteChildren {
   LlmsFullDottxtRoute: typeof LlmsFullDottxtRoute
   ApiSearchRoute: typeof ApiSearchRoute
   LlmsDotmdxSplatRoute: typeof LlmsDotmdxSplatRoute
+  NotesSlugRoute: typeof NotesSlugRoute
   PostsSlugRoute: typeof PostsSlugRoute
+  NotesIndexRoute: typeof NotesIndexRoute
   PostsIndexRoute: typeof PostsIndexRoute
   OgPostsSplatRoute: typeof OgPostsSplatRoute
   PostsTagsTagRoute: typeof PostsTagsTagRoute
@@ -190,11 +216,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PostsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/notes/': {
+      id: '/notes/'
+      path: '/notes'
+      fullPath: '/notes/'
+      preLoaderRoute: typeof NotesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/posts/$slug': {
       id: '/posts/$slug'
       path: '/posts/$slug'
       fullPath: '/posts/$slug'
       preLoaderRoute: typeof PostsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notes/$slug': {
+      id: '/notes/$slug'
+      path: '/notes/$slug'
+      fullPath: '/notes/$slug'
+      preLoaderRoute: typeof NotesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/llms.mdx/$': {
@@ -241,7 +281,9 @@ const rootRouteChildren: RootRouteChildren = {
   LlmsFullDottxtRoute: LlmsFullDottxtRoute,
   ApiSearchRoute: ApiSearchRoute,
   LlmsDotmdxSplatRoute: LlmsDotmdxSplatRoute,
+  NotesSlugRoute: NotesSlugRoute,
   PostsSlugRoute: PostsSlugRoute,
+  NotesIndexRoute: NotesIndexRoute,
   PostsIndexRoute: PostsIndexRoute,
   OgPostsSplatRoute: OgPostsSplatRoute,
   PostsTagsTagRoute: PostsTagsTagRoute,

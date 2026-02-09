@@ -57,4 +57,40 @@ export const posts = defineCollections({
   }),
 });
 
+export const notes = defineCollections({
+  type: "doc",
+  dir: "content/notes",
+  schema: frontmatterSchema.extend({
+    date: z.coerce.date(),
+    updatedAt: z.coerce.date().optional(),
+    category: z.enum(["predictions", "thoughts"]),
+    draft: z.boolean().default(false),
+    tags: z.array(z.string().trim()).default([]),
+  }),
+  mdxOptions: applyMdxPreset({
+    remarkPlugins: [remarkMath, remarkMdxMermaid, remarkHeading],
+    rehypePlugins: [
+      rehypeKatex,
+      [rehypeToc, { exportToc: true }],
+      [
+        rehypeExternalRef,
+        { exclude: ["caulk.lol", "localhost", "github.com"] },
+      ],
+    ],
+    rehypeCodeOptions: {
+      ...rehypeCodeDefaultOptions,
+      themes: {
+        light: monoGlowLightTheme,
+        dark: monoGlowTheme,
+      },
+      transformers: [
+        ...(rehypeCodeDefaultOptions.transformers ?? []),
+        transformerTwoslash({
+          typesCache: createFileSystemTypesCache(),
+        }),
+      ],
+    },
+  }),
+});
+
 export default defineConfig();

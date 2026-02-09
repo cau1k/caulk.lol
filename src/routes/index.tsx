@@ -120,12 +120,20 @@ function Home() {
 
         <footer className="mt-20 pt-8 border-t border-border">
           <div className="flex justify-between text-sm text-muted-foreground">
-            <Link
-              to="/posts"
-              className="hover:text-foreground transition-colors"
-            >
-              All writing
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link
+                to="/posts"
+                className="hover:text-foreground transition-colors"
+              >
+                Archive
+              </Link>
+              <Link
+                to="/notes"
+                className="hover:text-foreground transition-colors"
+              >
+                Notes
+              </Link>
+            </div>
           </div>
         </footer>
       </main>
