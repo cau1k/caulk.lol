@@ -4,7 +4,6 @@ import type {
   CollapsibleTriggerProps,
 } from "@radix-ui/react-collapsible";
 import { Presence } from "@radix-ui/react-presence";
-import type { ScrollAreaProps } from "@radix-ui/react-scroll-area";
 import { usePathname } from "fumadocs-core/framework";
 import Link, { type LinkProps } from "fumadocs-core/link";
 import { useMediaQuery } from "fumadocs-core/utils/use-media-query";
@@ -23,7 +22,7 @@ import {
   useState,
 } from "react";
 import scrollIntoView from "scroll-into-view-if-needed";
-import { cn } from "../../../lib/cn";
+import { cn, cnState } from "../../../lib/cn";
 import { isActive } from "../../../lib/is-active";
 import {
   Collapsible,
@@ -191,15 +190,26 @@ export function SidebarContent({
   });
 }
 
-export function SidebarDrawerOverlay(props: ComponentProps<"div">) {
+export function SidebarDrawerOverlay({
+  onClick,
+  onKeyDown,
+  type,
+  ...props
+}: ComponentProps<"button">) {
   const { open, setOpen, mode } = useSidebar();
 
   if (mode !== "drawer") return;
   return (
     <Presence present={open}>
-      <div
+      <button
+        type={type ?? "button"}
+        aria-label="Close sidebar"
         data-state={open ? "open" : "closed"}
-        onClick={() => setOpen(false)}
+        onClick={(event) => {
+          onClick?.(event);
+          setOpen(false);
+        }}
+        onKeyDown={onKeyDown}
         {...props}
       />
     </Presence>
@@ -231,9 +241,12 @@ export function SidebarDrawerContent({
   );
 }
 
-export function SidebarViewport(props: ScrollAreaProps) {
+export function SidebarViewport(props: ComponentProps<typeof ScrollArea>) {
   return (
-    <ScrollArea {...props} className={cn("min-h-0 flex-1", props.className)}>
+    <ScrollArea
+      {...props}
+      className={cnState("min-h-0 flex-1", props.className)}
+    >
       <ScrollViewport
         className="p-4 overscroll-contain"
         style={

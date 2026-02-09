@@ -26,7 +26,11 @@ export function SidebarTabsDropdown({
   const pathname = usePathname();
 
   const selected = useMemo(() => {
-    return options.findLast((item) => isTabActive(item, pathname));
+    for (let i = options.length - 1; i >= 0; i -= 1) {
+      const item = options[i];
+      if (item && isTabActive(item, pathname)) return item;
+    }
+    return undefined;
   }, [options, pathname]);
 
   const onClick = () => {
@@ -65,40 +69,44 @@ export function SidebarTabsDropdown({
         </PopoverTrigger>
       )}
       <PopoverContent className="flex flex-col gap-1 w-(--radix-popover-trigger-width) p-1 fd-scroll-container">
-        {options.map((item) => {
-          const isActive = selected && item.url === selected.url;
-          if (!isActive && item.unlisted) return;
+        {options
+          .filter((item) => {
+            const isActive = selected?.url === item.url;
+            return isActive || !item.unlisted;
+          })
+          .map((item) => {
+            const isActive = selected?.url === item.url;
 
-          return (
-            <Link
-              key={item.url}
-              href={item.url}
-              onClick={onClick}
-              {...item.props}
-              className={cn(
-                "flex items-center gap-2 rounded-lg p-1.5 hover:bg-accent hover:text-accent-foreground",
-                item.props?.className,
-              )}
-            >
-              <div className="shrink-0 size-9 md:mt-1 md:mb-auto md:size-5 empty:hidden">
-                {item.icon}
-              </div>
-              <div>
-                <p className="text-sm font-medium">{item.title}</p>
-                <p className="text-[0.8125rem] text-muted-foreground empty:hidden">
-                  {item.description}
-                </p>
-              </div>
-
-              <Check
+            return (
+              <Link
+                key={item.url}
+                href={item.url}
+                onClick={onClick}
+                {...item.props}
                 className={cn(
-                  "shrink-0 ms-auto size-3.5 text-primary",
-                  !isActive && "invisible",
+                  "flex items-center gap-2 rounded-lg p-1.5 hover:bg-accent hover:text-accent-foreground",
+                  item.props?.className,
                 )}
-              />
-            </Link>
-          );
-        })}
+              >
+                <div className="shrink-0 size-9 md:mt-1 md:mb-auto md:size-5 empty:hidden">
+                  {item.icon}
+                </div>
+                <div>
+                  <p className="text-sm font-medium">{item.title}</p>
+                  <p className="text-[0.8125rem] text-muted-foreground empty:hidden">
+                    {item.description}
+                  </p>
+                </div>
+
+                <Check
+                  className={cn(
+                    "shrink-0 ms-auto size-3.5 text-primary",
+                    !isActive && "invisible",
+                  )}
+                />
+              </Link>
+            );
+          })}
       </PopoverContent>
     </Popover>
   );

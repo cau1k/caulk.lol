@@ -231,6 +231,7 @@ function PostNavigation({
 function Post() {
   const data = Route.useLoaderData();
   const Content = clientLoader.getComponent(data.path);
+  const ContentRenderer = () => Content(undefined);
   const starsCtx = useBackgroundStarsOptional();
 
   useEffect(() => {
@@ -310,7 +311,7 @@ function Post() {
           </div>
           <div className="mt-8 h-px w-full bg-border" />
         </header>
-        <Content />
+        <ContentRenderer />
         <PostNavigation previous={data.previous} next={data.next} />
       </article>
       <SidebarTOC />
