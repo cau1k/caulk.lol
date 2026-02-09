@@ -1,8 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import { ChevronDown } from "lucide-react";
 import { useMemo, useState } from "react";
 import { EmptyState } from "@/components/empty-state";
 import { HomeLayout } from "@/components/layout/home";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/cn";
 import { formatDate, formatDateTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
@@ -72,22 +80,38 @@ function NotesIndex() {
         <header className="mb-6 flex items-end justify-between gap-3">
           <h1 className="text-3xl font-semibold tracking-tight">Notes</h1>
 
-          <label className="inline-flex items-center gap-2 text-sm">
-            <span className="text-xs text-muted-foreground">Sort</span>
-            <select
-              value={sort}
-              onChange={(e) =>
-                setSort(e.target.value === "oldest" ? "oldest" : "newest")
-              }
+          <DropdownMenu>
+            <DropdownMenuTrigger
               className={cn(
-                "h-9 rounded-lg border border-border bg-background px-2 text-sm",
-                "outline-none focus-visible:ring-ring/40 focus-visible:ring-4",
+                "h-9 inline-flex items-center gap-2 rounded-lg border border-border bg-background px-2",
+                "text-sm text-foreground",
+                "outline-ring transition-colors focus-visible:outline-2",
+                "hover:bg-accent/25",
               )}
             >
-              <option value="newest">Newest</option>
-              <option value="oldest">Oldest</option>
-            </select>
-          </label>
+              <span className="text-xs text-muted-foreground">Sort</span>
+              <span className="tabular-nums">
+                {sort === "newest" ? "Newest" : "Oldest"}
+              </span>
+              <ChevronDown className="size-3.5 text-muted-foreground" />
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="end" className="min-w-40">
+              <DropdownMenuRadioGroup
+                value={sort}
+                onValueChange={(value) =>
+                  setSort(value === "oldest" ? "oldest" : "newest")
+                }
+              >
+                <DropdownMenuRadioItem value="newest">
+                  Newest
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="oldest">
+                  Oldest
+                </DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </header>
 
         <section>
