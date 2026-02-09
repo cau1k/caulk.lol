@@ -57,6 +57,7 @@ function NotesIndex() {
   const { notes } = Route.useLoaderData();
 
   const [sort, setSort] = useState<"newest" | "oldest">("newest");
+  const [sortOpen, setSortOpen] = useState(false);
 
   const sorted = useMemo(() => {
     const list = [...notes];
@@ -80,7 +81,7 @@ function NotesIndex() {
         <header className="mb-6 flex items-end justify-between gap-3">
           <h1 className="text-3xl font-semibold tracking-tight">Notes</h1>
 
-          <DropdownMenu>
+          <DropdownMenu open={sortOpen} onOpenChange={setSortOpen}>
             <DropdownMenuTrigger
               className={cn(
                 "h-9 inline-flex items-center gap-2 rounded-lg border border-border bg-background px-2",
@@ -99,14 +100,27 @@ function NotesIndex() {
             <DropdownMenuContent align="end" className="min-w-40">
               <DropdownMenuRadioGroup
                 value={sort}
-                onValueChange={(value) =>
-                  setSort(value === "oldest" ? "oldest" : "newest")
-                }
+                onValueChange={(value) => {
+                  setSort(value === "oldest" ? "oldest" : "newest");
+                  setSortOpen(false);
+                }}
               >
-                <DropdownMenuRadioItem value="newest">
+                <DropdownMenuRadioItem
+                  value="newest"
+                  onClick={() => {
+                    setSort("newest");
+                    setSortOpen(false);
+                  }}
+                >
                   Newest
                 </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="oldest">
+                <DropdownMenuRadioItem
+                  value="oldest"
+                  onClick={() => {
+                    setSort("oldest");
+                    setSortOpen(false);
+                  }}
+                >
                   Oldest
                 </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
