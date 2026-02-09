@@ -135,18 +135,20 @@ function TChartView({
 }) {
   return (
     <div className="rounded-2xl border border-border overflow-hidden bg-background">
-      <div className="grid grid-cols-1 md:grid-cols-2 border-b border-border">
-        <div className="px-4 py-3 sm:px-6 font-medium">Predictions</div>
-        <div className="px-4 py-3 sm:px-6 font-medium md:border-l border-border">
-          Thoughts
-        </div>
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2">
-        <Column notes={predictions} />
-        <div className="md:border-l border-border">
+        <section>
+          <div className="px-4 py-3 sm:px-6 font-medium border-b border-border">
+            Predictions
+          </div>
+          <Column notes={predictions} />
+        </section>
+
+        <section className="border-t md:border-t-0 md:border-l border-border">
+          <div className="px-4 py-3 sm:px-6 font-medium border-b border-border">
+            Thoughts
+          </div>
           <Column notes={thoughts} />
-        </div>
+        </section>
       </div>
     </div>
   );

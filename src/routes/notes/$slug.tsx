@@ -1,7 +1,8 @@
 import browserCollections from "fumadocs-mdx:collections/browser";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { HomeLayout } from "@/components/layout/home";
+import { TagBadge } from "@/components/tag-badge";
 import { cn } from "@/lib/cn";
 import { formatDate, formatDateTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
@@ -76,15 +77,6 @@ function NotePage() {
   return (
     <HomeLayout {...baseOptions()}>
       <main className="mx-auto w-full max-w-2xl px-4 py-14">
-        <div className="mb-8">
-          <Link
-            to="/notes"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            ← Notes
-          </Link>
-        </div>
-
         <header className="mb-10">
           <div className="flex items-center gap-2">
             <CategoryStamp category={data.category} />
@@ -119,20 +111,6 @@ function NotePage() {
 }
 
 function CategoryStamp({ category }: { category: NoteCategory }) {
-  const classes =
-    category === "predictions"
-      ? "border-amber-500/30 text-amber-600 dark:text-amber-400 bg-amber-500/10"
-      : "border-emerald-500/30 text-emerald-700 dark:text-emerald-400 bg-emerald-500/10";
-
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-full border px-2 py-0.5",
-        "text-[0.70rem] tracking-wide uppercase",
-        classes,
-      )}
-    >
-      {category}
-    </span>
-  );
+  const singular = category === "predictions" ? "prediction" : "thought";
+  return <TagBadge tag={singular} linked={false} size="sm" />;
 }
