@@ -13,7 +13,6 @@ type NoteCategory = "predictions" | "thoughts";
 type NoteSummary = {
   url: string;
   title: string;
-  description?: string;
   date: Date;
   category: NoteCategory;
   tags: string[];
@@ -38,7 +37,6 @@ const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
   const result: NoteSummary[] = sorted.map((page) => ({
     url: page.url,
     title: page.data.title,
-    description: page.data.description,
     date: page.data.date,
     category: page.data.category,
     tags: page.data.tags ?? [],
@@ -71,49 +69,30 @@ function NotesIndex() {
   return (
     <HomeLayout {...baseOptions()}>
       <main className="mx-auto w-full max-w-2xl px-4 py-14">
-        <header className="mb-10">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h1 className="text-3xl font-semibold tracking-tight">Notes</h1>
-              <p className="mt-3 max-w-xl text-muted-foreground">
-                Two columns: predictions and thoughts. Keep it small.
-              </p>
-            </div>
-          </div>
+        <header className="mb-6 flex items-end justify-between gap-3">
+          <h1 className="text-3xl font-semibold tracking-tight">Notes</h1>
 
-          <div className="mt-6 flex items-center justify-between gap-3">
-            <div className="text-xs text-muted-foreground">
-              <span className="tabular-nums">{sorted.length}</span> notes
-              {sorted[0]?.date && (
-                <span className="tabular-nums"> · latest {formatDate(sorted[0].date)}</span>
+          <label className="inline-flex items-center gap-2 text-sm">
+            <span className="text-xs text-muted-foreground">Sort</span>
+            <select
+              value={sort}
+              onChange={(e) =>
+                setSort(e.target.value === "oldest" ? "oldest" : "newest")
+              }
+              className={cn(
+                "h-9 rounded-lg border border-border bg-background px-2 text-sm",
+                "outline-none focus-visible:ring-ring/40 focus-visible:ring-4",
               )}
-            </div>
-
-            <label className="inline-flex items-center gap-2 text-sm">
-              <span className="text-xs text-muted-foreground">Sort</span>
-              <select
-                value={sort}
-                onChange={(e) =>
-                  setSort(e.target.value === "oldest" ? "oldest" : "newest")
-                }
-                className={cn(
-                  "h-9 rounded-lg border border-border bg-background px-2 text-sm",
-                  "outline-none focus-visible:ring-ring/40 focus-visible:ring-4",
-                )}
-              >
-                <option value="newest">Newest</option>
-                <option value="oldest">Oldest</option>
-              </select>
-            </label>
-          </div>
+            >
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+            </select>
+          </label>
         </header>
 
         <section>
           {sorted.length === 0 ? (
-            <EmptyState
-              title="No notes match"
-              description="Write a note and it will show up here."
-            />
+            <EmptyState title="No notes" />
           ) : (
             <TChartView
               predictions={tChart.predictions}
@@ -182,11 +161,6 @@ function Column({ notes }: { notes: NoteSummary[] }) {
                     {formatDate(note.date)}
                   </time>
                 </div>
-                {note.description && (
-                  <p className="mt-1 text-sm text-muted-foreground line-clamp-1">
-                    {note.description}
-                  </p>
-                )}
               </article>
             </Link>
           ))}

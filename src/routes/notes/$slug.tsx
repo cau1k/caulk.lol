@@ -25,12 +25,9 @@ export const Route = createFileRoute("/notes/$slug")({
   }),
   head: ({ loaderData }) => {
     if (!loaderData) return { meta: [] };
-    const description = loaderData.description ?? "";
-
     return {
       meta: [
         { title: `${loaderData.title} - Notes` },
-        { name: "description", content: description },
       ],
     };
   },
@@ -51,7 +48,6 @@ const serverLoader = createServerFn({ method: "GET" })
       path: page.path,
       url: page.url,
       title: page.data.title,
-      description: page.data.description,
       date: page.data.date,
       updatedAt: page.data.updatedAt,
       category: page.data.category,
@@ -90,11 +86,6 @@ function NotePage() {
           <h1 className="mt-3 text-3xl font-semibold tracking-tight">
             {data.title}
           </h1>
-          {data.description && (
-            <p className="mt-4 text-muted-foreground leading-relaxed">
-              {data.description}
-            </p>
-          )}
         </header>
 
         <article
