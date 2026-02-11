@@ -36,6 +36,11 @@ type ShootingStar = {
 
 type StarColor = "muted" | "accent" | "primary";
 
+type CanvasSize = {
+  width: number;
+  height: number;
+};
+
 const STAR_CONFIG = {
   density: 0.00008,
   minSize: 1,
@@ -189,6 +194,15 @@ function drawStaticFrame(
   }
 }
 
+function getViewportSize(): CanvasSize {
+  const root = document.documentElement;
+
+  return {
+    width: Math.max(1, Math.floor(root.clientWidth)),
+    height: Math.max(1, Math.floor(root.clientHeight)),
+  };
+}
+
 export const BackgroundStars = memo(
   function BackgroundStars() {
     const ctx = useBackgroundStarsOptional();
@@ -201,6 +215,7 @@ export const BackgroundStars = memo(
     const isDarkRef = useRef<boolean>(true);
     const nextShootingStarRef = useRef<number>(0);
     const pausedRef = useRef(paused);
+    const canvasSizeRef = useRef<CanvasSize>({ width: 0, height: 0 });
 
     useEffect(() => {
       pausedRef.current = paused;
@@ -308,9 +323,32 @@ export const BackgroundStars = memo(
       if (!canvas) return;
 
       const resize = () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        const viewportSize = getViewportSize();
+
+        if (
+          canvasSizeRef.current.width === viewportSize.width &&
+          canvasSizeRef.current.height === viewportSize.height
+        ) {
+          return;
+        }
+
+        canvasSizeRef.current = viewportSize;
+        canvas.width = viewportSize.width;
+        canvas.height = viewportSize.height;
         initStars();
+
+        if (pausedRef.current) {
+          const ctxCanvas = canvas.getContext("2d");
+          if (ctxCanvas) {
+            ctxCanvas.clearRect(0, 0, canvas.width, canvas.height);
+            drawStaticFrame(
+              ctxCanvas,
+              starsRef.current,
+              shootingStarsRef.current,
+              isDarkRef.current
+            );
+          }
+        }
       };
 
       resize();
@@ -357,7 +395,7 @@ export const BackgroundStars = memo(
     return (
       <canvas
         ref={canvasRef}
-        className="pointer-events-none fixed inset-0 -z-10 opacity-0 motion-safe:animate-[fade-in_1500ms_cubic-bezier(0.215,0.61,0.355,1)_forwards] motion-reduce:opacity-100"
+        className="pointer-events-none fixed inset-0 h-[100lvh] w-[100lvw] -z-10 opacity-0 motion-safe:animate-[fade-in_1500ms_cubic-bezier(0.215,0.61,0.355,1)_forwards] motion-reduce:opacity-100"
       />
     );
   },
