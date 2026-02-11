@@ -281,6 +281,13 @@ body {
   -webkit-backdrop-filter: none;
 }
 
+@media (min-width: 640px) {
+  #nd-nav,
+  #nd-nav > div {
+    background-color: transparent !important;
+  }
+}
+
 /* View transitions for theme switching */
 ::view-transition-old(root),
 ::view-transition-new(root) {
