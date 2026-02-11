@@ -15,15 +15,15 @@ tags: ["AI"]
 
 ### opencode
 
-I was an opencode hater prior to their separation from the bubbletea tui library. Don't get me wrong, bubbletea--and really anything from charmbracelet--is a fantastic tui library. But opencode had its quirks pre-opentui. I actually started to seriously use opencode a day before the 1.0/opentui rewrite and it was incredible seeing how much blood, sweat, and tears [Sebastian Herrlinger](https://github.com/kommander) et al put into designing and developing the core UX in Zig.
+I was an opencode hater prior to their separation from the bubbletea tui library. Don't get me wrong, bubbletea--and really anything from charmbracelet--has great UX/DX. But opencode had its quirks pre-opentui. I actually started to seriously use opencode a day before the 1.0/opentui rewrite and it was incredible seeing how much blood, sweat, and tears [Sebastian Herrlinger](https://github.com/kommander) et al put into designing and developing the core UX in **Zig**.
 
-History aside, [my opencode setup](https://git.caulk.lol/config/opencode) vageuly mirrors Amp Code's setup. I ripped the earlier Oracle and Librarian prompts out of Amp and refactored them to use my own tools, which I detail a bit more below.
+History aside, [my opencode setup](https://git.caulk.lol/config/opencode) vageuly mirrors Amp Code's setup. I ripped the earlier Oracle and Librarian prompts out of Amp and refactored/slimmed them down to use my own tools, which I detail a bit more below.
 
 **Current tools for my agents**:
 
 - [opencode-antigravity-auth](https://github.com/NoeFabris/opencode-antigravity-auth) lets me use my Google Ultra subscription with opencode. Not only does it enable the newest opus/gemini models, it also gives me a `google_search` tool that's pretty decent.
 - [jina.ai MCP](https://github.com/jina-ai/MCP) with three tools enabled (`search_web`, `search_images`, and `search_arxiv`). I find jina.ai to be pretty good in terms of search quality. They're also backed by elastic. They have very generous free plans - no account needed. I'm not a fan of MCPs that ship a dozen tools, so I usually gate these to my subagents.
-- custom `catalog` CLI. It's used for managing my Librarian's catalog of repos. I've seen a lot of other implementations that embed repos/docs/etc. but they really only provide a speed boost. When I'm feeling fancy, I allow my agents to use Morph's [Warp Grep](https://docs.morphllm.com/sdk/components/warp-grep/tool) to semantically search through a specific repo within the catalog, which renders similar results to something like Nia MCP. I was a huge fan of Nia MCP, but the software quickly became enshittified slop.
+- custom `catalog` CLI that's used by my Librarian to essentially add submodules and subtrees of existing repos in an indexable/greppable location. I've seen a lot of other implementations that index repos/docs/etc. but they really only provide a speed boost. When I'm feeling fancy, I allow my agents to use Morph's [Warp Grep](https://docs.morphllm.com/sdk/components/warp-grep/tool) to semantically search through a specific repo within the catalog, which renders similar results to something like Nia MCP. I was a huge fan of Nia MCP, but the software quickly became enshittified slop. A much *better* hosted tool would be [Ben Davis's `btca`](https://btca.dev). Also completely open source.
 
 ### gpt-5.x-codex
 
