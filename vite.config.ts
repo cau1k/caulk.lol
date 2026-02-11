@@ -13,6 +13,11 @@ export default defineConfig({
   },
   ssr: {
     external: [],
+    optimizeDeps: {
+      noDiscovery: true,
+      include: [],
+      ignoreOutdatedRequests: true,
+    },
   },
   plugins: [
     mdx(await import("./source.config")),
