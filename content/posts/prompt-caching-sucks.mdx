@@ -3,6 +3,7 @@ title: Prompt caching sucks
 description: (for coding agents)
 author: Caulk
 date: "2026-01-06T14:58:14-05:00"
+updated: "2026-02-23T14:58:14-05:00"
 tags: ["ai", "prompt-caching", "infra"]
 draft: false
 ---
@@ -11,7 +12,7 @@ import { Excalidraw } from "../../src/components/excalidraw";
 
 import { Quote } from "../../src/components/quote";
 
-Every coding agent harness relies on prompt caching to speed up generation and cut costs. Though, every agentic harness employing multi-turn workflows similarly reaps these benefits. To put it simply, any time you send multiple "user" messages to an LLM API, prompt caching is already enabled and saving your wallet.
+Every coding agent harness relies on prompt caching to speed up generation and cut costs. Though, every agentic harness employing multi-turn workflows similarly reaps these benefits. Put simply, any time you send multiple messages to an LLM API, prompt caching means the model doesn't have to re-read everything from scratch each time. It remembers what it's already processed, and only needs to handle the new parts.
 
 For reference, cached tokens are both ~10x cheaper and, according to Anthropic, can reduce time to first token (TTFT) by up to 85%. This is a fantastic bargain for the end user.
 
