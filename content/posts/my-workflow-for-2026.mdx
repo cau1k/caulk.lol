@@ -13,6 +13,12 @@ tags: ["AI"]
 
 ## Agents
 
+### Current tools for my agents:
+
+- [opencode-antigravity-auth](https://github.com/NoeFabris/opencode-antigravity-auth) lets me use my Google Ultra subscription with opencode. Not only does it enable the newest opus/gemini models, it also gives me a `google_search` tool that's pretty decent.
+- [jina.ai MCP](https://github.com/jina-ai/MCP) with three tools enabled (`search_web`, `search_images`, and `search_arxiv`). I find jina.ai to be pretty good in terms of search quality. They're also backed by elastic. They have very generous free plans - no account needed. I'm not a fan of MCPs that ship a dozen tools, so I usually gate these to my subagents.
+- custom `catalog` CLI that's used by my Librarian to essentially add submodules and subtrees of existing repos in an indexable/greppable location. I've seen a lot of other implementations that index repos/docs/etc. but they really only provide a speed boost. When I'm feeling fancy, I allow my agents to use Morph's [Warp Grep](https://docs.morphllm.com/sdk/components/warp-grep/tool) to semantically search through a specific repo within the catalog, which renders similar results to something like Nia MCP. I was a huge fan of Nia MCP, but the software quickly became enshittified slop. A much *better* hosted tool would be [Ben Davis's `btca`](https://btca.dev). Also completely open source.
+
 ### opencode
 
 I was an opencode hater prior to their separation from the bubbletea tui library. Don't get me wrong, bubbletea--and really anything from charmbracelet--has great UX/DX. But opencode had its quirks pre-opentui. I actually started to seriously use opencode a day before the 1.0/opentui rewrite and it was incredible seeing how much blood, sweat, and tears [Sebastian Herrlinger](https://github.com/kommander) et al put into designing and developing the core UX in **Zig**.
@@ -21,19 +27,25 @@ History aside, [my opencode setup](https://git.caulk.lol/config/opencode) vageul
 
 ### OpenClaw
 
-Yes, yes, I know. OpenClaw is a huge security risk.
+Yes, yes, I know. OpenClaw is a huge security risk. But as soon as Peter finished migrating to Mario Zechner's Pi (a.k.a. "shitty coding agent"), and it ran on linux, I set up a VM on my server named zilla. Why is it called zilla? Because it's a fucking beast of a server. Along with the isolated OpenClaw instance, I run two GitHub and Forgejo runners, a development environment, a build server for local dev (mostly cargo), and a media VM.
 
-**Current tools for my agents**:
+OpenClaw is moreso an experiment for me than an actual tool. Because it has no desktop environment, it's pretty useless. I gave it its own email, GitHub and Forgejo accounts, but it's not all that useful to me. Maybe my life is too boring. I couldn't really use it for work due to the sensitive nature of what my contractee does.
 
-- [opencode-antigravity-auth](https://github.com/NoeFabris/opencode-antigravity-auth) lets me use my Google Ultra subscription with opencode. Not only does it enable the newest opus/gemini models, it also gives me a `google_search` tool that's pretty decent.
-- [jina.ai MCP](https://github.com/jina-ai/MCP) with three tools enabled (`search_web`, `search_images`, and `search_arxiv`). I find jina.ai to be pretty good in terms of search quality. They're also backed by elastic. They have very generous free plans - no account needed. I'm not a fan of MCPs that ship a dozen tools, so I usually gate these to my subagents.
-- custom `catalog` CLI that's used by my Librarian to essentially add submodules and subtrees of existing repos in an indexable/greppable location. I've seen a lot of other implementations that index repos/docs/etc. but they really only provide a speed boost. When I'm feeling fancy, I allow my agents to use Morph's [Warp Grep](https://docs.morphllm.com/sdk/components/warp-grep/tool) to semantically search through a specific repo within the catalog, which renders similar results to something like Nia MCP. I was a huge fan of Nia MCP, but the software quickly became enshittified slop. A much *better* hosted tool would be [Ben Davis's `btca`](https://btca.dev). Also completely open source.
+So far, though, it's built a bunch of tools for itself at my direction, such as CLIs for suno.com, youtube DL, hackernews, and a few others. Mostly just messing around.
+
+### Pi
+
+I love Pi. I tried it long before it was embedded within OpenClaw, but I did learn of it from following Peter. It's a fantastic tool. It's the most hackable harness money can't buy. So, I contributed GitHub authentication prior to the whole terms of service fiasco with Anthropic (and now Google). But turns out, GitHub is kinda chill.
 
 ### gpt-5.x-codex
 
-I've always been a fan of OpenAI's models. Especially their coding models. But gpt-5-codex hugely impressed me. It was actually scary. You really could *just build things*.
+I've always been a fan of OpenAI's models. Especially their coding models. gpt-5-codex hugely impressed me. It was actually quite scary. You really could *just build things*. And so I did. I got authorization at work to use it and boom. I've now spent ~15 billion tokens solely on gpt-5-codex at work.
 
-With gpt-5.3-codex you can build *anything*.
+Then 5.1 came out. I wasn't that impressed by the apparent jump in intelligence/quality, but then they released gpt-5.1-codex-**max**. Another 10 billion tokens spent on it. Then 5.2 codex came out. I was even more impressed, spending rougly 5 billion tokens. I still gravitated toward claude heavily during this period, so didn't spend the most time with it. It was still slow as hell, which made claude the most attractive.
+
+Then 5.3-codex and 5.3-codex-spark came out. Damn they were fast. I've spent 8 billion tokens in sum, mostly on the GPU variant. Codex-spark is not nearly as usable as its slower counterpart. It's still not the greatest at tool calling as it is a small model comparatively speaking. But it's oh so fast. Like 800tk/s fast. Compared to speeds I was getting with gpt-5.2-codex on Azure (20tk/s - get your shit together Microsoft).
+
+With gpt-5.3-codex you really can build *anything*. It's nearly eliminated every other model I could possibly need.
 
 ## Systems
 
