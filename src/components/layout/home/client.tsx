@@ -3,7 +3,16 @@ import { cva } from "class-variance-authority";
 import Link from "fumadocs-core/link";
 import { useIsScrollTop } from "fumadocs-ui/utils/use-is-scroll-top";
 import { ChevronDown, Languages } from "lucide-react";
-import { type ComponentProps, Fragment, useMemo, useState } from "react";
+import {
+  type ComponentProps,
+  Fragment,
+  type RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { cn } from "../../../lib/cn";
 import {
   NavigationMenu,
@@ -53,6 +62,10 @@ export function Header({
   themeSwitch = {},
   searchToggle = {},
 }: HomeLayoutProps) {
+  const navRef = useRef<HTMLElement | null>(null);
+  const [isCondensed, setIsCondensed] = useState(false);
+  const desktopRequiredWidthRef = useRef(0);
+
   const { navItems, menuItems } = useMemo(() => {
     const navItems: LinkItemType[] = [];
     const menuItems: LinkItemType[] = [];
@@ -74,8 +87,47 @@ export function Header({
     return { navItems, menuItems };
   }, [links, githubUrl]);
 
+  const updateCondensedState = useCallback(() => {
+    const navElement = navRef.current;
+    if (!navElement) return;
+
+    const availableWidth = navElement.clientWidth;
+    const requiredWidth = navElement.scrollWidth;
+
+    if (!isCondensed) {
+      desktopRequiredWidthRef.current = requiredWidth;
+      if (requiredWidth > availableWidth) {
+        setIsCondensed(true);
+      }
+      return;
+    }
+
+    if (availableWidth >= desktopRequiredWidthRef.current + 8) {
+      setIsCondensed(false);
+    }
+  }, [isCondensed]);
+
+  useEffect(() => {
+    updateCondensedState();
+  }, [updateCondensedState]);
+
+  useEffect(() => {
+    const navElement = navRef.current;
+    if (!navElement) return;
+
+    const observer = new ResizeObserver(() => {
+      updateCondensedState();
+    });
+
+    observer.observe(navElement);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [updateCondensedState]);
+
   return (
-    <HeaderNavigationMenu transparentMode={nav.transparentMode}>
+    <HeaderNavigationMenu navRef={navRef} transparentMode={nav.transparentMode}>
       <Link
         href={nav.url ?? "/"}
         className="inline-flex items-center gap-2.5 font-semibold"
@@ -83,14 +135,24 @@ export function Header({
         {typeof nav.title === "function" ? nav.title({}) : nav.title}
       </Link>
       {nav.children}
-      <ul className="flex flex-row items-center gap-2 px-6 max-sm:hidden">
+      <ul
+        className={cn(
+          "flex flex-row items-center gap-2 px-6",
+          isCondensed && "hidden",
+        )}
+      >
         {navItems
           .filter((item) => !isSecondary(item))
           .map((item, i) => (
             <NavigationMenuLinkItem key={i} item={item} className="text-sm" />
           ))}
       </ul>
-      <div className="flex flex-row items-center justify-end gap-1.5 flex-1 max-lg:hidden">
+      <div
+        className={cn(
+          "flex flex-row items-center justify-end gap-1.5 flex-1",
+          isCondensed && "hidden",
+        )}
+      >
         {searchToggle.enabled !== false &&
           (searchToggle.components?.lg ?? (
             <LargeSearchToggle
@@ -117,7 +179,12 @@ export function Header({
           ))}
         </ul>
       </div>
-      <ul className="flex flex-row items-center ms-auto -me-1.5 lg:hidden">
+      <ul
+        className={cn(
+          "flex flex-row items-center ms-auto -me-1.5",
+          !isCondensed && "hidden",
+        )}
+      >
         {searchToggle.enabled !== false &&
           (searchToggle.components?.sm ?? (
             <SearchToggle className="p-2" hideIfDisabled />
@@ -183,9 +250,11 @@ function isSecondary(item: LinkItemType): boolean {
 }
 
 function HeaderNavigationMenu({
+  navRef,
   transparentMode = "none",
   ...props
 }: ComponentProps<"div"> & {
+  navRef?: RefObject<HTMLElement | null>;
   transparentMode?: NavOptions["transparentMode"];
 }) {
   const [value, setValue] = useState("");
@@ -213,7 +282,7 @@ function HeaderNavigationMenu({
             className="flex h-14 w-full items-center px-4"
             asChild
           >
-            <nav>{props.children}</nav>
+            <nav ref={navRef}>{props.children}</nav>
           </NavigationMenuList>
 
           <NavigationMenuViewport />
