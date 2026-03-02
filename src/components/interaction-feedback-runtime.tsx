@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 
 const FEEDBACK_PREFERENCE_KEY = "caulk-interaction-feedback";
