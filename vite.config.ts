@@ -11,11 +11,17 @@ export default defineConfig({
     port: 3000,
     allowedHosts: ["arch.catla-justice.ts.net"],
   },
+  resolve: {
+    dedupe: ["react", "react-dom"],
+  },
+  optimizeDeps: {
+    exclude: ["web-haptics"],
+  },
   ssr: {
     external: [],
     optimizeDeps: {
       noDiscovery: true,
-      include: [],
+      include: ["@excalidraw/excalidraw"],
       ignoreOutdatedRequests: true,
     },
   },
