@@ -1,5 +1,4 @@
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
-import "@/lib/interaction-feedback-runtime";
 import { NotFound } from "@/components/not-found";
 import { routeTree } from "./routeTree.gen";
 

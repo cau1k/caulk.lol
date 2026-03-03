@@ -1,4 +1,3 @@
-"use client";
 import { cva } from "class-variance-authority";
 import Link from "fumadocs-core/link";
 import { useIsScrollTop } from "fumadocs-ui/utils/use-is-scroll-top";
@@ -14,6 +13,7 @@ import {
   useState,
 } from "react";
 import { cn } from "../../../lib/cn";
+import { useInteractionFeedback } from "../../../lib/interaction-feedback";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -62,9 +62,13 @@ export function Header({
   themeSwitch = {},
   searchToggle = {},
 }: HomeLayoutProps) {
+  const { triggerSelection } = useInteractionFeedback();
   const navRef = useRef<HTMLElement | null>(null);
   const [isCondensed, setIsCondensed] = useState(false);
   const desktopRequiredWidthRef = useRef(0);
+  const triggerNavigationFeedback = useCallback(() => {
+    triggerSelection();
+  }, [triggerSelection]);
 
   const { navItems, menuItems } = useMemo(() => {
     const navItems: LinkItemType[] = [];
@@ -144,7 +148,12 @@ export function Header({
         {navItems
           .filter((item) => !isSecondary(item))
           .map((item, i) => (
-            <NavigationMenuLinkItem key={i} item={item} className="text-sm" />
+            <NavigationMenuLinkItem
+              key={i}
+              item={item}
+              className="text-sm"
+              onFeedback={triggerNavigationFeedback}
+            />
           ))}
       </ul>
       <div
@@ -175,6 +184,7 @@ export function Header({
                 item.type === "icon" && "-mx-1 first:ms-0 last:me-0",
               )}
               item={item}
+              onFeedback={triggerNavigationFeedback}
             />
           ))}
         </ul>
@@ -202,6 +212,7 @@ export function Header({
             onPointerMove={
               nav.enableHoverToOpen ? undefined : (e) => e.preventDefault()
             }
+            onClick={triggerNavigationFeedback}
           >
             <ChevronDown className="transition-transform duration-300 group-data-[state=open]:rotate-180" />
           </NavigationMenuTrigger>
@@ -213,6 +224,7 @@ export function Header({
                   key={i}
                   item={item}
                   className="sm:hidden"
+                  onFeedback={triggerNavigationFeedback}
                 />
               ))}
             <div className="-ms-1.5 flex flex-row items-center gap-2 max-sm:mt-2">
@@ -221,6 +233,7 @@ export function Header({
                   key={i}
                   item={item}
                   className={cn(item.type === "icon" && "-mx-1 first:ms-0")}
+                  onFeedback={triggerNavigationFeedback}
                 />
               ))}
               <div role="separator" className="flex-1" />
@@ -294,10 +307,12 @@ function HeaderNavigationMenu({
 
 function NavigationMenuLinkItem({
   item,
+  onFeedback,
   ...props
 }: {
   item: LinkItemType;
   className?: string;
+  onFeedback?: () => void;
 }) {
   if (item.type === "custom") return <div {...props}>{item.children}</div>;
 
@@ -321,6 +336,7 @@ function NavigationMenuLinkItem({
           <Link
             href={child.url}
             external={child.external}
+            onClick={onFeedback}
             {...rest}
             className={cn(
               "flex flex-col gap-2 rounded-lg border bg-card p-3 transition-colors hover:bg-accent/80 hover:text-accent-foreground",
@@ -343,7 +359,10 @@ function NavigationMenuLinkItem({
 
     return (
       <NavigationMenuItem {...props}>
-        <NavigationMenuTrigger className={cn(navItemVariants(), "rounded-md")}>
+        <NavigationMenuTrigger
+          className={cn(navItemVariants(), "rounded-md")}
+          onClick={onFeedback}
+        >
           {item.url ? (
             <Link href={item.url} external={item.external}>
               {item.text}
@@ -366,6 +385,7 @@ function NavigationMenuLinkItem({
           item={item}
           aria-label={item.type === "icon" ? item.label : undefined}
           className={cn(navItemVariants({ variant: item.type }))}
+          onClick={onFeedback}
         >
           {item.type === "icon" ? item.icon : item.text}
         </LinkItem>
@@ -376,10 +396,12 @@ function NavigationMenuLinkItem({
 
 function MobileNavigationMenuLinkItem({
   item,
+  onFeedback,
   ...props
 }: {
   item: LinkItemType;
   className?: string;
+  onFeedback?: () => void;
 }) {
   if (item.type === "custom")
     return <div className={cn("grid", props.className)}>{item.children}</div>;
@@ -397,7 +419,7 @@ function MobileNavigationMenuLinkItem({
         <p className="text-sm text-muted-foreground">
           {item.url ? (
             <NavigationMenuLink asChild>
-              <Link href={item.url} external={item.external}>
+              <Link href={item.url} external={item.external} onClick={onFeedback}>
                 {header}
               </Link>
             </NavigationMenuLink>
@@ -406,7 +428,11 @@ function MobileNavigationMenuLinkItem({
           )}
         </p>
         {item.items.map((child, i) => (
-          <MobileNavigationMenuLinkItem key={i} item={child} />
+          <MobileNavigationMenuLinkItem
+            key={i}
+            item={child}
+            onFeedback={onFeedback}
+          />
         ))}
       </div>
     );
@@ -431,6 +457,7 @@ function MobileNavigationMenuLinkItem({
           props.className,
         )}
         aria-label={item.type === "icon" ? item.label : undefined}
+        onClick={onFeedback}
       >
         {item.icon}
         {item.type === "icon" ? undefined : item.text}
