@@ -63,7 +63,7 @@ function About() {
           <a href="https://git.caulk.lol">git.caulk.lol</a>{" "}
           <span className="inline-flex text-sm font-sans italic text-muted-foreground">
             {" "}
-            decoupling
+            self-sufficing
           </span>
           <br />
         </p>
