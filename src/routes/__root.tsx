@@ -8,9 +8,9 @@ import { RootProvider } from "fumadocs-ui/provider/tanstack";
 import type * as React from "react";
 import { BackgroundStars } from "@/components/background-stars";
 import { BackgroundStarsProvider } from "@/components/background-stars-context";
-import { InteractionFeedbackRuntime } from "@/components/interaction-feedback-runtime";
 import { NotFound } from "@/components/not-found";
 import { TerminalFooter } from "@/components/terminal-footer";
+import interactionFeedbackRuntimeScript from "@/lib/interaction-feedback-runtime.ts?url";
 import appCss from "@/styles/app.css?url";
 
 export const Route = createRootRoute({
@@ -87,6 +87,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 })();`}
         </script>
         <HeadContent />
+        <script type="module" src={interactionFeedbackRuntimeScript} />
       </head>
       <body className="flex flex-col min-h-screen">
         <BackgroundStarsProvider>
@@ -94,7 +95,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           <RootProvider search={{ hotKey: [{ key: "/", display: "/" }] }}>
             {children}
             <TerminalFooter />
-            <InteractionFeedbackRuntime />
           </RootProvider>
         </BackgroundStarsProvider>
         <Scripts />
