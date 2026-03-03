@@ -21,6 +21,7 @@ type FeedbackReason =
   | "forced-sound"
   | "desktop-auto"
   | "supported-auto"
+  | "sound-fallback-auto"
   | "unsupported";
 type FeedbackPattern =
   | "selection"
@@ -101,16 +102,12 @@ function resolveFeedbackMode(supportsVibration: boolean): FeedbackResolution {
       ? { mode: "haptics", reason: "forced-haptics" }
       : { mode: "none", reason: "unsupported" };
   }
-  if (preference === "sound") {
-    return isDesktopPointer
-      ? { mode: "sound", reason: "forced-sound" }
-      : { mode: "none", reason: "unsupported" };
-  }
+  if (preference === "sound") return { mode: "sound", reason: "forced-sound" };
 
   if (isDesktopPointer) return { mode: "sound", reason: "desktop-auto" };
   if (supportsVibration) return { mode: "haptics", reason: "supported-auto" };
 
-  return { mode: "none", reason: "unsupported" };
+  return { mode: "sound", reason: "sound-fallback-auto" };
 }
 
 function isFeedbackPattern(value: string): value is FeedbackPattern {
