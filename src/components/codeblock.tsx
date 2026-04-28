@@ -84,6 +84,7 @@ const languageNames = {
   bash: "Bash",
   sh: "Shell",
   shell: "Shell",
+  zsh: "Zsh",
   ts: "TypeScript",
   tsx: "TSX",
   typescript: "TypeScript",
@@ -94,6 +95,10 @@ const languageNames = {
   jsonc: "JSONC",
   md: "Markdown",
   mdx: "MDX",
+  rs: "Rust",
+  rust: "Rust",
+  go: "Go",
+  ex: "Elixir",
   markdown: "Markdown",
   css: "CSS",
   html: "HTML",
@@ -261,7 +266,8 @@ export function CodeBlock({
         {...viewportProps}
         data-collapsed={collapsed || undefined}
         className={cn(
-          "text-[0.8125rem] overflow-hidden px-5 pb-16 pt-5 fd-scroll-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring data-collapsed:max-h-80",
+          "text-[0.8125rem] overflow-hidden px-5 pt-5 fd-scroll-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring data-collapsed:max-h-80",
+          canCollapse ? "pb-16" : "pb-5",
           viewportProps.className,
         )}
         style={viewportStyle}
