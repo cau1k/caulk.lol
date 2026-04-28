@@ -35,8 +35,25 @@ LLMs already know how to close the loop when building software from scratch... b
 
 ## A very boring example: logs
 
-Before LLMs, an engineer would ship code, see a pager, open Datadog, tail logs, check a trace, form a theory, add a metric, reproduce locally, write a test, patch the bug, deploy, then watch the dashboard until the line went flat again. That's closing the loop. The system produced feedback, the engineer observed it, changed the system, then checked whether reality agreed.
+Before agents, an engineer might:
+  1. ship code
+  2. see a pager
+  3. open Datadog
+  4. tail logs
+  5. check a trace (and paste it into ChatGPT)
+  6. form a theory
+  7. add a metric
+  8. reproduce locally
+  9. write a test
+  10. patch the bug
+  11. deploy
+  12. then watch the dashboard until the line went flat again
 
-But the loop was mostly human-paced. The logs did not inject themselves into the engineer's brain. The dashboard did not block their next though. The test failure did not automatically rewrite their plan unless they chose to run the test, read it, understand it, and care.
+That's *closing the loop*. The system produced feedback, the engineer observed it, changed the system, then checked whether things corrected.
+
+But the loop was mostly human-paced. The logs did not inject themselves into the engineer's brain. The dashboard did not block their next thought. The test failure did not automatically rewrite their plan unless they chose to run the test, read it, understand it, and care.
 
 Agents are quite different. Agents are mechanizable.
+
+## Applying the example
+
