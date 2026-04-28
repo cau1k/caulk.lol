@@ -1,6 +1,6 @@
 "use client";
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
-import { Check, ChevronsDownUp, Clipboard } from "lucide-react";
+import { Check, ChevronsDownUp, ChevronsUpDown, Clipboard } from "lucide-react";
 import {
   type ComponentProps,
   type CSSProperties,
@@ -281,7 +281,7 @@ export function CodeBlock({
             className="pointer-events-auto inline-flex items-center gap-1.5 border bg-secondary/90 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur-md transition-colors hover:text-accent-foreground [&_svg]:size-3.5"
             onClick={() => setExpanded((value) => !value)}
           >
-            <ChevronsDownUp />
+            {collapsed ? <ChevronsUpDown /> : <ChevronsDownUp />}
             {collapsed ? `Expand (${lineCount} lines)` : "Collapse"}
           </button>
         </div>
