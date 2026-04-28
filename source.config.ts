@@ -1,11 +1,10 @@
+import type { ShikiTransformer } from "@shikijs/types";
 import {
   rehypeCodeDefaultOptions,
   rehypeToc,
   remarkHeading,
   remarkMdxMermaid,
 } from "fumadocs-core/mdx-plugins";
-import rehypeKatex from "rehype-katex";
-import remarkMath from "remark-math";
 import {
   applyMdxPreset,
   defineCollections,
@@ -14,9 +13,21 @@ import {
 } from "fumadocs-mdx/config";
 import { transformerTwoslash } from "fumadocs-twoslash";
 import { createFileSystemTypesCache } from "fumadocs-twoslash/cache-fs";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
 import { z } from "zod";
 import { monoGlowLightTheme, monoGlowTheme } from "./src/lib/monoglow-theme";
 import { rehypeExternalRef } from "./src/lib/rehype-external-ref";
+
+const codeLanguageTransformer = {
+  name: "code-language-attribute",
+  pre(hast) {
+    const language = this.options.lang;
+    if (!language) return;
+
+    hast.properties["data-language"] = language;
+  },
+} satisfies ShikiTransformer;
 
 export const posts = defineCollections({
   type: "doc",
@@ -48,6 +59,7 @@ export const posts = defineCollections({
         dark: monoGlowTheme,
       },
       transformers: [
+        codeLanguageTransformer,
         ...(rehypeCodeDefaultOptions.transformers ?? []),
         transformerTwoslash({
           typesCache: createFileSystemTypesCache(),
@@ -84,6 +96,7 @@ export const notes = defineCollections({
         dark: monoGlowTheme,
       },
       transformers: [
+        codeLanguageTransformer,
         ...(rehypeCodeDefaultOptions.transformers ?? []),
         transformerTwoslash({
           typesCache: createFileSystemTypesCache(),

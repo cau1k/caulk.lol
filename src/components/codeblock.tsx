@@ -6,6 +6,7 @@ import {
   type CSSProperties,
   createContext,
   type HTMLAttributes,
+  isValidElement,
   type ReactNode,
   type RefObject,
   use,
@@ -53,6 +54,8 @@ export interface CodeBlockProps extends ComponentProps<"figure"> {
    */
   "data-line-numbers-start"?: number;
 
+  "data-language"?: string;
+
   Actions?: (props: { className?: string; children?: ReactNode }) => ReactNode;
 }
 
@@ -78,7 +81,7 @@ export function Pre(props: ComponentProps<"pre">) {
 const collapsedLineThreshold = 12;
 
 const languageNames = {
-  bash: "Shell",
+  bash: "Bash",
   sh: "Shell",
   shell: "Shell",
   ts: "TypeScript",
@@ -99,6 +102,7 @@ const languageNames = {
 function formatLanguage(value: string) {
   switch (value) {
     case "bash":
+      return languageNames.bash;
     case "sh":
     case "shell":
       return languageNames.shell;
@@ -130,9 +134,40 @@ function formatLanguage(value: string) {
   }
 }
 
-function getLanguageLabel(title: ReactNode, className: string | undefined) {
+function getNodeClassName(node: unknown): string | undefined {
+  if (Array.isArray(node)) {
+    for (const child of node) {
+      const childClassName = getNodeClassName(child);
+      if (childClassName) return childClassName;
+    }
+
+    return undefined;
+  }
+
+  if (!isValidElement(node)) return undefined;
+
+  const props = node.props;
+  if (typeof props !== "object" || props === null) return undefined;
+
+  if ("className" in props && typeof props.className === "string") {
+    return props.className;
+  }
+
+  if (!("children" in props)) return undefined;
+  return getNodeClassName(props.children);
+}
+
+function getLanguageLabel(
+  title: ReactNode,
+  className: string | undefined,
+  dataLanguage: string | undefined,
+  children: ReactNode,
+) {
   const classMatch = className?.match(/(?:^|\s)language-([\w-]+)/);
-  const classLanguage = classMatch?.[1];
+  const childClassMatch = getNodeClassName(children)?.match(
+    /(?:^|\s)language-([\w-]+)/,
+  );
+  const classLanguage = dataLanguage ?? classMatch?.[1] ?? childClassMatch?.[1];
 
   if (classLanguage) return formatLanguage(classLanguage);
   if (typeof title !== "string") return "Code";
@@ -160,7 +195,12 @@ export function CodeBlock({
   const [lineCount, setLineCount] = useState(0);
   const canCollapse = lineCount > collapsedLineThreshold;
   const collapsed = canCollapse && !expanded;
-  const languageLabel = getLanguageLabel(title, props.className);
+  const languageLabel = getLanguageLabel(
+    title,
+    props.className,
+    props["data-language"],
+    children,
+  );
 
   useEffect(() => {
     const pre = areaRef.current?.getElementsByTagName("pre").item(0);
