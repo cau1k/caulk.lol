@@ -1,6 +1,6 @@
 ---
 title: Close the loop
-description: Your agents will thank you.
+description: Rant about how important systematic feedback really is to the success of your agents.
 author: Caulk
 date: "2026-04-27T20:52:31-04:00"
 tags: ["ai"]
@@ -19,57 +19,22 @@ name: close-the-loop
 description: Modify a codebase 
 ---
 
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
-Closing the loop isn't new.
+Closing the loop isn't new. But you are. With a fresh set of eyes, you should identify areas in which this codebase can be improved for agents.
+
+Some ways to improve:
+- Emphasize tests
+- Add pre-commit/pre-push git hooks that include linting, formatting, tests, and build steps
 ```
 
 ## Introduction
 
 I'll try to keep this short, hopefully by letting the above skill do the talking.
 
-LLMs already know how to close the loop when building software from scratch... because, by some standard, this is nothing new. How else do you think pre-LLM engineers figured out why prod was failing? Did they have some magical crystal ball whispering in their ear? Well, kinda, but not literally, and much less so with the whispering part. 
+LLMs already know how to close the loop when building software from scratch... because, by some standard, this is nothing new. How else do you think traditional software engineers figured out why prod was failing? Did they have some magical crystal ball whispering in their ear? Well, kinda, but not literally, and much less so with the whispering part. 
 
 ## A very boring example: logs
 
-Before agents, an engineer might:
+Before agents, a SWE might:
   1. ship code
   2. get paged
   3. open Datadog/Sentry/PostHog
@@ -83,12 +48,37 @@ Before agents, an engineer might:
   11. deploy
   12. then watch a dashboard until the line went flat again
 
-That's *closing the loop*. The system produced feedback, the engineer observed it, changed the system, then checked whether things corrected.
+That's essentially the human way of *closing the loop*. The system produced feedback, the engineer observed it, changed the system, then checked whether things corrected.
 
 But the loop was mostly human-paced. The logs did not inject themselves into the engineer's brain. The dashboard did not block their next thought. The test failure did not automatically rewrite their plan unless they chose to run the test, read it, understand it, and care.
 
 Agents are quite different, though. They are mechanizable and great at pattern recognition.
 
-## Applying the example
+## Agent loops
 
-Most of my agentic work lives on my own, private Forgejo instance, which mostly includes infrastructure and thing I don't care to share/allow issues/PRs. My stuff.
+Now, I am not talking about Geoffrey Huntley's famous [Ralph Wiggum loop](https://ghuntley.com/ralph/), which took LinkedIn by storm a few months ago; however, many of the principles here are shared.
+
+But let's talk about a Ralph loop real quick. You have an easliy composable agent harness, a for loop, a prompt, and some success criteria. Basically, you loop that prompt until the criteria is met. 
+
+Some implementations expect your prompt to have markdown todos (`- [ ]` for pending, `- [x]` for done), and your system will continue looping until all todos are done. You can add in your prompt, "... and tests pass." for each todo. Pragmatic, yes, but deterministic? Not really.
+
+## The essentials
+
+### git hooks
+
+### a composable harness
+
+## Extra credit
+
+### bespoke tooling for your agents
+
+I come from a web dev background, so I really like using package.json scripts. However, most of my time is no longer spent in the JS ecosystem. And I'm not using `make`. Sorry, but it just feels wrong. 
+
+So, I just use [just](https://github.com/casey/just). This allows me and my agents to wrap `scripts/` with a `just push` command, for example. This `just push` command is the only way my agent can push to my hosted git repo in multiple projects of mine. Here's how it works:
+
+1. `scripts/push-and-watch/bin` checks the commit hash of the current branch
+2. The script then builds locally, errors if it fails
+3. Work is then pushed to the remote repo (forgejo or github)
+4. Then, the script watches actions/runners started based on the commit hash
+5. Logs from the runners are then parsed and displayed in a blocking terminal, only shows full logs if there's an error
+6. Boom, done. My agent can now reliably watch build/test/deploy. None of it is local or manual. Frees up compute for other things.

@@ -215,12 +215,15 @@ export function CodeBlock({
 
   const toolbar = Actions({
     className:
-      "absolute top-3 right-3 z-10 flex items-center gap-1 border bg-secondary/80 px-2 py-1 text-muted-foreground shadow-lg backdrop-blur-md supports-[backdrop-filter]:bg-secondary/60",
+      "absolute top-3 right-3 z-10 flex origin-top-right items-center gap-1 border bg-secondary/80 px-2 py-1 text-muted-foreground shadow-lg backdrop-blur-md duration-100 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 supports-[backdrop-filter]:bg-secondary/60",
     children: (
       <>
-        {canCollapse && expanded ? (
+        <span
+          data-visible={canCollapse && expanded ? true : undefined}
+          className="grid w-0 scale-95 overflow-hidden opacity-0 transition-[width,opacity,transform] duration-100 ease-out data-visible:w-6 data-visible:scale-100 data-visible:opacity-100"
+        >
           <CollapseButton onClick={() => setExpanded(false)} />
-        ) : null}
+        </span>
         <span className="px-1 text-xs text-muted-foreground">
           {languageLabel}
         </span>
@@ -246,6 +249,8 @@ export function CodeBlock({
       dir="ltr"
       {...props}
       tabIndex={-1}
+      data-collapsed={collapsed || undefined}
+      data-expanded={canCollapse && expanded ? true : undefined}
       className={cn(
         inTab ? "bg-secondary -mx-px -mb-px" : "my-4 bg-card",
         keepBackground && "bg-(--shiki-light-bg) dark:bg-(--shiki-dark-bg)",
@@ -265,8 +270,9 @@ export function CodeBlock({
         ref={areaRef}
         {...viewportProps}
         data-collapsed={collapsed || undefined}
+        data-expanded={canCollapse && expanded ? true : undefined}
         className={cn(
-          "text-[0.8125rem] overflow-hidden px-5 pt-5 fd-scroll-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring data-collapsed:max-h-80",
+          "text-[0.8125rem] overflow-hidden px-5 pt-5 fd-scroll-container transition-[max-height,padding] duration-100 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring data-collapsed:max-h-80 data-expanded:max-h-[2400px]",
           canCollapse ? "pb-16" : "pb-5",
           viewportProps.className,
         )}
@@ -277,18 +283,30 @@ export function CodeBlock({
       {canCollapse ? (
         <div
           className={cn(
-            "pointer-events-none absolute inset-x-0 bottom-0 flex justify-center pb-2",
+            "pointer-events-none absolute inset-x-0 bottom-0 flex origin-bottom justify-center pb-2 transition-[padding,opacity,transform] duration-100 ease-out animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-2",
             collapsed &&
               "bg-linear-to-t from-card via-card/90 to-transparent pt-16",
           )}
         >
           <button
             type="button"
-            className="pointer-events-auto inline-flex items-center gap-1.5 border bg-secondary/90 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur-md transition-colors hover:text-accent-foreground [&_svg]:size-3.5"
+            data-collapsed={collapsed || undefined}
+            className="pointer-events-auto inline-flex items-center gap-1.5 border bg-secondary/90 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur-md transition-colors duration-100 ease-out hover:text-accent-foreground [&_svg]:size-3.5"
             onClick={() => setExpanded((value) => !value)}
           >
-            {collapsed ? <ChevronsUpDown /> : <ChevronsDownUp />}
-            {collapsed ? `Expand (${lineCount} lines)` : "Collapse"}
+            <span className="relative grid size-4 place-items-center">
+              <ChevronsUpDown
+                data-visible={collapsed || undefined}
+                className="absolute scale-75 opacity-0 transition-[opacity,transform] duration-100 ease-out data-visible:scale-100 data-visible:opacity-100"
+              />
+              <ChevronsDownUp
+                data-visible={!collapsed || undefined}
+                className="absolute scale-75 opacity-0 transition-[opacity,transform] duration-100 ease-out data-visible:scale-100 data-visible:opacity-100"
+              />
+            </span>
+            <span className="whitespace-nowrap transition-opacity duration-100 ease-out">
+              {collapsed ? `Expand (${lineCount} lines)` : "Collapse"}
+            </span>
           </button>
         </div>
       ) : null}
