@@ -261,21 +261,28 @@ export function CodeBlock({
         {...viewportProps}
         data-collapsed={collapsed || undefined}
         className={cn(
-          "text-[0.8125rem] overflow-hidden px-5 py-5 fd-scroll-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring data-collapsed:max-h-80",
+          "text-[0.8125rem] overflow-hidden px-5 pb-16 pt-5 fd-scroll-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring data-collapsed:max-h-80",
           viewportProps.className,
         )}
         style={viewportStyle}
       >
         {children}
       </section>
-      {collapsed ? (
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center bg-linear-to-t from-card via-card/90 to-transparent pb-2 pt-16">
+      {canCollapse ? (
+        <div
+          className={cn(
+            "pointer-events-none absolute inset-x-0 bottom-0 flex justify-center pb-2",
+            collapsed &&
+              "bg-linear-to-t from-card via-card/90 to-transparent pt-16",
+          )}
+        >
           <button
             type="button"
-            className="pointer-events-auto border bg-secondary/90 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur-md transition-colors hover:text-accent-foreground"
-            onClick={() => setExpanded(true)}
+            className="pointer-events-auto inline-flex items-center gap-1.5 border bg-secondary/90 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur-md transition-colors hover:text-accent-foreground [&_svg]:size-3.5"
+            onClick={() => setExpanded((value) => !value)}
           >
-            Expand ({lineCount} lines)
+            <ChevronsDownUp />
+            {collapsed ? `Expand (${lineCount} lines)` : "Collapse"}
           </button>
         </div>
       ) : null}
