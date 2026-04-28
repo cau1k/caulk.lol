@@ -1,6 +1,6 @@
 "use client";
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
-import { Check, ChevronUp, Clipboard } from "lucide-react";
+import { Check, ChevronsDownUp, Clipboard } from "lucide-react";
 import {
   type ComponentProps,
   type CSSProperties,
@@ -170,14 +170,12 @@ export function CodeBlock({
 
   const toolbar = Actions({
     className:
-      "absolute top-3 right-3 z-10 flex items-center gap-1 rounded-full border bg-secondary/80 px-2 py-1 text-muted-foreground shadow-lg backdrop-blur-md supports-[backdrop-filter]:bg-secondary/60",
+      "absolute top-3 right-3 z-10 flex items-center gap-1 border bg-secondary/80 px-2 py-1 text-muted-foreground shadow-lg backdrop-blur-md supports-[backdrop-filter]:bg-secondary/60",
     children: (
       <>
-        <CollapseButton
-          canCollapse={canCollapse}
-          collapsed={collapsed}
-          onClick={() => setExpanded((value) => !value)}
-        />
+        {canCollapse && expanded ? (
+          <CollapseButton onClick={() => setExpanded(false)} />
+        ) : null}
         <span className="px-1 text-xs text-muted-foreground">
           {languageLabel}
         </span>
@@ -234,7 +232,7 @@ export function CodeBlock({
         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center bg-linear-to-t from-card via-card/90 to-transparent pb-2 pt-16">
           <button
             type="button"
-            className="pointer-events-auto rounded-full border bg-secondary/90 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur-md transition-colors hover:text-accent-foreground"
+            className="pointer-events-auto border bg-secondary/90 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur-md transition-colors hover:text-accent-foreground"
             onClick={() => setExpanded(true)}
           >
             Expand ({lineCount} lines)
@@ -245,15 +243,7 @@ export function CodeBlock({
   );
 }
 
-function CollapseButton({
-  canCollapse,
-  collapsed,
-  onClick,
-}: {
-  canCollapse: boolean;
-  collapsed: boolean;
-  onClick: () => void;
-}) {
+function CollapseButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       type="button"
@@ -261,14 +251,13 @@ function CollapseButton({
         buttonVariants({
           color: "ghost",
           size: "icon-xs",
-          className: "rounded-full hover:text-accent-foreground",
+          className: "hover:text-accent-foreground",
         }),
       )}
-      disabled={!canCollapse}
-      aria-label={collapsed ? "Expand code block" : "Collapse code block"}
+      aria-label="Collapse code block"
       onClick={onClick}
     >
-      <ChevronUp className={cn(collapsed && "rotate-180")} />
+      <ChevronsDownUp />
     </button>
   );
 }
@@ -300,7 +289,7 @@ function CopyButton({
         buttonVariants({
           color: "ghost",
           className:
-            "rounded-full hover:text-accent-foreground data-checked:text-accent-foreground",
+            "hover:text-accent-foreground data-checked:text-accent-foreground",
           size: "icon-xs",
         }),
         className,
