@@ -1,15 +1,18 @@
 "use client";
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
-import { Check, Clipboard } from "lucide-react";
+import { Check, ChevronUp, Clipboard } from "lucide-react";
 import {
   type ComponentProps,
+  type CSSProperties,
   createContext,
   type HTMLAttributes,
   type ReactNode,
   type RefObject,
   use,
+  useEffect,
   useMemo,
   useRef,
+  useState,
 } from "react";
 import { cn } from "../lib/cn";
 import { mergeRefs } from "../lib/merge-refs";
@@ -62,11 +65,80 @@ export function Pre(props: ComponentProps<"pre">) {
   return (
     <pre
       {...props}
-      className={cn("min-w-full w-max *:flex *:flex-col", props.className)}
+      className={cn(
+        "min-w-full whitespace-pre-wrap break-words *:flex *:flex-col *:whitespace-pre-wrap *:break-words",
+        props.className,
+      )}
     >
       {props.children}
     </pre>
   );
+}
+
+const collapsedLineThreshold = 12;
+
+const languageNames = {
+  bash: "Shell",
+  sh: "Shell",
+  shell: "Shell",
+  ts: "TypeScript",
+  tsx: "TSX",
+  typescript: "TypeScript",
+  js: "JavaScript",
+  jsx: "JSX",
+  javascript: "JavaScript",
+  json: "JSON",
+  jsonc: "JSONC",
+  md: "Markdown",
+  mdx: "MDX",
+  markdown: "Markdown",
+  css: "CSS",
+  html: "HTML",
+} satisfies Record<string, string>;
+
+function formatLanguage(value: string) {
+  switch (value) {
+    case "bash":
+    case "sh":
+    case "shell":
+      return languageNames.shell;
+    case "ts":
+    case "typescript":
+      return languageNames.typescript;
+    case "tsx":
+      return languageNames.tsx;
+    case "js":
+    case "javascript":
+      return languageNames.javascript;
+    case "jsx":
+      return languageNames.jsx;
+    case "json":
+      return languageNames.json;
+    case "jsonc":
+      return languageNames.jsonc;
+    case "md":
+    case "markdown":
+      return languageNames.markdown;
+    case "mdx":
+      return languageNames.mdx;
+    case "css":
+      return languageNames.css;
+    case "html":
+      return languageNames.html;
+    default:
+      return value.toUpperCase();
+  }
+}
+
+function getLanguageLabel(title: ReactNode, className: string | undefined) {
+  const classMatch = className?.match(/(?:^|\s)language-([\w-]+)/);
+  const classLanguage = classMatch?.[1];
+
+  if (classLanguage) return formatLanguage(classLanguage);
+  if (typeof title !== "string") return "Code";
+
+  const extension = title.split(".").at(-1);
+  return extension ? formatLanguage(extension) : "Code";
 }
 
 export function CodeBlock({
@@ -83,7 +155,47 @@ export function CodeBlock({
   ...props
 }: CodeBlockProps) {
   const inTab = use(TabsContext) !== null;
-  const areaRef = useRef<HTMLDivElement>(null);
+  const areaRef = useRef<HTMLElement>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [lineCount, setLineCount] = useState(0);
+  const canCollapse = lineCount > collapsedLineThreshold;
+  const collapsed = canCollapse && !expanded;
+  const languageLabel = getLanguageLabel(title, props.className);
+
+  useEffect(() => {
+    const pre = areaRef.current?.getElementsByTagName("pre").item(0);
+    const text = pre?.textContent;
+    setLineCount(text ? text.split("\n").length : 0);
+  }, []);
+
+  const toolbar = Actions({
+    className:
+      "absolute top-3 right-3 z-10 flex items-center gap-1 rounded-full border bg-secondary/80 px-2 py-1 text-muted-foreground shadow-lg backdrop-blur-md supports-[backdrop-filter]:bg-secondary/60",
+    children: (
+      <>
+        <CollapseButton
+          canCollapse={canCollapse}
+          collapsed={collapsed}
+          onClick={() => setExpanded((value) => !value)}
+        />
+        <span className="px-1 text-xs text-muted-foreground">
+          {languageLabel}
+        </span>
+        {allowCopy ? (
+          <>
+            <span className="h-4 w-px bg-border" aria-hidden="true" />
+            <CopyButton containerRef={areaRef} />
+          </>
+        ) : null}
+      </>
+    ),
+  });
+  const viewportStyle: CSSProperties & { "--padding-right"?: string } = {
+    counterSet: props["data-line-numbers"]
+      ? `line ${Number(props["data-line-numbers-start"] ?? 1) - 1}`
+      : undefined,
+    ...viewportProps.style,
+  };
 
   return (
     <figure
@@ -92,9 +204,7 @@ export function CodeBlock({
       {...props}
       tabIndex={-1}
       className={cn(
-        inTab
-          ? "bg-secondary -mx-px -mb-px last:rounded-b-xl"
-          : "my-4 bg-card rounded-xl",
+        inTab ? "bg-secondary -mx-px -mb-px" : "my-4 bg-card",
         keepBackground && "bg-(--shiki-light-bg) dark:bg-(--shiki-dark-bg)",
 
         "shiki relative border shadow-sm not-prose overflow-hidden text-sm w-full max-w-full",
@@ -102,53 +212,64 @@ export function CodeBlock({
       )}
     >
       {title ? (
-        <div className="flex text-muted-foreground items-center gap-2 h-9.5 border-b px-4">
-          {typeof icon === "string" ? (
-            <div
-              className="[&_svg]:size-3.5"
-              dangerouslySetInnerHTML={{
-                __html: icon,
-              }}
-            />
-          ) : (
-            icon
-          )}
-          <figcaption className="flex-1 truncate">{title}</figcaption>
-          {Actions({
-            className: "-me-2",
-            children: allowCopy && <CopyButton containerRef={areaRef} />,
-          })}
-        </div>
-      ) : (
-        Actions({
-          className:
-            "absolute top-2 right-2 z-2 backdrop-blur-lg rounded-lg text-muted-foreground",
-          children: allowCopy && <CopyButton containerRef={areaRef} />,
-        })
-      )}
-      <div
+        <figcaption className="sr-only">
+          {typeof title === "string" ? title : languageLabel}
+        </figcaption>
+      ) : null}
+      {typeof icon === "string" ? null : icon}
+      {toolbar}
+      <section
         ref={areaRef}
         {...viewportProps}
-        role="region"
-        tabIndex={0}
+        data-collapsed={collapsed || undefined}
         className={cn(
-          "text-[0.8125rem] py-3.5 overflow-auto max-h-[600px] fd-scroll-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
+          "text-[0.8125rem] overflow-hidden px-5 py-5 fd-scroll-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring data-collapsed:max-h-80",
           viewportProps.className,
         )}
-        style={
-          {
-            // space for toolbar
-            "--padding-right": !title ? "calc(var(--spacing) * 8)" : undefined,
-            counterSet: props["data-line-numbers"]
-              ? `line ${Number(props["data-line-numbers-start"] ?? 1) - 1}`
-              : undefined,
-            ...viewportProps.style,
-          } as object
-        }
+        style={viewportStyle}
       >
         {children}
-      </div>
+      </section>
+      {collapsed ? (
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center bg-linear-to-t from-card via-card/90 to-transparent pb-2 pt-16">
+          <button
+            type="button"
+            className="pointer-events-auto rounded-full border bg-secondary/90 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur-md transition-colors hover:text-accent-foreground"
+            onClick={() => setExpanded(true)}
+          >
+            Expand ({lineCount} lines)
+          </button>
+        </div>
+      ) : null}
     </figure>
+  );
+}
+
+function CollapseButton({
+  canCollapse,
+  collapsed,
+  onClick,
+}: {
+  canCollapse: boolean;
+  collapsed: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className={cn(
+        buttonVariants({
+          color: "ghost",
+          size: "icon-xs",
+          className: "rounded-full hover:text-accent-foreground",
+        }),
+      )}
+      disabled={!canCollapse}
+      aria-label={collapsed ? "Expand code block" : "Collapse code block"}
+      onClick={onClick}
+    >
+      <ChevronUp className={cn(collapsed && "rotate-180")} />
+    </button>
   );
 }
 
@@ -177,8 +298,9 @@ function CopyButton({
       data-checked={checked || undefined}
       className={cn(
         buttonVariants({
+          color: "ghost",
           className:
-            "hover:text-accent-foreground data-checked:text-accent-foreground",
+            "rounded-full hover:text-accent-foreground data-checked:text-accent-foreground",
           size: "icon-xs",
         }),
         className,
