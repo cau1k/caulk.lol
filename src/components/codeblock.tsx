@@ -80,63 +80,13 @@ export function Pre(props: ComponentProps<"pre">) {
 
 const collapsedLineThreshold = 12;
 
-const languageNames = {
-  bash: "Bash",
-  sh: "Shell",
-  shell: "Shell",
-  zsh: "Zsh",
-  ts: "TypeScript",
-  tsx: "TSX",
-  typescript: "TypeScript",
-  js: "JavaScript",
-  jsx: "JSX",
-  javascript: "JavaScript",
-  json: "JSON",
-  jsonc: "JSONC",
-  md: "Markdown",
-  mdx: "MDX",
-  rs: "Rust",
-  rust: "Rust",
-  go: "Go",
-  ex: "Elixir",
-  markdown: "Markdown",
-  css: "CSS",
-  html: "HTML",
-} satisfies Record<string, string>;
-
 function formatLanguage(value: string) {
-  switch (value) {
-    case "bash":
-      return languageNames.bash;
-    case "sh":
-    case "shell":
-      return languageNames.shell;
-    case "ts":
-    case "typescript":
-      return languageNames.typescript;
-    case "tsx":
-      return languageNames.tsx;
-    case "js":
-    case "javascript":
-      return languageNames.javascript;
-    case "jsx":
-      return languageNames.jsx;
-    case "json":
-      return languageNames.json;
-    case "jsonc":
-      return languageNames.jsonc;
-    case "md":
-    case "markdown":
-      return languageNames.markdown;
-    case "mdx":
-      return languageNames.mdx;
-    case "css":
-      return languageNames.css;
-    case "html":
-      return languageNames.html;
-    default:
-      return value.toUpperCase();
-  }
+  return value
+    .trim()
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 }
 
 function getNodeClassName(node: unknown): string | undefined {

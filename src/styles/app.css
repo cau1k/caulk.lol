@@ -273,6 +273,7 @@ body {
 
 .prose :where(:not(pre) > code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   @apply rounded-none! py-0 my-0;
+  user-select: all;
 }
 
 /* Keep top navigation aligned with content width. */
