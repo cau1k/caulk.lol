@@ -317,7 +317,7 @@ export function CodeBlock({
 
   const toolbar = Actions({
     className:
-      "absolute top-3 right-3 z-10 flex origin-top-right items-center gap-1 border bg-secondary/80 px-2 py-1 text-muted-foreground shadow-lg backdrop-blur-md duration-100 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 supports-[backdrop-filter]:bg-secondary/60",
+      "absolute top-3 right-3 z-10 flex origin-top-right -translate-y-1 scale-95 items-center gap-1 border bg-secondary/80 px-2 py-1 text-muted-foreground opacity-0 shadow-lg backdrop-blur-md transition-[opacity,transform] delay-0 duration-200 ease-out group-hover/codeblock:delay-75 group-hover/codeblock:translate-y-0 group-hover/codeblock:scale-100 group-hover/codeblock:opacity-100 group-focus-within/codeblock:delay-75 group-focus-within/codeblock:translate-y-0 group-focus-within/codeblock:scale-100 group-focus-within/codeblock:opacity-100 supports-[backdrop-filter]:bg-secondary/60",
     children: (
       <>
         <span
@@ -357,7 +357,7 @@ export function CodeBlock({
         inTab ? "bg-secondary -mx-px -mb-px" : "my-4 bg-card",
         keepBackground && "bg-(--shiki-light-bg) dark:bg-(--shiki-dark-bg)",
 
-        "shiki relative border shadow-sm not-prose overflow-hidden text-sm w-full max-w-full",
+        "shiki group/codeblock relative border shadow-sm not-prose overflow-hidden text-sm w-full max-w-full",
         props.className,
       )}
     >
@@ -383,34 +383,36 @@ export function CodeBlock({
         {children}
       </section>
       {canCollapse ? (
-        <div
-          className={cn(
-            "pointer-events-none absolute inset-x-0 bottom-0 flex origin-bottom justify-center pb-2 transition-[padding,opacity,transform] duration-100 ease-out animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-2",
-            collapsed &&
-              "bg-linear-to-t from-card via-card/90 to-transparent pt-16",
-          )}
-        >
-          <button
-            type="button"
-            data-collapsed={collapsed || undefined}
-            className="pointer-events-auto inline-flex items-center gap-1.5 border bg-secondary/90 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur-md transition-colors duration-100 ease-out hover:text-accent-foreground [&_svg]:size-3.5"
-            onClick={() => setExpanded((value) => !value)}
-          >
-            <span className="relative grid size-4 place-items-center">
-              <ChevronsUpDown
-                data-visible={collapsed || undefined}
-                className="absolute scale-75 opacity-0 transition-[opacity,transform] duration-100 ease-out data-visible:scale-100 data-visible:opacity-100"
-              />
-              <ChevronsDownUp
-                data-visible={!collapsed || undefined}
-                className="absolute scale-75 opacity-0 transition-[opacity,transform] duration-100 ease-out data-visible:scale-100 data-visible:opacity-100"
-              />
-            </span>
-            <span className="whitespace-nowrap transition-opacity duration-100 ease-out">
-              {collapsed ? `Expand (${lineCount} lines)` : "Collapse"}
-            </span>
-          </button>
-        </div>
+        <>
+          {collapsed ? (
+            <div
+              className="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-card via-card/90 to-transparent pb-2 pt-16"
+              aria-hidden="true"
+            />
+          ) : null}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex origin-bottom translate-y-1 scale-95 justify-center pb-2 opacity-0 transition-[opacity,transform] delay-0 duration-200 ease-out group-hover/codeblock:delay-75 group-hover/codeblock:translate-y-0 group-hover/codeblock:scale-100 group-hover/codeblock:opacity-100 group-focus-within/codeblock:delay-75 group-focus-within/codeblock:translate-y-0 group-focus-within/codeblock:scale-100 group-focus-within/codeblock:opacity-100">
+            <button
+              type="button"
+              data-collapsed={collapsed || undefined}
+              className="pointer-events-auto inline-flex items-center gap-1.5 border bg-secondary/90 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur-md transition-colors duration-100 ease-out hover:text-accent-foreground [&_svg]:size-3.5"
+              onClick={() => setExpanded((value) => !value)}
+            >
+              <span className="relative grid size-4 place-items-center">
+                <ChevronsUpDown
+                  data-visible={collapsed || undefined}
+                  className="absolute scale-75 opacity-0 transition-[opacity,transform] duration-100 ease-out data-visible:scale-100 data-visible:opacity-100"
+                />
+                <ChevronsDownUp
+                  data-visible={!collapsed || undefined}
+                  className="absolute scale-75 opacity-0 transition-[opacity,transform] duration-100 ease-out data-visible:scale-100 data-visible:opacity-100"
+                />
+              </span>
+              <span className="whitespace-nowrap transition-opacity duration-100 ease-out">
+                {collapsed ? `Expand (${lineCount} lines)` : "Collapse"}
+              </span>
+            </button>
+          </div>
+        </>
       ) : null}
     </figure>
   );
