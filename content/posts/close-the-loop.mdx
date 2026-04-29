@@ -62,23 +62,22 @@ But let's talk about a Ralph loop real quick. You have an easily composable agen
 
 Some implementations expect your prompt to have markdown todos (`- [ ]` for pending, `- [x]` for done), and your system will continue looping until all todos are done. You can add in your prompt, "... and tests pass." for each todo. Pragmatic, yes, but deterministic? Not really. Unless the success criteria is programmatically deterministic, the loop will mostly just output slop.
 
-## The essentials
+Nowadays, it really doesn't take much to apply these principles but with more HITL. Here's what you need:
 
-### git hooks
+<Accordions>
+<Accordion title="1. Git hooks" open>
+I really do not like pre-commit hooks when trad coding, but they are easiest to implement **now**. However, agents need them as they act as an initial quality gate. I have found that pre-push hooks sometimes allow agents to perform better if CI is heavy.
 
-I really do not like pre-commit hooks when trad coding. However, agents need them as they act as an initial quality gate.
-
-### a composable harness
-
+I do think build/compile steps in pre-push are good, but I'm not sure they're necessary if your agent is already monitoring CI. And if you're working on multiple local projects, you don't want compute to get tied up from a 500 crate `cargo build --release`.
+</Accordion>
+<Accordion title="2. A good harness">
 Everyone has their own opinions on this. However, there is only one wrong answer: Claude Code. Why? Because you do not control anything outside of MCP servers. So, I recommend, in this order:
 
-1. The team at [opencode](https://github.com/anomalyco/opencode) knows what they're doing. The server-first architecture is too good not to place this in the first spot.
-2. Mario Zechner's [pi-coding-agent](https://github.com/badlogic/pi-mono) is fantastic and easily the most customizable, but the underlying architecture wasn't meant for multi-agent systems. But that's okay because it runs, out of the box, in a Cloudflare Worker. If you choose Pi, you can and should customize the hell out of it.
+1. The team at [opencode](https://github.com/anomalyco/opencode) knows what they're doing. The server-first architecture is too good not to place this in the first spot. And the recent migration off of Bun has left us with far fewer segfaults and a lack of process cleanup failures.
+2. Mario Zechner's [pi-coding-agent](https://github.com/badlogic/pi-mono) is fantastic and easily the most customizable, but the underlying architecture wasn't meant for multi-agent systems. But that's okay because it runs, out of the box, in a Cloudflare Worker. If you choose Pi, you can and are very much encouraged to customize the hell out of it.
 3. The [codex app server](https://github.com/openai/codex) is very composable. However, it ranks 3 here because of how fast it's changing. Websockets or JSON RPC is great.
-
-## Extra credit
-
-### bespoke tooling for your agents
+</Accordion>
+<Accordion title="3. Bespoke tooling for your agents">
 
 I come from a web dev background, so I really like using `package.json` scripts. However, most of my time is no longer spent in the JS ecosystem. And I'm not using `make`. Sorry, but it just feels wrong. 
 
@@ -90,3 +89,8 @@ So, I *just* use [just](https://github.com/casey/just). This allows me and my ag
 4. Then, the script watches actions/runners started based on the commit hash
 5. Logs from the runners are then parsed and displayed in a blocking terminal, only shows full logs if there's an error
 6. Boom, done. My agent can now reliably watch build/test/deploy. None of it is local or manual. Frees up compute for other things.
+</Accordion>
+<Accordion title="4. Agent isolation">
+I feel like I was slightly late to the party on this one--at least, in terms of sandboxing.
+</Accordion>
+</Accordions>
