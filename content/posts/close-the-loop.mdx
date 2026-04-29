@@ -58,23 +58,31 @@ Agents are quite different, though. They are mechanizable and great at pattern r
 
 Now, I am not talking about Geoffrey Huntley's famous [Ralph Wiggum loop](https://ghuntley.com/ralph/), which took LinkedIn by storm a few months ago; however, many of the principles here are shared.
 
-But let's talk about a Ralph loop real quick. You have an easliy composable agent harness, a for loop, a prompt, and some success criteria. Basically, you loop that prompt until the criteria is met. 
+But let's talk about a Ralph loop real quick. You have an easily composable agent harness (any CLI will likely do), a for loop, a prompt, and some success criteria. Basically, you loop that prompt until the criteria is met. 
 
-Some implementations expect your prompt to have markdown todos (`- [ ]` for pending, `- [x]` for done), and your system will continue looping until all todos are done. You can add in your prompt, "... and tests pass." for each todo. Pragmatic, yes, but deterministic? Not really.
+Some implementations expect your prompt to have markdown todos (`- [ ]` for pending, `- [x]` for done), and your system will continue looping until all todos are done. You can add in your prompt, "... and tests pass." for each todo. Pragmatic, yes, but deterministic? Not really. Unless the success criteria is programmatically deterministic, the loop will mostly just output slop.
 
 ## The essentials
 
 ### git hooks
 
+I really do not like pre-commit hooks when trad coding. However, agents need them as they act as an initial quality gate.
+
 ### a composable harness
+
+Everyone has their own opinions on this. However, there is only one wrong answer: Claude Code. Why? Because you do not control anything outside of MCP servers. So, I recommend, in this order:
+
+1. The team at [opencode](https://github.com/anomalyco/opencode) knows what they're doing. The server-first architecture is too good not to place this in the first spot.
+2. Mario Zechner's [pi-coding-agent](https://github.com/badlogic/pi-mono) is fantastic and easily the most customizable, but the underlying architecture wasn't meant for multi-agent systems. But that's okay because it runs, out of the box, in a Cloudflare Worker. If you choose Pi, you can and should customize the hell out of it.
+3. The [codex app server](https://github.com/openai/codex) is very composable. However, it ranks 3 here because of how fast it's changing. Websockets or JSON RPC is great.
 
 ## Extra credit
 
 ### bespoke tooling for your agents
 
-I come from a web dev background, so I really like using package.json scripts. However, most of my time is no longer spent in the JS ecosystem. And I'm not using `make`. Sorry, but it just feels wrong. 
+I come from a web dev background, so I really like using `package.json` scripts. However, most of my time is no longer spent in the JS ecosystem. And I'm not using `make`. Sorry, but it just feels wrong. 
 
-So, I just use [just](https://github.com/casey/just). This allows me and my agents to wrap `scripts/` with a `just push` command, for example. This `just push` command is the only way my agent can push to my hosted git repo in multiple projects of mine. Here's how it works:
+So, I *just* use [just](https://github.com/casey/just). This allows me and my agents to wrap `scripts/` with a `just push` command, for example. This `just push` command is the only way my agent can push to my hosted git repo in multiple projects of mine. Here's how it works:
 
 1. `scripts/push-and-watch/bin` checks the commit hash of the current branch
 2. The script then builds locally, errors if it fails
