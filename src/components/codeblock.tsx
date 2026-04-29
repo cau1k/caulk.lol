@@ -271,9 +271,7 @@ function getLanguageLabel(
   children: ReactNode,
 ) {
   const classMatch = className?.match(/(?:^|\s)language-([\w-]+)/);
-  const childClassMatch = getNodeClassName(children)?.match(
-    /(?:^|\s)language-([\w-]+)/,
-  );
+  const childClassMatch = getNodeClassName(children)?.match(/(?:^|\s)language-([\w-]+)/);
   const classLanguage = dataLanguage ?? classMatch?.[1] ?? childClassMatch?.[1];
 
   if (classLanguage) return formatLanguage(classLanguage);
@@ -291,9 +289,7 @@ export function CodeBlock({
   icon,
   viewportProps = {},
   children,
-  Actions = (props) => (
-    <div {...props} className={cn("empty:hidden", props.className)} />
-  ),
+  Actions = (props) => <div {...props} className={cn("empty:hidden", props.className)} />,
   ...props
 }: CodeBlockProps) {
   const inTab = use(TabsContext) !== null;
@@ -302,12 +298,7 @@ export function CodeBlock({
   const [lineCount, setLineCount] = useState(0);
   const canCollapse = lineCount > collapsedLineThreshold;
   const collapsed = canCollapse && !expanded;
-  const languageLabel = getLanguageLabel(
-    title,
-    props.className,
-    props["data-language"],
-    children,
-  );
+  const languageLabel = getLanguageLabel(title, props.className, props["data-language"], children);
 
   useEffect(() => {
     const pre = areaRef.current?.getElementsByTagName("pre").item(0);
@@ -317,7 +308,7 @@ export function CodeBlock({
 
   const toolbar = Actions({
     className:
-      "absolute top-3 right-3 z-10 flex origin-top-right -translate-y-1 scale-95 items-center gap-1 border bg-secondary/80 px-2 py-1 text-muted-foreground opacity-0 shadow-lg backdrop-blur-md transition-[opacity,transform] delay-0 duration-200 ease-out group-hover/codeblock:delay-75 group-hover/codeblock:translate-y-0 group-hover/codeblock:scale-100 group-hover/codeblock:opacity-100 group-focus-within/codeblock:delay-75 group-focus-within/codeblock:translate-y-0 group-focus-within/codeblock:scale-100 group-focus-within/codeblock:opacity-100 supports-[backdrop-filter]:bg-secondary/60",
+      "absolute top-3 right-3 z-10 flex origin-top-right  items-center gap-1 border bg-secondary/80 px-2 py-1 text-muted-foreground opacity-0 shadow-lg backdrop-blur-md transition-[opacity,transform] delay-0 duration-200 ease-out group-hover/codeblock:delay-75 group-hover/codeblock:translate-y-0 group-hover/codeblock:scale-100 group-hover/codeblock:opacity-100 group-focus-within/codeblock:delay-75 group-focus-within/codeblock:translate-y-0 group-focus-within/codeblock:scale-100 group-focus-within/codeblock:opacity-100 supports-[backdrop-filter]:bg-secondary/60",
     children: (
       <>
         <span
@@ -326,9 +317,7 @@ export function CodeBlock({
         >
           <CollapseButton onClick={() => setExpanded(false)} />
         </span>
-        <span className="px-1 text-xs text-muted-foreground">
-          {languageLabel}
-        </span>
+        <span className="px-1 text-xs text-muted-foreground">{languageLabel}</span>
         {allowCopy ? (
           <>
             <span className="h-4 w-px bg-border" aria-hidden="true" />
@@ -375,7 +364,7 @@ export function CodeBlock({
         data-expanded={canCollapse && expanded ? true : undefined}
         className={cn(
           "text-[0.8125rem] overflow-hidden px-5 pt-5 fd-scroll-container transition-[max-height,padding] duration-100 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring data-collapsed:max-h-80 data-expanded:max-h-[2400px]",
-          canCollapse ? "pb-16" : "pb-5",
+          canCollapse ? "pb-16" : "pb-4",
           viewportProps.className,
         )}
         style={viewportStyle}
@@ -390,7 +379,7 @@ export function CodeBlock({
               aria-hidden="true"
             />
           ) : null}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex origin-bottom translate-y-1 scale-95 justify-center pb-2 opacity-0 transition-[opacity,transform] delay-0 duration-200 ease-out group-hover/codeblock:delay-75 group-hover/codeblock:translate-y-0 group-hover/codeblock:scale-100 group-hover/codeblock:opacity-100 group-focus-within/codeblock:delay-75 group-focus-within/codeblock:translate-y-0 group-focus-within/codeblock:scale-100 group-focus-within/codeblock:opacity-100">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex origin-bottom  scale-95 justify-center pb-2 opacity-0 transition-[opacity,transform] delay-0 duration-200 ease-out group-hover/codeblock:delay-75 group-hover/codeblock:translate-y-0 group-hover/codeblock:scale-100 group-hover/codeblock:opacity-100 group-focus-within/codeblock:delay-75 group-focus-within/codeblock:translate-y-0 group-focus-within/codeblock:scale-100 group-focus-within/codeblock:opacity-100">
             <button
               type="button"
               data-collapsed={collapsed || undefined}
@@ -463,8 +452,7 @@ function CopyButton({
       className={cn(
         buttonVariants({
           color: "ghost",
-          className:
-            "hover:text-accent-foreground data-checked:text-accent-foreground",
+          className: "hover:text-accent-foreground data-checked:text-accent-foreground",
           size: "icon-xs",
         }),
         className,
@@ -486,11 +474,7 @@ export function CodeBlockTabs({ ref, ...props }: ComponentProps<typeof Tabs>) {
     <Tabs
       ref={mergeRefs(containerRef, ref)}
       {...props}
-      className={cn(
-        "bg-card rounded-xl border",
-        !nested && "my-4",
-        props.className,
-      )}
+      className={cn("bg-card rounded-xl border", !nested && "my-4", props.className)}
     >
       <TabsContext
         value={useMemo(
@@ -511,20 +495,14 @@ export function CodeBlockTabsList(props: ComponentProps<typeof TabsList>) {
   return (
     <TabsList
       {...props}
-      className={cn(
-        "flex flex-row px-2 overflow-x-auto text-muted-foreground",
-        props.className,
-      )}
+      className={cn("flex flex-row px-2 overflow-x-auto text-muted-foreground", props.className)}
     >
       {props.children}
     </TabsList>
   );
 }
 
-export function CodeBlockTabsTrigger({
-  children,
-  ...props
-}: ComponentProps<typeof TabsTrigger>) {
+export function CodeBlockTabsTrigger({ children, ...props }: ComponentProps<typeof TabsTrigger>) {
   return (
     <TabsTrigger
       {...props}
