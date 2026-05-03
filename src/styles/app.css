@@ -267,8 +267,34 @@ body {
   --tw-prose-quote-borders: var(--primary);
 }
 
-.prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  background: linear-gradient(to top, oklch(from var(--primary) l c h / 0.15) 0.15em, transparent 0.15em);
+/* .prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) { */
+/*   background: linear-gradient(to top, oklch(from var(--primary) l c h / 0.15) 0.15em, transparent 0.15em); */
+/* } */
+
+.prose .react-tweet-theme {
+  --tweet-container-margin: 0;
+  --tweet-header-font-size: 0.95rem;
+  --tweet-body-font-size: 1rem;
+  --tweet-body-line-height: 1.55rem;
+  --tweet-info-font-size: 0.85rem;
+  --tweet-font-family: "CMU Sans Serif", system-ui, sans-serif;
+  --tweet-border: 1px solid transparent;
+  --tweet-bg-color: var(--background);
+  --tweet-bg-color-hover: var(--background);
+  --tweet-font-color: var(--foreground);
+  --tweet-font-color-secondary: var(--muted-foreground);
+  --tweet-color-blue-primary: var(--primary);
+  --tweet-color-blue-primary-hover: var(--primary);
+  --tweet-color-blue-secondary: var(--primary);
+  --tweet-color-blue-secondary-hover: color-mix(in oklch, var(--primary) 12%, transparent);
+  width: 100%;
+  max-width: var(--tweet-width, 100%);
+  border-radius: var(--tweet-radius, 0.75rem);
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.prose .react-tweet-theme:hover {
+  border-color: var(--primary);
 }
 
 .prose :where(:not(pre) > code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {

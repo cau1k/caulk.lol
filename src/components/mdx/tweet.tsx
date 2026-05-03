@@ -15,6 +15,7 @@ export function Tweet({ className, apiUrl, ...props }: MdxTweetProps) {
         display: "flex",
         justifyContent: "center",
         marginBlock: "1.75rem",
+        width: "100%",
       }}
     >
       <ReactTweet {...props} apiUrl={localApiUrl} />

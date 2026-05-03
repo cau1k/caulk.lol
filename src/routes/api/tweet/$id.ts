@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { fetchTweet } from "react-tweet/api";
 
 type CacheNamespace = {
   get(key: string): Promise<string | null>;
@@ -12,6 +11,28 @@ type CachedTweet =
   | { status: "hit"; data: unknown }
   | { status: "miss" }
   | { status: "invalid"; error: string };
+
+type TweetFetchResult =
+  | { status: "found"; data: unknown }
+  | { status: "notFound" }
+  | { status: "tombstone" };
+
+const tweetFeatures = [
+  "tfw_timeline_list:",
+  "tfw_follower_count_sunset:true",
+  "tfw_tweet_edit_backend:on",
+  "tfw_refsrc_session:on",
+  "tfw_fosnr_soft_interventions_enabled:on",
+  "tfw_show_birdwatch_pivots_enabled:on",
+  "tfw_show_business_verified_badge:on",
+  "tfw_duplicate_scribes_to_settings:on",
+  "tfw_use_profile_image_shape_enabled:on",
+  "tfw_show_blue_verified_badge:on",
+  "tfw_legacy_timeline_sunset:true",
+  "tfw_show_gov_verified_badge:on",
+  "tfw_show_business_affiliate_badge:on",
+  "tfw_tweet_edit_frontend:on",
+].join(";");
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -118,6 +139,73 @@ function isTweetId(value: string) {
   return /^\d{1,32}$/.test(value);
 }
 
+function getTweetToken(id: string) {
+  return ((Number(id) / 1e15) * Math.PI)
+    .toString(6 ** 2)
+    .replace(/(0+|\.)/g, "");
+}
+
+function getTweetUrl(id: string) {
+  const url = new URL("https://cdn.syndication.twimg.com/tweet-result");
+  url.searchParams.set("id", id);
+  url.searchParams.set("lang", "en");
+  url.searchParams.set("features", tweetFeatures);
+  url.searchParams.set("token", getTweetToken(id));
+  return url;
+}
+
+async function parseJsonResponse(response: Response): Promise<unknown> {
+  const contentType = response.headers.get("Content-Type") ?? "";
+  if (!contentType.includes("application/json")) {
+    return null;
+  }
+
+  return response.json();
+}
+
+function isEmptyObject(value: unknown) {
+  return isRecord(value) && Object.keys(value).length === 0;
+}
+
+function isTweetTombstone(value: unknown) {
+  return isRecord(value) && value.__typename === "TweetTombstone";
+}
+
+async function fetchTweetFromSyndication(
+  id: string,
+): Promise<TweetFetchResult> {
+  const url = getTweetUrl(id);
+  const response = await fetch(url, {
+    headers: {
+      Accept: "application/json",
+      "User-Agent": "caulk.lol tweet embed cache",
+    },
+  });
+
+  const data = await parseJsonResponse(response);
+
+  if (response.ok) {
+    if (isTweetTombstone(data)) {
+      return { status: "tombstone" };
+    }
+
+    if (isEmptyObject(data) || data === null) {
+      return { status: "notFound" };
+    }
+
+    return { status: "found", data };
+  }
+
+  if (response.status === 404) {
+    return { status: "notFound" };
+  }
+
+  const body = data === null ? await response.text() : JSON.stringify(data);
+  throw new Error(
+    `Failed to fetch tweet ${id}: ${response.status} ${body.slice(0, 200)}`,
+  );
+}
+
 export const Route = createFileRoute("/api/tweet/$id")({
   server: {
     handlers: {
@@ -133,9 +221,9 @@ export const Route = createFileRoute("/api/tweet/$id")({
         const cached = await getCachedTweet(request, cacheKey);
 
         try {
-          const result = await fetchTweet(params.id);
+          const result = await fetchTweetFromSyndication(params.id);
 
-          if (result.data) {
+          if (result.status === "found") {
             const serialized = JSON.stringify(result.data);
             await writeCachedTweet(request, cacheKey, serialized);
             return jsonResponse(
@@ -156,7 +244,10 @@ export const Route = createFileRoute("/api/tweet/$id")({
           return jsonResponse(
             {
               data: null,
-              error: result.tombstone ? "Tweet unavailable" : "Tweet not found",
+              error:
+                result.status === "tombstone"
+                  ? "Tweet unavailable"
+                  : "Tweet not found",
             },
             { status: 404 },
           );
