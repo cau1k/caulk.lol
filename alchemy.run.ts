@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import alchemy from "alchemy";
-import { TanStackStart } from "alchemy/cloudflare";
+import { KVNamespace, TanStackStart } from "alchemy/cloudflare";
 import { CloudflareStateStore } from "alchemy/state";
 
 const app = await alchemy("caulk-lol", {
@@ -15,6 +15,10 @@ const app = await alchemy("caulk-lol", {
 const hasBuildOutput = existsSync(
   path.resolve(process.cwd(), "dist/server/index.js"),
 );
+
+const tweetCache = await KVNamespace("tweet-cache", {
+  title: `${app.name}-${app.stage}-tweet-cache`,
+});
 
 export const site = await TanStackStart("site", {
   name: `${app.name}-${app.stage}-site`,
@@ -40,6 +44,9 @@ export const site = await TanStackStart("site", {
               "./tsr.config.json",
             ],
           },
+  },
+  bindings: {
+    TWEET_CACHE: tweetCache,
   },
   dev: { command: "vite dev --port 3000" },
 });

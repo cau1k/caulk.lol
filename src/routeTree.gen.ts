@@ -21,6 +21,7 @@ import { Route as ApiSearchRouteImport } from './routes/api/search'
 import { Route as PostsTagsIndexRouteImport } from './routes/posts/tags/index'
 import { Route as PostsTagsTagRouteImport } from './routes/posts/tags/$tag'
 import { Route as OgPostsSplatRouteImport } from './routes/og/posts/$'
+import { Route as ApiTweetIdRouteImport } from './routes/api/tweet/$id'
 
 const LlmsFullDottxtRoute = LlmsFullDottxtRouteImport.update({
   id: '/llms-full.txt',
@@ -82,6 +83,11 @@ const OgPostsSplatRoute = OgPostsSplatRouteImport.update({
   path: '/og/posts/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTweetIdRoute = ApiTweetIdRouteImport.update({
+  id: '/api/tweet/$id',
+  path: '/api/tweet/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/posts/$slug': typeof PostsSlugRoute
   '/notes/': typeof NotesIndexRoute
   '/posts/': typeof PostsIndexRoute
+  '/api/tweet/$id': typeof ApiTweetIdRoute
   '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
   '/posts/tags/': typeof PostsTagsIndexRoute
@@ -107,6 +114,7 @@ export interface FileRoutesByTo {
   '/posts/$slug': typeof PostsSlugRoute
   '/notes': typeof NotesIndexRoute
   '/posts': typeof PostsIndexRoute
+  '/api/tweet/$id': typeof ApiTweetIdRoute
   '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
   '/posts/tags': typeof PostsTagsIndexRoute
@@ -122,6 +130,7 @@ export interface FileRoutesById {
   '/posts/$slug': typeof PostsSlugRoute
   '/notes/': typeof NotesIndexRoute
   '/posts/': typeof PostsIndexRoute
+  '/api/tweet/$id': typeof ApiTweetIdRoute
   '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
   '/posts/tags/': typeof PostsTagsIndexRoute
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
     | '/posts/$slug'
     | '/notes/'
     | '/posts/'
+    | '/api/tweet/$id'
     | '/og/posts/$'
     | '/posts/tags/$tag'
     | '/posts/tags/'
@@ -152,6 +162,7 @@ export interface FileRouteTypes {
     | '/posts/$slug'
     | '/notes'
     | '/posts'
+    | '/api/tweet/$id'
     | '/og/posts/$'
     | '/posts/tags/$tag'
     | '/posts/tags'
@@ -166,6 +177,7 @@ export interface FileRouteTypes {
     | '/posts/$slug'
     | '/notes/'
     | '/posts/'
+    | '/api/tweet/$id'
     | '/og/posts/$'
     | '/posts/tags/$tag'
     | '/posts/tags/'
@@ -181,6 +193,7 @@ export interface RootRouteChildren {
   PostsSlugRoute: typeof PostsSlugRoute
   NotesIndexRoute: typeof NotesIndexRoute
   PostsIndexRoute: typeof PostsIndexRoute
+  ApiTweetIdRoute: typeof ApiTweetIdRoute
   OgPostsSplatRoute: typeof OgPostsSplatRoute
   PostsTagsTagRoute: typeof PostsTagsTagRoute
   PostsTagsIndexRoute: typeof PostsTagsIndexRoute
@@ -272,6 +285,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OgPostsSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/tweet/$id': {
+      id: '/api/tweet/$id'
+      path: '/api/tweet/$id'
+      fullPath: '/api/tweet/$id'
+      preLoaderRoute: typeof ApiTweetIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -285,6 +305,7 @@ const rootRouteChildren: RootRouteChildren = {
   PostsSlugRoute: PostsSlugRoute,
   NotesIndexRoute: NotesIndexRoute,
   PostsIndexRoute: PostsIndexRoute,
+  ApiTweetIdRoute: ApiTweetIdRoute,
   OgPostsSplatRoute: OgPostsSplatRoute,
   PostsTagsTagRoute: PostsTagsTagRoute,
   PostsTagsIndexRoute: PostsTagsIndexRoute,

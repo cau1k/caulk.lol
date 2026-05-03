@@ -1,5 +1,4 @@
-import { Accordion, Accordions } from "@/components/accordion";
-import { Callout } from "@/components/callout";
+import { Popup, PopupContent, PopupTrigger } from "fumadocs-twoslash/ui";
 import { Card, Cards } from "fumadocs-ui/components/card";
 import { File, Files, Folder } from "fumadocs-ui/components/files";
 import { ImageZoom } from "fumadocs-ui/components/image-zoom";
@@ -7,10 +6,12 @@ import { Step, Steps } from "fumadocs-ui/components/steps";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { TypeTable } from "fumadocs-ui/components/type-table";
 import defaultMdxComponents from "fumadocs-ui/mdx";
-import { Popup, PopupContent, PopupTrigger } from "fumadocs-twoslash/ui";
 import type { MDXComponents } from "mdx/types";
+import { Accordion, Accordions } from "@/components/accordion";
+import { Callout } from "@/components/callout";
 import { CodeBlock, Pre } from "@/components/codeblock";
 import { Mermaid } from "@/components/mdx/mermaid";
+import { Tweet } from "@/components/mdx/tweet";
 import { Quote } from "@/components/quote";
 
 /**
@@ -39,6 +40,7 @@ export function getMDXComponents(overrides?: MDXComponents): MDXComponents {
     Tab,
     Tabs,
     TypeTable,
+    Tweet,
     Quote,
     Popup,
     PopupContent,

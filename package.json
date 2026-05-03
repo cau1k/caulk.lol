@@ -48,6 +48,7 @@
     "react-dom": "^19.2.3",
     "react-force-graph-2d": "^1.29.0",
     "react-medium-image-zoom": "^5.4.0",
+    "react-tweet": "^3.3.0",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "scroll-into-view-if-needed": "^3.1.0",
