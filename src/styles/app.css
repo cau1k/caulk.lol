@@ -278,7 +278,8 @@ body {
   --tweet-body-line-height: 1.55rem;
   --tweet-info-font-size: 0.85rem;
   --tweet-font-family: "CMU Sans Serif", system-ui, sans-serif;
-  --tweet-border: 1px solid transparent;
+  --tweet-border: 2px solid transparent;
+  --tweet-border-radius: 1px;
   --tweet-bg-color: var(--background);
   --tweet-bg-color-hover: var(--background);
   --tweet-font-color: var(--foreground);
@@ -291,10 +292,12 @@ body {
   max-width: var(--tweet-width, 100%);
   border-radius: var(--tweet-radius, 0.75rem);
   transition: border-color 150ms ease, background-color 150ms ease;
+  @apply rounded-none! inset-0!;
 }
 
 .prose .react-tweet-theme:hover {
   border-color: var(--primary);
+  @apply rounded-none! border-2!;
 }
 
 .prose :where(:not(pre) > code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {

@@ -12,6 +12,7 @@ import { Callout } from "@/components/callout";
 import { CodeBlock, Pre } from "@/components/codeblock";
 import { Mermaid } from "@/components/mdx/mermaid";
 import { Tweet } from "@/components/mdx/tweet";
+import { YouTube } from "@/components/mdx/youtube";
 import { Quote } from "@/components/quote";
 
 /**
@@ -41,6 +42,7 @@ export function getMDXComponents(overrides?: MDXComponents): MDXComponents {
     Tabs,
     TypeTable,
     Tweet,
+    YouTube,
     Quote,
     Popup,
     PopupContent,
