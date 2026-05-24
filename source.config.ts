@@ -9,6 +9,7 @@ import {
   applyMdxPreset,
   defineCollections,
   defineConfig,
+  defineDocs,
   frontmatterSchema,
 } from "fumadocs-mdx/config";
 import { transformerTwoslash } from "fumadocs-twoslash";
@@ -29,6 +30,29 @@ const codeLanguageTransformer = {
   },
 } satisfies ShikiTransformer;
 
+const sharedMdxOptions = applyMdxPreset({
+  remarkPlugins: [remarkMath, remarkMdxMermaid, remarkHeading],
+  rehypePlugins: [
+    rehypeKatex,
+    [rehypeToc, { exportToc: true }],
+    [rehypeExternalRef, { exclude: ["caulk.lol", "localhost", "github.com"] }],
+  ],
+  rehypeCodeOptions: {
+    ...rehypeCodeDefaultOptions,
+    themes: {
+      light: monoGlowLightTheme,
+      dark: monoGlowTheme,
+    },
+    transformers: [
+      codeLanguageTransformer,
+      ...(rehypeCodeDefaultOptions.transformers ?? []),
+      transformerTwoslash({
+        typesCache: createFileSystemTypesCache(),
+      }),
+    ],
+  },
+});
+
 export const posts = defineCollections({
   type: "doc",
   dir: "content/posts",
@@ -42,31 +66,7 @@ export const posts = defineCollections({
   postprocess: {
     includeProcessedMarkdown: true,
   },
-  mdxOptions: applyMdxPreset({
-    remarkPlugins: [remarkMath, remarkMdxMermaid, remarkHeading],
-    rehypePlugins: [
-      rehypeKatex,
-      [rehypeToc, { exportToc: true }],
-      [
-        rehypeExternalRef,
-        { exclude: ["caulk.lol", "localhost", "github.com"] },
-      ],
-    ],
-    rehypeCodeOptions: {
-      ...rehypeCodeDefaultOptions,
-      themes: {
-        light: monoGlowLightTheme,
-        dark: monoGlowTheme,
-      },
-      transformers: [
-        codeLanguageTransformer,
-        ...(rehypeCodeDefaultOptions.transformers ?? []),
-        transformerTwoslash({
-          typesCache: createFileSystemTypesCache(),
-        }),
-      ],
-    },
-  }),
+  mdxOptions: sharedMdxOptions,
 });
 
 export const notes = defineCollections({
@@ -79,31 +79,18 @@ export const notes = defineCollections({
     draft: z.boolean().default(false),
     tags: z.array(z.string().trim()).default([]),
   }),
-  mdxOptions: applyMdxPreset({
-    remarkPlugins: [remarkMath, remarkMdxMermaid, remarkHeading],
-    rehypePlugins: [
-      rehypeKatex,
-      [rehypeToc, { exportToc: true }],
-      [
-        rehypeExternalRef,
-        { exclude: ["caulk.lol", "localhost", "github.com"] },
-      ],
-    ],
-    rehypeCodeOptions: {
-      ...rehypeCodeDefaultOptions,
-      themes: {
-        light: monoGlowLightTheme,
-        dark: monoGlowTheme,
-      },
-      transformers: [
-        codeLanguageTransformer,
-        ...(rehypeCodeDefaultOptions.transformers ?? []),
-        transformerTwoslash({
-          typesCache: createFileSystemTypesCache(),
-        }),
-      ],
-    },
-  }),
+  mdxOptions: sharedMdxOptions,
+});
+
+export const projects = defineDocs({
+  dir: "content/projects",
+  docs: {
+    schema: frontmatterSchema.extend({
+      project: z.string().trim(),
+      draft: z.boolean().default(false),
+    }),
+    mdxOptions: sharedMdxOptions,
+  },
 });
 
 export default defineConfig();

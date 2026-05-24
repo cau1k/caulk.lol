@@ -22,19 +22,34 @@ interface SidebarContext {
 
 const SidebarContext = createContext<SidebarContext | null>(null);
 
+function useSidebarContext() {
+  const context = use(SidebarContext);
+  if (!context) {
+    throw new Error("useSidebarContext must be used within SidebarProvider");
+  }
+  return context;
+}
+
 export interface DocsLayoutProps {
   tree: PageTree.Root;
   children: ReactNode;
+  title?: string;
+  homeHref?: string;
 }
 
-export function DocsLayout({ tree, children }: DocsLayoutProps) {
+export function DocsLayout({
+  tree,
+  children,
+  title = "Docs",
+  homeHref = "/",
+}: DocsLayoutProps) {
   return (
     <TreeContextProvider tree={tree}>
       <SidebarProvider>
         <header className="sticky top-0 bg-background h-14 z-20">
           <nav className="flex flex-row items-center gap-2 size-full px-4">
-            <Link href="/" className="font-medium mr-auto">
-              My Docs
+            <Link href={homeHref} className="font-medium mr-auto">
+              {title}
             </Link>
 
             <SearchToggle />
@@ -87,7 +102,7 @@ function SearchToggle(props: ComponentProps<"button">) {
 }
 
 function NavbarSidebarTrigger(props: ComponentProps<"button">) {
-  const { open, setOpen } = use(SidebarContext)!;
+  const { open, setOpen } = useSidebarContext();
 
   return (
     <button
@@ -102,7 +117,7 @@ function NavbarSidebarTrigger(props: ComponentProps<"button">) {
 
 function Sidebar() {
   const { root } = useTreeContext();
-  const { open } = use(SidebarContext)!;
+  const { open } = useSidebarContext();
 
   const children = useMemo(() => {
     function renderItems(items: PageTree.Node[]) {

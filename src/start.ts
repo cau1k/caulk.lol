@@ -1,6 +1,7 @@
 import { redirect } from "@tanstack/react-router";
 import { createMiddleware, createStart } from "@tanstack/react-start";
 import { rewritePath } from "fumadocs-core/negotiation";
+import { getProjectByHost } from "@/lib/projects";
 
 const { rewrite: rewriteLLM } = rewritePath(
   "/posts{/*path}.mdx",
@@ -18,8 +19,24 @@ const llmMiddleware = createMiddleware().server(({ next, request }) => {
   return next();
 });
 
+const projectHostMiddleware = createMiddleware().server(({ next, request }) => {
+  const url = new URL(request.url);
+  const project = getProjectByHost(url.host);
+  if (!project) return next();
+
+  const basePath = `/projects/${project.id}`;
+  if (url.pathname === basePath || url.pathname.startsWith(`${basePath}/`)) {
+    return next();
+  }
+
+  const nextPath =
+    url.pathname === "/" ? basePath : `${basePath}${url.pathname}`;
+
+  throw redirect({ href: `${nextPath}${url.search}${url.hash}` });
+});
+
 export const startInstance = createStart(() => {
   return {
-    requestMiddleware: [llmMiddleware],
+    requestMiddleware: [projectHostMiddleware, llmMiddleware],
   };
 });

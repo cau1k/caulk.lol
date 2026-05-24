@@ -12,13 +12,16 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LlmsFullDottxtRouteImport } from './routes/llms-full[.]txt'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProjectsIndexRouteImport } from './routes/projects/index'
 import { Route as PostsIndexRouteImport } from './routes/posts/index'
 import { Route as NotesIndexRouteImport } from './routes/notes/index'
+import { Route as ProjectsProjectRouteImport } from './routes/projects/$project'
 import { Route as PostsSlugRouteImport } from './routes/posts/$slug'
 import { Route as NotesSlugRouteImport } from './routes/notes/$slug'
 import { Route as LlmsDotmdxSplatRouteImport } from './routes/llms[.]mdx.$'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
 import { Route as PostsTagsIndexRouteImport } from './routes/posts/tags/index'
+import { Route as ProjectsProjectSplatRouteImport } from './routes/projects/$project.$'
 import { Route as PostsTagsTagRouteImport } from './routes/posts/tags/$tag'
 import { Route as OgPostsSplatRouteImport } from './routes/og/posts/$'
 import { Route as ApiTweetIdRouteImport } from './routes/api/tweet/$id'
@@ -38,6 +41,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PostsIndexRoute = PostsIndexRouteImport.update({
   id: '/posts/',
   path: '/posts/',
@@ -46,6 +54,11 @@ const PostsIndexRoute = PostsIndexRouteImport.update({
 const NotesIndexRoute = NotesIndexRouteImport.update({
   id: '/notes/',
   path: '/notes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsProjectRoute = ProjectsProjectRouteImport.update({
+  id: '/projects/$project',
+  path: '/projects/$project',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PostsSlugRoute = PostsSlugRouteImport.update({
@@ -73,6 +86,11 @@ const PostsTagsIndexRoute = PostsTagsIndexRouteImport.update({
   path: '/posts/tags/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProjectsProjectSplatRoute = ProjectsProjectSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => ProjectsProjectRoute,
+} as any)
 const PostsTagsTagRoute = PostsTagsTagRouteImport.update({
   id: '/posts/tags/$tag',
   path: '/posts/tags/$tag',
@@ -97,11 +115,14 @@ export interface FileRoutesByFullPath {
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/notes/$slug': typeof NotesSlugRoute
   '/posts/$slug': typeof PostsSlugRoute
+  '/projects/$project': typeof ProjectsProjectRouteWithChildren
   '/notes/': typeof NotesIndexRoute
   '/posts/': typeof PostsIndexRoute
+  '/projects/': typeof ProjectsIndexRoute
   '/api/tweet/$id': typeof ApiTweetIdRoute
   '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
+  '/projects/$project/$': typeof ProjectsProjectSplatRoute
   '/posts/tags/': typeof PostsTagsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -112,11 +133,14 @@ export interface FileRoutesByTo {
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/notes/$slug': typeof NotesSlugRoute
   '/posts/$slug': typeof PostsSlugRoute
+  '/projects/$project': typeof ProjectsProjectRouteWithChildren
   '/notes': typeof NotesIndexRoute
   '/posts': typeof PostsIndexRoute
+  '/projects': typeof ProjectsIndexRoute
   '/api/tweet/$id': typeof ApiTweetIdRoute
   '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
+  '/projects/$project/$': typeof ProjectsProjectSplatRoute
   '/posts/tags': typeof PostsTagsIndexRoute
 }
 export interface FileRoutesById {
@@ -128,11 +152,14 @@ export interface FileRoutesById {
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/notes/$slug': typeof NotesSlugRoute
   '/posts/$slug': typeof PostsSlugRoute
+  '/projects/$project': typeof ProjectsProjectRouteWithChildren
   '/notes/': typeof NotesIndexRoute
   '/posts/': typeof PostsIndexRoute
+  '/projects/': typeof ProjectsIndexRoute
   '/api/tweet/$id': typeof ApiTweetIdRoute
   '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
+  '/projects/$project/$': typeof ProjectsProjectSplatRoute
   '/posts/tags/': typeof PostsTagsIndexRoute
 }
 export interface FileRouteTypes {
@@ -145,11 +172,14 @@ export interface FileRouteTypes {
     | '/llms.mdx/$'
     | '/notes/$slug'
     | '/posts/$slug'
+    | '/projects/$project'
     | '/notes/'
     | '/posts/'
+    | '/projects/'
     | '/api/tweet/$id'
     | '/og/posts/$'
     | '/posts/tags/$tag'
+    | '/projects/$project/$'
     | '/posts/tags/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -160,11 +190,14 @@ export interface FileRouteTypes {
     | '/llms.mdx/$'
     | '/notes/$slug'
     | '/posts/$slug'
+    | '/projects/$project'
     | '/notes'
     | '/posts'
+    | '/projects'
     | '/api/tweet/$id'
     | '/og/posts/$'
     | '/posts/tags/$tag'
+    | '/projects/$project/$'
     | '/posts/tags'
   id:
     | '__root__'
@@ -175,11 +208,14 @@ export interface FileRouteTypes {
     | '/llms.mdx/$'
     | '/notes/$slug'
     | '/posts/$slug'
+    | '/projects/$project'
     | '/notes/'
     | '/posts/'
+    | '/projects/'
     | '/api/tweet/$id'
     | '/og/posts/$'
     | '/posts/tags/$tag'
+    | '/projects/$project/$'
     | '/posts/tags/'
   fileRoutesById: FileRoutesById
 }
@@ -191,8 +227,10 @@ export interface RootRouteChildren {
   LlmsDotmdxSplatRoute: typeof LlmsDotmdxSplatRoute
   NotesSlugRoute: typeof NotesSlugRoute
   PostsSlugRoute: typeof PostsSlugRoute
+  ProjectsProjectRoute: typeof ProjectsProjectRouteWithChildren
   NotesIndexRoute: typeof NotesIndexRoute
   PostsIndexRoute: typeof PostsIndexRoute
+  ProjectsIndexRoute: typeof ProjectsIndexRoute
   ApiTweetIdRoute: typeof ApiTweetIdRoute
   OgPostsSplatRoute: typeof OgPostsSplatRoute
   PostsTagsTagRoute: typeof PostsTagsTagRoute
@@ -222,6 +260,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/projects/': {
+      id: '/projects/'
+      path: '/projects'
+      fullPath: '/projects/'
+      preLoaderRoute: typeof ProjectsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/posts/': {
       id: '/posts/'
       path: '/posts'
@@ -234,6 +279,13 @@ declare module '@tanstack/react-router' {
       path: '/notes'
       fullPath: '/notes/'
       preLoaderRoute: typeof NotesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/$project': {
+      id: '/projects/$project'
+      path: '/projects/$project'
+      fullPath: '/projects/$project'
+      preLoaderRoute: typeof ProjectsProjectRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/posts/$slug': {
@@ -271,6 +323,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PostsTagsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/projects/$project/$': {
+      id: '/projects/$project/$'
+      path: '/$'
+      fullPath: '/projects/$project/$'
+      preLoaderRoute: typeof ProjectsProjectSplatRouteImport
+      parentRoute: typeof ProjectsProjectRoute
+    }
     '/posts/tags/$tag': {
       id: '/posts/tags/$tag'
       path: '/posts/tags/$tag'
@@ -295,6 +354,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface ProjectsProjectRouteChildren {
+  ProjectsProjectSplatRoute: typeof ProjectsProjectSplatRoute
+}
+
+const ProjectsProjectRouteChildren: ProjectsProjectRouteChildren = {
+  ProjectsProjectSplatRoute: ProjectsProjectSplatRoute,
+}
+
+const ProjectsProjectRouteWithChildren = ProjectsProjectRoute._addFileChildren(
+  ProjectsProjectRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -303,8 +374,10 @@ const rootRouteChildren: RootRouteChildren = {
   LlmsDotmdxSplatRoute: LlmsDotmdxSplatRoute,
   NotesSlugRoute: NotesSlugRoute,
   PostsSlugRoute: PostsSlugRoute,
+  ProjectsProjectRoute: ProjectsProjectRouteWithChildren,
   NotesIndexRoute: NotesIndexRoute,
   PostsIndexRoute: PostsIndexRoute,
+  ProjectsIndexRoute: ProjectsIndexRoute,
   ApiTweetIdRoute: ApiTweetIdRoute,
   OgPostsSplatRoute: OgPostsSplatRoute,
   PostsTagsTagRoute: PostsTagsTagRoute,

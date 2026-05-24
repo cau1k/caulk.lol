@@ -1,0 +1,63 @@
+---
+title: Installation
+description: Install hyprwhspr-rs from crates.io, Nix, or source.
+project: hyprwhspr-rs
+draft: false
+---
+
+## Requirements
+
+- `whisper.cpp` with `whisper-cli` available on `PATH`, unless using a managed build path
+- `libudev` and `pkg-config` for hotplug detection
+- GNU Linux target; musl releases are not supported
+- Optional `GROQ_API_KEY` or `GEMINI_API_KEY`
+- Optional Parakeet TDT model files for NVIDIA local ASR through ONNX
+
+## crates.io
+
+```bash
+cargo install hyprwhspr-rs
+```
+
+To omit the Parakeet backend:
+
+```bash
+cargo install hyprwhspr-rs --no-default-features
+```
+
+Then run the installer:
+
+```bash
+hyprwhspr-rs install
+```
+
+Install specific pieces when needed:
+
+```bash
+hyprwhspr-rs install --service
+hyprwhspr-rs install --waybar
+hyprwhspr-rs install --elephant
+```
+
+The installer writes a systemd unit whose `ExecStart=` points at the binary used to run `hyprwhspr-rs install`.
+
+## NixOS
+
+```nix
+{
+  users.users.<username>.extraGroups = [ "input" ];
+
+  services.hyprwhspr-rs.enable = true;
+}
+```
+
+For GPU-accelerated local models, override the package inputs and enable CUDA or ROCm support in the relevant dependency.
+
+## Source
+
+```bash
+git clone https://github.com/better-slop/hyprwhspr-rs.git
+cd hyprwhspr-rs
+cargo build --release
+sudo cp target/release/hyprwhspr-rs /usr/local/bin/
+```

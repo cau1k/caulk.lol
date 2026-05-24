@@ -1,0 +1,35 @@
+---
+title: hyprwhspr-rs
+description: Native speech-to-text dictation for Hyprland and Omarchy, written in Rust.
+project: hyprwhspr-rs
+draft: false
+---
+
+`hyprwhspr-rs` is a Rust implementation of [`hyprwhspr`](https://github.com/goodroot/hyprwhspr) focused on fast, native speech-to-text dictation for Hyprland and Omarchy.
+
+It runs as a small desktop daemon, records speech on command, transcribes it through a configured provider, and injects the final text back into the active application.
+
+## What It Does
+
+- Fast speech-to-text for Wayland/Hyprland desktops
+- Hyprland-aware paste behavior through compositor IPC
+- Local `whisper.cpp`, Groq, Gemini, and optional Parakeet TDT transcription paths
+- Hot-reloadable configuration
+- Optional fast VAD trimming to reduce latency and inference cost
+- Waybar, Walker, Elephant, and Quickshell integration examples
+
+## Hyprland Model
+
+Hyprland owns shortcut capture. `hyprwhspr-rs` exposes recorder controls over a local socket, so compositor binds can start, stop, or toggle recording without grabbing the keyboard device directly.
+
+```ini
+bind = ALT, grave, exec, hyprwhspr-rs record start
+bindr = ALT, grave, exec, hyprwhspr-rs record stop
+bind = ALT, SPACE, exec, hyprwhspr-rs record toggle
+```
+
+The daemon detects Hyprland with `HYPRLAND_INSTANCE_SIGNATURE`, opens the compositor IPC socket under `$XDG_RUNTIME_DIR/hypr/<signature>/.socket.sock`, and dispatches paste shortcuts against the active window.
+
+## Source
+
+Project source lives at [`better-slop/hyprwhspr-rs`](https://github.com/better-slop/hyprwhspr-rs).
