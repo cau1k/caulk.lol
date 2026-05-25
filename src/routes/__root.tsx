@@ -3,11 +3,15 @@ import {
   HeadContent,
   Outlet,
   Scripts,
+  useRouterState,
 } from "@tanstack/react-router";
 import { RootProvider } from "fumadocs-ui/provider/tanstack";
-import type * as React from "react";
+import { type ReactNode, useLayoutEffect } from "react";
 import { BackgroundStars } from "@/components/background-stars";
-import { BackgroundStarsProvider } from "@/components/background-stars-context";
+import {
+  BackgroundStarsProvider,
+  useBackgroundStarsOptional,
+} from "@/components/background-stars-context";
 import { NotFound } from "@/components/not-found";
 import { TerminalFooter } from "@/components/terminal-footer";
 import appCss from "@/styles/app.css?url";
@@ -63,7 +67,7 @@ function RootComponent() {
   );
 }
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -89,6 +93,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="flex flex-col min-h-screen">
         <BackgroundStarsProvider>
+          <BackgroundStarsRouteSync />
           <BackgroundStars />
           <RootProvider search={{ hotKey: [{ key: "/", display: "/" }] }}>
             {children}
@@ -99,4 +104,19 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </body>
     </html>
   );
+}
+
+function BackgroundStarsRouteSync() {
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
+  const starsCtx = useBackgroundStarsOptional();
+  const shouldPause =
+    pathname.startsWith("/posts/") || pathname.startsWith("/projects");
+
+  useLayoutEffect(() => {
+    starsCtx?.setRoutePaused(shouldPause);
+  }, [shouldPause, starsCtx]);
+
+  return null;
 }

@@ -6,25 +6,32 @@ import {
   type ReactNode,
   type SetStateAction,
   useContext,
+  useMemo,
   useState,
 } from "react";
 
 type BackgroundStarsContextType = {
   paused: boolean;
   setPaused: Dispatch<SetStateAction<boolean>>;
+  routePaused: boolean;
+  setRoutePaused: Dispatch<SetStateAction<boolean>>;
 };
 
 const BackgroundStarsContext = createContext<BackgroundStarsContextType | null>(
-  null
+  null,
 );
 
 export function BackgroundStarsProvider({ children }: { children: ReactNode }) {
-  const [paused, setPaused] = useState(false);
+  const [manualPaused, setPaused] = useState(false);
+  const [routePaused, setRoutePaused] = useState(false);
+  const paused = manualPaused || routePaused;
+  const value = useMemo(
+    () => ({ paused, setPaused, routePaused, setRoutePaused }),
+    [paused, routePaused],
+  );
 
   return (
-    <BackgroundStarsContext value={{ paused, setPaused }}>
-      {children}
-    </BackgroundStarsContext>
+    <BackgroundStarsContext value={value}>{children}</BackgroundStarsContext>
   );
 }
 
@@ -32,7 +39,7 @@ export function useBackgroundStars() {
   const ctx = useContext(BackgroundStarsContext);
   if (!ctx) {
     throw new Error(
-      "useBackgroundStars must be used within BackgroundStarsProvider"
+      "useBackgroundStars must be used within BackgroundStarsProvider",
     );
   }
   return ctx;

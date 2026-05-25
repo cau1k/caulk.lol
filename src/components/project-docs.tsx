@@ -1,4 +1,5 @@
 import browserCollections from "fumadocs-mdx:collections/browser";
+import { Link } from "@tanstack/react-router";
 import type * as PageTree from "fumadocs-core/page-tree";
 import type { TOCItemType } from "fumadocs-core/toc";
 import { useEffect, useMemo, useRef } from "react";
@@ -85,10 +86,6 @@ export function ProjectDocs({ data }: { data: ProjectDocsData }) {
               ·
             </span>
             <span>{data.author}</span>
-            <span className="text-muted-foreground/50" aria-hidden>
-              ·
-            </span>
-            <span className="capitalize">{data.project.status}</span>
           </div>
 
           <h1 className="py-2 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
@@ -248,8 +245,8 @@ function ProjectNavAnchor({
   const isNext = direction === "next";
 
   return (
-    <a
-      href={href}
+    <Link
+      to={href}
       className={cn(
         "group flex gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground",
         isNext ? "items-center justify-end text-right" : "items-center",
@@ -261,6 +258,6 @@ function ProjectNavAnchor({
         </div>
         <div className="truncate font-medium text-foreground">{children}</div>
       </div>
-    </a>
+    </Link>
   );
 }
