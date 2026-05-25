@@ -27,7 +27,7 @@ function projectTree(
   const pages = projects
     .getPages()
     .filter((page) => page.data.project === project.id)
-    .sort((a, b) => pageOrder(a.url) - pageOrder(b.url));
+    .sort((a, b) => pageOrder(a.path) - pageOrder(b.path));
 
   if (pages.length === 0) throw notFound();
 
@@ -44,10 +44,10 @@ function projectTree(
   };
 }
 
-function pageOrder(url: string): number {
-  if (url.endsWith("/index")) return 0;
-  if (url.endsWith("/installation")) return 1;
-  if (url.endsWith("/integrations")) return 2;
+function pageOrder(path: string): number {
+  if (path.endsWith("/index.mdx")) return 0;
+  if (path.endsWith("/installation.mdx")) return 1;
+  if (path.endsWith("/integrations.mdx")) return 2;
   return 10;
 }
 
@@ -82,7 +82,9 @@ export function getProjectDocsData(
     project,
     path: page.path,
     title: page.data.title,
+    author: page.data.author,
     description: page.data.description,
+    url: canonicalPageUrl(page.url, project),
     tree: projectTree(project, hostMode),
     hostMode,
   };

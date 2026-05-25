@@ -87,6 +87,7 @@ export const projects = defineDocs({
   docs: {
     schema: frontmatterSchema.extend({
       project: z.string().trim(),
+      author: z.string().trim(),
       draft: z.boolean().default(false),
     }),
     mdxOptions: sharedMdxOptions,

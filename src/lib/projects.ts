@@ -4,6 +4,8 @@ export type Project = {
   id: ProjectId;
   title: string;
   host: string;
+  author: string;
+  status: "active";
   description: string;
   githubUrl: string;
 };
@@ -13,6 +15,8 @@ export const projectRegistry = {
     id: "hyprwhspr-rs",
     title: "hyprwhspr-rs",
     host: "hyprwhspr-rs.caulk.lol",
+    author: "Zero Caulk",
+    status: "active",
     description:
       "Native speech-to-text dictation for Hyprland and Omarchy, written in Rust.",
     githubUrl: "https://github.com/better-slop/hyprwhspr-rs",
