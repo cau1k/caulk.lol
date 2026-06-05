@@ -27,7 +27,12 @@ export const site = await TanStackStart("site", {
   url: false,
   assets: {
     // Let project subdomains resolve through request middleware before assets.
-    run_worker_first: true,
+    run_worker_first: [
+      "/",
+      "/installation",
+      "/integrations",
+      "/projects/*",
+    ],
   },
   build: {
     memoize:
