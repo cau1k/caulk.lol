@@ -9,7 +9,6 @@ import {
   applyMdxPreset,
   defineCollections,
   defineConfig,
-  defineDocs,
   frontmatterSchema,
 } from "fumadocs-mdx/config";
 import { transformerTwoslash } from "fumadocs-twoslash";
@@ -80,18 +79,6 @@ export const notes = defineCollections({
     tags: z.array(z.string().trim()).default([]),
   }),
   mdxOptions: sharedMdxOptions,
-});
-
-export const projects = defineDocs({
-  dir: "content/projects",
-  docs: {
-    schema: frontmatterSchema.extend({
-      project: z.string().trim(),
-      author: z.string().trim(),
-      draft: z.boolean().default(false),
-    }),
-    mdxOptions: sharedMdxOptions,
-  },
 });
 
 export default defineConfig();

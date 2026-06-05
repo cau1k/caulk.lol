@@ -9,10 +9,7 @@ import tsConfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   server: {
     port: 3000,
-    allowedHosts: ["arch.catla-justice.ts.net", "hyprwhspr-rs.caulk.lol"],
-  },
-  preview: {
-    allowedHosts: ["hyprwhspr-rs.caulk.lol"],
+    allowedHosts: ["arch.catla-justice.ts.net"],
   },
   resolve: {
     dedupe: ["react", "react-dom"],

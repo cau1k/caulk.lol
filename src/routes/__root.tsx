@@ -111,8 +111,7 @@ function BackgroundStarsRouteSync() {
     select: (state) => state.location.pathname,
   });
   const starsCtx = useBackgroundStarsOptional();
-  const shouldPause =
-    pathname.startsWith("/posts/") || pathname.startsWith("/projects");
+  const shouldPause = pathname.startsWith("/posts/");
 
   useLayoutEffect(() => {
     starsCtx?.setRoutePaused(shouldPause);
