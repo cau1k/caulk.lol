@@ -3,14 +3,35 @@ import { createServerFn } from "@tanstack/react-start";
 import { EmptyState } from "@/components/empty-state";
 import { HomeLayout } from "@/components/layout/home";
 import { LinkItem } from "@/components/layout/link-item";
+import { ProjectDocs, preloadProjectContent } from "@/components/project-docs";
 import { formatDate, formatDateTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
+import { getProjectDocsData } from "@/lib/project-docs";
+import { getProject, getProjectByHost, type Project } from "@/lib/projects";
 import { posts } from "@/lib/source";
 
 export const Route = createFileRoute("/")({
-  loader: () => serverLoader(),
+  loader: async ({ context }) => {
+    const project = getHostProject(
+      (context as LoaderContextWithServer).serverContext,
+    );
+    const data = project
+      ? {
+          kind: "project" as const,
+          project: getProjectDocsData(project.id, [], true),
+        }
+      : await serverLoader();
+    if (data.kind === "project") {
+      await preloadProjectContent(data.project.path);
+    }
+    return data;
+  },
   component: Home,
 });
+
+type LoaderContextWithServer = {
+  serverContext?: unknown;
+};
 
 const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
   const isDev = import.meta.env.DEV;
@@ -22,6 +43,7 @@ const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
   });
 
   return {
+    kind: "home" as const,
     posts: sorted.map((page) => ({
       url: page.url,
       title: page.data.title,
@@ -32,8 +54,25 @@ const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
   };
 });
 
+function getHostProject(serverContext: unknown): Project | undefined {
+  if (
+    serverContext &&
+    typeof serverContext === "object" &&
+    "projectHostId" in serverContext &&
+    typeof serverContext.projectHostId === "string"
+  ) {
+    return getProject(serverContext.projectHostId) ?? undefined;
+  }
+
+  if (typeof window === "undefined") return undefined;
+  return getProjectByHost(window.location.host) ?? undefined;
+}
+
 function Home() {
-  const { posts } = Route.useLoaderData();
+  const data = Route.useLoaderData();
+  if (data.kind === "project") return <ProjectDocs data={data.project} />;
+
+  const { posts } = data;
   const [featured, ...rest] = posts;
 
   return (

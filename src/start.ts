@@ -26,13 +26,11 @@ const projectHostMiddleware = createMiddleware().server(({ next, request }) => {
 
   const basePath = `/projects/${project.id}`;
   if (url.pathname === basePath || url.pathname.startsWith(`${basePath}/`)) {
-    return next();
+    const nextPath = url.pathname.slice(basePath.length) || "/";
+    throw redirect({ href: `${nextPath}${url.search}${url.hash}` });
   }
 
-  const nextPath =
-    url.pathname === "/" ? basePath : `${basePath}${url.pathname}`;
-
-  throw redirect({ href: `${nextPath}${url.search}${url.hash}` });
+  return next({ context: { projectHostId: project.id } });
 });
 
 export const startInstance = createStart(() => {

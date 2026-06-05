@@ -78,13 +78,16 @@ export function getProjectDocsData(
     );
   if (!page || page.data.project !== project.id) throw notFound();
 
+  const url = canonicalPageUrl(page.url, project);
+  const hostUrl = url.replace(`/projects/${project.id}`, "") || "/";
+
   return {
     project,
     path: page.path,
     title: page.data.title,
     author: page.data.author,
     description: page.data.description,
-    url: canonicalPageUrl(page.url, project),
+    url: hostMode ? hostUrl : url,
     tree: projectTree(project, hostMode),
     hostMode,
   };
