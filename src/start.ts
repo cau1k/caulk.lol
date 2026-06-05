@@ -25,12 +25,14 @@ const projectHostMiddleware = createMiddleware().server(({ next, request }) => {
   if (!project) return next();
 
   const basePath = `/projects/${project.id}`;
-  if (url.pathname === basePath || url.pathname.startsWith(`${basePath}/`)) {
-    const nextPath = url.pathname.slice(basePath.length) || "/";
-    throw redirect({ href: `${nextPath}${url.search}${url.hash}` });
-  }
+  const targetUrl = new URL(request.url);
+  targetUrl.host = "caulk.lol";
+  targetUrl.pathname =
+    url.pathname === basePath || url.pathname.startsWith(`${basePath}/`)
+      ? url.pathname
+      : `${basePath}${url.pathname === "/" ? "" : url.pathname}`;
 
-  return next({ context: { projectHostId: project.id } });
+  throw redirect({ href: targetUrl.toString() });
 });
 
 export const startInstance = createStart(() => {

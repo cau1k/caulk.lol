@@ -26,12 +26,13 @@ export const site = await TanStackStart("site", {
   // Disable the workers.dev URL to avoid leaking account subdomain in public URLs.
   url: false,
   assets: {
-    // Let project subdomains resolve through request middleware before assets.
+    // Route app paths through middleware so project subdomains can redirect.
     run_worker_first: [
-      "/",
-      "/installation",
-      "/integrations",
-      "/projects/*",
+      "/*",
+      "!/assets/*",
+      "!/fonts/*",
+      "!/media/*",
+      "!/cdn-cgi/*",
     ],
   },
   build: {
