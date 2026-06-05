@@ -21,11 +21,12 @@ export const Route = createFileRoute("/projects/")({
 });
 
 const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
+  const isDev = import.meta.env.DEV;
   const projects = Object.values(projectRegistry)
     .filter((project) => project.status === "active")
     .map((project) => ({
       ...project,
-      href: `/projects/${project.id}`,
+      href: isDev ? `/projects/${project.id}` : `https://${project.host}`,
     }));
 
   return { projects };

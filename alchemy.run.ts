@@ -22,9 +22,13 @@ const tweetCache = await KVNamespace("tweet-cache", {
 
 export const site = await TanStackStart("site", {
   name: `${app.name}-${app.stage}-site`,
-  domains: ["caulk.lol"],
+  domains: ["caulk.lol", "hyprwhspr-rs.caulk.lol"],
   // Disable the workers.dev URL to avoid leaking account subdomain in public URLs.
   url: false,
+  assets: {
+    // Let project subdomains resolve through request middleware before assets.
+    run_worker_first: ["hyprwhspr-rs.caulk.lol/*"],
+  },
   build: {
     memoize:
       process.env.CI || !hasBuildOutput
