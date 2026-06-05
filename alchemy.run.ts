@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import alchemy from "alchemy";
-import { KVNamespace, TanStackStart } from "alchemy/cloudflare";
+import { DnsRecords, KVNamespace, TanStackStart } from "alchemy/cloudflare";
 import { CloudflareStateStore } from "alchemy/state";
 
 const app = await alchemy("caulk-lol", {
@@ -18,6 +18,24 @@ const hasBuildOutput = existsSync(
 
 const tweetCache = await KVNamespace("tweet-cache", {
   title: `${app.name}-${app.stage}-tweet-cache`,
+});
+
+const cloudflareZoneId = process.env.CLOUDFLARE_ZONE_ID;
+if (process.env.CI && !cloudflareZoneId) {
+  throw new Error("CLOUDFLARE_ZONE_ID is required for project subdomain DNS");
+}
+
+await DnsRecords("project-subdomains-dns", {
+  zoneId: cloudflareZoneId ?? "caulk.lol",
+  records: [
+    {
+      type: "CNAME",
+      name: "hyprwhspr-rs.caulk.lol",
+      content: "caulk.lol",
+      proxied: true,
+      ttl: 1,
+    },
+  ],
 });
 
 export const site = await TanStackStart("site", {
