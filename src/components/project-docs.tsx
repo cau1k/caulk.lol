@@ -1,11 +1,8 @@
 import browserCollections from "fumadocs-mdx:collections/browser";
 import { Link } from "@tanstack/react-router";
 import type * as PageTree from "fumadocs-core/page-tree";
-import type { TOCItemType } from "fumadocs-core/toc";
-import { useEffect, useMemo, useRef } from "react";
-import { PostLayout, usePostTOC } from "@/components/layout/post";
-import { TOCProvider } from "@/components/toc";
-import { WheelTOCItems } from "@/components/toc/wheel";
+import { useMemo } from "react";
+import { PostLayout } from "@/components/layout/post";
 import { cn } from "@/lib/cn";
 import { baseOptions } from "@/lib/layout.shared";
 import type { Project } from "@/lib/projects";
@@ -58,9 +55,9 @@ export type ProjectDocsData = {
 
 export const projectClientLoader =
   browserCollections.projects.createClientLoader({
-    component({ toc, default: MDX }) {
+    component({ default: MDX }) {
       return (
-        <ProjectContent toc={toc}>
+        <ProjectContent>
           <MDX components={getMDXComponents()} />
         </ProjectContent>
       );
@@ -78,104 +75,104 @@ export function ProjectDocs({ data }: { data: ProjectDocsData }) {
 
   return (
     <PostLayout {...baseOptions()}>
-      <article className="relative mx-auto w-full max-w-2xl px-4 py-16 sm:py-20">
-        <header className="mb-12">
-          <div className="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">Project</span>
-            <span className="text-muted-foreground/50" aria-hidden>
-              ·
-            </span>
-            <span>{data.author}</span>
-          </div>
+      <div className="relative mx-auto w-full max-w-2xl px-4 py-16 sm:py-20">
+        <ProjectDocsSidebar data={data} />
+        <article className="relative">
+          <header className="mb-12">
+            <div className="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">Project</span>
+              <span className="text-muted-foreground/50" aria-hidden>
+                ·
+              </span>
+              <span>{data.author}</span>
+            </div>
 
-          <h1 className="py-2 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-            {data.title}
-          </h1>
+            <h1 className="py-2 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+              {data.title}
+            </h1>
 
-          {data.description ? (
-            <p className="mt-6 text-lg leading-relaxed text-muted-foreground sm:text-xl">
-              {data.description}
-            </p>
-          ) : null}
+            {data.description ? (
+              <p className="mt-6 text-lg leading-relaxed text-muted-foreground sm:text-xl">
+                {data.description}
+              </p>
+            ) : null}
 
-          <div className="mt-8 mb-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
-            <a
-              href={data.project.githubUrl}
-              className="hover:text-foreground"
-              rel="noreferrer"
-              target="_blank"
-            >
-              {data.project.githubUrl.replace("https://github.com/", "")}
-            </a>
-            <span className="text-muted-foreground/40" aria-hidden>
-              /
-            </span>
-            <a
-              href={`https://${data.project.host}`}
-              className="hover:text-foreground"
-            >
-              {data.project.host}
-            </a>
-          </div>
+            <div className="mt-8 mb-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+              <a
+                href={data.project.githubUrl}
+                className="hover:text-foreground"
+                rel="noreferrer"
+                target="_blank"
+              >
+                {data.project.githubUrl.replace("https://github.com/", "")}
+              </a>
+              <span className="text-muted-foreground/40" aria-hidden>
+                /
+              </span>
+              <a
+                href={`https://${data.project.host}`}
+                className="hover:text-foreground"
+              >
+                {data.project.host}
+              </a>
+            </div>
 
-          <div className="mt-8 h-px w-full bg-border" />
-        </header>
+            <div className="mt-8 h-px w-full bg-border" />
+          </header>
 
-        <ContentRenderer />
-        <ProjectNavigation previous={previous} next={next} />
-      </article>
-      <ProjectSidebarTOC />
+          <ContentRenderer />
+          <ProjectNavigation previous={previous} next={next} />
+        </article>
+      </div>
     </PostLayout>
   );
 }
 
-function ProjectContent({
-  toc,
-  children,
-}: {
-  toc?: TOCItemType[];
-  children: React.ReactNode;
-}) {
-  const { setToc, setContentVisible } = usePostTOC();
-
-  useEffect(() => {
-    setToc(toc ?? []);
-    return () => setToc([]);
-  }, [toc, setToc]);
-
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => setContentVisible(!entry.isIntersecting),
-      { threshold: 0, rootMargin: "-64px 0px 0px 0px" },
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [setContentVisible]);
-
+function ProjectContent({ children }: { children: React.ReactNode }) {
   return (
     <div className="prose prose-fd max-w-none overflow-x-hidden">
-      <div ref={sentinelRef} className="h-0 w-full" aria-hidden="true" />
       {children}
     </div>
   );
 }
 
-export function ProjectSidebarTOC() {
-  const { toc } = usePostTOC();
-  if (toc.length === 0) return null;
+function ProjectDocsSidebar({ data }: { data: ProjectDocsData }) {
+  const pages = useMemo(
+    () =>
+      data.tree.children.filter(
+        (item): item is SerializableTreeItem => item.type === "page",
+      ),
+    [data.tree.children],
+  );
+  if (pages.length === 0) return null;
 
   return (
-    <TOCProvider toc={toc}>
-      <aside className="fixed top-16 right-[max(1rem,calc((100vw-42rem)/2-16rem))] hidden w-56 xl:flex xl:flex-col shadow-none">
-        <WheelTOCItems />
-      </aside>
-    </TOCProvider>
+    <aside className="fixed top-14 left-[max(1rem,calc((100vw-42rem)/2-15rem))] hidden w-52 xl:block">
+      <nav className="pt-10 text-sm">
+        <div className="mb-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          Docs
+        </div>
+        <div className="flex flex-col border-l border-border">
+          {pages.map((page) => {
+            const active = page.url === data.url;
+            return (
+              <Link
+                key={page.$id}
+                to={page.url}
+                className={cn(
+                  "-ml-px border-l px-3 py-2 text-muted-foreground transition-colors hover:text-foreground",
+                  active
+                    ? "border-foreground font-medium text-foreground"
+                    : "border-transparent",
+                )}
+              >
+                {page.name}
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+    </aside>
   );
 }
 

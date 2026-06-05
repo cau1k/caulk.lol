@@ -1,6 +1,13 @@
 "use client";
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
-import { Check, ChevronsDownUp, ChevronsUpDown, Clipboard } from "lucide-react";
+import {
+  AlignJustify,
+  Check,
+  ChevronsDownUp,
+  ChevronsUpDown,
+  Clipboard,
+  WrapText,
+} from "lucide-react";
 import {
   type ComponentProps,
   type CSSProperties,
@@ -68,10 +75,7 @@ export function Pre(props: ComponentProps<"pre">) {
   return (
     <pre
       {...props}
-      className={cn(
-        "min-w-full whitespace-pre-wrap break-words *:flex *:flex-col *:whitespace-pre-wrap *:break-words",
-        props.className,
-      )}
+      className={cn("min-w-full *:flex *:flex-col", props.className)}
     >
       {props.children}
     </pre>
@@ -271,7 +275,9 @@ function getLanguageLabel(
   children: ReactNode,
 ) {
   const classMatch = className?.match(/(?:^|\s)language-([\w-]+)/);
-  const childClassMatch = getNodeClassName(children)?.match(/(?:^|\s)language-([\w-]+)/);
+  const childClassMatch = getNodeClassName(children)?.match(
+    /(?:^|\s)language-([\w-]+)/,
+  );
   const classLanguage = dataLanguage ?? classMatch?.[1] ?? childClassMatch?.[1];
 
   if (classLanguage) return formatLanguage(classLanguage);
@@ -289,16 +295,24 @@ export function CodeBlock({
   icon,
   viewportProps = {},
   children,
-  Actions = (props) => <div {...props} className={cn("empty:hidden", props.className)} />,
+  Actions = (props) => (
+    <div {...props} className={cn("empty:hidden", props.className)} />
+  ),
   ...props
 }: CodeBlockProps) {
   const inTab = use(TabsContext) !== null;
   const areaRef = useRef<HTMLElement>(null);
   const [expanded, setExpanded] = useState(false);
+  const [wrapCode, setWrapCode] = useState(true);
   const [lineCount, setLineCount] = useState(0);
   const canCollapse = lineCount > collapsedLineThreshold;
   const collapsed = canCollapse && !expanded;
-  const languageLabel = getLanguageLabel(title, props.className, props["data-language"], children);
+  const languageLabel = getLanguageLabel(
+    title,
+    props.className,
+    props["data-language"],
+    children,
+  );
 
   useEffect(() => {
     const pre = areaRef.current?.getElementsByTagName("pre").item(0);
@@ -317,7 +331,14 @@ export function CodeBlock({
         >
           <CollapseButton onClick={() => setExpanded(false)} />
         </span>
-        <span className="px-1 text-xs text-muted-foreground">{languageLabel}</span>
+        <span className="px-1 text-xs text-muted-foreground">
+          {languageLabel}
+        </span>
+        <span className="h-4 w-px bg-border" aria-hidden="true" />
+        <WrapButton
+          wrapped={wrapCode}
+          onClick={() => setWrapCode((value) => !value)}
+        />
         {allowCopy ? (
           <>
             <span className="h-4 w-px bg-border" aria-hidden="true" />
@@ -362,8 +383,12 @@ export function CodeBlock({
         {...viewportProps}
         data-collapsed={collapsed || undefined}
         data-expanded={canCollapse && expanded ? true : undefined}
+        data-wrap={wrapCode ? true : undefined}
         className={cn(
           "text-[0.8125rem] overflow-hidden px-5 pt-5 fd-scroll-container transition-[max-height,padding] duration-100 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring data-collapsed:max-h-80 data-expanded:max-h-[2400px]",
+          wrapCode
+            ? "[&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_pre_*]:whitespace-pre-wrap [&_pre_*]:break-words"
+            : "overflow-x-auto [&_pre]:w-max [&_pre]:whitespace-pre [&_pre]:break-normal [&_pre_*]:whitespace-pre [&_pre_*]:break-normal",
           canCollapse ? "pb-16" : "pb-4",
           viewportProps.className,
         )}
@@ -404,6 +429,34 @@ export function CodeBlock({
         </>
       ) : null}
     </figure>
+  );
+}
+
+function WrapButton({
+  wrapped,
+  onClick,
+}: {
+  wrapped: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      data-checked={wrapped || undefined}
+      className={cn(
+        buttonVariants({
+          color: "ghost",
+          size: "icon-xs",
+          className:
+            "hover:text-accent-foreground data-checked:text-accent-foreground",
+        }),
+      )}
+      aria-label={wrapped ? "Disable line wrap" : "Enable line wrap"}
+      aria-pressed={wrapped}
+      onClick={onClick}
+    >
+      {wrapped ? <WrapText /> : <AlignJustify />}
+    </button>
   );
 }
 
@@ -452,7 +505,8 @@ function CopyButton({
       className={cn(
         buttonVariants({
           color: "ghost",
-          className: "hover:text-accent-foreground data-checked:text-accent-foreground",
+          className:
+            "hover:text-accent-foreground data-checked:text-accent-foreground",
           size: "icon-xs",
         }),
         className,
@@ -474,7 +528,11 @@ export function CodeBlockTabs({ ref, ...props }: ComponentProps<typeof Tabs>) {
     <Tabs
       ref={mergeRefs(containerRef, ref)}
       {...props}
-      className={cn("bg-card rounded-xl border", !nested && "my-4", props.className)}
+      className={cn(
+        "bg-card rounded-xl border",
+        !nested && "my-4",
+        props.className,
+      )}
     >
       <TabsContext
         value={useMemo(
@@ -495,14 +553,20 @@ export function CodeBlockTabsList(props: ComponentProps<typeof TabsList>) {
   return (
     <TabsList
       {...props}
-      className={cn("flex flex-row px-2 overflow-x-auto text-muted-foreground", props.className)}
+      className={cn(
+        "flex flex-row px-2 overflow-x-auto text-muted-foreground",
+        props.className,
+      )}
     >
       {props.children}
     </TabsList>
   );
 }
 
-export function CodeBlockTabsTrigger({ children, ...props }: ComponentProps<typeof TabsTrigger>) {
+export function CodeBlockTabsTrigger({
+  children,
+  ...props
+}: ComponentProps<typeof TabsTrigger>) {
   return (
     <TabsTrigger
       {...props}

@@ -8,6 +8,7 @@
     "build": "vite build",
     "start": "vite preview",
     "deploy": "alchemy deploy",
+    "projects:sync-readme": "bun scripts/sync-project-readme.mjs",
     "types:check": "fumadocs-mdx && tsc --noEmit",
     "postinstall": "fumadocs-mdx",
     "lint": "biome check",
