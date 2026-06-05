@@ -22,11 +22,10 @@ const tweetCache = await KVNamespace("tweet-cache", {
 
 export const site = await TanStackStart("site", {
   name: `${app.name}-${app.stage}-site`,
-  domains: ["caulk.lol", "hyprwhspr-rs.caulk.lol"],
+  domains: ["caulk.lol"],
   // Disable the workers.dev URL to avoid leaking account subdomain in public URLs.
   url: false,
   assets: {
-    // Route app paths through middleware so project subdomains can redirect.
     run_worker_first: [
       "/*",
       "!/assets/*",
