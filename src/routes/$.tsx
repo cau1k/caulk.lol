@@ -1,24 +1,20 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import { ProjectDocs, preloadProjectContent } from "@/components/project-docs";
 import { getProjectDocsData } from "@/lib/project-docs";
-import { getProject, getProjectByHost, type Project } from "@/lib/projects";
+import { getProject, type Project } from "@/lib/projects";
 
-type LoaderContextWithServer = {
-  serverContext?: unknown;
+type HostProjectPathInput = {
+  slugs: string[];
 };
 
 export const Route = createFileRoute("/$")({
-  loader: async ({ context, params }) => {
-    const project = getHostProject(
-      (context as LoaderContextWithServer).serverContext,
-    );
-    if (!project) throw notFound();
-
-    const data = getProjectDocsData(
-      project.id,
-      params._splat?.split("/").filter(Boolean) ?? [],
-      true,
-    );
+  loader: async ({ params }) => {
+    const data = await serverLoader({
+      data: {
+        slugs: params._splat?.split("/").filter(Boolean) ?? [],
+      },
+    });
     await preloadProjectContent(data.path);
     return data;
   },
@@ -39,6 +35,15 @@ export const Route = createFileRoute("/$")({
   component: HostProjectSplatRoute,
 });
 
+const serverLoader = createServerFn({ method: "GET" })
+  .inputValidator((input: HostProjectPathInput) => input)
+  .handler(async ({ context, data }) => {
+    const project = getHostProject(context);
+    if (!project) throw notFound();
+
+    return getProjectDocsData(project.id, data.slugs, true);
+  });
+
 function getHostProject(serverContext: unknown): Project | undefined {
   if (
     serverContext &&
@@ -48,9 +53,7 @@ function getHostProject(serverContext: unknown): Project | undefined {
   ) {
     return getProject(serverContext.projectHostId) ?? undefined;
   }
-
-  if (typeof window === "undefined") return undefined;
-  return getProjectByHost(window.location.host) ?? undefined;
+  return undefined;
 }
 
 function HostProjectSplatRoute() {

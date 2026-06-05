@@ -7,20 +7,12 @@ import { ProjectDocs, preloadProjectContent } from "@/components/project-docs";
 import { formatDate, formatDateTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
 import { getProjectDocsData } from "@/lib/project-docs";
-import { getProject, getProjectByHost, type Project } from "@/lib/projects";
+import { getProject, type Project } from "@/lib/projects";
 import { posts } from "@/lib/source";
 
 export const Route = createFileRoute("/")({
-  loader: async ({ context }) => {
-    const project = getHostProject(
-      (context as LoaderContextWithServer).serverContext,
-    );
-    const data = project
-      ? {
-          kind: "project" as const,
-          project: getProjectDocsData(project.id, [], true),
-        }
-      : await serverLoader();
+  loader: async () => {
+    const data = await serverLoader();
     if (data.kind === "project") {
       await preloadProjectContent(data.project.path);
     }
@@ -29,30 +21,36 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-type LoaderContextWithServer = {
-  serverContext?: unknown;
-};
+const serverLoader = createServerFn({ method: "GET" }).handler(
+  async ({ context }) => {
+    const project = getHostProject(context);
+    if (project) {
+      return {
+        kind: "project" as const,
+        project: getProjectDocsData(project.id, [], true),
+      };
+    }
 
-const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
-  const isDev = import.meta.env.DEV;
-  const pages = posts.getPages().filter((p) => isDev || !p.data.draft);
-  const sorted = pages.sort((a, b) => {
-    const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
-    const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
-    return dateB - dateA;
-  });
+    const isDev = import.meta.env.DEV;
+    const pages = posts.getPages().filter((p) => isDev || !p.data.draft);
+    const sorted = pages.sort((a, b) => {
+      const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
+      const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
+      return dateB - dateA;
+    });
 
-  return {
-    kind: "home" as const,
-    posts: sorted.map((page) => ({
-      url: page.url,
-      title: page.data.title,
-      description: page.data.description,
-      date: page.data.date,
-      author: page.data.author,
-    })),
-  };
-});
+    return {
+      kind: "home" as const,
+      posts: sorted.map((page) => ({
+        url: page.url,
+        title: page.data.title,
+        description: page.data.description,
+        date: page.data.date,
+        author: page.data.author,
+      })),
+    };
+  },
+);
 
 function getHostProject(serverContext: unknown): Project | undefined {
   if (
@@ -63,9 +61,7 @@ function getHostProject(serverContext: unknown): Project | undefined {
   ) {
     return getProject(serverContext.projectHostId) ?? undefined;
   }
-
-  if (typeof window === "undefined") return undefined;
-  return getProjectByHost(window.location.host) ?? undefined;
+  return undefined;
 }
 
 function Home() {
