@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { readSiteAnalytics } from "@/lib/analytics-engine";
+import { demoSiteAnalytics, readSiteAnalytics } from "@/lib/analytics-engine";
+
+const isDev = import.meta.env.DEV || process.env.NODE_ENV !== "production";
 
 function jsonResponse(body: unknown, init?: ResponseInit) {
   return new Response(JSON.stringify(body), {
@@ -15,7 +17,9 @@ export const Route = createFileRoute("/api/analytics")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const analytics = await readSiteAnalytics(request);
+        const analytics = isDev
+          ? demoSiteAnalytics()
+          : await readSiteAnalytics(request);
         return jsonResponse(analytics, {
           headers: {
             "Cache-Control":
