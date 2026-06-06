@@ -10,7 +10,7 @@ import {
   XYChart,
 } from "@visx/xychart";
 import { Zoom } from "@visx/zoom";
-import { Minus, Move, Plus, RotateCcw } from "lucide-react";
+import { Minus, Plus, RotateCcw } from "lucide-react";
 import { type ReactNode, useMemo, useState } from "react";
 import type {
   NetworkEdge,
@@ -191,7 +191,7 @@ export function NetworkGraph({
 }) {
   const [activeRoute, setActiveRoute] = useState<string | null>(null);
   const width = 860;
-  const height = 430;
+  const height = 360;
   const graph = useMemo(
     () => makeNetworkGraph(nodes, edges, width, height),
     [nodes, edges],
@@ -256,7 +256,7 @@ export function NetworkGraph({
             <svg
               aria-label="Route network graph"
               className={cn(
-                "min-h-[430px] w-full min-w-[760px] touch-none outline-none",
+                "min-h-[360px] w-full min-w-[760px] touch-none outline-none",
                 zoom.isDragging ? "cursor-grabbing" : "cursor-grab",
               )}
               onMouseDown={zoom.dragStart}
@@ -275,35 +275,11 @@ export function NetworkGraph({
               viewBox={`0 0 ${width} ${height}`}
             >
               <title>Route network graph</title>
-              <defs>
-                <marker
-                  id="route-arrow"
-                  markerHeight="8"
-                  markerWidth="8"
-                  orient="auto"
-                  refX="8"
-                  refY="4"
-                >
-                  <path
-                    className="fill-muted-foreground/60"
-                    d="M 0 0 L 8 4 L 0 8 z"
-                  />
-                </marker>
-                <pattern
-                  height="24"
-                  id="network-grid"
-                  patternUnits="userSpaceOnUse"
-                  width="24"
-                >
-                  <path
-                    className="stroke-border/40"
-                    d="M 24 0 H 0 V 24"
-                    fill="none"
-                    strokeWidth="1"
-                  />
-                </pattern>
-              </defs>
-              <rect fill="url(#network-grid)" height={height} width={width} />
+              <rect
+                className="fill-background/20"
+                height={height}
+                width={width}
+              />
               <g transform={zoom.toString()}>
                 <VisxGraph<RouteLink, RouteNode>
                   graph={graph}
@@ -315,17 +291,16 @@ export function NetworkGraph({
                     return (
                       <path
                         className={cn(
-                          "stroke-border transition-opacity",
-                          isActive ? "opacity-100" : "opacity-20",
+                          "stroke-muted-foreground/45 transition-opacity",
+                          isActive ? "opacity-100" : "opacity-55",
                           activeRoute && isActive && "stroke-chart-1",
                         )}
                         d={makeFlowPath(link.source, link.target)}
                         fill="none"
-                        markerEnd="url(#route-arrow)"
                         strokeLinecap="round"
                         strokeWidth={Math.max(
-                          1.5,
-                          Math.min(link.requests / 12 + 1, 8),
+                          1.25,
+                          Math.min(link.requests / 22 + 1, 5),
                         )}
                       />
                     );
@@ -334,7 +309,8 @@ export function NetworkGraph({
                     const isActive =
                       activeRoute === null || activeRoute === node.route;
                     const isSelected = activeRoute === node.route;
-                    const labelWidth = Math.max(106, node.route.length * 7.2);
+                    const labelWidth = Math.max(96, node.route.length * 7.2);
+                    const labelX = node.r + 12;
                     return (
                       // biome-ignore lint/a11y/useSemanticElements: SVG graph nodes cannot render HTML buttons.
                       <g
@@ -344,46 +320,44 @@ export function NetworkGraph({
                         role="button"
                         tabIndex={0}
                       >
-                        <rect
-                          className={cn(
-                            "fill-background/95 stroke-border transition-opacity",
-                            isActive ? "opacity-100" : "opacity-35",
-                            isSelected && "stroke-chart-1",
-                          )}
-                          height="58"
-                          rx="6"
-                          strokeWidth={isSelected ? 2 : 1}
-                          width={labelWidth}
-                          x={node.x - labelWidth / 2}
-                          y={node.y - 29}
-                        />
                         <circle
                           className={cn(
-                            "fill-chart-1/25 stroke-chart-1 transition-opacity",
-                            isActive ? "opacity-100" : "opacity-35",
+                            "fill-chart-1/35 stroke-chart-1 transition-opacity",
+                            isActive ? "opacity-100" : "opacity-70",
                           )}
-                          cx={node.x - labelWidth / 2 + 18}
-                          cy={node.y}
-                          r={node.r}
-                          strokeWidth="1.5"
+                          cx="0"
+                          cy="0"
+                          r={node.r + 5}
+                          strokeWidth={isSelected ? 3 : 1.5}
+                        />
+                        <rect
+                          className={cn(
+                            "fill-background/90 transition-opacity",
+                            isActive ? "opacity-100" : "opacity-75",
+                          )}
+                          height="38"
+                          rx="5"
+                          width={labelWidth}
+                          x={labelX - 8}
+                          y="-22"
                         />
                         <text
                           className={cn(
                             "fill-foreground text-[12px] transition-opacity",
-                            isActive ? "opacity-100" : "opacity-35",
+                            isActive ? "opacity-100" : "opacity-80",
                           )}
-                          x={node.x - labelWidth / 2 + 34}
-                          y={node.y - 5}
+                          x={labelX}
+                          y="-5"
                         >
                           {node.route}
                         </text>
                         <text
                           className={cn(
                             "fill-muted-foreground text-[11px] transition-opacity",
-                            isActive ? "opacity-100" : "opacity-35",
+                            isActive ? "opacity-100" : "opacity-75",
                           )}
-                          x={node.x - labelWidth / 2 + 34}
-                          y={node.y + 13}
+                          x={labelX}
+                          y="13"
                         >
                           {formatCount(node.requests)} · p95{" "}
                           {formatMs(node.p95Ms)}
@@ -393,37 +367,6 @@ export function NetworkGraph({
                   }}
                 />
               </g>
-
-              <g transform="translate(18 356)">
-                <rect
-                  className="fill-background/80 stroke-border"
-                  height="42"
-                  rx="6"
-                  width="188"
-                />
-                <Move
-                  className="text-muted-foreground"
-                  height={14}
-                  width={14}
-                  x={12}
-                  y={13}
-                />
-                <text
-                  className="fill-muted-foreground text-[11px]"
-                  x={34}
-                  y={17}
-                >
-                  drag to pan
-                </text>
-                <text
-                  className="fill-muted-foreground text-[11px]"
-                  x={34}
-                  y={31}
-                >
-                  wheel or buttons to zoom
-                </text>
-              </g>
-
               {activeNode && (
                 <foreignObject height={102} width={220} x={24} y={24}>
                   <div className="h-full border border-border bg-popover/95 p-3 text-popover-foreground shadow-sm backdrop-blur">
@@ -551,10 +494,8 @@ function getRouteLane(route: string) {
 }
 
 function makeFlowPath(source: RouteNode, target: RouteNode) {
-  const sourceWidth = Math.max(106, source.route.length * 7.2);
-  const targetWidth = Math.max(106, target.route.length * 7.2);
-  const startX = source.x + sourceWidth / 2;
-  const endX = target.x - targetWidth / 2;
+  const startX = source.x + source.r + 8;
+  const endX = target.x - target.r - 8;
   const controlOffset = Math.max(48, Math.abs(endX - startX) * 0.44);
 
   return [
