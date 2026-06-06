@@ -132,6 +132,7 @@ export function recordRumMetric(request: Request, payload: RumMetricPayload) {
   const env = getAnalyticsEnv(request);
   const dataset = env?.SITE_METRICS;
   if (!dataset) return;
+  if (isBotRequest(request)) return;
 
   const url = new URL(request.url);
   const pathname = normalizePathname(payload.pathname);
