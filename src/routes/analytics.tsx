@@ -1,19 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { getRequest } from "@tanstack/react-start/server";
 import { Activity, Clock, Gauge, TriangleAlert } from "lucide-react";
+import { useEffect, useState } from "react";
 import { HomeLayout } from "@/components/layout/home";
 import type {
   NetworkEdge,
   NetworkNode,
+  SiteAnalyticsData,
   SiteMetricPoint,
 } from "@/lib/analytics-engine";
-import { readSiteAnalytics } from "@/lib/analytics-engine";
+import { emptySiteAnalytics } from "@/lib/analytics-engine";
 import { cn } from "@/lib/cn";
 import { baseOptions } from "@/lib/layout.shared";
 
 export const Route = createFileRoute("/analytics")({
-  loader: () => serverLoader(),
   headers: () => ({
     "Cache-Control":
       "public, max-age=0, s-maxage=60, stale-while-revalidate=300",
@@ -21,13 +20,43 @@ export const Route = createFileRoute("/analytics")({
   component: AnalyticsPage,
 });
 
-const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
-  return readSiteAnalytics(getRequest());
-});
-
 function AnalyticsPage() {
-  const analytics = Route.useLoaderData();
+  const [analytics, setAnalytics] = useState<SiteAnalyticsData>(() =>
+    emptySiteAnalytics("empty", new Date().toISOString()),
+  );
+  const [isLoading, setIsLoading] = useState(true);
   const hasData = analytics.points.length > 0;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadAnalytics() {
+      try {
+        const response = await fetch("/api/analytics");
+        const nextAnalytics = (await response.json()) as SiteAnalyticsData;
+        if (!cancelled) setAnalytics(nextAnalytics);
+      } catch (error) {
+        if (cancelled) return;
+        setAnalytics(
+          emptySiteAnalytics(
+            "error",
+            new Date().toISOString(),
+            error instanceof Error
+              ? error.message
+              : "Failed to load analytics.",
+          ),
+        );
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    }
+
+    void loadAnalytics();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <HomeLayout {...baseOptions()}>
@@ -85,8 +114,10 @@ function AnalyticsPage() {
             <LatencyChart points={analytics.points} />
           ) : (
             <div className="flex min-h-72 items-center justify-center border border-dashed border-border px-4 text-center text-sm text-muted-foreground">
-              {analytics.error ??
-                "Waiting for Analytics Engine data. The dataset is created after production traffic writes its first point."}
+              {isLoading
+                ? "Loading Analytics Engine data..."
+                : (analytics.error ??
+                  "Waiting for Analytics Engine data. The dataset is created after production traffic writes its first point.")}
             </div>
           )}
         </section>

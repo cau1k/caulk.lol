@@ -19,6 +19,7 @@ import { Route as PostsSlugRouteImport } from './routes/posts/$slug'
 import { Route as NotesSlugRouteImport } from './routes/notes/$slug'
 import { Route as LlmsDotmdxSplatRouteImport } from './routes/llms[.]mdx.$'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
+import { Route as ApiAnalyticsRouteImport } from './routes/api/analytics'
 import { Route as PostsTagsIndexRouteImport } from './routes/posts/tags/index'
 import { Route as PostsTagsTagRouteImport } from './routes/posts/tags/$tag'
 import { Route as OgPostsSplatRouteImport } from './routes/og/posts/$'
@@ -74,6 +75,11 @@ const ApiSearchRoute = ApiSearchRouteImport.update({
   path: '/api/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAnalyticsRoute = ApiAnalyticsRouteImport.update({
+  id: '/api/analytics',
+  path: '/api/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PostsTagsIndexRoute = PostsTagsIndexRouteImport.update({
   id: '/posts/tags/',
   path: '/posts/tags/',
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/analytics': typeof AnalyticsRoute
   '/llms-full.txt': typeof LlmsFullDottxtRoute
+  '/api/analytics': typeof ApiAnalyticsRoute
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/notes/$slug': typeof NotesSlugRoute
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/analytics': typeof AnalyticsRoute
   '/llms-full.txt': typeof LlmsFullDottxtRoute
+  '/api/analytics': typeof ApiAnalyticsRoute
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/notes/$slug': typeof NotesSlugRoute
@@ -133,6 +141,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/analytics': typeof AnalyticsRoute
   '/llms-full.txt': typeof LlmsFullDottxtRoute
+  '/api/analytics': typeof ApiAnalyticsRoute
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/notes/$slug': typeof NotesSlugRoute
@@ -151,6 +160,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/analytics'
     | '/llms-full.txt'
+    | '/api/analytics'
     | '/api/search'
     | '/llms.mdx/$'
     | '/notes/$slug'
@@ -167,6 +177,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/analytics'
     | '/llms-full.txt'
+    | '/api/analytics'
     | '/api/search'
     | '/llms.mdx/$'
     | '/notes/$slug'
@@ -183,6 +194,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/analytics'
     | '/llms-full.txt'
+    | '/api/analytics'
     | '/api/search'
     | '/llms.mdx/$'
     | '/notes/$slug'
@@ -200,6 +212,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AnalyticsRoute: typeof AnalyticsRoute
   LlmsFullDottxtRoute: typeof LlmsFullDottxtRoute
+  ApiAnalyticsRoute: typeof ApiAnalyticsRoute
   ApiSearchRoute: typeof ApiSearchRoute
   LlmsDotmdxSplatRoute: typeof LlmsDotmdxSplatRoute
   NotesSlugRoute: typeof NotesSlugRoute
@@ -284,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/analytics': {
+      id: '/api/analytics'
+      path: '/api/analytics'
+      fullPath: '/api/analytics'
+      preLoaderRoute: typeof ApiAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/posts/tags/': {
       id: '/posts/tags/'
       path: '/posts/tags'
@@ -320,6 +340,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AnalyticsRoute: AnalyticsRoute,
   LlmsFullDottxtRoute: LlmsFullDottxtRoute,
+  ApiAnalyticsRoute: ApiAnalyticsRoute,
   ApiSearchRoute: ApiSearchRoute,
   LlmsDotmdxSplatRoute: LlmsDotmdxSplatRoute,
   NotesSlugRoute: NotesSlugRoute,

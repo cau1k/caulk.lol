@@ -107,11 +107,15 @@ export async function readSiteAnalytics(
   const dataset = env?.ANALYTICS_DATASET?.trim();
 
   if (!accountId || !apiToken || !dataset) {
-    return emptyAnalytics("unconfigured", generatedAt);
+    return emptySiteAnalytics("unconfigured", generatedAt);
   }
 
   if (!DATASET_NAME_PATTERN.test(dataset)) {
-    return emptyAnalytics("error", generatedAt, "Invalid analytics dataset.");
+    return emptySiteAnalytics(
+      "error",
+      generatedAt,
+      "Invalid analytics dataset.",
+    );
   }
 
   const [timeSeries, nodes, edges] = await Promise.all([
@@ -121,13 +125,13 @@ export async function readSiteAnalytics(
   ]);
 
   if (timeSeries.status !== "ok") {
-    return emptyAnalytics("error", generatedAt, timeSeries.error);
+    return emptySiteAnalytics("error", generatedAt, timeSeries.error);
   }
 
   const rows = parseAnalyticsRows(timeSeries.payload);
   if (rows.length === 0) {
     return {
-      ...emptyAnalytics("empty", generatedAt),
+      ...emptySiteAnalytics("empty", generatedAt),
       network: {
         nodes: parseNetworkNodes(nodes.payload),
         edges: parseNetworkEdges(edges.payload),
@@ -365,7 +369,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
-function emptyAnalytics(
+export function emptySiteAnalytics(
   source: SiteAnalyticsData["source"],
   generatedAt: string,
   error?: string,
