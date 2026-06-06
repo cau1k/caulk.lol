@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { demoSiteAnalytics, readSiteAnalytics } from "@/lib/analytics-engine";
+import { demoSiteAnalytics } from "@/lib/analytics-demo";
+import { readSiteAnalytics } from "@/lib/analytics-engine";
 
 const isDev = import.meta.env.DEV || process.env.NODE_ENV !== "production";
 

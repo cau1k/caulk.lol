@@ -13,6 +13,7 @@ import {
   useBackgroundStarsOptional,
 } from "@/components/background-stars-context";
 import { NotFound } from "@/components/not-found";
+import { SiteRum } from "@/components/site-rum";
 import { TerminalFooter } from "@/components/terminal-footer";
 import appCss from "@/styles/app.css?url";
 
@@ -96,6 +97,7 @@ function RootDocument({ children }: { children: ReactNode }) {
           <BackgroundStarsRouteSync />
           <BackgroundStars />
           <RootProvider search={{ hotKey: [{ key: "/", display: "/" }] }}>
+            <SiteRum />
             {children}
             <TerminalFooter />
           </RootProvider>

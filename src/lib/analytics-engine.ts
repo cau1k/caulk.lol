@@ -50,6 +50,12 @@ type AnalyticsEngineDatasetBinding = {
   writeDataPoint(point: AnalyticsEngineDataPoint): void;
 };
 
+export type RumMetricPayload = {
+  pathname: string;
+  referrer?: string;
+  durationMs: number;
+};
+
 type AnalyticsEnv = {
   SITE_METRICS?: AnalyticsEngineDatasetBinding;
   ANALYTICS_ACCOUNT_ID?: unknown;
@@ -109,14 +115,38 @@ export function recordSiteMetric(
   if (!shouldRecordRequest(url, request)) return;
 
   const pathname = normalizePathname(url.pathname);
+  if (!pathname) return;
+
   const referrer = normalizeReferrer(request, url);
   const status = response.status;
   const statusClass = `${Math.floor(status / 100)}xx`;
 
   dataset.writeDataPoint({
     indexes: [url.hostname],
-    blobs: [pathname, referrer, request.method, statusClass],
+    blobs: [pathname, referrer, "SSR", statusClass],
     doubles: [durationMs, status, 1],
+  });
+}
+
+export function recordRumMetric(request: Request, payload: RumMetricPayload) {
+  const env = getAnalyticsEnv(request);
+  const dataset = env?.SITE_METRICS;
+  if (!dataset) return;
+
+  const url = new URL(request.url);
+  const pathname = normalizePathname(payload.pathname);
+  const durationMs = Math.round(payload.durationMs);
+  if (!pathname || !Number.isFinite(durationMs) || durationMs <= 0) return;
+
+  dataset.writeDataPoint({
+    indexes: [url.hostname],
+    blobs: [
+      pathname,
+      normalizeRumReferrer(payload.referrer, url),
+      "RUM",
+      "client",
+    ],
+    doubles: [durationMs, 0, 1],
   });
 }
 
@@ -258,8 +288,8 @@ function normalizePathname(pathname: string) {
   if (pathname.startsWith("/posts/")) return "/posts/:slug";
   if (pathname === "/notes" || pathname === "/notes/") return "/notes";
   if (pathname.startsWith("/notes/")) return "/notes/:slug";
-  if (pathname.startsWith("/api/tweet/")) return "/api/tweet/:id";
-  return pathname;
+  if (pathname === "/about" || pathname === "/about/") return "/about";
+  return undefined;
 }
 
 function normalizeReferrer(request: Request, url: URL) {
@@ -269,7 +299,19 @@ function normalizeReferrer(request: Request, url: URL) {
   try {
     const referrerUrl = new URL(referrer);
     if (referrerUrl.hostname !== url.hostname) return "";
-    return normalizePathname(referrerUrl.pathname);
+    return normalizePathname(referrerUrl.pathname) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+function normalizeRumReferrer(referrer: string | undefined, url: URL) {
+  if (!referrer) return "";
+
+  try {
+    const referrerUrl = new URL(referrer, url.origin);
+    if (referrerUrl.hostname !== url.hostname) return "";
+    return normalizePathname(referrerUrl.pathname) ?? "";
   } catch {
     return "";
   }
@@ -286,6 +328,7 @@ SELECT
   SUM(if(double2 >= 500, _sample_interval, 0)) AS errors
 FROM ${dataset}
 WHERE timestamp >= NOW() - INTERVAL '${DEFAULT_RANGE_HOURS}' HOUR
+  AND blob3 = 'RUM'
 GROUP BY t
 ORDER BY t ASC
 FORMAT JSON
@@ -300,6 +343,7 @@ SELECT
   QUANTILEEXACTWEIGHTED(0.95)(double1, _sample_interval) AS p95_ms
 FROM ${dataset}
 WHERE timestamp >= NOW() - INTERVAL '${DEFAULT_RANGE_HOURS}' HOUR
+  AND blob3 = 'RUM'
 GROUP BY route
 ORDER BY requests DESC
 LIMIT 16
@@ -315,6 +359,7 @@ SELECT
   SUM(_sample_interval) AS requests
 FROM ${dataset}
 WHERE timestamp >= NOW() - INTERVAL '${DEFAULT_RANGE_HOURS}' HOUR
+  AND blob3 = 'RUM'
   AND blob2 != ''
   AND blob2 != blob1
 GROUP BY source, target
@@ -421,63 +466,4 @@ export function emptySiteAnalytics(
       edges: [],
     },
   };
-}
-
-export function demoSiteAnalytics(generatedAt = new Date().toISOString()) {
-  const bucketMs = DEFAULT_BUCKET_MINUTES * 60 * 1000;
-  const end = Math.floor(Date.now() / bucketMs) * bucketMs;
-  const routeSeeds = ["/", "/posts", "/posts/:slug", "/notes", "/about"];
-  const points = Array.from({ length: 24 }, (_, index): SiteMetricPoint => {
-    const wave = Math.sin(index / 2.4) * 18;
-    const burst = index > 14 && index < 19 ? 34 : 0;
-    const requests = Math.max(4, Math.round(18 + wave + burst + index * 0.8));
-    const p50Ms = Math.max(18, Math.round(42 + Math.cos(index / 2) * 9));
-    const p95Ms = Math.round(p50Ms * 2.1 + 18 + burst * 1.4);
-
-    return {
-      timestamp: new Date(end - (23 - index) * bucketMs).toISOString(),
-      requests,
-      p50Ms,
-      p95Ms,
-      avgMs: Math.round((p50Ms + p95Ms) / 2.7),
-      errors: index === 17 ? 1 : 0,
-    };
-  });
-  const totals = points.reduce(
-    (acc, point) => {
-      acc.requests += point.requests;
-      acc.errors += point.errors;
-      acc.avgMs += point.avgMs * point.requests;
-      acc.p95Ms = Math.max(acc.p95Ms, point.p95Ms);
-      return acc;
-    },
-    { requests: 0, errors: 0, p95Ms: 0, avgMs: 0 },
-  );
-
-  return {
-    generatedAt,
-    source: "demo",
-    rangeHours: DEFAULT_RANGE_HOURS,
-    bucketMinutes: DEFAULT_BUCKET_MINUTES,
-    totals: {
-      ...totals,
-      avgMs: totals.requests > 0 ? totals.avgMs / totals.requests : 0,
-    },
-    points,
-    network: {
-      nodes: routeSeeds.map((route, index) => ({
-        route,
-        requests: [260, 184, 151, 94, 71][index] ?? 20,
-        p95Ms: [88, 121, 173, 96, 64][index] ?? 80,
-      })),
-      edges: [
-        { source: "/", target: "/posts", requests: 64 },
-        { source: "/posts", target: "/posts/:slug", requests: 92 },
-        { source: "/posts/:slug", target: "/posts", requests: 38 },
-        { source: "/", target: "/about", requests: 24 },
-        { source: "/", target: "/notes", requests: 31 },
-        { source: "/notes", target: "/posts/:slug", requests: 12 },
-      ],
-    },
-  } satisfies SiteAnalyticsData;
 }

@@ -24,6 +24,7 @@ import { Route as PostsTagsIndexRouteImport } from './routes/posts/tags/index'
 import { Route as PostsTagsTagRouteImport } from './routes/posts/tags/$tag'
 import { Route as OgPostsSplatRouteImport } from './routes/og/posts/$'
 import { Route as ApiTweetIdRouteImport } from './routes/api/tweet/$id'
+import { Route as ApiAnalyticsRumRouteImport } from './routes/api/analytics/rum'
 
 const LlmsFullDottxtRoute = LlmsFullDottxtRouteImport.update({
   id: '/llms-full.txt',
@@ -100,19 +101,25 @@ const ApiTweetIdRoute = ApiTweetIdRouteImport.update({
   path: '/api/tweet/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAnalyticsRumRoute = ApiAnalyticsRumRouteImport.update({
+  id: '/rum',
+  path: '/rum',
+  getParentRoute: () => ApiAnalyticsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/analytics': typeof AnalyticsRoute
   '/llms-full.txt': typeof LlmsFullDottxtRoute
-  '/api/analytics': typeof ApiAnalyticsRoute
+  '/api/analytics': typeof ApiAnalyticsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/notes/$slug': typeof NotesSlugRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/notes/': typeof NotesIndexRoute
   '/posts/': typeof PostsIndexRoute
+  '/api/analytics/rum': typeof ApiAnalyticsRumRoute
   '/api/tweet/$id': typeof ApiTweetIdRoute
   '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
@@ -123,13 +130,14 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/analytics': typeof AnalyticsRoute
   '/llms-full.txt': typeof LlmsFullDottxtRoute
-  '/api/analytics': typeof ApiAnalyticsRoute
+  '/api/analytics': typeof ApiAnalyticsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/notes/$slug': typeof NotesSlugRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/notes': typeof NotesIndexRoute
   '/posts': typeof PostsIndexRoute
+  '/api/analytics/rum': typeof ApiAnalyticsRumRoute
   '/api/tweet/$id': typeof ApiTweetIdRoute
   '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
@@ -141,13 +149,14 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/analytics': typeof AnalyticsRoute
   '/llms-full.txt': typeof LlmsFullDottxtRoute
-  '/api/analytics': typeof ApiAnalyticsRoute
+  '/api/analytics': typeof ApiAnalyticsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/notes/$slug': typeof NotesSlugRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/notes/': typeof NotesIndexRoute
   '/posts/': typeof PostsIndexRoute
+  '/api/analytics/rum': typeof ApiAnalyticsRumRoute
   '/api/tweet/$id': typeof ApiTweetIdRoute
   '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
@@ -167,6 +176,7 @@ export interface FileRouteTypes {
     | '/posts/$slug'
     | '/notes/'
     | '/posts/'
+    | '/api/analytics/rum'
     | '/api/tweet/$id'
     | '/og/posts/$'
     | '/posts/tags/$tag'
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/posts/$slug'
     | '/notes'
     | '/posts'
+    | '/api/analytics/rum'
     | '/api/tweet/$id'
     | '/og/posts/$'
     | '/posts/tags/$tag'
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '/posts/$slug'
     | '/notes/'
     | '/posts/'
+    | '/api/analytics/rum'
     | '/api/tweet/$id'
     | '/og/posts/$'
     | '/posts/tags/$tag'
@@ -212,7 +224,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AnalyticsRoute: typeof AnalyticsRoute
   LlmsFullDottxtRoute: typeof LlmsFullDottxtRoute
-  ApiAnalyticsRoute: typeof ApiAnalyticsRoute
+  ApiAnalyticsRoute: typeof ApiAnalyticsRouteWithChildren
   ApiSearchRoute: typeof ApiSearchRoute
   LlmsDotmdxSplatRoute: typeof LlmsDotmdxSplatRoute
   NotesSlugRoute: typeof NotesSlugRoute
@@ -332,15 +344,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTweetIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/analytics/rum': {
+      id: '/api/analytics/rum'
+      path: '/rum'
+      fullPath: '/api/analytics/rum'
+      preLoaderRoute: typeof ApiAnalyticsRumRouteImport
+      parentRoute: typeof ApiAnalyticsRoute
+    }
   }
 }
+
+interface ApiAnalyticsRouteChildren {
+  ApiAnalyticsRumRoute: typeof ApiAnalyticsRumRoute
+}
+
+const ApiAnalyticsRouteChildren: ApiAnalyticsRouteChildren = {
+  ApiAnalyticsRumRoute: ApiAnalyticsRumRoute,
+}
+
+const ApiAnalyticsRouteWithChildren = ApiAnalyticsRoute._addFileChildren(
+  ApiAnalyticsRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AnalyticsRoute: AnalyticsRoute,
   LlmsFullDottxtRoute: LlmsFullDottxtRoute,
-  ApiAnalyticsRoute: ApiAnalyticsRoute,
+  ApiAnalyticsRoute: ApiAnalyticsRouteWithChildren,
   ApiSearchRoute: ApiSearchRoute,
   LlmsDotmdxSplatRoute: LlmsDotmdxSplatRoute,
   NotesSlugRoute: NotesSlugRoute,
