@@ -98,9 +98,6 @@ function AnalyticsPage() {
         <section className="mt-8 border border-border bg-background/70 p-4 backdrop-blur-sm sm:p-6">
           <div className="mb-6">
             <h2 className="font-medium">Route network</h2>
-            <p className="text-sm text-muted-foreground">
-              same-origin referrer flow for real browser page requests
-            </p>
           </div>
 
           {analytics.network.nodes.length > 0 ? (
