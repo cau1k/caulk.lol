@@ -364,23 +364,24 @@ function getAsteroidColor(shade: AsteroidShade, isDark: boolean): string {
 }
 
 function drawStaticFrame(
-  ctx: CanvasRenderingContext2D,
+  starsCtx: CanvasRenderingContext2D,
+  asteroidCtx: CanvasRenderingContext2D,
   stars: Star[],
   shootingStars: ShootingStar[],
   isDark: boolean,
 ): void {
   for (const star of stars) {
-    ctx.beginPath();
-    ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-    ctx.fillStyle = getStarColor(star.color, isDark);
-    ctx.globalAlpha = star.opacity;
-    ctx.fill();
+    starsCtx.beginPath();
+    starsCtx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+    starsCtx.fillStyle = getStarColor(star.color, isDark);
+    starsCtx.globalAlpha = star.opacity;
+    starsCtx.fill();
   }
 
-  ctx.globalAlpha = 1;
+  starsCtx.globalAlpha = 1;
 
   for (const star of shootingStars) {
-    drawShootingStar(ctx, star, isDark);
+    drawShootingStar(asteroidCtx, star, isDark);
   }
 }
 
@@ -398,7 +399,8 @@ export const BackgroundStars = memo(
     const ctx = useBackgroundStarsOptional();
     const paused = ctx?.paused ?? false;
 
-    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const starsCanvasRef = useRef<HTMLCanvasElement | null>(null);
+    const asteroidCanvasRef = useRef<HTMLCanvasElement | null>(null);
     const starsRef = useRef<Star[]>([]);
     const shootingStarsRef = useRef<ShootingStar[]>([]);
     const animationRef = useRef<number | null>(null);
@@ -419,7 +421,7 @@ export const BackgroundStars = memo(
     }, [paused]);
 
     const initStars = useCallback(() => {
-      const canvas = canvasRef.current;
+      const canvas = starsCanvasRef.current;
       if (!canvas) return;
 
       const area = canvas.width * canvas.height;
@@ -433,12 +435,21 @@ export const BackgroundStars = memo(
       isDarkRef.current = document.documentElement.classList.contains("dark");
 
       if (pausedRef.current) {
-        const canvas = canvasRef.current;
-        const ctxCanvas = canvas?.getContext("2d");
-        if (canvas && ctxCanvas) {
-          ctxCanvas.clearRect(0, 0, canvas.width, canvas.height);
+        const starsCanvas = starsCanvasRef.current;
+        const asteroidCanvas = asteroidCanvasRef.current;
+        const starsCtx = starsCanvas?.getContext("2d");
+        const asteroidCtx = asteroidCanvas?.getContext("2d");
+        if (starsCanvas && asteroidCanvas && starsCtx && asteroidCtx) {
+          starsCtx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
+          asteroidCtx.clearRect(
+            0,
+            0,
+            asteroidCanvas.width,
+            asteroidCanvas.height,
+          );
           drawStaticFrame(
-            ctxCanvas,
+            starsCtx,
+            asteroidCtx,
             starsRef.current,
             shootingStarsRef.current,
             isDarkRef.current,
@@ -452,14 +463,17 @@ export const BackgroundStars = memo(
         return;
       }
 
-      const canvas = canvasRef.current;
-      const ctxCanvas = canvas?.getContext("2d");
-      if (!canvas || !ctxCanvas) {
+      const starsCanvas = starsCanvasRef.current;
+      const asteroidCanvas = asteroidCanvasRef.current;
+      const starsCtx = starsCanvas?.getContext("2d");
+      const asteroidCtx = asteroidCanvas?.getContext("2d");
+      if (!starsCanvas || !asteroidCanvas || !starsCtx || !asteroidCtx) {
         animationRef.current = requestAnimationFrame(animate);
         return;
       }
 
-      ctxCanvas.clearRect(0, 0, canvas.width, canvas.height);
+      starsCtx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
+      asteroidCtx.clearRect(0, 0, asteroidCanvas.width, asteroidCanvas.height);
 
       const isDark = isDarkRef.current;
       const timeSeconds = time / 1000;
@@ -472,17 +486,17 @@ export const BackgroundStars = memo(
           star.opacity = star.baseOpacity * (0.6 + 0.4 * twinkle);
         }
 
-        ctxCanvas.beginPath();
-        ctxCanvas.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-        ctxCanvas.fillStyle = getStarColor(star.color, isDark);
-        ctxCanvas.globalAlpha = star.opacity;
-        ctxCanvas.fill();
+        starsCtx.beginPath();
+        starsCtx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        starsCtx.fillStyle = getStarColor(star.color, isDark);
+        starsCtx.globalAlpha = star.opacity;
+        starsCtx.fill();
       }
 
-      ctxCanvas.globalAlpha = 1;
+      starsCtx.globalAlpha = 1;
 
       if (time > nextShootingStarRef.current) {
-        shootingStarsRef.current.push(createShootingStar(canvas.width));
+        shootingStarsRef.current.push(createShootingStar(starsCanvas.width));
         nextShootingStarRef.current =
           time +
           SHOOTING_STAR_CONFIG.minInterval +
@@ -496,13 +510,13 @@ export const BackgroundStars = memo(
 
         const outOfBounds =
           star.x < -50 ||
-          star.x > canvas.width + 50 ||
+          star.x > starsCanvas.width + 50 ||
           star.y < -50 ||
-          star.y > canvas.height + 50;
+          star.y > starsCanvas.height + 50;
 
         if (outOfBounds && star.trail.length === 0) return false;
 
-        drawShootingStar(ctxCanvas, star, isDark);
+        drawShootingStar(asteroidCtx, star, isDark);
         return true;
       });
 
@@ -510,8 +524,9 @@ export const BackgroundStars = memo(
     }, []);
 
     useEffect(() => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
+      const starsCanvas = starsCanvasRef.current;
+      const asteroidCanvas = asteroidCanvasRef.current;
+      if (!starsCanvas || !asteroidCanvas) return;
 
       const resize = () => {
         const viewportSize = getViewportSize();
@@ -524,16 +539,26 @@ export const BackgroundStars = memo(
         }
 
         canvasSizeRef.current = viewportSize;
-        canvas.width = viewportSize.width;
-        canvas.height = viewportSize.height;
+        starsCanvas.width = viewportSize.width;
+        starsCanvas.height = viewportSize.height;
+        asteroidCanvas.width = viewportSize.width;
+        asteroidCanvas.height = viewportSize.height;
         initStars();
 
         if (pausedRef.current) {
-          const ctxCanvas = canvas.getContext("2d");
-          if (ctxCanvas) {
-            ctxCanvas.clearRect(0, 0, canvas.width, canvas.height);
+          const starsCtx = starsCanvas.getContext("2d");
+          const asteroidCtx = asteroidCanvas.getContext("2d");
+          if (starsCtx && asteroidCtx) {
+            starsCtx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
+            asteroidCtx.clearRect(
+              0,
+              0,
+              asteroidCanvas.width,
+              asteroidCanvas.height,
+            );
             drawStaticFrame(
-              ctxCanvas,
+              starsCtx,
+              asteroidCtx,
               starsRef.current,
               shootingStarsRef.current,
               isDarkRef.current,
@@ -550,10 +575,12 @@ export const BackgroundStars = memo(
       if (!pausedRef.current) {
         animationRef.current = requestAnimationFrame(animate);
       } else {
-        const ctxCanvas = canvas.getContext("2d");
-        if (ctxCanvas) {
+        const starsCtx = starsCanvas.getContext("2d");
+        const asteroidCtx = asteroidCanvas.getContext("2d");
+        if (starsCtx && asteroidCtx) {
           drawStaticFrame(
-            ctxCanvas,
+            starsCtx,
+            asteroidCtx,
             starsRef.current,
             shootingStarsRef.current,
             isDarkRef.current,
@@ -585,10 +612,16 @@ export const BackgroundStars = memo(
     }, [paused, animate]);
 
     return (
-      <canvas
-        ref={canvasRef}
-        className="pointer-events-none fixed inset-0 h-[100lvh] w-[100lvw] -z-10 opacity-0 motion-safe:animate-[fade-in_1500ms_cubic-bezier(0.215,0.61,0.355,1)_forwards] motion-reduce:opacity-100"
-      />
+      <>
+        <canvas
+          ref={starsCanvasRef}
+          className="pointer-events-none fixed inset-0 h-[100lvh] w-[100lvw] -z-10 opacity-0 motion-safe:animate-[fade-in_1500ms_cubic-bezier(0.215,0.61,0.355,1)_forwards] motion-reduce:opacity-100"
+        />
+        <canvas
+          ref={asteroidCanvasRef}
+          className="pointer-events-none fixed inset-0 z-[45] h-[100lvh] w-[100lvw] opacity-0 motion-safe:animate-[fade-in_1500ms_cubic-bezier(0.215,0.61,0.355,1)_forwards] motion-reduce:opacity-100"
+        />
+      </>
     );
   },
   () => true,
