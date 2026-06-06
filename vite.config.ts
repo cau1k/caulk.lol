@@ -36,7 +36,8 @@ export default defineConfig({
       prerender: {
         enabled: true,
         crawlLinks: true,
-        filter: (page) => !page.path.startsWith("/media/"),
+        filter: (page) =>
+          !page.path.startsWith("/media/") && page.path !== "/analytics",
       },
     }),
     react(),

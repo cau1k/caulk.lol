@@ -1,7 +1,11 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import alchemy from "alchemy";
-import { KVNamespace, TanStackStart } from "alchemy/cloudflare";
+import {
+  AnalyticsEngineDataset,
+  KVNamespace,
+  TanStackStart,
+} from "alchemy/cloudflare";
 import { CloudflareStateStore } from "alchemy/state";
 
 const app = await alchemy("caulk-lol", {
@@ -18,6 +22,12 @@ const hasBuildOutput = existsSync(
 
 const tweetCache = await KVNamespace("tweet-cache", {
   title: `${app.name}-${app.stage}-tweet-cache`,
+});
+
+const analyticsDatasetName = "CAULK_SITE_METRICS";
+
+const siteMetrics = AnalyticsEngineDataset("site-metrics", {
+  dataset: analyticsDatasetName,
 });
 
 export const site = await TanStackStart("site", {
@@ -56,6 +66,13 @@ export const site = await TanStackStart("site", {
   },
   bindings: {
     TWEET_CACHE: tweetCache,
+    SITE_METRICS: siteMetrics,
+    ANALYTICS_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID ?? "",
+    ANALYTICS_API_TOKEN: alchemy.secret(
+      process.env.CLOUDFLARE_API_TOKEN ?? "",
+      "analytics-api-token",
+    ),
+    ANALYTICS_DATASET: analyticsDatasetName,
   },
   dev: { command: "vite dev --port 3000" },
 });
