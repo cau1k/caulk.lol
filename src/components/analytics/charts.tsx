@@ -9,7 +9,9 @@ import {
   Tooltip,
   XYChart,
 } from "@visx/xychart";
-import { useMemo, useState } from "react";
+import { Zoom } from "@visx/zoom";
+import { Minus, Move, Plus, RotateCcw } from "lucide-react";
+import { type ReactNode, useMemo, useState } from "react";
 import type {
   NetworkEdge,
   NetworkNode,
@@ -189,7 +191,7 @@ export function NetworkGraph({
 }) {
   const [activeRoute, setActiveRoute] = useState<string | null>(null);
   const width = 860;
-  const height = 390;
+  const height = 430;
   const graph = useMemo(
     () => makeNetworkGraph(nodes, edges, width, height),
     [nodes, edges],
@@ -199,113 +201,283 @@ export function NetworkGraph({
     : null;
 
   return (
-    <div className="overflow-x-auto">
-      <svg
-        aria-label="Route network graph"
-        className="min-h-80 w-full min-w-[700px] touch-pan-x"
-        onMouseLeave={() => setActiveRoute(null)}
-        role="img"
-        viewBox={`0 0 ${width} ${height}`}
+    <div className="relative overflow-x-auto">
+      <Zoom<SVGSVGElement>
+        height={height}
+        initialTransformMatrix={{
+          scaleX: 1,
+          scaleY: 1,
+          skewX: 0,
+          skewY: 0,
+          translateX: 0,
+          translateY: 0,
+        }}
+        scaleXMax={2.8}
+        scaleXMin={0.65}
+        scaleYMax={2.8}
+        scaleYMin={0.65}
+        wheelDelta={(event) => {
+          const scale = 1 - Math.max(-0.15, Math.min(0.15, event.deltaY / 600));
+          return { scaleX: scale, scaleY: scale };
+        }}
+        width={width}
       >
-        <title>Route network graph</title>
-        <VisxGraph<RouteLink, RouteNode>
-          graph={graph}
-          linkComponent={({ link }) => {
-            const isActive =
-              activeRoute === null ||
-              activeRoute === link.source.route ||
-              activeRoute === link.target.route;
-            return (
-              <path
-                className={cn(
-                  "stroke-border transition-opacity",
-                  isActive ? "opacity-100" : "opacity-20",
-                  activeRoute && isActive && "stroke-chart-1",
-                )}
-                d={makeCurve(link.source, link.target, {
-                  x: width / 2,
-                  y: height / 2,
-                })}
-                fill="none"
-                strokeLinecap="round"
-                strokeWidth={Math.max(1.5, Math.min(link.requests + 1, 9))}
-              />
-            );
-          }}
-          nodeComponent={({ node }) => {
-            const isActive = activeRoute === null || activeRoute === node.route;
-            return (
-              // biome-ignore lint/a11y/useSemanticElements: SVG graph nodes cannot render HTML buttons.
-              <g
-                className="cursor-pointer outline-none"
-                onFocus={() => setActiveRoute(node.route)}
-                onMouseEnter={() => setActiveRoute(node.route)}
-                role="button"
-                tabIndex={0}
+        {(zoom) => (
+          <>
+            <div className="absolute right-3 top-3 z-10 flex items-center gap-1 border border-border bg-background/85 p-1 backdrop-blur">
+              <GraphToolButton
+                label="Zoom in"
+                onClick={() =>
+                  zoom.scale({
+                    scaleX: 1.18,
+                    scaleY: 1.18,
+                    point: { x: width / 2, y: height / 2 },
+                  })
+                }
               >
-                <circle
-                  className={cn(
-                    "fill-background stroke-chart-1 transition-opacity",
-                    isActive ? "opacity-100" : "opacity-35",
-                  )}
-                  cx={node.x}
-                  cy={node.y}
-                  r={node.r}
-                  strokeWidth={activeRoute === node.route ? 3 : 2}
+                <Plus className="size-3.5" aria-hidden />
+              </GraphToolButton>
+              <GraphToolButton
+                label="Zoom out"
+                onClick={() =>
+                  zoom.scale({
+                    scaleX: 0.84,
+                    scaleY: 0.84,
+                    point: { x: width / 2, y: height / 2 },
+                  })
+                }
+              >
+                <Minus className="size-3.5" aria-hidden />
+              </GraphToolButton>
+              <GraphToolButton label="Reset" onClick={zoom.reset}>
+                <RotateCcw className="size-3.5" aria-hidden />
+              </GraphToolButton>
+            </div>
+            <svg
+              aria-label="Route network graph"
+              className={cn(
+                "min-h-[430px] w-full min-w-[760px] touch-none outline-none",
+                zoom.isDragging ? "cursor-grabbing" : "cursor-grab",
+              )}
+              onMouseDown={zoom.dragStart}
+              onMouseLeave={() => {
+                zoom.dragEnd();
+                setActiveRoute(null);
+              }}
+              onMouseMove={zoom.dragMove}
+              onMouseUp={zoom.dragEnd}
+              onTouchEnd={zoom.dragEnd}
+              onTouchMove={zoom.dragMove}
+              onTouchStart={zoom.dragStart}
+              onWheel={zoom.handleWheel}
+              ref={zoom.containerRef}
+              role="img"
+              viewBox={`0 0 ${width} ${height}`}
+            >
+              <title>Route network graph</title>
+              <defs>
+                <marker
+                  id="route-arrow"
+                  markerHeight="8"
+                  markerWidth="8"
+                  orient="auto"
+                  refX="8"
+                  refY="4"
+                >
+                  <path
+                    className="fill-muted-foreground/60"
+                    d="M 0 0 L 8 4 L 0 8 z"
+                  />
+                </marker>
+                <pattern
+                  height="24"
+                  id="network-grid"
+                  patternUnits="userSpaceOnUse"
+                  width="24"
+                >
+                  <path
+                    className="stroke-border/40"
+                    d="M 24 0 H 0 V 24"
+                    fill="none"
+                    strokeWidth="1"
+                  />
+                </pattern>
+              </defs>
+              <rect fill="url(#network-grid)" height={height} width={width} />
+              <g transform={zoom.toString()}>
+                <VisxGraph<RouteLink, RouteNode>
+                  graph={graph}
+                  linkComponent={({ link }) => {
+                    const isActive =
+                      activeRoute === null ||
+                      activeRoute === link.source.route ||
+                      activeRoute === link.target.route;
+                    return (
+                      <path
+                        className={cn(
+                          "stroke-border transition-opacity",
+                          isActive ? "opacity-100" : "opacity-20",
+                          activeRoute && isActive && "stroke-chart-1",
+                        )}
+                        d={makeFlowPath(link.source, link.target)}
+                        fill="none"
+                        markerEnd="url(#route-arrow)"
+                        strokeLinecap="round"
+                        strokeWidth={Math.max(
+                          1.5,
+                          Math.min(link.requests / 12 + 1, 8),
+                        )}
+                      />
+                    );
+                  }}
+                  nodeComponent={({ node }) => {
+                    const isActive =
+                      activeRoute === null || activeRoute === node.route;
+                    const isSelected = activeRoute === node.route;
+                    const labelWidth = Math.max(106, node.route.length * 7.2);
+                    return (
+                      // biome-ignore lint/a11y/useSemanticElements: SVG graph nodes cannot render HTML buttons.
+                      <g
+                        className="cursor-pointer outline-none"
+                        onFocus={() => setActiveRoute(node.route)}
+                        onMouseEnter={() => setActiveRoute(node.route)}
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <rect
+                          className={cn(
+                            "fill-background/95 stroke-border transition-opacity",
+                            isActive ? "opacity-100" : "opacity-35",
+                            isSelected && "stroke-chart-1",
+                          )}
+                          height="58"
+                          rx="6"
+                          strokeWidth={isSelected ? 2 : 1}
+                          width={labelWidth}
+                          x={node.x - labelWidth / 2}
+                          y={node.y - 29}
+                        />
+                        <circle
+                          className={cn(
+                            "fill-chart-1/25 stroke-chart-1 transition-opacity",
+                            isActive ? "opacity-100" : "opacity-35",
+                          )}
+                          cx={node.x - labelWidth / 2 + 18}
+                          cy={node.y}
+                          r={node.r}
+                          strokeWidth="1.5"
+                        />
+                        <text
+                          className={cn(
+                            "fill-foreground text-[12px] transition-opacity",
+                            isActive ? "opacity-100" : "opacity-35",
+                          )}
+                          x={node.x - labelWidth / 2 + 34}
+                          y={node.y - 5}
+                        >
+                          {node.route}
+                        </text>
+                        <text
+                          className={cn(
+                            "fill-muted-foreground text-[11px] transition-opacity",
+                            isActive ? "opacity-100" : "opacity-35",
+                          )}
+                          x={node.x - labelWidth / 2 + 34}
+                          y={node.y + 13}
+                        >
+                          {formatCount(node.requests)} · p95{" "}
+                          {formatMs(node.p95Ms)}
+                        </text>
+                      </g>
+                    );
+                  }}
+                />
+              </g>
+
+              <g transform="translate(18 356)">
+                <rect
+                  className="fill-background/80 stroke-border"
+                  height="42"
+                  rx="6"
+                  width="188"
+                />
+                <Move
+                  className="text-muted-foreground"
+                  height={14}
+                  width={14}
+                  x={12}
+                  y={13}
                 />
                 <text
-                  className={cn(
-                    "fill-foreground text-[12px] transition-opacity",
-                    isActive ? "opacity-100" : "opacity-35",
-                  )}
-                  textAnchor="middle"
-                  x={node.x}
-                  y={node.y + node.r + 18}
+                  className="fill-muted-foreground text-[11px]"
+                  x={34}
+                  y={17}
                 >
-                  {node.route}
+                  drag to pan
                 </text>
                 <text
-                  className={cn(
-                    "fill-muted-foreground text-[11px] transition-opacity",
-                    isActive ? "opacity-100" : "opacity-35",
-                  )}
-                  textAnchor="middle"
-                  x={node.x}
-                  y={node.y + node.r + 34}
+                  className="fill-muted-foreground text-[11px]"
+                  x={34}
+                  y={31}
                 >
-                  {formatCount(node.requests)} · p95 {formatMs(node.p95Ms)}
+                  wheel or buttons to zoom
                 </text>
               </g>
-            );
-          }}
-        />
 
-        {activeNode && (
-          <foreignObject height={102} width={220} x={24} y={24}>
-            <div className="h-full border border-border bg-popover/95 p-3 text-popover-foreground shadow-sm backdrop-blur">
-              <div className="mb-2 truncate font-mono text-xs">
-                {activeNode.route}
-              </div>
-              <TooltipRow
-                label="requests"
-                value={formatCount(activeNode.requests)}
-              />
-              <TooltipRow label="p95" value={formatMs(activeNode.p95Ms)} />
-              <TooltipRow
-                label="linked"
-                value={formatCount(
-                  edges.filter(
-                    (edge) =>
-                      edge.source === activeNode.route ||
-                      edge.target === activeNode.route,
-                  ).length,
-                )}
-              />
-            </div>
-          </foreignObject>
+              {activeNode && (
+                <foreignObject height={102} width={220} x={24} y={24}>
+                  <div className="h-full border border-border bg-popover/95 p-3 text-popover-foreground shadow-sm backdrop-blur">
+                    <div className="mb-2 truncate font-mono text-xs">
+                      {activeNode.route}
+                    </div>
+                    <TooltipRow
+                      label="requests"
+                      value={formatCount(activeNode.requests)}
+                    />
+                    <TooltipRow
+                      label="p95"
+                      value={formatMs(activeNode.p95Ms)}
+                    />
+                    <TooltipRow
+                      label="linked"
+                      value={formatCount(
+                        edges.filter(
+                          (edge) =>
+                            edge.source === activeNode.route ||
+                            edge.target === activeNode.route,
+                        ).length,
+                      )}
+                    />
+                  </div>
+                </foreignObject>
+              )}
+            </svg>
+          </>
         )}
-      </svg>
+      </Zoom>
     </div>
+  );
+}
+
+function GraphToolButton({
+  children,
+  label,
+  onClick,
+}: {
+  children: ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      aria-label={label}
+      className="grid size-7 place-items-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
+      onClick={onClick}
+      title={label}
+      type="button"
+    >
+      {children}
+    </button>
   );
 }
 
@@ -324,20 +496,23 @@ function makeNetworkGraph(
   width: number,
   height: number,
 ) {
-  const center = { x: width / 2, y: height / 2 };
   const maxRequests = Math.max(...nodes.map((node) => node.requests), 1);
-  const radius = Math.min(150, 84 + nodes.length * 9);
-  const graphNodes = nodes.map<RouteNode>((node, index) => {
-    const angle =
-      (Math.PI * 2 * index) / Math.max(nodes.length, 1) - Math.PI / 2;
+  const lanes = groupNodesByLane(nodes);
+  const xByLane = [130, width * 0.43, width * 0.72, width - 118];
+  const graphNodes = lanes.flatMap((lane, laneIndex) =>
+    lane.map<RouteNode>((node, index) => {
+      const laneHeight = height - 128;
+      const step = laneHeight / Math.max(lane.length, 1);
+      const y = 64 + step * index + step / 2;
 
-    return {
-      ...node,
-      r: 10 + (node.requests / maxRequests) * 18,
-      x: center.x + Math.cos(angle) * radius,
-      y: center.y + Math.sin(angle) * radius,
-    };
-  });
+      return {
+        ...node,
+        r: 5 + (node.requests / maxRequests) * 8,
+        x: xByLane[laneIndex] ?? width - 118,
+        y,
+      };
+    }),
+  );
   const nodeByRoute = new Map(
     graphNodes.map((node) => [node.route, node] as const),
   );
@@ -353,16 +528,41 @@ function makeNetworkGraph(
   };
 }
 
-function makeCurve(
-  source: { x: number; y: number },
-  target: { x: number; y: number },
-  center: { x: number; y: number },
-) {
-  const midX = (source.x + target.x) / 2;
-  const midY = (source.y + target.y) / 2;
-  const controlX = midX + (midX - center.x) * 0.16;
-  const controlY = midY + (midY - center.y) * 0.16;
-  return `M ${source.x.toFixed(2)} ${source.y.toFixed(2)} Q ${controlX.toFixed(2)} ${controlY.toFixed(2)} ${target.x.toFixed(2)} ${target.y.toFixed(2)}`;
+function groupNodesByLane(nodes: NetworkNode[]) {
+  const lanes = [[], [], [], []] as NetworkNode[][];
+
+  for (const node of nodes) {
+    lanes[getRouteLane(node.route)].push(node);
+  }
+
+  for (const lane of lanes) {
+    lane.sort((a, b) => b.requests - a.requests);
+  }
+
+  return lanes.filter((lane) => lane.length > 0);
+}
+
+function getRouteLane(route: string) {
+  if (route === "/") return 0;
+  if (route.includes(":")) return 2;
+  const depth = route.split("/").filter(Boolean).length;
+  if (depth <= 1) return 1;
+  return 3;
+}
+
+function makeFlowPath(source: RouteNode, target: RouteNode) {
+  const sourceWidth = Math.max(106, source.route.length * 7.2);
+  const targetWidth = Math.max(106, target.route.length * 7.2);
+  const startX = source.x + sourceWidth / 2;
+  const endX = target.x - targetWidth / 2;
+  const controlOffset = Math.max(48, Math.abs(endX - startX) * 0.44);
+
+  return [
+    `M ${startX.toFixed(2)} ${source.y.toFixed(2)}`,
+    `C ${(startX + controlOffset).toFixed(2)} ${source.y.toFixed(2)}`,
+    `${(endX - controlOffset).toFixed(2)} ${target.y.toFixed(2)}`,
+    `${endX.toFixed(2)} ${target.y.toFixed(2)}`,
+  ].join(" ");
 }
 
 function formatCount(value: number) {
