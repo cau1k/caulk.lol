@@ -77,6 +77,7 @@ const STAR_CONFIG = {
 } as const;
 
 const SHOOTING_STAR_CONFIG = {
+  maxActive: 3,
   minInterval: 3000,
   maxInterval: 8000,
   minSpeed: 2,
@@ -259,17 +260,20 @@ function createAsteroidSprite(): AsteroidSprite {
     segments: variant.segments,
     rotation: (Math.random() - 0.5) * 0.7,
     scale: 0.82 + Math.random() * 0.38,
-    alpha: 0.76 + Math.random() * 0.22,
+    alpha: 0.48 + Math.random() * 0.18,
   };
 }
 
-function updateShootingStar(star: ShootingStar): void {
+function updateShootingStar(star: ShootingStar, bounds: CanvasSize): void {
   const radians = (star.angle * Math.PI) / 180;
   star.x += star.speed * Math.cos(radians);
   star.y += star.speed * Math.sin(radians);
   star.distance += star.speed;
 
-  if (star.distance % SHOOTING_STAR_CONFIG.trailSpacing < star.speed) {
+  if (
+    !isShootingStarOutOfBounds(star, bounds) &&
+    star.distance % SHOOTING_STAR_CONFIG.trailSpacing < star.speed
+  ) {
     star.trail.push({
       x: star.x,
       y: star.y,
@@ -281,6 +285,15 @@ function updateShootingStar(star: ShootingStar): void {
     point.opacity -= SHOOTING_STAR_CONFIG.trailFadeRate;
   }
   star.trail = star.trail.filter((p) => p.opacity > 0);
+}
+
+function isShootingStarOutOfBounds(star: ShootingStar, bounds: CanvasSize) {
+  return (
+    star.x < -50 ||
+    star.x > bounds.width + 50 ||
+    star.y < -50 ||
+    star.y > bounds.height + 50
+  );
 }
 
 function drawShootingStar(
@@ -297,7 +310,7 @@ function drawShootingStar(
     ctx.rotate(radians);
     ctx.translate(-point.x, -point.y);
 
-    ctx.globalAlpha = point.opacity * (isDark ? 0.55 : 0.4);
+    ctx.globalAlpha = point.opacity * (isDark ? 0.34 : 0.26);
     ctx.fillStyle = isDark ? "rgba(168, 145, 118, 1)" : "rgba(95, 82, 68, 1)";
     ctx.fillRect(point.x, point.y, px, px);
 
@@ -309,7 +322,7 @@ function drawShootingStar(
   ctx.rotate(radians + star.asteroid.rotation);
   ctx.translate(-star.x, -star.y);
 
-  ctx.globalAlpha = star.asteroid.alpha * (isDark ? 0.95 : 0.82);
+  ctx.globalAlpha = star.asteroid.alpha * (isDark ? 0.78 : 0.64);
   drawAsteroid(ctx, star, isDark);
 
   ctx.restore();
@@ -495,7 +508,10 @@ export const BackgroundStars = memo(
 
       starsCtx.globalAlpha = 1;
 
-      if (time > nextShootingStarRef.current) {
+      if (
+        time > nextShootingStarRef.current &&
+        shootingStarsRef.current.length < SHOOTING_STAR_CONFIG.maxActive
+      ) {
         shootingStarsRef.current.push(createShootingStar(starsCanvas.width));
         nextShootingStarRef.current =
           time +
@@ -506,15 +522,20 @@ export const BackgroundStars = memo(
       }
 
       shootingStarsRef.current = shootingStarsRef.current.filter((star) => {
-        updateShootingStar(star);
+        updateShootingStar(star, {
+          width: starsCanvas.width,
+          height: starsCanvas.height,
+        });
 
-        const outOfBounds =
-          star.x < -50 ||
-          star.x > starsCanvas.width + 50 ||
-          star.y < -50 ||
-          star.y > starsCanvas.height + 50;
-
-        if (outOfBounds && star.trail.length === 0) return false;
+        if (
+          isShootingStarOutOfBounds(star, {
+            width: starsCanvas.width,
+            height: starsCanvas.height,
+          }) &&
+          star.trail.length === 0
+        ) {
+          return false;
+        }
 
         drawShootingStar(asteroidCtx, star, isDark);
         return true;

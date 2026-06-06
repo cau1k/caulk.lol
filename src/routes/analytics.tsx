@@ -13,8 +13,7 @@ import { baseOptions } from "@/lib/layout.shared";
 
 export const Route = createFileRoute("/analytics")({
   headers: () => ({
-    "Cache-Control":
-      "public, max-age=0, s-maxage=60, stale-while-revalidate=300",
+    "Cache-Control": "public, max-age=0, s-maxage=60, stale-while-revalidate=300",
   }),
   component: AnalyticsPage,
 });
@@ -40,9 +39,7 @@ function AnalyticsPage() {
           createEmptySiteAnalytics(
             "error",
             new Date().toISOString(),
-            error instanceof Error
-              ? error.message
-              : "Failed to load analytics.",
+            error instanceof Error ? error.message : "Failed to load analytics.",
           ),
         );
       } finally {
@@ -62,9 +59,7 @@ function AnalyticsPage() {
       <main className="mx-auto w-full max-w-5xl px-4 py-16 sm:py-24">
         <header className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="mb-3 text-sm text-muted-foreground">
-              public worker telemetry
-            </p>
+            <p className="mb-3 text-sm text-muted-foreground">public worker telemetry</p>
             <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
           </div>
           <p className="text-sm text-muted-foreground">
@@ -73,35 +68,16 @@ function AnalyticsPage() {
         </header>
 
         <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Metric
-            icon={Activity}
-            label="Requests"
-            value={formatCount(analytics.totals.requests)}
-          />
-          <Metric
-            icon={Gauge}
-            label="p95 latency"
-            value={formatMs(analytics.totals.p95Ms)}
-          />
-          <Metric
-            icon={Clock}
-            label="Average"
-            value={formatMs(analytics.totals.avgMs)}
-          />
-          <Metric
-            icon={TriangleAlert}
-            label="5xx"
-            value={formatCount(analytics.totals.errors)}
-          />
+          <Metric icon={Activity} label="Requests" value={formatCount(analytics.totals.requests)} />
+          <Metric icon={Gauge} label="p95 latency" value={formatMs(analytics.totals.p95Ms)} />
+          <Metric icon={Clock} label="Average" value={formatMs(analytics.totals.avgMs)} />
+          <Metric icon={TriangleAlert} label="5xx" value={formatCount(analytics.totals.errors)} />
         </section>
 
         <section className="mt-8 border border-border bg-background/70 p-4 backdrop-blur-sm sm:p-6">
           <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="font-medium">Latency over time</h2>
-              <p className="text-sm text-muted-foreground">
-                p50 and p95 response timing from Workers Analytics Engine
-              </p>
             </div>
             <div className="flex gap-4 text-xs text-muted-foreground">
               <Legend color="bg-primary" label="p95" />
@@ -124,27 +100,19 @@ function AnalyticsPage() {
         <section className="mt-8 border border-border bg-background/70 p-4 backdrop-blur-sm sm:p-6">
           <div className="mb-6">
             <h2 className="font-medium">Route network</h2>
-            <p className="text-sm text-muted-foreground">
-              same-origin referrer flow for real browser page requests
-            </p>
           </div>
 
           {analytics.network.nodes.length > 0 ? (
-            <NetworkGraph
-              nodes={analytics.network.nodes}
-              edges={analytics.network.edges}
-            />
+            <NetworkGraph nodes={analytics.network.nodes} edges={analytics.network.edges} />
           ) : (
             <div className="flex min-h-72 items-center justify-center border border-dashed border-border px-4 text-center text-sm text-muted-foreground">
-              Network flow appears after visitors move between pages with a
-              same-origin referrer.
+              Network flow appears after visitors move between pages with a same-origin referrer.
             </div>
           )}
         </section>
 
         <p className="mt-4 text-xs text-muted-foreground">
-          source: {analytics.source} · generated{" "}
-          {new Date(analytics.generatedAt).toLocaleString()}
+          source: {analytics.source} · generated {new Date(analytics.generatedAt).toLocaleString()}
         </p>
       </main>
     </HomeLayout>
@@ -166,9 +134,7 @@ function Metric({
         <span className="text-sm">{label}</span>
         <Icon className="size-4" aria-hidden />
       </div>
-      <div className="font-mono text-2xl font-semibold tabular-nums">
-        {value}
-      </div>
+      <div className="font-mono text-2xl font-semibold tabular-nums">{value}</div>
     </div>
   );
 }
@@ -204,17 +170,11 @@ function LatencyChart({ points }: { points: SiteMetricPoint[] }) {
   const p95Path = linePath(points, (point) => point.p95Ms);
   const p50Path = linePath(points, (point) => point.p50Ms);
 
-  function linePath(
-    chartPoints: SiteMetricPoint[],
-    getValue: (point: SiteMetricPoint) => number,
-  ) {
+  function linePath(chartPoints: SiteMetricPoint[], getValue: (point: SiteMetricPoint) => number) {
     return chartPoints
       .map((point, index) => {
         const x = padding.left + (index / xSpan) * plotWidth;
-        const y =
-          padding.top +
-          plotHeight -
-          (getValue(point) / maxLatency) * plotHeight;
+        const y = padding.top + plotHeight - (getValue(point) / maxLatency) * plotHeight;
         return `${index === 0 ? "M" : "L"} ${x.toFixed(2)} ${y.toFixed(2)}`;
       })
       .join(" ");
@@ -263,18 +223,8 @@ function LatencyChart({ points }: { points: SiteMetricPoint[] }) {
           />
         ))}
 
-        <path
-          d={p95Path}
-          fill="none"
-          className="stroke-primary"
-          strokeWidth="3"
-        />
-        <path
-          d={p50Path}
-          fill="none"
-          className="stroke-foreground/70"
-          strokeWidth="2"
-        />
+        <path d={p95Path} fill="none" className="stroke-primary" strokeWidth="3" />
+        <path d={p50Path} fill="none" className="stroke-foreground/70" strokeWidth="2" />
 
         {points.map((point, index) => {
           const x = padding.left + (index / xSpan) * plotWidth;
@@ -296,13 +246,7 @@ function LatencyChart({ points }: { points: SiteMetricPoint[] }) {
   );
 }
 
-function NetworkGraph({
-  nodes,
-  edges,
-}: {
-  nodes: NetworkNode[];
-  edges: NetworkEdge[];
-}) {
+function NetworkGraph({ nodes, edges }: { nodes: NetworkNode[]; edges: NetworkEdge[] }) {
   const width = 860;
   const height = 360;
   const center = { x: width / 2, y: height / 2 };
@@ -311,8 +255,7 @@ function NetworkGraph({
   const radius = 126;
 
   nodes.forEach((node, index) => {
-    const angle =
-      (Math.PI * 2 * index) / Math.max(nodes.length, 1) - Math.PI / 2;
+    const angle = (Math.PI * 2 * index) / Math.max(nodes.length, 1) - Math.PI / 2;
     nodePositions.set(node.route, {
       x: center.x + Math.cos(angle) * radius,
       y: center.y + Math.sin(angle) * radius,
@@ -343,12 +286,7 @@ function NetworkGraph({
                 className="stroke-border"
                 strokeWidth={Math.max(1, Math.min(edge.requests, 8))}
               />
-              <circle
-                cx={target.x}
-                cy={target.y}
-                r="3"
-                className="fill-primary"
-              />
+              <circle cx={target.x} cy={target.y} r="3" className="fill-primary" />
             </g>
           );
         })}
