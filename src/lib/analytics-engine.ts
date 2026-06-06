@@ -1,3 +1,5 @@
+import { env as workerEnv } from "cloudflare:workers";
+
 export type SiteMetricPoint = {
   timestamp: string;
   requests: number;
@@ -50,9 +52,9 @@ type AnalyticsEngineDatasetBinding = {
 
 type AnalyticsEnv = {
   SITE_METRICS?: AnalyticsEngineDatasetBinding;
-  ANALYTICS_ACCOUNT_ID?: string;
-  ANALYTICS_API_TOKEN?: string;
-  ANALYTICS_DATASET?: string;
+  ANALYTICS_ACCOUNT_ID?: unknown;
+  ANALYTICS_API_TOKEN?: unknown;
+  ANALYTICS_DATASET?: unknown;
 };
 
 type CloudflareRuntime = {
@@ -67,7 +69,28 @@ const DEFAULT_BUCKET_MINUTES = 5;
 const BOT_USER_AGENT_PATTERN =
   /\b(bot|crawler|spider|crawl|slurp|bingpreview|facebookexternalhit|headless|lighthouse|pagespeed|pingdom|uptimerobot|curl|wget|python-requests|httpx|go-http-client)\b/i;
 
-export function getAnalyticsEnv(request: Request): AnalyticsEnv | undefined {
+export function getAnalyticsEnv(request: Request): AnalyticsEnv {
+  const runtimeEnv = getRuntimeAnalyticsEnv(request);
+  const importedEnv = workerEnv as AnalyticsEnv;
+
+  return {
+    SITE_METRICS: runtimeEnv?.SITE_METRICS ?? importedEnv.SITE_METRICS,
+    ANALYTICS_ACCOUNT_ID:
+      readString(runtimeEnv?.ANALYTICS_ACCOUNT_ID) ??
+      readString(importedEnv.ANALYTICS_ACCOUNT_ID) ??
+      readString(process.env.ANALYTICS_ACCOUNT_ID),
+    ANALYTICS_API_TOKEN:
+      readString(runtimeEnv?.ANALYTICS_API_TOKEN) ??
+      readString(importedEnv.ANALYTICS_API_TOKEN) ??
+      readString(process.env.ANALYTICS_API_TOKEN),
+    ANALYTICS_DATASET:
+      readString(runtimeEnv?.ANALYTICS_DATASET) ??
+      readString(importedEnv.ANALYTICS_DATASET) ??
+      readString(process.env.ANALYTICS_DATASET),
+  };
+}
+
+function getRuntimeAnalyticsEnv(request: Request): AnalyticsEnv | undefined {
   if (!("runtime" in request)) return undefined;
   const runtime = request.runtime as CloudflareRuntime;
   return runtime.cloudflare?.env;
@@ -102,9 +125,9 @@ export async function readSiteAnalytics(
 ): Promise<SiteAnalyticsData> {
   const env = getAnalyticsEnv(request);
   const generatedAt = new Date().toISOString();
-  const accountId = env?.ANALYTICS_ACCOUNT_ID?.trim();
-  const apiToken = env?.ANALYTICS_API_TOKEN?.trim();
-  const dataset = env?.ANALYTICS_DATASET?.trim();
+  const accountId = readString(env.ANALYTICS_ACCOUNT_ID);
+  const apiToken = readString(env.ANALYTICS_API_TOKEN);
+  const dataset = readString(env.ANALYTICS_DATASET);
 
   if (!accountId || !apiToken || !dataset) {
     return emptySiteAnalytics("unconfigured", generatedAt);
@@ -363,6 +386,12 @@ function parseNetworkEdges(payload: unknown): NetworkEdge[] {
 function readNumber(value: unknown) {
   const number = typeof value === "number" ? value : Number(value);
   return Number.isFinite(number) ? number : 0;
+}
+
+function readString(value: unknown) {
+  return typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : undefined;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

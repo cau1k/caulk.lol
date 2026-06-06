@@ -8,7 +8,6 @@ import type {
   SiteAnalyticsData,
   SiteMetricPoint,
 } from "@/lib/analytics-engine";
-import { emptySiteAnalytics } from "@/lib/analytics-engine";
 import { cn } from "@/lib/cn";
 import { baseOptions } from "@/lib/layout.shared";
 
@@ -22,7 +21,7 @@ export const Route = createFileRoute("/analytics")({
 
 function AnalyticsPage() {
   const [analytics, setAnalytics] = useState<SiteAnalyticsData>(() =>
-    emptySiteAnalytics("empty", new Date().toISOString()),
+    createEmptySiteAnalytics("empty", new Date().toISOString()),
   );
   const [isLoading, setIsLoading] = useState(true);
   const hasData = analytics.points.length > 0;
@@ -38,7 +37,7 @@ function AnalyticsPage() {
       } catch (error) {
         if (cancelled) return;
         setAnalytics(
-          emptySiteAnalytics(
+          createEmptySiteAnalytics(
             "error",
             new Date().toISOString(),
             error instanceof Error
@@ -419,4 +418,29 @@ function formatTime(value: string) {
     hour: "numeric",
     minute: "2-digit",
   });
+}
+
+function createEmptySiteAnalytics(
+  source: SiteAnalyticsData["source"],
+  generatedAt: string,
+  error?: string,
+): SiteAnalyticsData {
+  return {
+    generatedAt,
+    source,
+    error,
+    rangeHours: 24,
+    bucketMinutes: 5,
+    totals: {
+      requests: 0,
+      errors: 0,
+      p95Ms: 0,
+      avgMs: 0,
+    },
+    points: [],
+    network: {
+      nodes: [],
+      edges: [],
+    },
+  };
 }
