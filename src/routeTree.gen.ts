@@ -14,9 +14,7 @@ import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PostsIndexRouteImport } from './routes/posts/index'
-import { Route as NotesIndexRouteImport } from './routes/notes/index'
 import { Route as PostsSlugRouteImport } from './routes/posts/$slug'
-import { Route as NotesSlugRouteImport } from './routes/notes/$slug'
 import { Route as LlmsDotmdxSplatRouteImport } from './routes/llms[.]mdx.$'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
 import { Route as ApiAnalyticsRouteImport } from './routes/api/analytics'
@@ -51,19 +49,9 @@ const PostsIndexRoute = PostsIndexRouteImport.update({
   path: '/posts/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const NotesIndexRoute = NotesIndexRouteImport.update({
-  id: '/notes/',
-  path: '/notes/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PostsSlugRoute = PostsSlugRouteImport.update({
   id: '/posts/$slug',
   path: '/posts/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotesSlugRoute = NotesSlugRouteImport.update({
-  id: '/notes/$slug',
-  path: '/notes/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LlmsDotmdxSplatRoute = LlmsDotmdxSplatRouteImport.update({
@@ -115,9 +103,7 @@ export interface FileRoutesByFullPath {
   '/api/analytics': typeof ApiAnalyticsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
-  '/notes/$slug': typeof NotesSlugRoute
   '/posts/$slug': typeof PostsSlugRoute
-  '/notes/': typeof NotesIndexRoute
   '/posts/': typeof PostsIndexRoute
   '/api/analytics/rum': typeof ApiAnalyticsRumRoute
   '/api/tweet/$id': typeof ApiTweetIdRoute
@@ -133,9 +119,7 @@ export interface FileRoutesByTo {
   '/api/analytics': typeof ApiAnalyticsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
-  '/notes/$slug': typeof NotesSlugRoute
   '/posts/$slug': typeof PostsSlugRoute
-  '/notes': typeof NotesIndexRoute
   '/posts': typeof PostsIndexRoute
   '/api/analytics/rum': typeof ApiAnalyticsRumRoute
   '/api/tweet/$id': typeof ApiTweetIdRoute
@@ -152,9 +136,7 @@ export interface FileRoutesById {
   '/api/analytics': typeof ApiAnalyticsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
-  '/notes/$slug': typeof NotesSlugRoute
   '/posts/$slug': typeof PostsSlugRoute
-  '/notes/': typeof NotesIndexRoute
   '/posts/': typeof PostsIndexRoute
   '/api/analytics/rum': typeof ApiAnalyticsRumRoute
   '/api/tweet/$id': typeof ApiTweetIdRoute
@@ -172,9 +154,7 @@ export interface FileRouteTypes {
     | '/api/analytics'
     | '/api/search'
     | '/llms.mdx/$'
-    | '/notes/$slug'
     | '/posts/$slug'
-    | '/notes/'
     | '/posts/'
     | '/api/analytics/rum'
     | '/api/tweet/$id'
@@ -190,9 +170,7 @@ export interface FileRouteTypes {
     | '/api/analytics'
     | '/api/search'
     | '/llms.mdx/$'
-    | '/notes/$slug'
     | '/posts/$slug'
-    | '/notes'
     | '/posts'
     | '/api/analytics/rum'
     | '/api/tweet/$id'
@@ -208,9 +186,7 @@ export interface FileRouteTypes {
     | '/api/analytics'
     | '/api/search'
     | '/llms.mdx/$'
-    | '/notes/$slug'
     | '/posts/$slug'
-    | '/notes/'
     | '/posts/'
     | '/api/analytics/rum'
     | '/api/tweet/$id'
@@ -227,9 +203,7 @@ export interface RootRouteChildren {
   ApiAnalyticsRoute: typeof ApiAnalyticsRouteWithChildren
   ApiSearchRoute: typeof ApiSearchRoute
   LlmsDotmdxSplatRoute: typeof LlmsDotmdxSplatRoute
-  NotesSlugRoute: typeof NotesSlugRoute
   PostsSlugRoute: typeof PostsSlugRoute
-  NotesIndexRoute: typeof NotesIndexRoute
   PostsIndexRoute: typeof PostsIndexRoute
   ApiTweetIdRoute: typeof ApiTweetIdRoute
   OgPostsSplatRoute: typeof OgPostsSplatRoute
@@ -274,25 +248,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PostsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/notes/': {
-      id: '/notes/'
-      path: '/notes'
-      fullPath: '/notes/'
-      preLoaderRoute: typeof NotesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/posts/$slug': {
       id: '/posts/$slug'
       path: '/posts/$slug'
       fullPath: '/posts/$slug'
       preLoaderRoute: typeof PostsSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notes/$slug': {
-      id: '/notes/$slug'
-      path: '/notes/$slug'
-      fullPath: '/notes/$slug'
-      preLoaderRoute: typeof NotesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/llms.mdx/$': {
@@ -374,9 +334,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAnalyticsRoute: ApiAnalyticsRouteWithChildren,
   ApiSearchRoute: ApiSearchRoute,
   LlmsDotmdxSplatRoute: LlmsDotmdxSplatRoute,
-  NotesSlugRoute: NotesSlugRoute,
   PostsSlugRoute: PostsSlugRoute,
-  NotesIndexRoute: NotesIndexRoute,
   PostsIndexRoute: PostsIndexRoute,
   ApiTweetIdRoute: ApiTweetIdRoute,
   OgPostsSplatRoute: OgPostsSplatRoute,

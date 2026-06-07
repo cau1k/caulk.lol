@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { EmptyState } from "@/components/empty-state";
 import { HomeLayout } from "@/components/layout/home";
-import { LinkItem } from "@/components/layout/link-item";
 import { formatDate, formatDateTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
 import { posts } from "@/lib/source";
@@ -126,12 +125,6 @@ function Home() {
                 className="hover:text-foreground transition-colors"
               >
                 Archive
-              </Link>
-              <Link
-                to="/notes"
-                className="hover:text-foreground transition-colors"
-              >
-                Notes
               </Link>
             </div>
           </div>

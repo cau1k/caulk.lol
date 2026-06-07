@@ -9,7 +9,7 @@ const DEFAULT_BUCKET_MINUTES = 5;
 export function demoSiteAnalytics(generatedAt = new Date().toISOString()) {
   const bucketMs = DEFAULT_BUCKET_MINUTES * 60 * 1000;
   const end = Math.floor(Date.now() / bucketMs) * bucketMs;
-  const routeSeeds = ["/", "/posts", "/posts/:slug", "/notes", "/about"];
+  const routeSeeds = ["/", "/posts", "/posts/:slug", "/about"];
   const points = Array.from({ length: 24 }, (_, index): SiteMetricPoint => {
     const wave = Math.sin(index / 2.4) * 18;
     const burst = index > 14 && index < 19 ? 34 : 0;
@@ -50,16 +50,14 @@ export function demoSiteAnalytics(generatedAt = new Date().toISOString()) {
     network: {
       nodes: routeSeeds.map((route, index) => ({
         route,
-        requests: [260, 184, 151, 94, 71][index] ?? 20,
-        p95Ms: [88, 121, 173, 96, 64][index] ?? 80,
+        requests: [260, 184, 151, 71][index] ?? 20,
+        p95Ms: [88, 121, 173, 64][index] ?? 80,
       })),
       edges: [
         { source: "/", target: "/posts", requests: 64 },
         { source: "/posts", target: "/posts/:slug", requests: 92 },
         { source: "/posts/:slug", target: "/posts", requests: 38 },
         { source: "/", target: "/about", requests: 24 },
-        { source: "/", target: "/notes", requests: 31 },
-        { source: "/notes", target: "/posts/:slug", requests: 12 },
       ],
     },
   } satisfies SiteAnalyticsData;

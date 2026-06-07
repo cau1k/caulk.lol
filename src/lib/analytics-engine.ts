@@ -287,8 +287,6 @@ function normalizePathname(pathname: string) {
   if (pathname === "/posts" || pathname === "/posts/") return "/posts";
   if (pathname.startsWith("/posts/tags/")) return "/posts/tags/:tag";
   if (pathname.startsWith("/posts/")) return "/posts/:slug";
-  if (pathname === "/notes" || pathname === "/notes/") return "/notes";
-  if (pathname.startsWith("/notes/")) return "/notes/:slug";
   if (pathname === "/about" || pathname === "/about/") return "/about";
   return undefined;
 }

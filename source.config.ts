@@ -68,17 +68,4 @@ export const posts = defineCollections({
   mdxOptions: sharedMdxOptions,
 });
 
-export const notes = defineCollections({
-  type: "doc",
-  dir: "content/notes",
-  schema: frontmatterSchema.omit({ description: true }).extend({
-    date: z.coerce.date(),
-    updatedAt: z.coerce.date().optional(),
-    category: z.enum(["predictions", "thoughts"]),
-    draft: z.boolean().default(false),
-    tags: z.array(z.string().trim()).default([]),
-  }),
-  mdxOptions: sharedMdxOptions,
-});
-
 export default defineConfig();
