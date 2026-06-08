@@ -5,6 +5,11 @@ import { TagBadge } from "@/components/tag-badge";
 import { baseOptions } from "@/lib/layout.shared";
 import { posts } from "@/lib/source";
 
+type TagCount = {
+  tag: string;
+  count: number;
+};
+
 export const Route = createFileRoute("/posts/tags/")({
   loader: () => serverLoader(),
   staleTime: 5 * 60_000,
@@ -38,7 +43,10 @@ const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
 });
 
 function TagsIndex() {
-  const { tags, maxCount } = Route.useLoaderData();
+  const { tags, maxCount } = Route.useLoaderData() as {
+    tags: TagCount[];
+    maxCount: number;
+  };
 
   return (
     <HomeLayout {...baseOptions()}>

@@ -9,6 +9,7 @@ export function baseOptions(): BaseLayoutProps {
     },
     links: [
       { text: "archive", url: "/posts" },
+      { text: "links", url: "/links" },
       { text: "about", url: "/about" },
     ],
     searchToggle: {

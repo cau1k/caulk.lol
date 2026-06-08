@@ -1,7 +1,12 @@
 "use client";
 
 import { X } from "lucide-react";
-import { type HTMLAttributes, useEffect, useState } from "react";
+import {
+  type CSSProperties,
+  type HTMLAttributes,
+  useEffect,
+  useState,
+} from "react";
 import { cn } from "../lib/cn";
 import { buttonVariants } from "./ui/button";
 
@@ -130,7 +135,7 @@ function flow({ colors }: { colors: string[] }) {
             backgroundImage: `repeating-linear-gradient(70deg, ${[...colors, colors[0]].map((color, i) => `${color} ${(i * 50) / colors.length}%`).join(", ")})`,
             backgroundSize: "200% 100%",
             filter: "saturate(2)",
-          } as object
+          } as CSSProperties
         }
       />
       <style>

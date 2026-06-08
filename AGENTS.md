@@ -1,11 +1,11 @@
 # AGENTS.md
 
 ## Commands
-- `bun run dev` - dev server
-- `bun run build` - production build
-- `bun run types:check` - typecheck (runs fumadocs-mdx first)
-- `bun run lint` - biome check
-- `bun run format` - biome format
+- `pnpm dev` - dev server
+- `pnpm build` - production build
+- `pnpm types:check` - typecheck (runs fumadocs-mdx first)
+- `pnpm lint` - biome check
+- `pnpm format` - biome format
 
 ## Code Style
 - **Formatting**: 2-space indent, biome handles organization

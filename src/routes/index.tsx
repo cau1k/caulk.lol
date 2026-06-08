@@ -6,6 +6,14 @@ import { formatDate, formatDateTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
 import { posts } from "@/lib/source";
 
+type HomePost = {
+  url: string;
+  title: string;
+  description?: string;
+  date?: Date;
+  author?: string;
+};
+
 export const Route = createFileRoute("/")({
   loader: () => serverLoader(),
   component: Home,
@@ -32,7 +40,7 @@ const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
 });
 
 function Home() {
-  const { posts } = Route.useLoaderData();
+  const { posts } = Route.useLoaderData() as { posts: HomePost[] };
   const [featured, ...rest] = posts;
 
   return (

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LlmsFullDottxtRouteImport } from './routes/llms-full[.]txt'
+import { Route as LinksRouteImport } from './routes/links'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -17,16 +18,28 @@ import { Route as PostsIndexRouteImport } from './routes/posts/index'
 import { Route as PostsSlugRouteImport } from './routes/posts/$slug'
 import { Route as LlmsDotmdxSplatRouteImport } from './routes/llms[.]mdx.$'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
+import { Route as ApiLinksRouteImport } from './routes/api/links'
 import { Route as ApiAnalyticsRouteImport } from './routes/api/analytics'
+import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as AdminLinksRouteImport } from './routes/admin/links'
 import { Route as PostsTagsIndexRouteImport } from './routes/posts/tags/index'
 import { Route as PostsTagsTagRouteImport } from './routes/posts/tags/$tag'
 import { Route as OgPostsSplatRouteImport } from './routes/og/posts/$'
 import { Route as ApiTweetIdRouteImport } from './routes/api/tweet/$id'
+import { Route as ApiLinksIdRouteImport } from './routes/api/links/$id'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiAnalyticsRumRouteImport } from './routes/api/analytics/rum'
+import { Route as ApiAdminBootstrapRouteImport } from './routes/api/admin/bootstrap'
+import { Route as ApiAdminApiKeyRouteImport } from './routes/api/admin/api-key'
 
 const LlmsFullDottxtRoute = LlmsFullDottxtRouteImport.update({
   id: '/llms-full.txt',
   path: '/llms-full.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LinksRoute = LinksRouteImport.update({
+  id: '/links',
+  path: '/links',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnalyticsRoute = AnalyticsRouteImport.update({
@@ -64,9 +77,24 @@ const ApiSearchRoute = ApiSearchRouteImport.update({
   path: '/api/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiLinksRoute = ApiLinksRouteImport.update({
+  id: '/api/links',
+  path: '/api/links',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAnalyticsRoute = ApiAnalyticsRouteImport.update({
   id: '/api/analytics',
   path: '/api/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLinksRoute = AdminLinksRouteImport.update({
+  id: '/admin/links',
+  path: '/admin/links',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PostsTagsIndexRoute = PostsTagsIndexRouteImport.update({
@@ -89,23 +117,51 @@ const ApiTweetIdRoute = ApiTweetIdRouteImport.update({
   path: '/api/tweet/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiLinksIdRoute = ApiLinksIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiLinksRoute,
+} as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAnalyticsRumRoute = ApiAnalyticsRumRouteImport.update({
   id: '/rum',
   path: '/rum',
   getParentRoute: () => ApiAnalyticsRoute,
+} as any)
+const ApiAdminBootstrapRoute = ApiAdminBootstrapRouteImport.update({
+  id: '/api/admin/bootstrap',
+  path: '/api/admin/bootstrap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminApiKeyRoute = ApiAdminApiKeyRouteImport.update({
+  id: '/api/admin/api-key',
+  path: '/api/admin/api-key',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/analytics': typeof AnalyticsRoute
+  '/links': typeof LinksRoute
   '/llms-full.txt': typeof LlmsFullDottxtRoute
+  '/admin/links': typeof AdminLinksRoute
+  '/admin/login': typeof AdminLoginRoute
   '/api/analytics': typeof ApiAnalyticsRouteWithChildren
+  '/api/links': typeof ApiLinksRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/posts/': typeof PostsIndexRoute
+  '/api/admin/api-key': typeof ApiAdminApiKeyRoute
+  '/api/admin/bootstrap': typeof ApiAdminBootstrapRoute
   '/api/analytics/rum': typeof ApiAnalyticsRumRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/links/$id': typeof ApiLinksIdRoute
   '/api/tweet/$id': typeof ApiTweetIdRoute
   '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
@@ -115,13 +171,21 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/analytics': typeof AnalyticsRoute
+  '/links': typeof LinksRoute
   '/llms-full.txt': typeof LlmsFullDottxtRoute
+  '/admin/links': typeof AdminLinksRoute
+  '/admin/login': typeof AdminLoginRoute
   '/api/analytics': typeof ApiAnalyticsRouteWithChildren
+  '/api/links': typeof ApiLinksRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/posts': typeof PostsIndexRoute
+  '/api/admin/api-key': typeof ApiAdminApiKeyRoute
+  '/api/admin/bootstrap': typeof ApiAdminBootstrapRoute
   '/api/analytics/rum': typeof ApiAnalyticsRumRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/links/$id': typeof ApiLinksIdRoute
   '/api/tweet/$id': typeof ApiTweetIdRoute
   '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
@@ -132,13 +196,21 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/analytics': typeof AnalyticsRoute
+  '/links': typeof LinksRoute
   '/llms-full.txt': typeof LlmsFullDottxtRoute
+  '/admin/links': typeof AdminLinksRoute
+  '/admin/login': typeof AdminLoginRoute
   '/api/analytics': typeof ApiAnalyticsRouteWithChildren
+  '/api/links': typeof ApiLinksRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/posts/$slug': typeof PostsSlugRoute
   '/posts/': typeof PostsIndexRoute
+  '/api/admin/api-key': typeof ApiAdminApiKeyRoute
+  '/api/admin/bootstrap': typeof ApiAdminBootstrapRoute
   '/api/analytics/rum': typeof ApiAnalyticsRumRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/links/$id': typeof ApiLinksIdRoute
   '/api/tweet/$id': typeof ApiTweetIdRoute
   '/og/posts/$': typeof OgPostsSplatRoute
   '/posts/tags/$tag': typeof PostsTagsTagRoute
@@ -150,13 +222,21 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/analytics'
+    | '/links'
     | '/llms-full.txt'
+    | '/admin/links'
+    | '/admin/login'
     | '/api/analytics'
+    | '/api/links'
     | '/api/search'
     | '/llms.mdx/$'
     | '/posts/$slug'
     | '/posts/'
+    | '/api/admin/api-key'
+    | '/api/admin/bootstrap'
     | '/api/analytics/rum'
+    | '/api/auth/$'
+    | '/api/links/$id'
     | '/api/tweet/$id'
     | '/og/posts/$'
     | '/posts/tags/$tag'
@@ -166,13 +246,21 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/analytics'
+    | '/links'
     | '/llms-full.txt'
+    | '/admin/links'
+    | '/admin/login'
     | '/api/analytics'
+    | '/api/links'
     | '/api/search'
     | '/llms.mdx/$'
     | '/posts/$slug'
     | '/posts'
+    | '/api/admin/api-key'
+    | '/api/admin/bootstrap'
     | '/api/analytics/rum'
+    | '/api/auth/$'
+    | '/api/links/$id'
     | '/api/tweet/$id'
     | '/og/posts/$'
     | '/posts/tags/$tag'
@@ -182,13 +270,21 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/analytics'
+    | '/links'
     | '/llms-full.txt'
+    | '/admin/links'
+    | '/admin/login'
     | '/api/analytics'
+    | '/api/links'
     | '/api/search'
     | '/llms.mdx/$'
     | '/posts/$slug'
     | '/posts/'
+    | '/api/admin/api-key'
+    | '/api/admin/bootstrap'
     | '/api/analytics/rum'
+    | '/api/auth/$'
+    | '/api/links/$id'
     | '/api/tweet/$id'
     | '/og/posts/$'
     | '/posts/tags/$tag'
@@ -199,12 +295,19 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AnalyticsRoute: typeof AnalyticsRoute
+  LinksRoute: typeof LinksRoute
   LlmsFullDottxtRoute: typeof LlmsFullDottxtRoute
+  AdminLinksRoute: typeof AdminLinksRoute
+  AdminLoginRoute: typeof AdminLoginRoute
   ApiAnalyticsRoute: typeof ApiAnalyticsRouteWithChildren
+  ApiLinksRoute: typeof ApiLinksRouteWithChildren
   ApiSearchRoute: typeof ApiSearchRoute
   LlmsDotmdxSplatRoute: typeof LlmsDotmdxSplatRoute
   PostsSlugRoute: typeof PostsSlugRoute
   PostsIndexRoute: typeof PostsIndexRoute
+  ApiAdminApiKeyRoute: typeof ApiAdminApiKeyRoute
+  ApiAdminBootstrapRoute: typeof ApiAdminBootstrapRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiTweetIdRoute: typeof ApiTweetIdRoute
   OgPostsSplatRoute: typeof OgPostsSplatRoute
   PostsTagsTagRoute: typeof PostsTagsTagRoute
@@ -218,6 +321,13 @@ declare module '@tanstack/react-router' {
       path: '/llms-full.txt'
       fullPath: '/llms-full.txt'
       preLoaderRoute: typeof LlmsFullDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/links': {
+      id: '/links'
+      path: '/links'
+      fullPath: '/links'
+      preLoaderRoute: typeof LinksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/analytics': {
@@ -269,11 +379,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/links': {
+      id: '/api/links'
+      path: '/api/links'
+      fullPath: '/api/links'
+      preLoaderRoute: typeof ApiLinksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/analytics': {
       id: '/api/analytics'
       path: '/api/analytics'
       fullPath: '/api/analytics'
       preLoaderRoute: typeof ApiAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/links': {
+      id: '/admin/links'
+      path: '/admin/links'
+      fullPath: '/admin/links'
+      preLoaderRoute: typeof AdminLinksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/posts/tags/': {
@@ -304,12 +435,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTweetIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/links/$id': {
+      id: '/api/links/$id'
+      path: '/$id'
+      fullPath: '/api/links/$id'
+      preLoaderRoute: typeof ApiLinksIdRouteImport
+      parentRoute: typeof ApiLinksRoute
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/analytics/rum': {
       id: '/api/analytics/rum'
       path: '/rum'
       fullPath: '/api/analytics/rum'
       preLoaderRoute: typeof ApiAnalyticsRumRouteImport
       parentRoute: typeof ApiAnalyticsRoute
+    }
+    '/api/admin/bootstrap': {
+      id: '/api/admin/bootstrap'
+      path: '/api/admin/bootstrap'
+      fullPath: '/api/admin/bootstrap'
+      preLoaderRoute: typeof ApiAdminBootstrapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/api-key': {
+      id: '/api/admin/api-key'
+      path: '/api/admin/api-key'
+      fullPath: '/api/admin/api-key'
+      preLoaderRoute: typeof ApiAdminApiKeyRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -326,16 +485,35 @@ const ApiAnalyticsRouteWithChildren = ApiAnalyticsRoute._addFileChildren(
   ApiAnalyticsRouteChildren,
 )
 
+interface ApiLinksRouteChildren {
+  ApiLinksIdRoute: typeof ApiLinksIdRoute
+}
+
+const ApiLinksRouteChildren: ApiLinksRouteChildren = {
+  ApiLinksIdRoute: ApiLinksIdRoute,
+}
+
+const ApiLinksRouteWithChildren = ApiLinksRoute._addFileChildren(
+  ApiLinksRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AnalyticsRoute: AnalyticsRoute,
+  LinksRoute: LinksRoute,
   LlmsFullDottxtRoute: LlmsFullDottxtRoute,
+  AdminLinksRoute: AdminLinksRoute,
+  AdminLoginRoute: AdminLoginRoute,
   ApiAnalyticsRoute: ApiAnalyticsRouteWithChildren,
+  ApiLinksRoute: ApiLinksRouteWithChildren,
   ApiSearchRoute: ApiSearchRoute,
   LlmsDotmdxSplatRoute: LlmsDotmdxSplatRoute,
   PostsSlugRoute: PostsSlugRoute,
   PostsIndexRoute: PostsIndexRoute,
+  ApiAdminApiKeyRoute: ApiAdminApiKeyRoute,
+  ApiAdminBootstrapRoute: ApiAdminBootstrapRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiTweetIdRoute: ApiTweetIdRoute,
   OgPostsSplatRoute: OgPostsSplatRoute,
   PostsTagsTagRoute: PostsTagsTagRoute,

@@ -8,6 +8,15 @@ import { formatDate, formatDateTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
 import { posts } from "@/lib/source";
 
+type ArchivePost = {
+  url: string;
+  title: string;
+  tags: string[];
+  excerpt: string;
+  date?: Date;
+  author?: string;
+};
+
 /** Extract first paragraph from MDX content (after frontmatter), trimmed to ~100 chars */
 async function getExcerpt(absolutePath: string, maxLen = 100): Promise<string> {
   try {
@@ -72,7 +81,7 @@ const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
 });
 
 function BlogIndex() {
-  const { posts } = Route.useLoaderData();
+  const { posts } = Route.useLoaderData() as { posts: ArchivePost[] };
 
   return (
     <HomeLayout {...baseOptions()}>

@@ -3,6 +3,7 @@ import path from "node:path";
 import alchemy from "alchemy";
 import {
   AnalyticsEngineDataset,
+  D1Database,
   KVNamespace,
   TanStackStart,
 } from "alchemy/cloudflare";
@@ -30,6 +31,11 @@ const siteMetrics = AnalyticsEngineDataset("site-metrics", {
   dataset: analyticsDatasetName,
 });
 
+const linksDb = await D1Database("links-db", {
+  name: `${app.name}-${app.stage}-links`,
+  migrationsDir: "./migrations",
+});
+
 export const site = await TanStackStart("site", {
   name: `${app.name}-${app.stage}-site`,
   domains: ["caulk.lol"],
@@ -53,20 +59,31 @@ export const site = await TanStackStart("site", {
               "./src/**",
               "./components/**",
               "./content/**",
+              "./migrations/**",
               "./public/**",
               "./styles/**",
               "./source.config.ts",
               "./vite.config.ts",
               "./package.json",
-              "./bun.lock",
+              "./pnpm-lock.yaml",
               "./tsconfig.json",
               "./tsr.config.json",
             ],
           },
   },
   bindings: {
+    LINKS_DB: linksDb,
     TWEET_CACHE: tweetCache,
     SITE_METRICS: siteMetrics,
+    BETTER_AUTH_SECRET: alchemy.secret(
+      process.env.BETTER_AUTH_SECRET ?? "",
+      "better-auth-secret",
+    ),
+    ADMIN_BOOTSTRAP_TOKEN: alchemy.secret(
+      process.env.ADMIN_BOOTSTRAP_TOKEN ?? "",
+      "admin-bootstrap-token",
+    ),
+    OWNER_EMAIL: process.env.OWNER_EMAIL ?? "",
     ANALYTICS_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID ?? "",
     ANALYTICS_API_TOKEN: alchemy.secret(
       process.env.CLOUDFLARE_API_TOKEN ?? "",

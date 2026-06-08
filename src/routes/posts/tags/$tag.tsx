@@ -5,6 +5,15 @@ import { formatDate, formatDateTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
 import { posts } from "@/lib/source";
 
+type TaggedPost = {
+  url: string;
+  title: string;
+  description?: string;
+  date?: Date;
+  author?: string;
+  tags: string[];
+};
+
 export const Route = createFileRoute("/posts/tags/$tag")({
   loader: ({ params }) => serverLoader({ data: params.tag }),
   staleTime: 5 * 60_000,
@@ -50,7 +59,10 @@ const serverLoader = createServerFn({ method: "GET" })
   });
 
 function TagPosts() {
-  const { tag, posts } = Route.useLoaderData();
+  const { tag, posts } = Route.useLoaderData() as {
+    tag: string;
+    posts: TaggedPost[];
+  };
 
   return (
     <HomeLayout {...baseOptions()}>

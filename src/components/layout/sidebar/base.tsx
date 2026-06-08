@@ -11,6 +11,7 @@ import { useOnChange } from "fumadocs-core/utils/use-on-change";
 import { ChevronDown, ExternalLink } from "lucide-react";
 import {
   type ComponentProps,
+  type CSSProperties,
   createContext,
   type PointerEvent,
   type ReactNode,
@@ -253,7 +254,7 @@ export function SidebarViewport(props: ComponentProps<typeof ScrollArea>) {
           {
             maskImage:
               "linear-gradient(to bottom, transparent, white 12px, white calc(100% - 12px), transparent)",
-          } as object
+          } as CSSProperties
         }
       >
         {props.children}
