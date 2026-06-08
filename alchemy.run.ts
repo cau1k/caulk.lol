@@ -56,12 +56,10 @@ export const site = await TanStackStart("site", {
         ? false
         : {
             patterns: [
-              "./src/**",
-              "./components/**",
-              "./content/**",
-              "./migrations/**",
-              "./public/**",
-              "./styles/**",
+              "./src/**/*.{css,js,jsx,ts,tsx}",
+              "./content/**/*.{json,md,mdx,ts,tsx}",
+              "./migrations/*.sql",
+              "./public/**/*.*",
               "./source.config.ts",
               "./vite.config.ts",
               "./package.json",
@@ -84,9 +82,10 @@ export const site = await TanStackStart("site", {
       "admin-bootstrap-token",
     ),
     OWNER_EMAIL: process.env.OWNER_EMAIL ?? "",
-    ANALYTICS_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID ?? "",
+    ANALYTICS_ACCOUNT_ID:
+      process.env.ANALYTICS_ACCOUNT_ID ?? process.env.CLOUDFLARE_ACCOUNT_ID ?? "",
     ANALYTICS_API_TOKEN: alchemy.secret(
-      process.env.CLOUDFLARE_API_TOKEN ?? "",
+      process.env.ANALYTICS_API_TOKEN ?? process.env.CLOUDFLARE_API_TOKEN ?? "",
       "analytics-api-token",
     ),
     ANALYTICS_DATASET: analyticsDatasetName,
