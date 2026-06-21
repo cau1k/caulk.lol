@@ -97,7 +97,11 @@ export function createAuthPlugins(runtimeEnv: RuntimeEnv) {
 
   return [
     admin({ defaultRole: "admin" }),
-    passkey(),
+    passkey({
+      origin: getAdminOrigin(runtimeEnv),
+      rpID: getPasskeyRpId(runtimeEnv),
+      rpName: "caulk.lol",
+    }),
     emailOTP({
       async sendVerificationOTP({ email, otp, type }) {
         if (!isOwnerEmail(email, ownerEmail)) return;
@@ -200,6 +204,10 @@ function getAdminOrigin(runtimeEnv: RuntimeEnv) {
   if (adminOrigin) return adminOrigin;
   if (isDevelopmentEnvironment(runtimeEnv)) return "http://localhost:3002";
   return "https://admin.caulk.lol";
+}
+
+function getPasskeyRpId(runtimeEnv: RuntimeEnv) {
+  return isDevelopmentEnvironment(runtimeEnv) ? "localhost" : "caulk.lol";
 }
 
 function isDevelopmentEnvironment(runtimeEnv: RuntimeEnv) {

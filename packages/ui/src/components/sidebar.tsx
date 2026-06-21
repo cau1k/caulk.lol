@@ -185,9 +185,7 @@ function Sidebar({
   }
 
   if (isMobile) {
-    const mobileStyle: SidebarStyle = {
-      "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
-    }
+    const mobileStyle: SidebarStyle = { "--sidebar-width": SIDEBAR_WIDTH_MOBILE }
 
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>

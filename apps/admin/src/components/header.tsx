@@ -11,11 +11,11 @@ const links = [
 
 export default function Header() {
   return (
-    <header className="border-b border-white/10 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+    <header className="border-b bg-background">
       <div className="flex h-12 items-center justify-between px-3 sm:px-5">
         <div className="flex items-center gap-5">
           <Link to="/dashboard" className="flex items-center gap-2 text-xs font-medium tracking-[0.18em] uppercase">
-            <span className="inline-flex size-7 items-center justify-center border border-emerald-400/30 bg-emerald-400/10 text-emerald-300">
+            <span className="inline-flex size-7 items-center justify-center border text-muted-foreground">
               <CommandIcon className="size-3.5" />
             </span>
             caulk
