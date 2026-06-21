@@ -44,4 +44,4 @@ jobs:
           BETTER_AUTH_URL: https://api.caulk.lol
           CORS_ORIGIN: https://caulk.lol,https://admin.caulk.lol
           ADMIN_BOOTSTRAP_TOKEN: ${{ secrets.ADMIN_BOOTSTRAP_TOKEN }}
-          OWNER_EMAIL: zero@composer.group
+          OWNER_EMAIL: ${{ secrets.OWNER_EMAIL }}
