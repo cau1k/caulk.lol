@@ -1,0 +1,17 @@
+{
+  "$schema": "https://dev.ohm.moe/schema",
+  "references": {
+    "opencode": {
+      "repository": "https://github.com/anomalyco/opencode",
+      "branch": "main",
+      "description": "really good effect patterns",
+      "hidden": false
+    },
+    "effect-smol": {
+      "repository": "https://github.com/effect-TS/effect-smol",
+      "branch": "main",
+      "description": "Core libraries and experimental work for Effect v4",
+      "hidden": false
+    }
+  }
+}
