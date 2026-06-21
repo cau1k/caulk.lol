@@ -12,6 +12,12 @@
       "branch": "main",
       "description": "Core libraries and experimental work for Effect v4",
       "hidden": false
+    },
+    "better-auth": {
+      "repository": "https://github.com/better-auth/better-auth",
+      "branch": "main",
+      "description": "Use whenever working with better-auth here.",
+      "hidden": false
     }
   }
 }
