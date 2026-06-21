@@ -19,7 +19,12 @@ config({ path: "../../apps/admin/.env" });
 config({ path: "../../apps/server/.env" });
 
 const stage = process.env.STAGE ?? "prod";
+const serverCwd = fileURLToPath(new URL("../../apps/server/", import.meta.url));
 const blogCwd = fileURLToPath(new URL("../../apps/blog/", import.meta.url));
+const serverBetterAuthMinimalBarrel = path.join(
+  fileURLToPath(new URL("../../packages/auth/src/", import.meta.url)),
+  "better-auth-minimal-barrel.ts",
+);
 const hasBlogBuildOutput = existsSync(path.join(blogCwd, "dist/server/index.js"));
 
 const app = await alchemy("caulk-lol", {
@@ -57,9 +62,21 @@ const analyticsAccountId = readEnv("ANALYTICS_ACCOUNT_ID") ?? readEnv("CLOUDFLAR
 const analyticsApiToken = readEnv("ANALYTICS_API_TOKEN") ?? readEnv("CLOUDFLARE_API_TOKEN");
 
 export const server = await Worker("server", {
-  cwd: "../../apps/server",
+  cwd: serverCwd,
   entrypoint: "src/index.ts",
   compatibility: "node",
+  bundle: {
+    plugins: [
+      {
+        name: "better-auth-minimal-root-alias",
+        setup(build) {
+          build.onResolve({ filter: /^better-auth$/ }, () => ({
+            path: serverBetterAuthMinimalBarrel,
+          }));
+        },
+      },
+    ],
+  },
   url: true,
   bindings: {
     DB: linksDb,
@@ -96,7 +113,7 @@ const sharedSiteBindings = {
 const blogPublicConfig =
   stage === "prod"
     ? {
-        domains: ["caulk.lol"],
+        domains: [{ domainName: "caulk.lol", overrideExistingOrigin: true }],
         url: false,
       }
     : {
@@ -106,7 +123,7 @@ const blogPublicConfig =
 const adminPublicConfig =
   stage === "prod"
     ? {
-        domains: ["admin.caulk.lol"],
+        domains: [{ domainName: "admin.caulk.lol", overrideExistingOrigin: true }],
         url: false,
       }
     : {

@@ -16,7 +16,7 @@ const cloudflareWorkersShimPath = fileURLToPath(
   new URL("../../packages/env/src/cloudflare-local.ts", import.meta.url),
 );
 const betterAuthMinimalBarrel = fileURLToPath(
-  new URL("./src/lib/better-auth-minimal-barrel.ts", import.meta.url),
+  new URL("../../packages/auth/src/better-auth-minimal-barrel.ts", import.meta.url),
 );
 const cloudflareWorkersAlias = shouldUseAlchemy
   ? []
