@@ -3,6 +3,14 @@
 
 type Env = import("./src/types").CloudflareEnv;
 
+type ImportMetaEnv = {
+  readonly VITE_SERVER_URL?: string;
+};
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+
 declare namespace Cloudflare {
   type Env = import("./src/types").CloudflareEnv;
 }
