@@ -1,0 +1,43 @@
+{
+  "name": "caulk.lol",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "workers/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "check-types": "turbo check-types",
+    "types:check": "pnpm check-types",
+    "dev:blog": "turbo -F blog dev:bare",
+    "dev:admin": "turbo -F admin dev:bare",
+    "db:generate": "turbo -F @caulk.lol/db db:generate",
+    "deploy": "turbo -F @caulk.lol/infra deploy",
+    "destroy": "turbo -F @caulk.lol/infra destroy",
+    "links:add": "node scripts/links-add.ts",
+    "lint": "oxlint --threads=1",
+    "format": "oxfmt --write .",
+    "check": "oxlint && oxfmt --write ."
+  },
+  "dependencies": {
+    "@caulk.lol/env": "workspace:*",
+    "dotenv": "catalog:",
+    "drizzle-orm": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@caulk.lol/config": "workspace:*",
+    "@cloudflare/workers-types": "catalog:",
+    "@types/node": "catalog:",
+    "oxfmt": "^0.53.0",
+    "oxlint": "^1.68.0",
+    "turbo": "^2.9.16",
+    "typescript": "catalog:"
+  },
+  "packageManager": "pnpm@10.26.0"
+}

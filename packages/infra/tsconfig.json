@@ -1,0 +1,5 @@
+{
+  "extends": "@caulk.lol/config/tsconfig.base.json",
+  "include": ["alchemy.run.ts"],
+  "exclude": ["node_modules", "dist"]
+}

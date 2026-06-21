@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-import { auth } from "@/lib/auth";
+import { getAuth } from "@/lib/auth";
 import { getOwnerSession } from "@/lib/auth-guards";
 
 const createApiKeySchema = z.object({
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/api/admin/api-key")({
           );
         }
 
-        const key = await auth.api.createApiKey({
+        const key = await getAuth(request).api.createApiKey({
           body: {
             name: parsed.data.name,
             userId: session.user.id,

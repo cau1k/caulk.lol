@@ -1,6 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ImageResponse } from "@takumi-rs/image-response/wasm";
-import takumiModule from "@takumi-rs/wasm/next";
 import { getOgFonts } from "@/lib/og/fonts";
 import { PostImage } from "@/lib/og/post-image";
 import { posts } from "@/lib/source";
@@ -38,6 +36,11 @@ export const Route = createFileRoute("/og/posts/$")({
           }
 
           const fonts = await getOgFonts(request);
+          const [{ ImageResponse }, { default: takumiModule }] =
+            await Promise.all([
+              import("@takumi-rs/image-response/wasm"),
+              import("@takumi-rs/wasm/next"),
+            ]);
           const image = new ImageResponse(
             <PostImage
               title={page.data.title}

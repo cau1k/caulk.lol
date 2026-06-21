@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
@@ -7,9 +8,24 @@ import mdx from "fumadocs-mdx/vite";
 import { defineConfig } from "vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 
+const alchemyConfigPath = fileURLToPath(
+  new URL("./.alchemy/local/wrangler.jsonc", import.meta.url),
+);
+const shouldUseAlchemy = existsSync(alchemyConfigPath);
+const cloudflareWorkersShimPath = fileURLToPath(
+  new URL("../../packages/env/src/cloudflare-local.ts", import.meta.url),
+);
 const betterAuthMinimalBarrel = fileURLToPath(
   new URL("./src/lib/better-auth-minimal-barrel.ts", import.meta.url),
 );
+const cloudflareWorkersAlias = shouldUseAlchemy
+  ? []
+  : [
+      {
+        find: "cloudflare:workers",
+        replacement: cloudflareWorkersShimPath,
+      },
+    ];
 
 export default defineConfig({
   server: {
@@ -22,6 +38,7 @@ export default defineConfig({
         find: /^better-auth$/,
         replacement: betterAuthMinimalBarrel,
       },
+      ...cloudflareWorkersAlias,
     ],
     dedupe: ["react", "react-dom"],
   },
@@ -30,6 +47,7 @@ export default defineConfig({
   },
   ssr: {
     external: [],
+    noExternal: ["react-tweet", /^@radix-ui\//],
     optimizeDeps: {
       noDiscovery: true,
       include: ["@excalidraw/excalidraw"],
@@ -42,7 +60,7 @@ export default defineConfig({
     tsConfigPaths({
       projects: ["./tsconfig.json"],
     }),
-    alchemy(),
+    ...(shouldUseAlchemy ? [alchemy({ configPath: alchemyConfigPath })] : []),
     tanstackStart({
       prerender: {
         enabled: true,

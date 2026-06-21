@@ -1,0 +1,5 @@
+{
+  "extends": "@caulk.lol/config/tsconfig.base.json",
+  "include": ["env.d.ts", "src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

@@ -1,18 +1,19 @@
-import { type AuthSession, auth } from "@/lib/auth";
-import { getAppEnv, readEnvString } from "@/lib/worker-env";
+import { getRuntimeEnv, readEnvString } from "@caulk.lol/env/runtime";
+import { getAuth, type AuthSession } from "@/lib/auth";
 
-export function getOwnerEmail(): string | undefined {
+export function getOwnerEmail(request?: Request): string | undefined {
   return (
-    readEnvString(getAppEnv().OWNER_EMAIL) ??
+    readEnvString(getRuntimeEnv(request).OWNER_EMAIL) ??
     readEnvString(process.env.OWNER_EMAIL)
   );
 }
 
 export function isOwnerSession(
   session: AuthSession,
+  request?: Request,
 ): session is NonNullable<AuthSession> {
   if (!session) return false;
-  const ownerEmail = getOwnerEmail();
+  const ownerEmail = getOwnerEmail(request);
   if (!ownerEmail) return true;
   return session.user.email.toLowerCase() === ownerEmail.toLowerCase();
 }
@@ -20,8 +21,8 @@ export function isOwnerSession(
 export async function getOwnerSession(
   request: Request,
 ): Promise<NonNullable<AuthSession> | null> {
-  const session = await auth.api.getSession({ headers: request.headers });
-  return isOwnerSession(session) ? session : null;
+  const session = await getAuth(request).api.getSession({ headers: request.headers });
+  return isOwnerSession(session, request) ? session : null;
 }
 
 export async function canWriteLinks(request: Request): Promise<boolean> {
@@ -31,7 +32,7 @@ export async function canWriteLinks(request: Request): Promise<boolean> {
   const key = getApiKey(request);
   if (!key) return false;
 
-  const result = await auth.api.verifyApiKey({
+  const result = await getAuth(request).api.verifyApiKey({
     body: {
       key,
       permissions: {

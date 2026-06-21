@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-import { auth } from "@/lib/auth";
+import { getAuth } from "@/lib/auth";
 import { getOwnerEmail } from "@/lib/auth-guards";
 import { requireLinksDb } from "@/lib/links/queries";
 import { getAppEnv, readEnvString } from "@/lib/worker-env";
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/api/admin/bootstrap")({
           );
         }
 
-        const ownerEmail = getOwnerEmail();
+        const ownerEmail = getOwnerEmail(request);
         if (
           ownerEmail &&
           parsed.data.email.toLowerCase() !== ownerEmail.toLowerCase()
@@ -46,14 +46,18 @@ export const Route = createFileRoute("/api/admin/bootstrap")({
           .prepare('select count(*) as count from "user"')
           .first<{ count: number }>();
 
-        if ((userCount?.count ?? 0) > 0) {
+        if (!userCount) {
+          throw new Error("Could not read owner user count.");
+        }
+
+        if (userCount.count > 0) {
           return jsonResponse(
             { error: "Owner already exists." },
             { status: 409 },
           );
         }
 
-        const created = await auth.api.signUpEmail({
+        const created = await getAuth(request).api.signUpEmail({
           body: parsed.data,
         });
 

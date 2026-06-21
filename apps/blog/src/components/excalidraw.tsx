@@ -108,7 +108,7 @@ function transformSvgStyles(svg: SVGSVGElement): void {
       font-family: var(--font-serif) !important; 
     }
   `;
-  svg.prepend(style);
+  svg.insertBefore(style, svg.firstChild);
 
   // Strip inline font-family attributes
   const textEls = svg.querySelectorAll("text, tspan, [font-family]");

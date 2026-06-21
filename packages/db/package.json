@@ -1,0 +1,32 @@
+{
+  "name": "@caulk.lol/db",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./schema/*": {
+      "default": "./src/schema/*.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@caulk.lol/env": "workspace:*",
+    "@libsql/client": "0.15.15",
+    "dotenv": "catalog:",
+    "drizzle-orm": "catalog:",
+    "libsql": "0.5.22",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@caulk.lol/config": "workspace:*",
+    "drizzle-kit": "^0.31.8",
+    "typescript": "catalog:"
+  }
+}

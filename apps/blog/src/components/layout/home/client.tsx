@@ -1,6 +1,5 @@
 import { cva } from "class-variance-authority";
 import Link from "fumadocs-core/link";
-import { useIsScrollTop } from "fumadocs-ui/utils/use-is-scroll-top";
 import { ChevronDown, Languages } from "lucide-react";
 import {
   type ComponentProps,
@@ -264,16 +263,13 @@ function isSecondary(item: LinkItemType): boolean {
 
 function HeaderNavigationMenu({
   navRef,
-  transparentMode = "none",
+  transparentMode: _transparentMode = "none",
   ...props
 }: ComponentProps<"div"> & {
   navRef?: RefObject<HTMLElement | null>;
   transparentMode?: NavOptions["transparentMode"];
 }) {
   const [value, setValue] = useState("");
-  const isTop = useIsScrollTop({ enabled: transparentMode === "top" }) ?? true;
-  const isTransparent =
-    transparentMode === "top" ? isTop : transparentMode === "always";
 
   return (
     <NavigationMenu value={value} onValueChange={setValue} asChild>
