@@ -18,7 +18,10 @@ export async function createContext({ context }: CreateContextOptions) {
   });
 
   return {
+    auth,
     db: createDb(context.env),
+    env: context.env,
+    headers: context.req.raw.headers,
     session,
   };
 }

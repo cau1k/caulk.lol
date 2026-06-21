@@ -2,18 +2,11 @@ import type { AppRouter } from "@caulk.lol/api/routers/index";
 import { Toaster } from "@caulk.lol/ui/components/sonner";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import {
-  HeadContent,
-  Outlet,
-  Scripts,
-  createRootRouteWithContext,
-} from "@tanstack/react-router";
+import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createMiddleware } from "@tanstack/react-start";
 import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { evlogErrorHandler } from "evlog/nitro/v3";
-
-import Header from "../components/header";
 
 import appCss from "../index.css?url";
 
@@ -58,10 +51,7 @@ function RootDocument() {
         <HeadContent />
       </head>
       <body>
-        <div className="grid h-svh grid-rows-[auto_1fr]">
-          <Header />
-          <Outlet />
-        </div>
+        <Outlet />
         <Toaster richColors />
         <TanStackRouterDevtools position="bottom-left" />
         <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
