@@ -113,7 +113,14 @@ const sharedSiteBindings = {
 const blogPublicConfig =
   stage === "prod"
     ? {
-        domains: [{ domainName: "caulk.lol", overrideExistingOrigin: true }],
+        domains: [
+          {
+            domainName: "caulk.lol",
+            zoneId: requiredEnv("CLOUDFLARE_ZONE_ID"),
+            adopt: true,
+            overrideExistingOrigin: true,
+          },
+        ],
         url: false,
       }
     : {
@@ -123,7 +130,14 @@ const blogPublicConfig =
 const adminPublicConfig =
   stage === "prod"
     ? {
-        domains: [{ domainName: "admin.caulk.lol", overrideExistingOrigin: true }],
+        domains: [
+          {
+            domainName: "admin.caulk.lol",
+            zoneId: requiredEnv("CLOUDFLARE_ZONE_ID"),
+            adopt: true,
+            overrideExistingOrigin: true,
+          },
+        ],
         url: false,
       }
     : {
