@@ -19,6 +19,7 @@ config({ path: "../../apps/admin/.env" });
 config({ path: "../../apps/server/.env" });
 
 const stage = process.env.STAGE ?? "prod";
+const apiDomainName = "api.caulk.lol";
 const serverCwd = fileURLToPath(new URL("../../apps/server/", import.meta.url));
 const blogCwd = fileURLToPath(new URL("../../apps/blog/", import.meta.url));
 const serverBetterAuthMinimalBarrel = path.join(
@@ -78,6 +79,18 @@ export const server = await Worker("server", {
     ],
   },
   url: true,
+  ...(stage === "prod"
+    ? {
+        domains: [
+          {
+            domainName: apiDomainName,
+            zoneId: requiredEnv("CLOUDFLARE_ZONE_ID"),
+            adopt: true,
+            overrideExistingOrigin: true,
+          },
+        ],
+      }
+    : {}),
   bindings: {
     DB: linksDb,
     LINKS_DB: linksDb,
@@ -92,7 +105,7 @@ export const server = await Worker("server", {
   },
 });
 
-const serverUrl = requireResourceUrl("server", server.url);
+const serverUrl = stage === "prod" ? `https://${apiDomainName}` : requireResourceUrl("server", server.url);
 
 const sharedSiteBindings = {
   DB: linksDb,
