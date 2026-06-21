@@ -181,8 +181,16 @@ const links = defineCommand({
 const authStatus = defineCommand({
   meta: { description: "Show authenticated admin account." },
   async run() {
-    const me = await getMe();
-    console.log(`${me.user.email} (${me.user.id})`);
+    try {
+      const me = await getMe();
+      console.log(`${me.user.email} (${me.user.id})`);
+    } catch (error) {
+      if (error instanceof CliError && error.message === "Unauthorized.") {
+        printCliError("Not authenticated. Run caulk auth login --device-auth.");
+        return;
+      }
+      throw error;
+    }
   },
 });
 

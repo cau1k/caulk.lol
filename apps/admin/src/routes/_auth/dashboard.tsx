@@ -10,7 +10,20 @@ import {
 } from "@caulk.lol/ui/components/dialog";
 import { Input } from "@caulk.lol/ui/components/input";
 import { Label } from "@caulk.lol/ui/components/label";
-import { Separator } from "@caulk.lol/ui/components/separator";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+} from "@caulk.lol/ui/components/sidebar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@caulk.lol/ui/components/tabs";
 import { Textarea } from "@caulk.lol/ui/components/textarea";
 import {
   type CreateLinkInput,
@@ -18,7 +31,6 @@ import {
   type LinkStatus,
   createLinkInputSchema,
 } from "@caulk.lol/api/links";
-import { env } from "@caulk.lol/env/web";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import {
@@ -27,17 +39,20 @@ import {
   CheckCircle2Icon,
   ClipboardIcon,
   CommandIcon,
+  FingerprintIcon,
   GaugeIcon,
   KeyRoundIcon,
   LinkIcon,
   PlusIcon,
   RadioTowerIcon,
   SettingsIcon,
+  ShieldCheckIcon,
   SparklesIcon,
 } from "lucide-react";
 import { type FormEvent, type ReactNode, useMemo, useState } from "react";
 import { toast } from "sonner";
 
+import { authClient } from "@/lib/auth-client";
 import {
   AdminApiError,
   createAdminApiKey,
@@ -51,6 +66,7 @@ export const Route = createFileRoute("/_auth/dashboard")({
 });
 
 type LinkFilter = "all" | "published" | "draft" | "archived";
+type SecurityTab = "device" | "passkeys" | "api-keys";
 
 type LinkMutationInput = {
   id: string;
@@ -59,6 +75,31 @@ type LinkMutationInput = {
 
 const linksQueryKey = ["admin-links"];
 const filterOptions: LinkFilter[] = ["all", "published", "draft", "archived"];
+const securityTabs = [
+  {
+    description: "Approve CLI logins.",
+    icon: <RadioTowerIcon />,
+    label: "Device auth",
+    value: "device",
+  },
+  {
+    description: "Register WebAuthn keys.",
+    icon: <FingerprintIcon />,
+    label: "Passkeys",
+    value: "passkeys",
+  },
+  {
+    description: "Create CLI tokens.",
+    icon: <KeyRoundIcon />,
+    label: "API keys",
+    value: "api-keys",
+  },
+] satisfies ReadonlyArray<{
+  description: string;
+  icon: ReactNode;
+  label: string;
+  value: SecurityTab;
+}>;
 
 function DashboardRoute() {
   const { session } = Route.useRouteContext();
@@ -135,7 +176,7 @@ function DashboardRoute() {
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <SettingsPanel linkCount={links.length} archivedCount={metrics.archived} />
+                <SettingsPanel archivedCount={metrics.archived} linkCount={links.length} ownerEmail={ownerEmail} />
                 <a href="/device">
                   <Button variant="outline">
                     <RadioTowerIcon />
@@ -351,7 +392,16 @@ function LinkRow({
   );
 }
 
-function SettingsPanel({ archivedCount, linkCount }: { archivedCount: number; linkCount: number }) {
+function SettingsPanel({
+  archivedCount,
+  linkCount,
+  ownerEmail,
+}: {
+  archivedCount: number;
+  linkCount: number;
+  ownerEmail: string;
+}) {
+  const [activeTab, setActiveTab] = useState<SecurityTab>("device");
   const [apiKey, setApiKey] = useState<string | null>(null);
   const createKeyMutation = useMutation({
     mutationFn: createAdminApiKey,
@@ -361,21 +411,35 @@ function SettingsPanel({ archivedCount, linkCount }: { archivedCount: number; li
       toast.success("API key created.");
     },
   });
+  const addPasskeyMutation = useMutation({
+    mutationFn: addPasskey,
+    onError: (error) => toast.error(errorMessage(error)),
+    onSuccess: () => toast.success("Passkey added."),
+  });
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  function submitApiKey(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     createKeyMutation.mutate(fieldValue(formData, "name"));
   }
 
+  function submitPasskey(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    addPasskeyMutation.mutate(fieldValue(formData, "name"));
+  }
+
   async function copyApiKey() {
     if (!apiKey) return;
-    try {
-      await navigator.clipboard.writeText(apiKey);
-      toast.success("API key copied.");
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not copy API key.");
-    }
+    await copyToClipboard(apiKey, "API key copied.");
+  }
+
+  async function copyDeviceCommand() {
+    await copyToClipboard("caulk auth login --device-auth", "Device auth command copied.");
+  }
+
+  async function copyApiKeyCommand() {
+    await copyToClipboard("caulk auth login --api-key <key>", "API key command copied.");
   }
 
   return (
@@ -384,79 +448,278 @@ function SettingsPanel({ archivedCount, linkCount }: { archivedCount: number; li
         <SettingsIcon />
         Settings
       </DialogTrigger>
-      <DialogContent className="border-white/15 bg-[linear-gradient(135deg,oklch(0.18_0.02_160),oklch(0.12_0_0)_52%,oklch(0.18_0.02_260))] p-0">
-        <div className="grid gap-0 md:grid-cols-[0.9fr_1.1fr]">
-          <div className="border-b border-white/10 p-6 md:border-r md:border-b-0">
-            <DialogHeader>
-              <Badge variant="success">settings</Badge>
-              <DialogTitle className="mt-4 text-2xl tracking-[-0.04em]">Operator keys</DialogTitle>
-              <DialogDescription>
-                Create short-lived working credentials for `caulk` and keep the admin surface isolated from the blog.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="mt-8 grid grid-cols-2 gap-px overflow-hidden border border-white/10 bg-white/10 text-xs">
-              <div className="bg-background/70 p-3">
-                <p className="text-muted-foreground">links</p>
-                <p className="mt-2 text-2xl">{linkCount}</p>
-              </div>
-              <div className="bg-background/70 p-3">
-                <p className="text-muted-foreground">archived</p>
-                <p className="mt-2 text-2xl">{archivedCount}</p>
-              </div>
+      <DialogContent className="max-w-5xl border-white/15 bg-[linear-gradient(135deg,oklch(0.18_0.02_160),oklch(0.12_0_0)_48%,oklch(0.17_0.02_250))] p-0">
+        <Tabs
+          orientation="vertical"
+          value={activeTab}
+          onValueChange={(value: unknown) => setActiveTab(parseSecurityTab(value))}
+          className="block"
+        >
+          <SidebarProvider defaultOpen className="min-h-[34rem] overflow-hidden bg-transparent">
+            <div className="grid min-h-[34rem] md:grid-cols-[16rem_minmax(0,1fr)]">
+              <Sidebar collapsible="none" className="border-r border-white/10 bg-black/20">
+                <SidebarHeader className="p-5">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span className="inline-flex size-8 items-center justify-center border border-emerald-300/25 bg-emerald-400/10 text-emerald-200">
+                      <SettingsIcon className="size-4" />
+                    </span>
+                    Settings
+                  </div>
+                </SidebarHeader>
+                <SidebarContent>
+                  <SidebarGroup>
+                    <SidebarGroupLabel className="tracking-[0.18em] uppercase">
+                      <ShieldCheckIcon className="size-3.5" />
+                      Security
+                    </SidebarGroupLabel>
+                    <SidebarGroupContent>
+                      <TabsList
+                        render={<SidebarMenu />}
+                        variant="line"
+                        className="h-auto w-full items-stretch gap-1 bg-transparent p-0"
+                      >
+                        {securityTabs.map((tab) => (
+                          <SidebarMenuItem key={tab.value}>
+                            <SidebarMenuButton
+                              isActive={activeTab === tab.value}
+                              render={<TabsTrigger value={tab.value} />}
+                              className="h-auto items-start gap-3 px-2.5 py-2.5 data-active:bg-emerald-400/10 data-active:text-emerald-100 [&>svg]:mt-0.5"
+                            >
+                              {tab.icon}
+                              <span className="grid gap-0.5">
+                                <span>{tab.label}</span>
+                                <span className="font-normal text-muted-foreground">{tab.description}</span>
+                              </span>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        ))}
+                      </TabsList>
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+                </SidebarContent>
+                <SidebarFooter className="border-t border-white/10 p-5 text-xs text-muted-foreground">
+                  <p className="break-all text-foreground">{ownerEmail}</p>
+                  <div className="grid grid-cols-2 gap-px overflow-hidden border border-white/10 bg-white/10">
+                    <div className="bg-background/80 p-2">
+                      <p>links</p>
+                      <p className="mt-1 text-lg text-foreground">{linkCount}</p>
+                    </div>
+                    <div className="bg-background/80 p-2">
+                      <p>archived</p>
+                      <p className="mt-1 text-lg text-foreground">{archivedCount}</p>
+                    </div>
+                  </div>
+                </SidebarFooter>
+              </Sidebar>
+
+              <section className="min-w-0 p-5 sm:p-7">
+                <DialogHeader className="border-b border-white/10 pb-5">
+                  <Badge variant="success">security</Badge>
+                  <DialogTitle className="mt-3 text-3xl tracking-[-0.05em]">Security and login</DialogTitle>
+                  <DialogDescription>
+                    Manage caulk admin credentials for browser login, passkeys, and the `caulk` CLI.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <TabsContent value="device" className="mt-6">
+                  <DeviceAuthSettings onCopyCommand={copyDeviceCommand} />
+                </TabsContent>
+                <TabsContent value="passkeys" className="mt-6">
+                  <PasskeySettings isPending={addPasskeyMutation.isPending} onSubmit={submitPasskey} />
+                </TabsContent>
+                <TabsContent value="api-keys" className="mt-6">
+                  <ApiKeySettings
+                    apiKey={apiKey}
+                    isPending={createKeyMutation.isPending}
+                    onCopyApiKey={copyApiKey}
+                    onCopyCommand={copyApiKeyCommand}
+                    onSubmit={submitApiKey}
+                  />
+                </TabsContent>
+              </section>
             </div>
-            <div className="mt-6 space-y-2 text-xs text-muted-foreground">
-              <p className="flex items-center gap-2">
-                <LinkIcon className="size-3.5" />
-                {env.VITE_SERVER_URL}
-              </p>
-              <p className="flex items-center gap-2">
-                <CommandIcon className="size-3.5" />
-                bin: caulk
-              </p>
-            </div>
-          </div>
-
-          <div className="p-6">
-            <form className="grid gap-4" onSubmit={submit}>
-              <Field label="API key name">
-                <Input name="name" defaultValue="good links client" required />
-              </Field>
-              <Button type="submit" disabled={createKeyMutation.isPending}>
-                <KeyRoundIcon />
-                {createKeyMutation.isPending ? "Creating..." : "Create API key"}
-              </Button>
-            </form>
-
-            {apiKey && (
-              <div className="mt-6 border border-emerald-300/20 bg-emerald-400/10 p-3">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-xs font-medium text-emerald-200">Copy now. It will not be shown again.</p>
-                  <Button type="button" size="sm" variant="outline" onClick={copyApiKey}>
-                    <ClipboardIcon />
-                    Copy
-                  </Button>
-                </div>
-                <pre className="mt-3 max-h-28 overflow-auto whitespace-pre-wrap break-all text-xs text-emerald-100">
-                  {apiKey}
-                </pre>
-              </div>
-            )}
-
-            <Separator className="my-6 bg-white/10" />
-
-            <div className="space-y-3 text-xs leading-5 text-muted-foreground">
-              <p className="font-medium text-foreground">Device authorization</p>
-              <p>
-                Run <code className="border border-white/10 bg-black/30 px-1 py-0.5">caulk auth login --device-auth</code>, approve the code on the device screen, then use bearer auth for CLI writes.
-              </p>
-              <a className="inline-flex items-center gap-1 text-emerald-200 hover:text-emerald-100" href="/device">
-                Open device approval <ArrowUpRightIcon className="size-3" />
-              </a>
-            </div>
-          </div>
-        </div>
+          </SidebarProvider>
+        </Tabs>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function DeviceAuthSettings({ onCopyCommand }: { onCopyCommand: () => void }) {
+  return (
+    <div className="space-y-5">
+      <SecurityPanelHeader
+        icon={<RadioTowerIcon />}
+        title="Device authorization"
+        description="Use this when the CLI cannot complete an interactive browser session itself."
+      />
+      <SecurityRow
+        label="CLI login"
+        description="Run the command, approve the displayed code here, then the CLI stores bearer auth."
+        value="caulk auth login --device-auth"
+        action={
+          <Button type="button" size="sm" variant="outline" onClick={onCopyCommand}>
+            <ClipboardIcon />
+            Copy
+          </Button>
+        }
+      />
+      <SecurityRow
+        label="Approval screen"
+        description="Codes open on admin.caulk.lol and stay behind the owner session gate."
+        value="/device"
+        action={
+          <a href="/device">
+            <Button type="button" size="sm" variant="outline">
+              Open
+              <ArrowUpRightIcon />
+            </Button>
+          </a>
+        }
+      />
+      <p className="border border-white/10 bg-black/20 p-3 text-xs leading-5 text-muted-foreground">
+        The device flow is intended for `caulk auth login --device-auth`. API writes still require an owner-approved session or token.
+      </p>
+    </div>
+  );
+}
+
+function PasskeySettings({
+  isPending,
+  onSubmit,
+}: {
+  isPending: boolean;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+}) {
+  return (
+    <div className="space-y-5">
+      <SecurityPanelHeader
+        icon={<FingerprintIcon />}
+        title="Passkeys"
+        description="Add a WebAuthn credential for this admin account. Your browser will show the secure prompt."
+      />
+      <form className="grid gap-4 border border-white/10 bg-black/20 p-4" onSubmit={onSubmit}>
+        <Field label="Passkey name">
+          <Input name="name" defaultValue="caulk admin passkey" required />
+        </Field>
+        <Button type="submit" disabled={isPending}>
+          <FingerprintIcon />
+          {isPending ? "Opening secure prompt..." : "Add passkey"}
+        </Button>
+      </form>
+      <div className="grid gap-px overflow-hidden border border-white/10 bg-white/10 sm:grid-cols-2">
+        <MiniSecurityCard label="Primary use" value="Fast browser login" />
+        <MiniSecurityCard label="Backup" value="Email OTP remains available" />
+      </div>
+    </div>
+  );
+}
+
+function ApiKeySettings({
+  apiKey,
+  isPending,
+  onCopyApiKey,
+  onCopyCommand,
+  onSubmit,
+}: {
+  apiKey: string | null;
+  isPending: boolean;
+  onCopyApiKey: () => void;
+  onCopyCommand: () => void;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+}) {
+  return (
+    <div className="space-y-5">
+      <SecurityPanelHeader
+        icon={<KeyRoundIcon />}
+        title="API keys"
+        description="Create a one-time key for `caulk auth login --api-key` or automation that cannot use device auth."
+      />
+      <form className="grid gap-4 border border-white/10 bg-black/20 p-4" onSubmit={onSubmit}>
+        <Field label="API key name">
+          <Input name="name" defaultValue="caulk cli" required />
+        </Field>
+        <Button type="submit" disabled={isPending}>
+          <KeyRoundIcon />
+          {isPending ? "Creating..." : "Create API key"}
+        </Button>
+      </form>
+
+      {apiKey && (
+        <div className="border border-emerald-300/20 bg-emerald-400/10 p-3">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs font-medium text-emerald-200">Copy now. It will not be shown again.</p>
+            <Button type="button" size="sm" variant="outline" onClick={onCopyApiKey}>
+              <ClipboardIcon />
+              Copy
+            </Button>
+          </div>
+          <pre className="mt-3 max-h-28 overflow-auto whitespace-pre-wrap break-all text-xs text-emerald-100">
+            {apiKey}
+          </pre>
+        </div>
+      )}
+
+      <SecurityRow
+        label="CLI command"
+        description="Store the generated secret locally in the caulk config directory."
+        value="caulk auth login --api-key <key>"
+        action={
+          <Button type="button" size="sm" variant="outline" onClick={onCopyCommand}>
+            <ClipboardIcon />
+            Copy
+          </Button>
+        }
+      />
+    </div>
+  );
+}
+
+function SecurityPanelHeader({ description, icon, title }: { description: string; icon: ReactNode; title: string }) {
+  return (
+    <div className="flex items-start gap-3">
+      <span className="inline-flex size-10 shrink-0 items-center justify-center border border-emerald-300/20 bg-emerald-400/10 text-emerald-200 [&_svg]:size-4">
+        {icon}
+      </span>
+      <div>
+        <h3 className="text-lg font-medium tracking-tight">{title}</h3>
+        <p className="mt-1 max-w-xl text-xs leading-5 text-muted-foreground">{description}</p>
+      </div>
+    </div>
+  );
+}
+
+function SecurityRow({
+  action,
+  description,
+  label,
+  value,
+}: {
+  action: ReactNode;
+  description: string;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="grid gap-3 border border-white/10 bg-black/20 p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+      <div className="min-w-0">
+        <p className="text-sm font-medium">{label}</p>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground">{description}</p>
+        <code className="mt-3 inline-flex max-w-full border border-white/10 bg-black/30 px-2 py-1 text-xs text-emerald-100">
+          <span className="truncate">{value}</span>
+        </code>
+      </div>
+      {action}
+    </div>
+  );
+}
+
+function MiniSecurityCard({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="bg-background/80 p-3">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="mt-2 text-sm text-foreground">{value}</p>
+    </div>
   );
 }
 
@@ -540,6 +803,28 @@ function formatDate(value: string) {
     day: "2-digit",
     month: "short",
   }).format(new Date(value));
+}
+
+async function addPasskey(name: string) {
+  const result = await authClient.passkey.addPasskey({ name });
+  if (result.error) {
+    throw new Error(result.error.message ?? "Could not add passkey.");
+  }
+  return result.data;
+}
+
+async function copyToClipboard(value: string, successMessage: string) {
+  try {
+    await navigator.clipboard.writeText(value);
+    toast.success(successMessage);
+  } catch (error) {
+    toast.error(error instanceof Error ? error.message : "Could not copy value.");
+  }
+}
+
+function parseSecurityTab(value: unknown): SecurityTab {
+  if (value === "device" || value === "passkeys" || value === "api-keys") return value;
+  throw new Error("Invalid security tab.");
 }
 
 function errorMessage(error: unknown) {
