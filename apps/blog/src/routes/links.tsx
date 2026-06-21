@@ -1,22 +1,28 @@
+import { type GoodLink, linksResponseSchema } from "@caulk.lol/api/links";
+import { env } from "@caulk.lol/env/web";
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { EmptyState } from "@/components/empty-state";
 import { HomeLayout } from "@/components/layout/home";
 import { formatDate, formatDateTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
-import { type GoodLink, listLinks, requireLinksDb } from "@/lib/links/queries";
+
+type LinksLoaderData = {
+  links: GoodLink[];
+  error?: string;
+};
 
 export const Route = createFileRoute("/links")({
   loader: () => serverLoader(),
   component: LinksPage,
 });
 
-const serverLoader = createServerFn({ method: "GET" }).handler(async () => {
+const serverLoader = createServerFn({ method: "GET" }).handler(async (): Promise<LinksLoaderData> => {
   try {
-    return { links: await listLinks(requireLinksDb()) };
+    return { links: await fetchLinks() };
   } catch (error) {
     return {
-      links: [] as GoodLink[],
+      links: [],
       error: error instanceof Error ? error.message : "Failed to load links.",
     };
   }
@@ -87,4 +93,14 @@ function LinkRow({ link }: { link: GoodLink }) {
       )}
     </article>
   );
+}
+
+async function fetchLinks(): Promise<GoodLink[]> {
+  const response = await fetch(new URL("/api/links", env.VITE_SERVER_URL));
+  if (!response.ok) {
+    throw new Error(`Links API returned ${response.status}.`);
+  }
+
+  const payload: unknown = await response.json();
+  return linksResponseSchema.parse(payload).links;
 }
