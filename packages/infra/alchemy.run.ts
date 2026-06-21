@@ -5,6 +5,7 @@ import alchemy from "alchemy";
 import {
   AnalyticsEngineDataset,
   D1Database,
+  EmailSender,
   KVNamespace,
   TanStackStart,
   Worker,
@@ -59,6 +60,11 @@ const adminBootstrapToken = requiredSecret(
 const betterAuthUrl = requiredEnv("BETTER_AUTH_URL");
 const corsOrigin = requiredEnv("CORS_ORIGIN");
 const ownerEmail = requiredEnv("OWNER_EMAIL");
+const emailSender = EmailSender({
+  allowedDestinationAddresses: [ownerEmail],
+  allowedSenderAddresses: [ownerEmail],
+  dev: { remote: true },
+});
 const analyticsAccountId = readEnv("ANALYTICS_ACCOUNT_ID") ?? readEnv("CLOUDFLARE_ACCOUNT_ID");
 const analyticsApiToken = readEnv("ANALYTICS_API_TOKEN") ?? readEnv("CLOUDFLARE_API_TOKEN");
 
@@ -99,6 +105,7 @@ export const server = await Worker("server", {
     BETTER_AUTH_URL: betterAuthUrl,
     ADMIN_BOOTSTRAP_TOKEN: adminBootstrapToken,
     OWNER_EMAIL: ownerEmail,
+    EMAIL: emailSender,
   },
   dev: {
     port: 3001,
@@ -117,6 +124,7 @@ const sharedSiteBindings = {
   BETTER_AUTH_URL: betterAuthUrl,
   ADMIN_BOOTSTRAP_TOKEN: adminBootstrapToken,
   OWNER_EMAIL: ownerEmail,
+  EMAIL: emailSender,
   ANALYTICS_DATASET: analyticsDatasetName,
   VITE_SERVER_URL: serverUrl,
   ...optionalPlainBinding("ANALYTICS_ACCOUNT_ID", analyticsAccountId),

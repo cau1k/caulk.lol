@@ -35,11 +35,4 @@ Shortcut shape:
 4. POST JSON to `/api/links`.
 5. Show response status.
 
-Bootstrap owner account once:
-
-```sh
-curl -X POST https://caulk.lol/api/admin/bootstrap \
-  -H 'Content-Type: application/json' \
-  -H "x-bootstrap-token: $ADMIN_BOOTSTRAP_TOKEN" \
-  -d '{"email":"'$OWNER_EMAIL'","password":"change-me-now","name":"Zero"}'
-```
+Create the owner session with email OTP at `/admin/login`, then create an API key from `/admin/links`.

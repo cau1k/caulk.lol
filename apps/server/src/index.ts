@@ -24,7 +24,7 @@ app.use("/*", async (c, next) => {
   const corsMiddleware = cors({
     origin: parseCorsOrigins(requireEnvString(c.env.CORS_ORIGIN, "CORS_ORIGIN")),
     allowMethods: ["GET", "POST", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization"],
+    allowHeaders: ["Content-Type", "Authorization", "x-api-key"],
     credentials: true,
   });
 

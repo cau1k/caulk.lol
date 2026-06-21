@@ -8,6 +8,8 @@
     "dev:bare": "vite dev"
   },
   "dependencies": {
+    "@better-auth/api-key": "^1.6.14",
+    "@better-auth/passkey": "^1.6.14",
     "@caulk.lol/api": "workspace:*",
     "@caulk.lol/env": "workspace:*",
     "@caulk.lol/ui": "workspace:*",

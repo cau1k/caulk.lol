@@ -12,6 +12,10 @@ export const user = sqliteTable("user", {
   image: text("image"),
   createdAt: timestamp("createdAt").notNull(),
   updatedAt: timestamp("updatedAt").notNull(),
+  role: text("role"),
+  banned: booleanInteger("banned"),
+  banReason: text("banReason"),
+  banExpires: timestamp("banExpires"),
 });
 
 export const session = sqliteTable(
@@ -27,6 +31,7 @@ export const session = sqliteTable(
     userId: text("userId")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
+    impersonatedBy: text("impersonatedBy"),
   },
   (table) => [index("session_userId_idx").on(table.userId)],
 );
@@ -99,9 +104,47 @@ export const apikey = sqliteTable(
   ],
 );
 
+export const passkey = sqliteTable(
+  "passkey",
+  {
+    id: text("id").primaryKey(),
+    name: text("name"),
+    publicKey: text("publicKey").notNull(),
+    userId: text("userId")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    credentialID: text("credentialID").notNull(),
+    counter: integer("counter").notNull(),
+    deviceType: text("deviceType").notNull(),
+    backedUp: booleanInteger("backedUp").notNull(),
+    transports: text("transports"),
+    createdAt: timestamp("createdAt"),
+    aaguid: text("aaguid"),
+  },
+  (table) => [
+    index("passkey_userId_idx").on(table.userId),
+    index("passkey_credentialID_idx").on(table.credentialID),
+  ],
+);
+
+export const deviceCode = sqliteTable("deviceCode", {
+  id: text("id").primaryKey(),
+  deviceCode: text("deviceCode").notNull(),
+  userCode: text("userCode").notNull(),
+  userId: text("userId"),
+  expiresAt: timestamp("expiresAt").notNull(),
+  status: text("status").notNull(),
+  lastPolledAt: timestamp("lastPolledAt"),
+  pollingInterval: integer("pollingInterval"),
+  clientId: text("clientId"),
+  scope: text("scope"),
+});
+
 export const authSchema = {
   account,
   apikey,
+  deviceCode,
+  passkey,
   session,
   user,
   verification,
@@ -110,6 +153,7 @@ export const authSchema = {
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
+  passkeys: many(passkey),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -122,6 +166,13 @@ export const sessionRelations = relations(session, ({ one }) => ({
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, {
     fields: [account.userId],
+    references: [user.id],
+  }),
+}));
+
+export const passkeyRelations = relations(passkey, ({ one }) => ({
+  user: one(user, {
+    fields: [passkey.userId],
     references: [user.id],
   }),
 }));
