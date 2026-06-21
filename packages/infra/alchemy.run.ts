@@ -60,10 +60,15 @@ const adminBootstrapToken = requiredSecret(
 const betterAuthUrl = requiredEnv("BETTER_AUTH_URL");
 const corsOrigin = requiredEnv("CORS_ORIGIN");
 const ownerEmail = requiredEnv("OWNER_EMAIL");
-const emailSender = EmailSender({
+const authEmailFrom = "noreply@caulk.lol";
+const serverEmailSender = EmailSender({
   allowedDestinationAddresses: [ownerEmail],
-  allowedSenderAddresses: [ownerEmail],
+  allowedSenderAddresses: [authEmailFrom],
   dev: { remote: true },
+});
+const siteEmailSender = EmailSender({
+  allowedDestinationAddresses: [ownerEmail],
+  allowedSenderAddresses: [authEmailFrom],
 });
 const analyticsAccountId = readEnv("ANALYTICS_ACCOUNT_ID") ?? readEnv("CLOUDFLARE_ACCOUNT_ID");
 const analyticsApiToken = readEnv("ANALYTICS_API_TOKEN") ?? readEnv("CLOUDFLARE_API_TOKEN");
@@ -105,7 +110,8 @@ export const server = await Worker("server", {
     BETTER_AUTH_URL: betterAuthUrl,
     ADMIN_BOOTSTRAP_TOKEN: adminBootstrapToken,
     OWNER_EMAIL: ownerEmail,
-    EMAIL: emailSender,
+    AUTH_EMAIL_FROM: authEmailFrom,
+    EMAIL: serverEmailSender,
   },
   dev: {
     port: 3001,
@@ -124,6 +130,7 @@ const sharedSiteBindings = {
   BETTER_AUTH_URL: betterAuthUrl,
   ADMIN_BOOTSTRAP_TOKEN: adminBootstrapToken,
   OWNER_EMAIL: ownerEmail,
+  AUTH_EMAIL_FROM: authEmailFrom,
   ANALYTICS_DATASET: analyticsDatasetName,
   VITE_SERVER_URL: serverUrl,
   ...optionalPlainBinding("ANALYTICS_ACCOUNT_ID", analyticsAccountId),
@@ -192,7 +199,10 @@ export const blog = await TanStackStart("blog", {
             ],
           },
   },
-  bindings: sharedSiteBindings,
+  bindings: {
+    ...sharedSiteBindings,
+    EMAIL: siteEmailSender,
+  },
   dev: {
     command: "vite dev --host 127.0.0.1 --port 3000",
   },

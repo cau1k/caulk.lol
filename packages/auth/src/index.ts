@@ -156,8 +156,10 @@ async function sendOwnerOtp({
   otp: string;
   type: string;
 }) {
+  const emailFrom = normalizeEmail(requireEnvString(runtimeEnv.AUTH_EMAIL_FROM, "AUTH_EMAIL_FROM"));
+
   await requireBinding(runtimeEnv.EMAIL, "EMAIL").send({
-    from: ownerEmail,
+    from: emailFrom,
     to: ownerEmail,
     subject: `Your sign-in code is: ${otp}`,
     text: [
