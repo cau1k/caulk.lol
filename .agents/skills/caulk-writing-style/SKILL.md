@@ -33,6 +33,7 @@ Write like a technically sharp builder with strong taste, personal context, and 
 - Prefer practical lived experience over abstract claims. Name the tools, versions, APIs, providers, and failure modes.
 - Use rhetorical questions sparingly to pull the reader into the argument.
 - Avoid em dashes. Use commas, parentheses, colons, or simple hyphens.
+- Avoid lazy binary contrast tropes like "it's not X, it's Y" or "the real problem isn't X, it's Y" unless the contrast genuinely sharpens the idea. Overusing this reeks of LLM prose. Usually, state the point directly, then add the concrete detail that makes it true.
 
 ## Shape of a post
 
@@ -43,7 +44,7 @@ Good openings usually do one of these:
 1. State the thesis directly.
 2. Start with a real workflow problem.
 3. Admit a personal change in opinion.
-4. Contrast what people think is happening with what is actually happening.
+4. Start from a concrete mismatch between the popular explanation and the actual mechanics.
 
 Then move quickly into specifics:
 
@@ -77,10 +78,19 @@ The author often argues from systems and incentives:
 Useful frames:
 
 - "This is good, but only under these conditions."
-- "The real problem is not X. It's Y."
 - "The ugly choice is..."
 - "For subscription users, the incentive changes."
 - "This is not infrastructure. It is good enough to get me back to work."
+
+Use contrast sparingly. If a draft starts stacking lines like "the issue is not the fab, it is the supply chain" or "the miracle is not the machine, it is the ecosystem," rewrite toward direct causality instead:
+
+Weak:
+
+> The miracle is not just that we can draw tiny patterns on silicon. The miracle is doing it repeatedly at scale.
+
+Better:
+
+> Drawing tiny patterns on silicon is obviously difficult. Doing it over and over again, at industrial scale, with acceptable yields, across thousands of steps, is the real problem.
 
 ## Technical texture
 
@@ -155,4 +165,3 @@ Weak:
 Caulk-style:
 
 > Closing the loop isn't new. But you are. Agents only look magical when the system around them refuses to give them feedback.
-
