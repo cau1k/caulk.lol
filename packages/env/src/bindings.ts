@@ -1,7 +1,4 @@
-import type { CloudflareEnv as BoundCloudflareEnv } from "../env";
-
-export type CloudflareEnv = BoundCloudflareEnv;
-export type RuntimeEnv = Partial<CloudflareEnv>;
+export type { CloudflareEnv, RuntimeEnv } from "./types";
 
 export class MissingRuntimeBindingError extends Error {
   constructor(name: string) {

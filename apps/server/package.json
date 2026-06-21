@@ -22,7 +22,6 @@
   },
   "devDependencies": {
     "@caulk.lol/config": "workspace:*",
-    "@cloudflare/workers-types": "catalog:",
     "@types/node": "catalog:",
     "alchemy": "catalog:",
     "tsdown": "^0.21.9",

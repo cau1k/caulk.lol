@@ -1,3 +1,9 @@
+import { createAuth } from "@caulk.lol/auth";
+import { getRuntimeEnv } from "@caulk.lol/env/runtime";
+
 export { createAuth } from "@caulk.lol/auth";
 export type { AuthSession } from "@caulk.lol/auth";
-export { getAuth } from "@caulk.lol/auth/runtime";
+
+export function getAuth(request?: Request) {
+  return createAuth(getRuntimeEnv(request));
+}

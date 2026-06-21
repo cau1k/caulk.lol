@@ -1,4 +1,3 @@
-import type {} from "../env";
 import { env as importedEnv } from "cloudflare:workers";
 
 import type { RuntimeEnv } from "./bindings";

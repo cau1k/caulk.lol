@@ -1,12 +1,14 @@
-import type { D1Database } from "@cloudflare/workers-types";
+import type { CloudflareEnv } from "@caulk.lol/env/bindings";
 import { getRuntimeEnv, readEnvString } from "@caulk.lol/env/runtime";
 
-export type AppEnv = {
-  LINKS_DB?: D1Database;
-  BETTER_AUTH_SECRET?: unknown;
-  ADMIN_BOOTSTRAP_TOKEN?: unknown;
-  OWNER_EMAIL?: unknown;
-};
+export type LinksDatabase = CloudflareEnv["LINKS_DB"];
+
+export type AppEnv = Partial<
+  Pick<
+    CloudflareEnv,
+    "LINKS_DB" | "BETTER_AUTH_SECRET" | "ADMIN_BOOTSTRAP_TOKEN" | "OWNER_EMAIL"
+  >
+>;
 
 export function getAppEnv(request?: Request): AppEnv {
   return getRuntimeEnv(request);
@@ -14,6 +16,6 @@ export function getAppEnv(request?: Request): AppEnv {
 
 export { readEnvString };
 
-export function getLinksDb(request?: Request): D1Database | undefined {
+export function getLinksDb(request?: Request): LinksDatabase | undefined {
   return getAppEnv(request).LINKS_DB;
 }

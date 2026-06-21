@@ -18,9 +18,9 @@
     "deploy": "turbo -F @caulk.lol/infra deploy",
     "destroy": "turbo -F @caulk.lol/infra destroy",
     "links:add": "node scripts/links-add.ts",
-    "lint": "oxlint --threads=1",
+    "lint": "node scripts/run-oxlint.mjs",
     "format": "oxfmt --write .",
-    "check": "oxlint && oxfmt --write ."
+    "check": "node scripts/run-oxlint.mjs && oxfmt --write ."
   },
   "dependencies": {
     "@caulk.lol/env": "workspace:*",
@@ -32,7 +32,6 @@
   },
   "devDependencies": {
     "@caulk.lol/config": "workspace:*",
-    "@cloudflare/workers-types": "catalog:",
     "@types/node": "catalog:",
     "oxfmt": "^0.53.0",
     "oxlint": "^1.68.0",

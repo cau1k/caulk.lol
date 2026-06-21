@@ -1,5 +1,5 @@
-import type { D1Database } from "@cloudflare/workers-types";
 import { getLinksDb } from "@/lib/worker-env";
+import type { LinksDatabase } from "@/lib/worker-env";
 import type {
   CreateLinkInput,
   LinkStatus,
@@ -47,14 +47,14 @@ export class DuplicateLinkError extends Error {
   }
 }
 
-export function requireLinksDb(request?: Request): D1Database {
+export function requireLinksDb(request?: Request): LinksDatabase {
   const db = getLinksDb(request);
   if (!db) throw new LinksDbUnavailableError();
   return db;
 }
 
 export async function listLinks(
-  db: D1Database,
+  db: LinksDatabase,
   options: { includeArchived?: boolean } = {},
 ): Promise<GoodLink[]> {
   const query = options.includeArchived
@@ -66,7 +66,7 @@ export async function listLinks(
 }
 
 export async function findLinkById(
-  db: D1Database,
+  db: LinksDatabase,
   id: string,
 ): Promise<GoodLink | null> {
   const row = await db
@@ -78,7 +78,7 @@ export async function findLinkById(
 }
 
 export async function createLink(
-  db: D1Database,
+  db: LinksDatabase,
   input: CreateLinkInput & { title: string },
 ): Promise<GoodLink> {
   const canonicalUrl = normalizeUrl(input.url);
@@ -119,7 +119,7 @@ export async function createLink(
 }
 
 export async function updateLink(
-  db: D1Database,
+  db: LinksDatabase,
   id: string,
   input: UpdateLinkInput,
 ): Promise<GoodLink | null> {
