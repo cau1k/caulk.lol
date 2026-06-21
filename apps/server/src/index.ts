@@ -8,6 +8,8 @@ import { evlog, type EvlogVariables } from "evlog/hono";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 
+import { linksApi } from "./links-api";
+
 initLogger({
   env: { service: "caulk.lol-server" },
 });
@@ -23,7 +25,7 @@ app.use(evlog());
 app.use("/*", async (c, next) => {
   const corsMiddleware = cors({
     origin: parseCorsOrigins(requireEnvString(c.env.CORS_ORIGIN, "CORS_ORIGIN")),
-    allowMethods: ["GET", "POST", "OPTIONS"],
+    allowMethods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization", "x-api-key"],
     credentials: true,
   });
@@ -32,6 +34,8 @@ app.use("/*", async (c, next) => {
 });
 
 app.on(["POST", "GET"], "/api/auth/*", (c) => createAuth(c.env).handler(c.req.raw));
+
+app.route("/api", linksApi);
 
 app.use(
   "/trpc/*",
