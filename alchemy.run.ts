@@ -9,8 +9,10 @@ import {
 } from "alchemy/cloudflare";
 import { CloudflareStateStore } from "alchemy/state";
 
+const stage = process.env.STAGE ?? "prod";
+
 const app = await alchemy("caulk-lol", {
-  stage: process.env.STAGE ?? "prod",
+  stage,
   stateStore: process.env.CI
     ? (scope) => new CloudflareStateStore(scope, { forceUpdate: true })
     : undefined,
@@ -42,13 +44,10 @@ export const site = await TanStackStart("site", {
   // Disable the workers.dev URL to avoid leaking account subdomain in public URLs.
   url: false,
   assets: {
-    run_worker_first: [
-      "/*",
-      "!/assets/*",
-      "!/fonts/*",
-      "!/media/*",
-      "!/cdn-cgi/*",
-    ],
+    run_worker_first:
+      stage === "prod"
+        ? ["/*", "!/assets/*", "!/fonts/*", "!/media/*", "!/cdn-cgi/*"]
+        : false,
   },
   build: {
     memoize:
@@ -92,7 +91,7 @@ export const site = await TanStackStart("site", {
     ),
     ANALYTICS_DATASET: analyticsDatasetName,
   },
-  dev: { command: "vite dev --port 3000" },
+  dev: { command: "vite dev --host 127.0.0.1 --port 3000" },
 });
 
 console.log({ url: site.url });

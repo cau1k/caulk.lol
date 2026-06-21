@@ -8,6 +8,8 @@ function toDate(input: string | Date): Date {
   return new Date(input);
 }
 
+const authorTimeZone = "America/New_York";
+
 export function formatDate(date: string | Date) {
   const d = toDate(date);
   if (Number.isNaN(d.getTime())) return "";
@@ -16,6 +18,7 @@ export function formatDate(date: string | Date) {
     year: "numeric",
     month: "short",
     day: "numeric",
+    timeZone: authorTimeZone,
   });
 }
 
@@ -27,10 +30,12 @@ export function formatDateTime(date: string | Date) {
     year: "numeric",
     month: "short",
     day: "numeric",
+    timeZone: authorTimeZone,
   });
   const timePart = d.toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "2-digit",
+    timeZone: authorTimeZone,
   });
 
   return `${datePart} at ${timePart}`;
