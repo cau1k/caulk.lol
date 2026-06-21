@@ -1,9 +1,9 @@
-import { createAuth } from "@caulk.lol/auth";
 import { getRuntimeEnv } from "@caulk.lol/env/runtime";
+import { createTanstackAuth } from "@caulk.lol/auth/tanstack";
 
-export { createAuth } from "@caulk.lol/auth";
+export { createTanstackAuth as createAuth } from "@caulk.lol/auth/tanstack";
 export type { AuthSession } from "@caulk.lol/auth";
 
 export function getAuth(request?: Request) {
-  return createAuth(getRuntimeEnv(request));
+  return createTanstackAuth(getRuntimeEnv(request));
 }

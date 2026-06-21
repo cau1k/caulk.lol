@@ -8,14 +8,20 @@ import {
   type RuntimeEnv,
 } from "@caulk.lol/env/bindings";
 import { betterAuth } from "better-auth/minimal";
-import { tanstackStartCookies } from "better-auth/tanstack-start";
 
 export function createAuth(runtimeEnv: RuntimeEnv) {
+  return betterAuth({
+    ...createAuthConfig(runtimeEnv),
+    plugins: [createApiKeyPlugin()],
+  });
+}
+
+export function createAuthConfig(runtimeEnv: RuntimeEnv) {
   const db = createDb(runtimeEnv);
   const linksDb = requireBinding(runtimeEnv.LINKS_DB, "LINKS_DB");
   const ownerEmail = readEnvString(runtimeEnv.OWNER_EMAIL);
 
-  return betterAuth({
+  return {
     baseURL: requireEnvString(runtimeEnv.BETTER_AUTH_URL, "BETTER_AUTH_URL"),
     secret: requireEnvString(runtimeEnv.BETTER_AUTH_SECRET, "BETTER_AUTH_SECRET"),
     database: drizzleAdapter(db, {
@@ -31,7 +37,7 @@ export function createAuth(runtimeEnv: RuntimeEnv) {
     databaseHooks: {
       user: {
         create: {
-          before: async (user) => {
+          before: async (user: { email: string }) => {
             if (ownerEmail && user.email.toLowerCase() !== ownerEmail.toLowerCase()) {
               return false;
             }
@@ -49,24 +55,7 @@ export function createAuth(runtimeEnv: RuntimeEnv) {
         },
       },
     },
-    plugins: [
-      apiKey({
-        defaultPrefix: "caulk_",
-        enableMetadata: true,
-        permissions: {
-          defaultPermissions: {
-            links: ["write"],
-          },
-        },
-        rateLimit: {
-          enabled: true,
-          maxRequests: 240,
-          timeWindow: 1000 * 60 * 60 * 24,
-        },
-      }),
-      tanstackStartCookies(),
-    ],
-  });
+  };
 }
 
 export type Auth = ReturnType<typeof createAuth>;
@@ -80,4 +69,21 @@ function readTrustedOrigins(runtimeEnv: RuntimeEnv): string[] {
     .split(",")
     .map((origin) => origin.trim())
     .filter((origin) => origin.length > 0);
+}
+
+export function createApiKeyPlugin() {
+  return apiKey({
+    defaultPrefix: "caulk_",
+    enableMetadata: true,
+    permissions: {
+      defaultPermissions: {
+        links: ["write"],
+      },
+    },
+    rateLimit: {
+      enabled: true,
+      maxRequests: 240,
+      timeWindow: 1000 * 60 * 60 * 24,
+    },
+  });
 }
