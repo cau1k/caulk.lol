@@ -124,7 +124,6 @@ const sharedSiteBindings = {
   BETTER_AUTH_URL: betterAuthUrl,
   ADMIN_BOOTSTRAP_TOKEN: adminBootstrapToken,
   OWNER_EMAIL: ownerEmail,
-  EMAIL: emailSender,
   ANALYTICS_DATASET: analyticsDatasetName,
   VITE_SERVER_URL: serverUrl,
   ...optionalPlainBinding("ANALYTICS_ACCOUNT_ID", analyticsAccountId),
