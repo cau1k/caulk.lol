@@ -10,7 +10,7 @@
 
 ## Deploying
 
-- Use git push to deploy to prod. Do not deploy from this machine.
+- Use git push to deploy to prod. Do not deploy from this machine. Watch CI for any failures. Do the simplest fix possible if a failure occurs, then push again and watch.
 
 ## Code Style
 
