@@ -83,7 +83,7 @@ function LinksPage() {
           <div className="space-y-10">
             {groups.map((group) => (
               <section key={group.dateLabel}>
-                <h2 className="mb-4 text-sm font-medium tracking-tight text-muted-foreground">
+                <h2 className="mb-4 font-sans text-xl font-medium tracking-tight text-foreground">
                   {group.dateLabel}
                 </h2>
                 <ol className="group/list list-decimal pl-6" start={group.start}>
