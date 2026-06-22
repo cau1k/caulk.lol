@@ -65,7 +65,6 @@ const authEmailFrom = "noreply@caulk.lol";
 const serverEmailSender = EmailSender({
   allowedDestinationAddresses: [ownerEmail],
   allowedSenderAddresses: [authEmailFrom],
-  dev: { remote: true },
 });
 const siteEmailSender = EmailSender({
   allowedDestinationAddresses: [ownerEmail],

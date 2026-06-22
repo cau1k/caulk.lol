@@ -68,16 +68,9 @@ function Home() {
               <section className="mb-16">
                 <Link to={featured.url} className="group block">
                   <article>
-                    <time
-                      className="text-sm text-muted-foreground"
-                      title={
-                        featured.date
-                          ? formatDateTime(featured.date)
-                          : undefined
-                      }
-                    >
-                      {featured.date && formatDate(featured.date)}
-                    </time>
+                    <h2 className="text-sm font-medium font-mono text-muted-foreground uppercase tracking-wider">
+                      [Latest]
+                    </h2>
                     <h2 className="text-2xl font-semibold mt-2 group-hover:text-primary transition-colors">
                       {featured.title}
                     </h2>
@@ -86,9 +79,6 @@ function Home() {
                         {featured.description}
                       </p>
                     )}
-                    <span className="inline-block mt-4 text-sm font-medium text-primary group-hover:underline">
-                      Read more
-                    </span>
                   </article>
                 </Link>
               </section>
@@ -96,8 +86,8 @@ function Home() {
 
             {rest.length > 0 && (
               <section>
-                <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-6">
-                  Recent
+                <h2 className="text-sm font-medium font-mono text-muted-foreground uppercase tracking-wider">
+                  [Older]
                 </h2>
                 <div className="group/list">
                   {rest.slice(0, 3).map((post) => (
@@ -111,9 +101,7 @@ function Home() {
                       </span>
                       <time
                         className="text-sm text-muted-foreground shrink-0"
-                        title={
-                          post.date ? formatDateTime(post.date) : undefined
-                        }
+                        title={post.date ? formatDateTime(post.date) : undefined}
                       >
                         {post.date && formatDate(post.date)}
                       </time>
@@ -128,10 +116,7 @@ function Home() {
         <footer className="mt-20 pt-8 border-t border-border">
           <div className="flex justify-between text-sm text-muted-foreground">
             <div className="flex items-center gap-4">
-              <Link
-                to="/posts"
-                className="hover:text-foreground transition-colors"
-              >
+              <Link to="/posts" className="hover:text-foreground transition-colors">
                 Archive
               </Link>
             </div>

@@ -1,0 +1,50 @@
+diff --git a/lib/cloudflare/miniflare/build-worker-options.js b/lib/cloudflare/miniflare/build-worker-options.js
+index c45a40dc9e8151a7776bb874ac8662c55b738fee..eb4cbee57d15fae98ebea54888936009f94a530a 100644
+--- a/lib/cloudflare/miniflare/build-worker-options.js
++++ b/lib/cloudflare/miniflare/build-worker-options.js
+@@ -239,9 +239,17 @@ export const buildWorkerOptions = async (input) => {
+             case "send_email": {
+                 const config = {
+                     name: key,
+-                    destination_address: binding.destinationAddress,
+-                    allowed_destination_addresses: binding.allowedDestinationAddresses,
+-                    allowed_sender_addresses: binding.allowedSenderAddresses,
++                    ...(binding.destinationAddress === undefined
++                        ? {}
++                        : { destination_address: binding.destinationAddress }),
++                    ...(binding.allowedDestinationAddresses === undefined
++                        ? {}
++                        : {
++                            allowed_destination_addresses: binding.allowedDestinationAddresses,
++                        }),
++                    ...(binding.allowedSenderAddresses === undefined
++                        ? {}
++                        : { allowed_sender_addresses: binding.allowedSenderAddresses }),
+                 };
+                 if (isRemoteBinding(binding)) {
+                     remoteBindings.push({
+diff --git a/src/cloudflare/miniflare/build-worker-options.ts b/src/cloudflare/miniflare/build-worker-options.ts
+index e07e1846b7717fc630279029921375edae07227a..9560b84dd50584d561ced44c57857db48e271c79 100644
+--- a/src/cloudflare/miniflare/build-worker-options.ts
++++ b/src/cloudflare/miniflare/build-worker-options.ts
+@@ -309,9 +309,17 @@ export const buildWorkerOptions = async (
+       case "send_email": {
+         const config = {
+           name: key,
+-          destination_address: binding.destinationAddress,
+-          allowed_destination_addresses: binding.allowedDestinationAddresses,
+-          allowed_sender_addresses: binding.allowedSenderAddresses,
++          ...(binding.destinationAddress === undefined
++            ? {}
++            : { destination_address: binding.destinationAddress }),
++          ...(binding.allowedDestinationAddresses === undefined
++            ? {}
++            : {
++                allowed_destination_addresses: binding.allowedDestinationAddresses,
++              }),
++          ...(binding.allowedSenderAddresses === undefined
++            ? {}
++            : { allowed_sender_addresses: binding.allowedSenderAddresses }),
+         };
+         if (isRemoteBinding(binding)) {
+           remoteBindings.push({
