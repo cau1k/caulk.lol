@@ -1,5 +1,4 @@
 import { cva } from "class-variance-authority";
-import Link from "fumadocs-core/link";
 import { ChevronDown, Languages } from "lucide-react";
 import {
   type ComponentProps,
@@ -24,7 +23,7 @@ import {
 } from "../../navigation-menu";
 import { buttonVariants } from "../../ui/button";
 import { LanguageToggle, LanguageToggleText } from "../language-toggle";
-import { LinkItem } from "../link-item";
+import { LayoutLink, LinkItem } from "../link-item";
 import { LargeSearchToggle, SearchToggle } from "../search-toggle";
 import {
   type LinkItemType,
@@ -131,12 +130,12 @@ export function Header({
 
   return (
     <HeaderNavigationMenu navRef={navRef} transparentMode={nav.transparentMode}>
-      <Link
+      <LayoutLink
         href={nav.url ?? "/"}
         className="inline-flex items-center gap-2.5 font-semibold"
       >
         {typeof nav.title === "function" ? nav.title({}) : nav.title}
-      </Link>
+      </LayoutLink>
       {nav.children}
       <ul
         className={cn(
@@ -329,11 +328,11 @@ function NavigationMenuLinkItem({
 
       return (
         <NavigationMenuLink key={`${j}-${child.url}`} asChild>
-          <Link
+          <LayoutLink
+            {...rest}
             href={child.url}
             external={child.external}
             onClick={onFeedback}
-            {...rest}
             className={cn(
               "flex flex-col gap-2 rounded-lg border bg-card p-3 transition-colors hover:bg-accent/80 hover:text-accent-foreground",
               rest.className,
@@ -348,7 +347,7 @@ function NavigationMenuLinkItem({
                 </p>
               </>
             )}
-          </Link>
+          </LayoutLink>
         </NavigationMenuLink>
       );
     });
@@ -360,9 +359,9 @@ function NavigationMenuLinkItem({
           onClick={onFeedback}
         >
           {item.url ? (
-            <Link href={item.url} external={item.external}>
+            <LayoutLink href={item.url} external={item.external}>
               {item.text}
-            </Link>
+            </LayoutLink>
           ) : (
             item.text
           )}
@@ -415,9 +414,13 @@ function MobileNavigationMenuLinkItem({
         <p className="text-sm text-muted-foreground">
           {item.url ? (
             <NavigationMenuLink asChild>
-              <Link href={item.url} external={item.external} onClick={onFeedback}>
+              <LayoutLink
+                href={item.url}
+                external={item.external}
+                onClick={onFeedback}
+              >
                 {header}
-              </Link>
+              </LayoutLink>
             </NavigationMenuLink>
           ) : (
             header

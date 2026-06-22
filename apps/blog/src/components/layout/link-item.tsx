@@ -1,6 +1,7 @@
 "use client";
+import { Link as RouterLink } from "@tanstack/react-router";
 import { usePathname } from "fumadocs-core/framework";
-import Link from "fumadocs-core/link";
+import FumadocsLink from "fumadocs-core/link";
 import type { ComponentProps, ReactNode } from "react";
 import { isActive } from "../../lib/is-active";
 
@@ -94,6 +95,27 @@ export type LinkItemType =
   | MenuItemType
   | CustomItemType;
 
+type LayoutLinkProps = Omit<ComponentProps<"a">, "href"> & {
+  external?: boolean;
+  href: string;
+};
+
+export function LayoutLink({ external, href, ref, ...props }: LayoutLinkProps) {
+  if (external || !isSameOriginPath(href)) {
+    return (
+      <FumadocsLink ref={ref} href={href} external={external} {...props}>
+        {props.children}
+      </FumadocsLink>
+    );
+  }
+
+  return (
+    <RouterLink ref={ref} to={href} preload="intent" {...props}>
+      {props.children}
+    </RouterLink>
+  );
+}
+
 export function LinkItem({
   ref,
   item,
@@ -106,7 +128,7 @@ export function LinkItem({
     isActive(item.url, pathname, activeType === "nested-url");
 
   return (
-    <Link
+    <LayoutLink
       ref={ref}
       href={item.url}
       external={item.external}
@@ -114,6 +136,10 @@ export function LinkItem({
       data-active={active}
     >
       {props.children}
-    </Link>
+    </LayoutLink>
   );
+}
+
+function isSameOriginPath(url: string) {
+  return url.startsWith("/") && !url.startsWith("//");
 }
