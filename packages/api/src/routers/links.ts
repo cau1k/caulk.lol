@@ -15,6 +15,7 @@ import {
   updateLinkInputSchema,
 } from "../links";
 import {
+  metadataFromLinkPreview,
   type LinkPreviewCacheStore,
   type LinkPreviewResponse,
   resolveLinkPreview,
@@ -56,8 +57,11 @@ export const linksRouter = router({
   }),
   create: protectedProcedure.input(createLinkInputSchema).mutation(async ({ ctx, input }) => {
     const canonicalUrl = normalizeUrl(input.url);
-    const metadata: LinkMetadataResult =
-      input.title && input.description ? { ok: true } : await fetchLinkMetadata(canonicalUrl);
+    const metadata = await resolveCreateLinkMetadata(
+      canonicalUrl,
+      input,
+      getLinkPreviewCache(ctx.env),
+    );
     const title = input.title ?? (metadata.ok ? metadata.title : undefined);
 
     if (!title) {
@@ -136,4 +140,24 @@ function getLinksDb(env: CloudflareEnv) {
 
 function getLinkPreviewCache(env: CloudflareEnv): LinkPreviewCacheStore | null {
   return env.LINK_PREVIEW_CACHE ?? env.TWEET_CACHE ?? null;
+}
+
+async function resolveCreateLinkMetadata(
+  url: string,
+  input: { title?: string; description?: string },
+  cache: LinkPreviewCacheStore | null,
+): Promise<LinkMetadataResult> {
+  if (input.title && input.description)
+    return { ok: true, title: input.title, description: input.description };
+
+  const previewMetadata = metadataFromLinkPreview(await resolveLinkPreview(url, { cache }));
+  if (previewMetadata.title || previewMetadata.description) {
+    return {
+      ok: true,
+      title: previewMetadata.title,
+      description: previewMetadata.description,
+    };
+  }
+
+  return await fetchLinkMetadata(url);
 }

@@ -138,6 +138,10 @@ export type LinkPreviewProvider = z.infer<typeof linkPreviewProviderSchema>;
 export type LinkPreviewContent = z.infer<typeof linkPreviewContentSchema>;
 export type LinkPreviewResponse = z.infer<typeof linkPreviewResponseSchema>;
 export type LinkPreviewCacheSource = z.infer<typeof linkPreviewCacheSourceSchema>;
+export type LinkPreviewMetadata = {
+  title?: string;
+  description?: string;
+};
 
 export type ResolveLinkPreviewOptions = {
   cache?: LinkPreviewCacheStore | null;
@@ -261,6 +265,39 @@ export async function resolveTweetEmbed(
   throw new Error(
     result.preview.kind === "unavailable" ? result.preview.message : "Tweet unavailable.",
   );
+}
+
+export function metadataFromLinkPreview(preview: LinkPreviewResponse): LinkPreviewMetadata {
+  if (preview.preview.kind === "generic") {
+    return {
+      title: preview.preview.title,
+      description: preview.preview.description,
+    };
+  }
+
+  if (preview.preview.kind === "youtube") {
+    return {
+      title: preview.preview.title,
+      description: preview.preview.authorName
+        ? `YouTube video by ${preview.preview.authorName}.`
+        : preview.preview.providerName,
+    };
+  }
+
+  if (preview.preview.kind === "tweet") {
+    const user = recordValue(preview.preview.data.user);
+    const screenName = stringValue(user?.screen_name);
+    const name = stringValue(user?.name);
+    const author = screenName ? `@${screenName}` : name;
+    const text = stringValue(preview.preview.data.text);
+
+    return {
+      title: author ? `Tweet by ${author}` : `Tweet ${preview.preview.tweetId}`,
+      description: text,
+    };
+  }
+
+  return {};
 }
 
 export function detectLinkPreviewTarget(value: string): LinkPreviewTargetResult {
@@ -616,6 +653,14 @@ async function parseJsonResponse(response: Response): Promise<unknown> {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
+}
+
+function recordValue(value: unknown): Record<string, unknown> | undefined {
+  return isRecord(value) ? value : undefined;
+}
+
+function stringValue(value: unknown): string | undefined {
+  return typeof value === "string" && value.trim().length > 0 ? value.trim() : undefined;
 }
 
 function isEmptyObject(value: unknown) {

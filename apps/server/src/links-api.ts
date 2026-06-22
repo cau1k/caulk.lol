@@ -15,6 +15,7 @@ import {
   type LinkPreviewCacheSource,
   type LinkPreviewCacheStore,
   type LinkPreviewResponse,
+  metadataFromLinkPreview,
   resolveLinkPreview,
   resolveTweetEmbed,
 } from "@caulk.lol/api/link-preview";
@@ -96,10 +97,11 @@ linksApi.post("/links", async (c) => {
   }
 
   const canonicalUrl = normalizeUrl(parsed.data.url);
-  const metadata: LinkMetadataResult =
-    parsed.data.title && parsed.data.description
-      ? { ok: true }
-      : await fetchLinkMetadata(canonicalUrl);
+  const metadata = await resolveCreateLinkMetadata(
+    canonicalUrl,
+    parsed.data,
+    getLinkPreviewCache(c),
+  );
   const title = parsed.data.title ?? (metadata.ok ? metadata.title : undefined);
 
   if (!title) {
@@ -226,6 +228,23 @@ function getLinksDb(c: LinksApiContext) {
 
 function getLinkPreviewCache(c: LinksApiContext): LinkPreviewCacheStore {
   return c.env.LINK_PREVIEW_CACHE ?? c.env.TWEET_CACHE ?? memoryCacheStore;
+}
+
+async function resolveCreateLinkMetadata(
+  url: string,
+  input: { title?: string; description?: string },
+  cache: LinkPreviewCacheStore,
+): Promise<LinkMetadataResult> {
+  if (input.title && input.description) {
+    return { ok: true, title: input.title, description: input.description };
+  }
+
+  const previewMetadata = metadataFromLinkPreview(await resolveLinkPreview(url, { cache }));
+  if (previewMetadata.title || previewMetadata.description) {
+    return { ok: true, title: previewMetadata.title, description: previewMetadata.description };
+  }
+
+  return await fetchLinkMetadata(url);
 }
 
 const memoryCacheStore: LinkPreviewCacheStore = {
