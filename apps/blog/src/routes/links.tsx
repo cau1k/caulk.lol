@@ -3,7 +3,7 @@ import { type GoodLink, linksResponseSchema } from "@caulk.lol/api/links";
 import { env } from "@caulk.lol/env/web";
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { motion, useReducedMotion } from "motion/react";
+import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
 import { type PointerEvent, useRef, useState } from "react";
 import { EmptyState } from "@/components/empty-state";
 import { HomeLayout } from "@/components/layout/home";
@@ -29,12 +29,18 @@ type PreviewMotion = {
   x: number;
   y: number;
   rotate: number;
+  velocity: PointerVelocity;
 };
 
 type PointerSample = {
   clientX: number;
   clientY: number;
   time: number;
+};
+
+type PointerVelocity = {
+  x: number;
+  y: number;
 };
 
 type LinkDayGroup = {
@@ -105,29 +111,53 @@ function LinkRow({ item }: { item: LinkListItem }) {
   const hoverImage = hoverPreviewImage(preview);
   const shouldReduceMotion = useReducedMotion();
   const lastPointerSample = useRef<PointerSample | undefined>(undefined);
-  const [previewMotionState, setPreviewMotionState] = useState<PreviewMotion>();
-  const [previewMountKey, setPreviewMountKey] = useState(0);
+  const pointerVelocity = useRef<PointerVelocity>(zeroPointerVelocity());
+  const targetPreviewX = useMotionValue(0);
+  const targetPreviewY = useMotionValue(0);
+  const targetPreviewRotate = useMotionValue(0);
+  const previewX = useSpring(targetPreviewX, { stiffness: 90, damping: 22, mass: 1.15 });
+  const previewY = useSpring(targetPreviewY, { stiffness: 90, damping: 22, mass: 1.15 });
+  const previewRotate = useSpring(targetPreviewRotate, {
+    stiffness: 70,
+    damping: 18,
+    mass: 1.1,
+  });
+  const [hasActivatedPreview, setHasActivatedPreview] = useState(false);
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
   const domain = displayDomain(link.url);
 
   function updatePreviewPosition(event: PointerEvent<HTMLLIElement>) {
     if (!hoverImage || shouldReduceMotion || event.pointerType === "touch") return;
 
-    setPreviewMotionState(previewMotion(event, lastPointerSample.current));
+    const motion = previewMotion(event, lastPointerSample.current, pointerVelocity.current);
+    pointerVelocity.current = motion.velocity;
     lastPointerSample.current = pointerSample(event);
+    targetPreviewX.set(motion.x);
+    targetPreviewY.set(motion.y);
+    targetPreviewRotate.set(motion.rotate);
   }
 
   function handlePointerEnter(event: PointerEvent<HTMLLIElement>) {
     if (!hoverImage || shouldReduceMotion || event.pointerType === "touch") return;
 
+    pointerVelocity.current = zeroPointerVelocity();
     lastPointerSample.current = pointerSample(event);
-    setPreviewMotionState(previewMotion(event));
-    setPreviewMountKey((key) => key + 1);
+    const motion = previewMotion(event, undefined, pointerVelocity.current);
+    pointerVelocity.current = motion.velocity;
+    targetPreviewX.jump(motion.x);
+    targetPreviewY.jump(motion.y);
+    targetPreviewRotate.jump(motion.rotate);
+    previewX.jump(motion.x);
+    previewY.jump(motion.y);
+    previewRotate.jump(motion.rotate);
+    setHasActivatedPreview(true);
     setIsPreviewVisible(true);
   }
 
   function handlePointerLeave() {
     lastPointerSample.current = undefined;
+    pointerVelocity.current = zeroPointerVelocity();
+    targetPreviewRotate.set(0);
     setIsPreviewVisible(false);
   }
 
@@ -155,30 +185,18 @@ function LinkRow({ item }: { item: LinkListItem }) {
         <p className="mt-1 text-sm leading-6 text-muted-foreground">{link.reason}</p>
       </div>
 
-      {hoverImage && !shouldReduceMotion && previewMotionState ? (
+      {hoverImage && !shouldReduceMotion && hasActivatedPreview ? (
         <motion.div
-          key={previewMountKey}
           aria-hidden="true"
           className="pointer-events-none fixed left-0 top-0 z-50 hidden h-28 w-52 overflow-hidden rounded-md border border-border/60 bg-background shadow-[0_16px_50px_rgb(0_0_0/0.22)] will-change-transform md:block motion-reduce:hidden"
-          initial={{
-            x: previewMotionState.x,
-            y: previewMotionState.y,
-            opacity: 0,
-            rotate: 0,
-            scale: 0.98,
-          }}
+          style={{ x: previewX, y: previewY, rotate: previewRotate }}
+          initial={{ opacity: 0, scale: 0.98 }}
           animate={{
-            x: previewMotionState.x,
-            y: previewMotionState.y,
             opacity: isPreviewVisible ? 1 : 0,
-            rotate: previewMotionState.rotate,
             scale: isPreviewVisible ? 1 : 0.98,
           }}
           transition={{
-            x: { type: "spring", stiffness: 140, damping: 18, mass: 0.85 },
-            y: { type: "spring", stiffness: 140, damping: 18, mass: 0.85 },
             opacity: { duration: 0.16, ease: "easeOut" },
-            rotate: { type: "spring", stiffness: 95, damping: 14, mass: 0.8 },
             scale: { duration: 0.16, ease: "easeOut" },
           }}
         >
@@ -254,6 +272,7 @@ function firstImageUrl(items: readonly unknown[], keys: readonly string[]): stri
 function previewMotion(
   event: PointerEvent<HTMLLIElement>,
   previousSample?: PointerSample,
+  previousVelocity: PointerVelocity = zeroPointerVelocity(),
 ): PreviewMotion {
   const previewWidth = 208;
   const previewHeight = 112;
@@ -262,7 +281,7 @@ function previewMotion(
   const viewport = event.currentTarget.ownerDocument.documentElement;
   const maxX = viewport.clientWidth - previewWidth - margin;
   const maxY = viewport.clientHeight - previewHeight - margin;
-  const dynamics = previewDynamics(pointerSample(event), previousSample);
+  const dynamics = previewDynamics(pointerSample(event), previousSample, previousVelocity);
   const preferredX = event.clientX + offset + dynamics.driftX;
   const preferredY = event.clientY + offset + dynamics.driftY;
   const x = preferredX > maxX ? event.clientX - previewWidth - offset : preferredX;
@@ -272,21 +291,31 @@ function previewMotion(
     x: Math.max(margin, Math.min(x, maxX)),
     y: Math.max(margin, Math.min(y, maxY)),
     rotate: dynamics.rotate,
+    velocity: dynamics.velocity,
   };
 }
 
-function previewDynamics(sample: PointerSample, previousSample?: PointerSample) {
-  if (!previousSample) return { driftX: 0, driftY: 0, rotate: 0 };
+function previewDynamics(
+  sample: PointerSample,
+  previousSample: PointerSample | undefined,
+  previousVelocity: PointerVelocity,
+) {
+  if (!previousSample) {
+    return { driftX: 0, driftY: 0, rotate: 0, velocity: zeroPointerVelocity() };
+  }
 
   const elapsed = Math.max(16, sample.time - previousSample.time);
-  const velocityX = ((sample.clientX - previousSample.clientX) / elapsed) * 1_000;
-  const velocityY = ((sample.clientY - previousSample.clientY) / elapsed) * 1_000;
+  const instantVelocityX = ((sample.clientX - previousSample.clientX) / elapsed) * 1_000;
+  const instantVelocityY = ((sample.clientY - previousSample.clientY) / elapsed) * 1_000;
+  const velocityX = lerp(previousVelocity.x, instantVelocityX, 0.16);
+  const velocityY = lerp(previousVelocity.y, instantVelocityY, 0.16);
   const speed = Math.hypot(velocityX, velocityY);
 
   return {
-    driftX: clamp(velocityX * 0.028, -28, 28),
-    driftY: clamp(velocityY * 0.02 - speed * 0.006, -24, 20),
-    rotate: clamp(velocityX * 0.006 + velocityY * 0.002, -7, 7),
+    driftX: clamp(velocityX * 0.018, -18, 18),
+    driftY: clamp(velocityY * 0.012 - speed * 0.003, -16, 14),
+    rotate: clamp(velocityX * 0.003 + velocityY * 0.001, -3.5, 3.5),
+    velocity: { x: velocityX, y: velocityY },
   };
 }
 
@@ -296,6 +325,14 @@ function pointerSample(event: PointerEvent<HTMLLIElement>): PointerSample {
     clientY: event.clientY,
     time: event.timeStamp,
   };
+}
+
+function zeroPointerVelocity(): PointerVelocity {
+  return { x: 0, y: 0 };
+}
+
+function lerp(from: number, to: number, amount: number) {
+  return from + (to - from) * amount;
 }
 
 function clamp(value: number, min: number, max: number) {
