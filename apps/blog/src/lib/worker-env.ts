@@ -6,7 +6,12 @@ export type LinksDatabase = CloudflareEnv["LINKS_DB"];
 export type AppEnv = Partial<
   Pick<
     CloudflareEnv,
-    "LINKS_DB" | "BETTER_AUTH_SECRET" | "ADMIN_BOOTSTRAP_TOKEN" | "OWNER_EMAIL"
+    | "LINKS_DB"
+    | "LINK_PREVIEW_CACHE"
+    | "TWEET_CACHE"
+    | "BETTER_AUTH_SECRET"
+    | "ADMIN_BOOTSTRAP_TOKEN"
+    | "OWNER_EMAIL"
   >
 >;
 

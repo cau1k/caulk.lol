@@ -23,6 +23,7 @@ export function LinkForm({
   initialValues,
   isPending,
   onCreate,
+  onUrlChange,
   pendingLabel = "Adding",
   resetOnSuccess = true,
   submitLabel = "Add link",
@@ -30,6 +31,7 @@ export function LinkForm({
   initialValues?: LinkFormInitialValues;
   isPending: boolean;
   onCreate: (input: CreateLinkInput, onSuccess: () => void) => void;
+  onUrlChange?: (url: string) => void;
   pendingLabel?: string;
   resetOnSuccess?: boolean;
   submitLabel?: string;
@@ -78,6 +80,7 @@ export function LinkForm({
           inputMode="url"
           autoCapitalize="none"
           autoComplete="url"
+          onChange={(event) => onUrlChange?.(event.currentTarget.value)}
           required
         />
       </Field>

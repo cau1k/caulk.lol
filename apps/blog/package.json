@@ -1,8 +1,8 @@
 {
   "name": "blog",
   "private": true,
-  "sideEffects": false,
   "type": "module",
+  "sideEffects": false,
   "scripts": {
     "build": "vite build",
     "serve": "vite preview",
@@ -19,6 +19,7 @@
     "@caulk.lol/api": "workspace:*",
     "@caulk.lol/auth": "workspace:*",
     "@caulk.lol/env": "workspace:*",
+    "@caulk.lol/ui": "workspace:*",
     "@excalidraw/excalidraw": "^0.18.0",
     "@icons-pack/react-simple-icons": "^13.8.0",
     "@radix-ui/react-accordion": "^1.2.12",

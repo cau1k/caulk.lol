@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
+    "@caulk.lol/api": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -26,6 +27,7 @@
     "react": "catalog:",
     "react-day-picker": "^10.0.1",
     "react-dom": "catalog:",
+    "react-tweet": "^3.3.0",
     "react-resizable-panels": "^4.11.2",
     "recharts": "3.8.0",
     "shadcn": "^3.6.2",

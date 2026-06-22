@@ -1,24 +1,8 @@
-import { Tweet as ReactTweet, type TweetProps } from "react-tweet";
-import "react-tweet/theme.css";
+import { TweetEmbed, type TweetEmbedProps } from "@caulk.lol/ui/components/tweet-embed";
 
-type MdxTweetProps = TweetProps & {
-  className?: string;
-};
+type MdxTweetProps = TweetEmbedProps;
 
-export function Tweet({ className, apiUrl, ...props }: MdxTweetProps) {
+export function Tweet({ apiUrl, ...props }: MdxTweetProps) {
   const localApiUrl = props.id ? `/api/tweet/${props.id}` : apiUrl;
-
-  return (
-    <div
-      className={className}
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        marginBlock: "1.75rem",
-        width: "100%",
-      }}
-    >
-      <ReactTweet {...props} apiUrl={localApiUrl} />
-    </div>
-  );
+  return <TweetEmbed {...props} apiUrl={localApiUrl} />;
 }

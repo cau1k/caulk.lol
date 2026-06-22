@@ -41,6 +41,10 @@ const tweetCache = await KVNamespace("tweet-cache", {
   title: `${app.name}-${app.stage}-tweet-cache`,
 });
 
+const linkPreviewCache = await KVNamespace("link-preview-cache", {
+  title: `${app.name}-${app.stage}-link-preview-cache`,
+});
+
 const analyticsDatasetName = "CAULK_SITE_METRICS";
 
 const siteMetrics = AnalyticsEngineDataset("site-metrics", {
@@ -102,6 +106,7 @@ export const server = await Worker("server", {
   bindings: {
     DB: linksDb,
     LINKS_DB: linksDb,
+    LINK_PREVIEW_CACHE: linkPreviewCache,
     CORS_ORIGIN: corsOrigin,
     BETTER_AUTH_SECRET: authSecret,
     BETTER_AUTH_URL: betterAuthUrl,
@@ -121,6 +126,7 @@ const serverUrl =
 const sharedSiteBindings = {
   DB: linksDb,
   LINKS_DB: linksDb,
+  LINK_PREVIEW_CACHE: linkPreviewCache,
   TWEET_CACHE: tweetCache,
   SITE_METRICS: siteMetrics,
   CORS_ORIGIN: corsOrigin,

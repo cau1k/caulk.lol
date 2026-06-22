@@ -11,6 +11,13 @@ import {
   updateLink,
   updateLinkInputSchema,
 } from "@caulk.lol/api/links";
+import {
+  type LinkPreviewCacheSource,
+  type LinkPreviewCacheStore,
+  type LinkPreviewResponse,
+  resolveLinkPreview,
+  resolveTweetEmbed,
+} from "@caulk.lol/api/link-preview";
 import { requireBinding, type CloudflareEnv } from "@caulk.lol/env/bindings";
 import type { EvlogVariables } from "evlog/hono";
 import { Hono, type Context } from "hono";
@@ -37,6 +44,8 @@ const createApiKeySchema = z.object({
   name: z.string().trim().min(1).max(48).default("good links client"),
 });
 
+const memoryPreviewCache = new Map<string, string>();
+
 export const linksApi = new Hono<LinksApiEnv>();
 
 linksApi.get("/links", async (c) => {
@@ -46,6 +55,31 @@ linksApi.get("/links", async (c) => {
   return c.json({
     links: await listLinks(getLinksDb(c), { includeArchived }),
   });
+});
+
+linksApi.get("/link/preview", async (c) => {
+  const url = c.req.query("url");
+  if (!url) return c.json({ error: "url query parameter required." }, 400);
+
+  const result = await resolveLinkPreview(url, {
+    cache: getLinkPreviewCache(c),
+  });
+
+  setPreviewCacheControl(c, result);
+  return c.json(result);
+});
+
+linksApi.get("/link/preview/tweet/:id", async (c) => {
+  try {
+    const result = await resolveTweetEmbed(c.req.param("id"), {
+      cache: getLinkPreviewCache(c),
+    });
+
+    c.header("Cache-Control", tweetEmbedCacheControl(result.source));
+    return c.json(result);
+  } catch (error) {
+    return c.json({ data: null, error: errorMessage(error) }, 404);
+  }
 });
 
 linksApi.post("/links", async (c) => {
@@ -58,10 +92,7 @@ linksApi.post("/links", async (c) => {
 
   const parsed = createLinkInputSchema.safeParse(body.value);
   if (!parsed.success) {
-    return c.json(
-      { error: "Invalid link payload.", issues: parsed.error.issues },
-      400,
-    );
+    return c.json({ error: "Invalid link payload.", issues: parsed.error.issues }, 400);
   }
 
   const canonicalUrl = normalizeUrl(parsed.data.url);
@@ -108,10 +139,7 @@ linksApi.patch("/links/:id", async (c) => {
 
   const parsed = updateLinkInputSchema.safeParse(body.value);
   if (!parsed.success) {
-    return c.json(
-      { error: "Invalid link payload.", issues: parsed.error.issues },
-      400,
-    );
+    return c.json({ error: "Invalid link payload.", issues: parsed.error.issues }, 400);
   }
 
   const link = await updateLink(getLinksDb(c), c.req.param("id"), parsed.data);
@@ -136,10 +164,7 @@ linksApi.post("/admin/api-key", async (c) => {
 
   const parsed = createApiKeySchema.safeParse(body.value);
   if (!parsed.success) {
-    return c.json(
-      { error: "Invalid API key payload.", issues: parsed.error.issues },
-      400,
-    );
+    return c.json({ error: "Invalid API key payload.", issues: parsed.error.issues }, 400);
   }
 
   const key = await createAuth(c.env).api.createApiKey({
@@ -197,4 +222,41 @@ function hasAdminRole(user: unknown) {
 
 function getLinksDb(c: LinksApiContext) {
   return requireBinding(c.env.LINKS_DB, "LINKS_DB");
+}
+
+function getLinkPreviewCache(c: LinksApiContext): LinkPreviewCacheStore {
+  return c.env.LINK_PREVIEW_CACHE ?? c.env.TWEET_CACHE ?? memoryCacheStore;
+}
+
+const memoryCacheStore: LinkPreviewCacheStore = {
+  async get(key) {
+    return memoryPreviewCache.get(key) ?? null;
+  },
+  async put(key, value) {
+    memoryPreviewCache.set(key, value);
+  },
+};
+
+function setPreviewCacheControl(c: LinksApiContext, result: LinkPreviewResponse) {
+  if (result.preview.kind === "unavailable") {
+    c.header("Cache-Control", "public, max-age=60, s-maxage=300");
+    return;
+  }
+
+  if (result.meta.cacheSource === "live") {
+    c.header("Cache-Control", "public, max-age=300, s-maxage=300");
+    return;
+  }
+
+  c.header("Cache-Control", "public, max-age=3600, s-maxage=86400");
+}
+
+function tweetEmbedCacheControl(source: LinkPreviewCacheSource) {
+  return source === "live"
+    ? "public, max-age=300, s-maxage=300"
+    : "public, max-age=3600, s-maxage=86400";
+}
+
+function errorMessage(error: unknown) {
+  return error instanceof Error ? error.message : "Request failed.";
 }

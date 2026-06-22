@@ -1,10 +1,13 @@
 import { type CreateLinkInput, type GoodLink, type LinkStatus } from "@caulk.lol/api/links";
+import { type LinkPreviewResponse, linkPreviewResponseSchema } from "@caulk.lol/api/link-preview";
+import { env } from "@caulk.lol/env/web";
 import { Badge } from "@caulk.lol/ui/components/badge";
 import { Button } from "@caulk.lol/ui/components/button";
+import { LinkPreviewCard } from "@caulk.lol/ui/components/link-preview";
 import { Separator } from "@caulk.lol/ui/components/separator";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { ArrowUpRightIcon, PlusIcon } from "lucide-react";
+import { ArrowUpRightIcon, PlusIcon, RefreshCwIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -52,6 +55,25 @@ function LinksRoute() {
     },
   });
 
+  const previewRefreshMutation = useMutation({
+    mutationFn: async (url: string) => await trpcClient.links.preview.refresh.mutate({ url }),
+    onError: (error) => toast.error(errorMessage(error)),
+    onSuccess: async (_preview, url) => {
+      toast.success("Preview refreshed.");
+      await queryClient.invalidateQueries({ queryKey: linkPreviewQueryKey(url) });
+    },
+  });
+
+  const previewRefreshAllMutation = useMutation({
+    mutationFn: async () =>
+      await trpcClient.links.preview.refreshAll.mutate({ includeArchived: true }),
+    onError: (error) => toast.error(errorMessage(error)),
+    onSuccess: async (result) => {
+      toast.success(`Refreshed ${result.refreshed}/${result.count} previews.`);
+      await queryClient.invalidateQueries({ queryKey: ["link-preview"] });
+    },
+  });
+
   const links = linksQuery.data ?? [];
   const filteredLinks = useMemo(
     () => links.filter((link) => filter === "all" || link.status === filter),
@@ -69,10 +91,22 @@ function LinksRoute() {
               Add, publish, and archive links shown on caulk.lol.
             </p>
           </div>
-          <Button className="w-full sm:w-auto" render={<Link to="/links/add" />}>
-            <PlusIcon />
-            Add link
-          </Button>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full sm:w-auto"
+              disabled={previewRefreshAllMutation.isPending}
+              onClick={() => previewRefreshAllMutation.mutate()}
+            >
+              <RefreshCwIcon />
+              Refresh previews
+            </Button>
+            <Button className="w-full sm:w-auto" render={<Link to="/links/add" />}>
+              <PlusIcon />
+              Add link
+            </Button>
+          </div>
         </header>
 
         <Separator />
@@ -124,7 +158,9 @@ function LinksRoute() {
                   <LinkRow
                     key={link.id}
                     link={link}
-                    isPending={statusMutation.isPending}
+                    isPreviewPending={previewRefreshMutation.isPending}
+                    isStatusPending={statusMutation.isPending}
+                    onPreviewRefresh={() => previewRefreshMutation.mutate(link.url)}
                     onStatusChange={(status) => statusMutation.mutate({ id: link.id, status })}
                   />
                 ))}
@@ -147,12 +183,16 @@ function Metric({ label, value }: { label: string; value: string }) {
 }
 
 function LinkRow({
-  isPending,
+  isPreviewPending,
+  isStatusPending,
   link,
+  onPreviewRefresh,
   onStatusChange,
 }: {
-  isPending: boolean;
+  isPreviewPending: boolean;
+  isStatusPending: boolean;
   link: GoodLink;
+  onPreviewRefresh: () => void;
   onStatusChange: (status: LinkStatus) => void;
 }) {
   const nextStatus = link.status === "published" ? "archived" : "published";
@@ -184,12 +224,63 @@ function LinkRow({
         type="button"
         variant="outline"
         size="sm"
-        disabled={isPending}
+        disabled={isStatusPending}
         onClick={() => onStatusChange(nextStatus)}
       >
         {nextStatus === "archived" ? "Archive" : "Publish"}
       </Button>
+      <div className="sm:col-span-2">
+        <LinkPreviewPanel
+          url={link.url}
+          isRefreshing={isPreviewPending}
+          onRefresh={onPreviewRefresh}
+        />
+      </div>
     </article>
+  );
+}
+
+function LinkPreviewPanel({
+  isRefreshing,
+  onRefresh,
+  url,
+}: {
+  isRefreshing: boolean;
+  onRefresh: () => void;
+  url: string;
+}) {
+  const previewQuery = useQuery({
+    queryKey: linkPreviewQueryKey(url),
+    queryFn: async () => await fetchLinkPreview(url),
+    staleTime: 60 * 60 * 1000,
+  });
+  const preview = previewQuery.data;
+  const previewStatus = preview
+    ? `${preview.meta.provider} preview · ${preview.meta.cacheSource}`
+    : previewQuery.isError
+      ? "Preview unavailable"
+      : "Loading preview";
+
+  return (
+    <div className="mt-2 space-y-2">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs text-muted-foreground">{previewStatus}</p>
+        <Button type="button" variant="ghost" size="xs" disabled={isRefreshing} onClick={onRefresh}>
+          <RefreshCwIcon />
+          Refresh
+        </Button>
+      </div>
+      {preview ? (
+        <LinkPreviewCard
+          preview={preview}
+          tweetApiUrl={(tweetId) => `${env.VITE_SERVER_URL}/api/link/preview/tweet/${tweetId}`}
+        />
+      ) : previewQuery.isError ? (
+        <p className="border border-dashed p-3 text-xs text-muted-foreground">
+          {errorMessage(previewQuery.error)}
+        </p>
+      ) : null}
+    </div>
   );
 }
 
@@ -225,6 +316,20 @@ function linkMetrics(links: GoodLink[]) {
     Array.from(tagCounts.entries()).sort((left, right) => right[1] - left[1])[0]?.[0] ?? "none";
 
   return { archived, draft, published, topTag };
+}
+
+function linkPreviewQueryKey(url: string) {
+  return ["link-preview", url] as const;
+}
+
+async function fetchLinkPreview(url: string): Promise<LinkPreviewResponse> {
+  const previewUrl = new URL("/api/link/preview", env.VITE_SERVER_URL);
+  previewUrl.searchParams.set("url", url);
+  const response = await fetch(previewUrl, { credentials: "include" });
+  if (!response.ok) throw new Error(`Link preview API returned ${response.status}.`);
+
+  const payload: unknown = await response.json();
+  return linkPreviewResponseSchema.parse(payload);
 }
 
 function errorMessage(error: unknown): string {
