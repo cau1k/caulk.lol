@@ -1,10 +1,5 @@
-import {
-  type LinkPreviewResponse,
-  linkPreviewResponseSchema,
-} from "@caulk.lol/api/link-preview";
 import { type GoodLink, listLinks } from "@caulk.lol/api/links";
 import { requireBinding } from "@caulk.lol/env/runtime";
-import { env } from "@caulk.lol/env/web";
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
@@ -29,7 +24,7 @@ type LinksLoaderData = {
 
 type PreviewLoadState =
   | { status: "loading" }
-  | { status: "ok"; preview: LinkPreviewResponse }
+  | { status: "ok"; imageUrl: string | null }
   | { status: "error"; message: string };
 
 type HoverPreviewImage = {
@@ -157,7 +152,7 @@ function LinkGroups({ groups }: { groups: LinkDayGroup[] }) {
         setPreviewByLinkId((current) => {
           const next = new Map(current);
           if (result.status === "ok") {
-            next.set(link.id, { status: "ok", preview: result.preview });
+            next.set(link.id, { status: "ok", imageUrl: result.imageUrl });
             return next;
           }
 
@@ -378,50 +373,8 @@ function hoverPreviewImage(
   link: GoodLink,
   previewState: PreviewLoadState | undefined,
 ): HoverPreviewImage | undefined {
-  const preview =
-    previewState?.status === "ok" ? previewState.preview : undefined;
-  if (!preview) return undefined;
-
-  if (preview.preview.kind === "generic" && preview.preview.imageUrl) {
-    return { id: link.id, src: preview.preview.imageUrl };
-  }
-
-  if (preview.preview.kind === "youtube" && preview.preview.thumbnailUrl) {
-    return { id: link.id, src: preview.preview.thumbnailUrl };
-  }
-
-  if (preview.preview.kind === "tweet") {
-    const tweetImage = tweetPreviewImage(preview.preview.data);
-    return tweetImage ? { id: link.id, src: tweetImage } : undefined;
-  }
-
-  return undefined;
-}
-
-function tweetPreviewImage(data: Record<string, unknown>): string | undefined {
-  const photos = arrayValue(data.photos);
-  const photoUrl = firstImageUrl(photos, ["url", "media_url_https"]);
-  if (photoUrl) return photoUrl;
-
-  const mediaDetails = arrayValue(data.mediaDetails);
-  return firstImageUrl(mediaDetails, ["media_url_https", "url"]);
-}
-
-function firstImageUrl(
-  items: readonly unknown[],
-  keys: readonly string[],
-): string | undefined {
-  for (const item of items) {
-    const record = recordValue(item);
-    if (!record) continue;
-
-    for (const key of keys) {
-      const value = stringValue(record[key]);
-      if (value) return value;
-    }
-  }
-
-  return undefined;
+  if (previewState?.status !== "ok" || !previewState.imageUrl) return undefined;
+  return { id: link.id, src: previewState.imageUrl };
 }
 
 function previewMotion(
@@ -507,14 +460,6 @@ function displayDomain(url: string) {
   return hostname.startsWith("www.") ? hostname.slice(4) : hostname;
 }
 
-function arrayValue(value: unknown): readonly unknown[] {
-  return Array.isArray(value) ? value : [];
-}
-
-function recordValue(value: unknown): Record<string, unknown> | undefined {
-  return isRecord(value) ? value : undefined;
-}
-
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -526,12 +471,12 @@ function stringValue(value: unknown): string | undefined {
 }
 
 type PreviewLoadResult =
-  | { status: "ok"; preview: LinkPreviewResponse }
+  | { status: "ok"; imageUrl: string | null }
   | { status: "error"; message: string };
 
 async function loadPreview(url: string): Promise<PreviewLoadResult> {
   try {
-    return { status: "ok", preview: await fetchLinkPreview(url) };
+    return { status: "ok", imageUrl: await fetchPreviewImageUrl(url) };
   } catch (error) {
     return {
       status: "error",
@@ -545,15 +490,28 @@ async function fetchLinks(): Promise<GoodLink[]> {
   return await listLinks(requireBinding(getLinksDb(getRequest()), "LINKS_DB"));
 }
 
-async function fetchLinkPreview(url: string): Promise<LinkPreviewResponse> {
-  const previewUrl = new URL("/api/link/preview", env.VITE_SERVER_URL);
-  previewUrl.searchParams.set("url", url);
-  const response = await fetch(previewUrl);
+async function fetchPreviewImageUrl(url: string): Promise<string | null> {
+  const response = await fetch(
+    `/api/link-preview-image?${new URLSearchParams({ url })}`,
+  );
   if (!response.ok)
-    throw new Error(`Link preview API returned ${response.status}.`);
+    throw new Error(`Preview image API returned ${response.status}.`);
 
   const payload: unknown = await response.json();
-  return linkPreviewResponseSchema.parse(payload);
+  return parsePreviewImageResponse(payload).imageUrl;
+}
+
+function parsePreviewImageResponse(value: unknown): {
+  imageUrl: string | null;
+} {
+  if (!isRecord(value)) throw new Error("Invalid preview image response.");
+
+  if (value.imageUrl === null) return { imageUrl: null };
+
+  const imageUrl = stringValue(value.imageUrl);
+  if (!imageUrl) throw new Error("Invalid preview image response.");
+
+  return { imageUrl };
 }
 
 function errorMessage(error: unknown): string {

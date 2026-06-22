@@ -18,6 +18,7 @@ import { Route as PostsIndexRouteImport } from './routes/posts/index'
 import { Route as PostsSlugRouteImport } from './routes/posts/$slug'
 import { Route as LlmsDotmdxSplatRouteImport } from './routes/llms[.]mdx.$'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
+import { Route as ApiLinkPreviewImageRouteImport } from './routes/api/link-preview-image'
 import { Route as ApiAnalyticsRouteImport } from './routes/api/analytics'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminLinksRouteImport } from './routes/admin/links'
@@ -72,6 +73,11 @@ const LlmsDotmdxSplatRoute = LlmsDotmdxSplatRouteImport.update({
 const ApiSearchRoute = ApiSearchRouteImport.update({
   id: '/api/search',
   path: '/api/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiLinkPreviewImageRoute = ApiLinkPreviewImageRouteImport.update({
+  id: '/api/link-preview-image',
+  path: '/api/link-preview-image',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAnalyticsRoute = ApiAnalyticsRouteImport.update({
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/admin/links': typeof AdminLinksRoute
   '/admin/login': typeof AdminLoginRoute
   '/api/analytics': typeof ApiAnalyticsRouteWithChildren
+  '/api/link-preview-image': typeof ApiLinkPreviewImageRoute
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/posts/$slug': typeof PostsSlugRoute
@@ -155,6 +162,7 @@ export interface FileRoutesByTo {
   '/admin/links': typeof AdminLinksRoute
   '/admin/login': typeof AdminLoginRoute
   '/api/analytics': typeof ApiAnalyticsRouteWithChildren
+  '/api/link-preview-image': typeof ApiLinkPreviewImageRoute
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/posts/$slug': typeof PostsSlugRoute
@@ -177,6 +185,7 @@ export interface FileRoutesById {
   '/admin/links': typeof AdminLinksRoute
   '/admin/login': typeof AdminLoginRoute
   '/api/analytics': typeof ApiAnalyticsRouteWithChildren
+  '/api/link-preview-image': typeof ApiLinkPreviewImageRoute
   '/api/search': typeof ApiSearchRoute
   '/llms.mdx/$': typeof LlmsDotmdxSplatRoute
   '/posts/$slug': typeof PostsSlugRoute
@@ -200,6 +209,7 @@ export interface FileRouteTypes {
     | '/admin/links'
     | '/admin/login'
     | '/api/analytics'
+    | '/api/link-preview-image'
     | '/api/search'
     | '/llms.mdx/$'
     | '/posts/$slug'
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
     | '/admin/links'
     | '/admin/login'
     | '/api/analytics'
+    | '/api/link-preview-image'
     | '/api/search'
     | '/llms.mdx/$'
     | '/posts/$slug'
@@ -242,6 +253,7 @@ export interface FileRouteTypes {
     | '/admin/links'
     | '/admin/login'
     | '/api/analytics'
+    | '/api/link-preview-image'
     | '/api/search'
     | '/llms.mdx/$'
     | '/posts/$slug'
@@ -264,6 +276,7 @@ export interface RootRouteChildren {
   AdminLinksRoute: typeof AdminLinksRoute
   AdminLoginRoute: typeof AdminLoginRoute
   ApiAnalyticsRoute: typeof ApiAnalyticsRouteWithChildren
+  ApiLinkPreviewImageRoute: typeof ApiLinkPreviewImageRoute
   ApiSearchRoute: typeof ApiSearchRoute
   LlmsDotmdxSplatRoute: typeof LlmsDotmdxSplatRoute
   PostsSlugRoute: typeof PostsSlugRoute
@@ -339,6 +352,13 @@ declare module '@tanstack/react-router' {
       path: '/api/search'
       fullPath: '/api/search'
       preLoaderRoute: typeof ApiSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/link-preview-image': {
+      id: '/api/link-preview-image'
+      path: '/api/link-preview-image'
+      fullPath: '/api/link-preview-image'
+      preLoaderRoute: typeof ApiLinkPreviewImageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/analytics': {
@@ -435,6 +455,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLinksRoute: AdminLinksRoute,
   AdminLoginRoute: AdminLoginRoute,
   ApiAnalyticsRoute: ApiAnalyticsRouteWithChildren,
+  ApiLinkPreviewImageRoute: ApiLinkPreviewImageRoute,
   ApiSearchRoute: ApiSearchRoute,
   LlmsDotmdxSplatRoute: LlmsDotmdxSplatRoute,
   PostsSlugRoute: PostsSlugRoute,
