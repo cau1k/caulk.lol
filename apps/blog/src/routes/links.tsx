@@ -73,7 +73,7 @@ function LinksPage() {
                 <h2 className="mb-4 text-sm font-medium tracking-tight text-muted-foreground">
                   {group.dateLabel}
                 </h2>
-                <ol className="group/list list-decimal space-y-5 pl-6" start={group.start}>
+                <ol className="group/list list-decimal pl-6" start={group.start}>
                   {group.items.map((item) => (
                     <LinkRow key={item.link.id} item={item} />
                   ))}
@@ -123,12 +123,12 @@ function LinkRow({ item }: { item: LinkListItem }) {
 
   return (
     <li
-      className="relative pl-1 transition-opacity duration-150 ease-out group-has-hover/list:opacity-45 hover:opacity-100!"
+      className="group/entry relative py-2.5 pl-1 transition-opacity duration-150 ease-out group-has-hover/list:opacity-45 hover:opacity-100!"
       onPointerEnter={handlePointerEnter}
       onPointerMove={updatePreviewPosition}
       onPointerLeave={handlePointerLeave}
     >
-      <div className="group/entry rounded-sm px-1 py-0.5">
+      <div className="rounded-sm px-1">
         <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
           <a
             href={link.url}
