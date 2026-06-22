@@ -34,8 +34,11 @@ const siteRumScript = `(function () {
       ], { type: 'application/json' }),
     );
   }
-  if (document.readyState === 'complete') window.setTimeout(report, 0);
-  else window.addEventListener('load', report, { once: true });
+  function queueReport() {
+    window.setTimeout(report, 0);
+  }
+  if (document.readyState === 'complete') queueReport();
+  else window.addEventListener('load', queueReport, { once: true });
 })();`;
 
 export const Route = createRootRoute({
