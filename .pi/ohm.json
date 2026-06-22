@@ -18,6 +18,12 @@
       "branch": "main",
       "description": "Use whenever working with better-auth here.",
       "hidden": false
+    },
+    "tanstack-start": {
+      "repository": "https://github.com/tanstack/router",
+      "branch": "main",
+      "description": "Type-safe router for React. Includes tanstack-start in packages/react-start.",
+      "hidden": false
     }
   }
 }

@@ -84,6 +84,7 @@ export function SettingsDialog({
                             <Button
                               type="button"
                               variant="full"
+                              className="w-full"
                               render={<TabsTrigger value={tab.value} />}
                             >
                               <tab.icon />
