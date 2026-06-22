@@ -3,7 +3,7 @@ import { type GoodLink, linksResponseSchema } from "@caulk.lol/api/links";
 import { env } from "@caulk.lol/env/web";
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { type PointerEvent, useState } from "react";
 import { EmptyState } from "@/components/empty-state";
 import { HomeLayout } from "@/components/layout/home";
@@ -23,6 +23,11 @@ type LinkListItem = {
 
 type HoverPreviewImage = {
   src: string;
+};
+
+type PreviewPosition = {
+  x: number;
+  y: number;
 };
 
 type LinkDayGroup = {
@@ -92,11 +97,8 @@ function LinkRow({ item }: { item: LinkListItem }) {
   const { link, preview } = item;
   const hoverImage = hoverPreviewImage(preview);
   const shouldReduceMotion = useReducedMotion();
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 260, damping: 28, mass: 0.45 });
-  const springY = useSpring(y, { stiffness: 260, damping: 28, mass: 0.45 });
-  const [hasActivatedPreview, setHasActivatedPreview] = useState(false);
+  const [previewPositionState, setPreviewPositionState] = useState<PreviewPosition>();
+  const [previewMountKey, setPreviewMountKey] = useState(0);
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
   const domain = displayDomain(link.url);
 
@@ -104,15 +106,14 @@ function LinkRow({ item }: { item: LinkListItem }) {
     if (!hoverImage || shouldReduceMotion || event.pointerType === "touch") return;
 
     const position = previewPosition(event);
-    x.set(position.x);
-    y.set(position.y);
+    setPreviewPositionState(position);
   }
 
   function handlePointerEnter(event: PointerEvent<HTMLLIElement>) {
     if (!hoverImage || shouldReduceMotion || event.pointerType === "touch") return;
 
-    updatePreviewPosition(event);
-    setHasActivatedPreview(true);
+    setPreviewPositionState(previewPosition(event));
+    setPreviewMountKey((key) => key + 1);
     setIsPreviewVisible(true);
   }
 
@@ -144,13 +145,29 @@ function LinkRow({ item }: { item: LinkListItem }) {
         <p className="mt-1 text-sm leading-6 text-muted-foreground">{link.reason}</p>
       </div>
 
-      {hoverImage && !shouldReduceMotion && hasActivatedPreview ? (
+      {hoverImage && !shouldReduceMotion && previewPositionState ? (
         <motion.div
+          key={previewMountKey}
           aria-hidden="true"
           className="pointer-events-none fixed left-0 top-0 z-50 hidden h-28 w-52 overflow-hidden rounded-md border border-border/60 bg-background shadow-[0_16px_50px_rgb(0_0_0/0.22)] md:block motion-reduce:hidden"
-          style={{ x: springX, y: springY }}
-          animate={{ opacity: isPreviewVisible ? 1 : 0, scale: isPreviewVisible ? 1 : 0.98 }}
-          transition={{ duration: 0.16, ease: "easeOut" }}
+          initial={{
+            x: previewPositionState.x,
+            y: previewPositionState.y,
+            opacity: 0,
+            scale: 0.98,
+          }}
+          animate={{
+            x: previewPositionState.x,
+            y: previewPositionState.y,
+            opacity: isPreviewVisible ? 1 : 0,
+            scale: isPreviewVisible ? 1 : 0.98,
+          }}
+          transition={{
+            x: { type: "spring", stiffness: 260, damping: 28, mass: 0.45 },
+            y: { type: "spring", stiffness: 260, damping: 28, mass: 0.45 },
+            opacity: { duration: 0.16, ease: "easeOut" },
+            scale: { duration: 0.16, ease: "easeOut" },
+          }}
         >
           <img src={hoverImage.src} alt="" className="h-full w-full object-cover" />
         </motion.div>
