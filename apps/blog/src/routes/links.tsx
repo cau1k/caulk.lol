@@ -3,7 +3,7 @@ import { type GoodLink, linksResponseSchema } from "@caulk.lol/api/links";
 import { env } from "@caulk.lol/env/web";
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
 import { type PointerEvent, useRef, useState } from "react";
 import { EmptyState } from "@/components/empty-state";
 import { HomeLayout } from "@/components/layout/home";
@@ -22,6 +22,7 @@ type LinkListItem = {
 };
 
 type HoverPreviewImage = {
+  id: string;
   src: string;
 };
 
@@ -80,20 +81,7 @@ function LinksPage() {
         </header>
 
         {groups.length > 0 ? (
-          <div className="space-y-10">
-            {groups.map((group) => (
-              <section key={group.dateLabel}>
-                <h2 className="mb-4 font-sans text-xl font-medium tracking-tight text-foreground">
-                  {group.dateLabel}
-                </h2>
-                <ol className="group/list list-decimal pl-6" start={group.start}>
-                  {group.items.map((item) => (
-                    <LinkRow key={item.link.id} item={item} />
-                  ))}
-                </ol>
-              </section>
-            ))}
-          </div>
+          <LinkGroups groups={groups} />
         ) : (
           <EmptyState
             title={error ? "Links unavailable" : "No links yet"}
@@ -106,12 +94,11 @@ function LinksPage() {
   );
 }
 
-function LinkRow({ item }: { item: LinkListItem }) {
-  const { link, preview } = item;
-  const hoverImage = hoverPreviewImage(preview);
+function LinkGroups({ groups }: { groups: LinkDayGroup[] }) {
   const shouldReduceMotion = useReducedMotion();
   const lastPointerSample = useRef<PointerSample | undefined>(undefined);
   const pointerVelocity = useRef<PointerVelocity>(zeroPointerVelocity());
+  const isPreviewVisibleRef = useRef(false);
   const targetPreviewX = useMotionValue(0);
   const targetPreviewY = useMotionValue(0);
   const targetPreviewRotate = useMotionValue(0);
@@ -122,51 +109,157 @@ function LinkRow({ item }: { item: LinkListItem }) {
     damping: 18,
     mass: 1.1,
   });
-  const [hasActivatedPreview, setHasActivatedPreview] = useState(false);
+  const [activePreviewImage, setActivePreviewImage] = useState<HoverPreviewImage>();
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
-  const domain = displayDomain(link.url);
 
-  function updatePreviewPosition(event: PointerEvent<HTMLLIElement>) {
-    if (!hoverImage || shouldReduceMotion || event.pointerType === "touch") return;
-
-    const motion = previewMotion(event, lastPointerSample.current, pointerVelocity.current);
-    pointerVelocity.current = motion.velocity;
-    lastPointerSample.current = pointerSample(event);
+  function setPreviewMotion(motion: PreviewMotion) {
     targetPreviewX.set(motion.x);
     targetPreviewY.set(motion.y);
     targetPreviewRotate.set(motion.rotate);
   }
 
-  function handlePointerEnter(event: PointerEvent<HTMLLIElement>) {
-    if (!hoverImage || shouldReduceMotion || event.pointerType === "touch") return;
-
-    pointerVelocity.current = zeroPointerVelocity();
-    lastPointerSample.current = pointerSample(event);
-    const motion = previewMotion(event, undefined, pointerVelocity.current);
-    pointerVelocity.current = motion.velocity;
+  function jumpPreviewMotion(motion: PreviewMotion) {
     targetPreviewX.jump(motion.x);
     targetPreviewY.jump(motion.y);
     targetPreviewRotate.jump(motion.rotate);
     previewX.jump(motion.x);
     previewY.jump(motion.y);
     previewRotate.jump(motion.rotate);
-    setHasActivatedPreview(true);
+  }
+
+  function showPreview(image: HoverPreviewImage, event: PointerEvent<HTMLElement>) {
+    if (shouldReduceMotion || event.pointerType === "touch") return;
+
+    const shouldJump = !isPreviewVisibleRef.current;
+    if (shouldJump) pointerVelocity.current = zeroPointerVelocity();
+
+    const motion = previewMotion(
+      event,
+      shouldJump ? undefined : lastPointerSample.current,
+      pointerVelocity.current,
+    );
+
+    pointerVelocity.current = motion.velocity;
+    lastPointerSample.current = pointerSample(event);
+
+    if (shouldJump) jumpPreviewMotion(motion);
+    else setPreviewMotion(motion);
+
+    setActivePreviewImage((currentImage) => {
+      if (currentImage?.id === image.id && currentImage.src === image.src) return currentImage;
+      return image;
+    });
+    isPreviewVisibleRef.current = true;
     setIsPreviewVisible(true);
   }
 
-  function handlePointerLeave() {
+  function movePreview(event: PointerEvent<HTMLElement>) {
+    if (shouldReduceMotion || event.pointerType === "touch" || !isPreviewVisibleRef.current) {
+      return;
+    }
+
+    const motion = previewMotion(event, lastPointerSample.current, pointerVelocity.current);
+    pointerVelocity.current = motion.velocity;
+    lastPointerSample.current = pointerSample(event);
+    setPreviewMotion(motion);
+  }
+
+  function hidePreview() {
     lastPointerSample.current = undefined;
     pointerVelocity.current = zeroPointerVelocity();
     targetPreviewRotate.set(0);
+    isPreviewVisibleRef.current = false;
     setIsPreviewVisible(false);
+  }
+
+  return (
+    <div className="space-y-10" onPointerLeave={hidePreview}>
+      {groups.map((group) => (
+        <section key={group.dateLabel}>
+          <h2
+            className="mb-4 font-sans text-xl font-medium tracking-tight text-foreground"
+            onPointerEnter={hidePreview}
+          >
+            {group.dateLabel}
+          </h2>
+          <ol className="group/list list-decimal pl-6" start={group.start}>
+            {group.items.map((item) => (
+              <LinkRow
+                key={item.link.id}
+                item={item}
+                onPreviewClear={hidePreview}
+                onPreviewEnter={showPreview}
+                onPreviewMove={movePreview}
+              />
+            ))}
+          </ol>
+        </section>
+      ))}
+
+      {activePreviewImage && !shouldReduceMotion ? (
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none fixed left-0 top-0 z-50 hidden h-28 w-52 overflow-hidden rounded-md border border-border/60 bg-background shadow-[0_16px_50px_rgb(0_0_0/0.22)] will-change-transform md:block motion-reduce:hidden"
+          style={{ x: previewX, y: previewY, rotate: previewRotate }}
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{
+            opacity: isPreviewVisible ? 1 : 0,
+            scale: isPreviewVisible ? 1 : 0.98,
+          }}
+          transition={{
+            opacity: { duration: 0.16, ease: "easeOut" },
+            scale: { duration: 0.16, ease: "easeOut" },
+          }}
+        >
+          <AnimatePresence initial={false}>
+            <motion.img
+              key={`${activePreviewImage.id}:${activePreviewImage.src}`}
+              src={activePreviewImage.src}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+              initial={{ opacity: 0, scale: 1.04, filter: "blur(8px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, scale: 0.98, filter: "blur(6px)" }}
+              transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+            />
+          </AnimatePresence>
+        </motion.div>
+      ) : null}
+    </div>
+  );
+}
+
+type LinkRowProps = {
+  item: LinkListItem;
+  onPreviewClear: () => void;
+  onPreviewEnter: (image: HoverPreviewImage, event: PointerEvent<HTMLElement>) => void;
+  onPreviewMove: (event: PointerEvent<HTMLElement>) => void;
+};
+
+function LinkRow({ item, onPreviewClear, onPreviewEnter, onPreviewMove }: LinkRowProps) {
+  const { link } = item;
+  const hoverImage = hoverPreviewImage(item);
+  const domain = displayDomain(link.url);
+
+  function handlePointerEnter(event: PointerEvent<HTMLLIElement>) {
+    if (!hoverImage) {
+      onPreviewClear();
+      return;
+    }
+
+    onPreviewEnter(hoverImage, event);
+  }
+
+  function handlePointerMove(event: PointerEvent<HTMLLIElement>) {
+    if (!hoverImage) return;
+    onPreviewMove(event);
   }
 
   return (
     <li
       className="group/entry relative py-2.5 pl-1 transition-opacity duration-150 ease-out group-has-hover/list:opacity-45 hover:opacity-100!"
       onPointerEnter={handlePointerEnter}
-      onPointerMove={updatePreviewPosition}
-      onPointerLeave={handlePointerLeave}
+      onPointerMove={handlePointerMove}
     >
       <div className="rounded-sm px-1">
         <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
@@ -184,25 +277,6 @@ function LinkRow({ item }: { item: LinkListItem }) {
         </div>
         <p className="mt-1 text-sm leading-6 text-muted-foreground">{link.reason}</p>
       </div>
-
-      {hoverImage && !shouldReduceMotion && hasActivatedPreview ? (
-        <motion.div
-          aria-hidden="true"
-          className="pointer-events-none fixed left-0 top-0 z-50 hidden h-28 w-52 overflow-hidden rounded-md border border-border/60 bg-background shadow-[0_16px_50px_rgb(0_0_0/0.22)] will-change-transform md:block motion-reduce:hidden"
-          style={{ x: previewX, y: previewY, rotate: previewRotate }}
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{
-            opacity: isPreviewVisible ? 1 : 0,
-            scale: isPreviewVisible ? 1 : 0.98,
-          }}
-          transition={{
-            opacity: { duration: 0.16, ease: "easeOut" },
-            scale: { duration: 0.16, ease: "easeOut" },
-          }}
-        >
-          <img src={hoverImage.src} alt="" className="h-full w-full object-cover" />
-        </motion.div>
-      ) : null}
     </li>
   );
 }
@@ -225,22 +299,21 @@ function groupLinkItemsByDay(items: LinkListItem[]): LinkDayGroup[] {
   return groups;
 }
 
-function hoverPreviewImage(
-  preview: LinkPreviewResponse | undefined,
-): HoverPreviewImage | undefined {
+function hoverPreviewImage(item: LinkListItem): HoverPreviewImage | undefined {
+  const { link, preview } = item;
   if (!preview) return undefined;
 
   if (preview.preview.kind === "generic" && preview.preview.imageUrl) {
-    return { src: preview.preview.imageUrl };
+    return { id: link.id, src: preview.preview.imageUrl };
   }
 
   if (preview.preview.kind === "youtube" && preview.preview.thumbnailUrl) {
-    return { src: preview.preview.thumbnailUrl };
+    return { id: link.id, src: preview.preview.thumbnailUrl };
   }
 
   if (preview.preview.kind === "tweet") {
     const tweetImage = tweetPreviewImage(preview.preview.data);
-    return tweetImage ? { src: tweetImage } : undefined;
+    return tweetImage ? { id: link.id, src: tweetImage } : undefined;
   }
 
   return undefined;
@@ -270,7 +343,7 @@ function firstImageUrl(items: readonly unknown[], keys: readonly string[]): stri
 }
 
 function previewMotion(
-  event: PointerEvent<HTMLLIElement>,
+  event: PointerEvent<HTMLElement>,
   previousSample?: PointerSample,
   previousVelocity: PointerVelocity = zeroPointerVelocity(),
 ): PreviewMotion {
@@ -319,7 +392,7 @@ function previewDynamics(
   };
 }
 
-function pointerSample(event: PointerEvent<HTMLLIElement>): PointerSample {
+function pointerSample(event: PointerEvent<HTMLElement>): PointerSample {
   return {
     clientX: event.clientX,
     clientY: event.clientY,
