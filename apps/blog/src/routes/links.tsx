@@ -55,7 +55,7 @@ function LinksPage() {
         </header>
 
         {items.length > 0 ? (
-          <ol className="group/list space-y-5 pl-6">
+          <ol className="group/list list-decimal space-y-5 pl-6">
             {items.map((item) => (
               <LinkRow key={item.link.id} item={item} />
             ))}
@@ -106,7 +106,7 @@ function LinkRow({ item }: { item: LinkListItem }) {
 
   return (
     <li
-      className="relative pl-1 marker:font-mono marker:text-xs marker:text-muted-foreground/55 transition-opacity duration-150 ease-out group-has-hover/list:opacity-45 hover:opacity-100!"
+      className="relative pl-1 transition-opacity duration-150 ease-out group-has-hover/list:opacity-45 hover:opacity-100!"
       onPointerEnter={handlePointerEnter}
       onPointerMove={updatePreviewPosition}
       onPointerLeave={handlePointerLeave}
