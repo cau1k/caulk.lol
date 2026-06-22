@@ -4,7 +4,7 @@ import { env } from "@caulk.lol/env/web";
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { motion, useReducedMotion } from "motion/react";
-import { type PointerEvent, useState } from "react";
+import { type PointerEvent, useRef, useState } from "react";
 import { EmptyState } from "@/components/empty-state";
 import { HomeLayout } from "@/components/layout/home";
 import { formatDate } from "@/lib/format-date";
@@ -25,9 +25,16 @@ type HoverPreviewImage = {
   src: string;
 };
 
-type PreviewPosition = {
+type PreviewMotion = {
   x: number;
   y: number;
+  rotate: number;
+};
+
+type PointerSample = {
+  clientX: number;
+  clientY: number;
+  time: number;
 };
 
 type LinkDayGroup = {
@@ -97,7 +104,8 @@ function LinkRow({ item }: { item: LinkListItem }) {
   const { link, preview } = item;
   const hoverImage = hoverPreviewImage(preview);
   const shouldReduceMotion = useReducedMotion();
-  const [previewPositionState, setPreviewPositionState] = useState<PreviewPosition>();
+  const lastPointerSample = useRef<PointerSample | undefined>(undefined);
+  const [previewMotionState, setPreviewMotionState] = useState<PreviewMotion>();
   const [previewMountKey, setPreviewMountKey] = useState(0);
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
   const domain = displayDomain(link.url);
@@ -105,19 +113,21 @@ function LinkRow({ item }: { item: LinkListItem }) {
   function updatePreviewPosition(event: PointerEvent<HTMLLIElement>) {
     if (!hoverImage || shouldReduceMotion || event.pointerType === "touch") return;
 
-    const position = previewPosition(event);
-    setPreviewPositionState(position);
+    setPreviewMotionState(previewMotion(event, lastPointerSample.current));
+    lastPointerSample.current = pointerSample(event);
   }
 
   function handlePointerEnter(event: PointerEvent<HTMLLIElement>) {
     if (!hoverImage || shouldReduceMotion || event.pointerType === "touch") return;
 
-    setPreviewPositionState(previewPosition(event));
+    lastPointerSample.current = pointerSample(event);
+    setPreviewMotionState(previewMotion(event));
     setPreviewMountKey((key) => key + 1);
     setIsPreviewVisible(true);
   }
 
   function handlePointerLeave() {
+    lastPointerSample.current = undefined;
     setIsPreviewVisible(false);
   }
 
@@ -145,27 +155,30 @@ function LinkRow({ item }: { item: LinkListItem }) {
         <p className="mt-1 text-sm leading-6 text-muted-foreground">{link.reason}</p>
       </div>
 
-      {hoverImage && !shouldReduceMotion && previewPositionState ? (
+      {hoverImage && !shouldReduceMotion && previewMotionState ? (
         <motion.div
           key={previewMountKey}
           aria-hidden="true"
-          className="pointer-events-none fixed left-0 top-0 z-50 hidden h-28 w-52 overflow-hidden rounded-md border border-border/60 bg-background shadow-[0_16px_50px_rgb(0_0_0/0.22)] md:block motion-reduce:hidden"
+          className="pointer-events-none fixed left-0 top-0 z-50 hidden h-28 w-52 overflow-hidden rounded-md border border-border/60 bg-background shadow-[0_16px_50px_rgb(0_0_0/0.22)] will-change-transform md:block motion-reduce:hidden"
           initial={{
-            x: previewPositionState.x,
-            y: previewPositionState.y,
+            x: previewMotionState.x,
+            y: previewMotionState.y,
             opacity: 0,
+            rotate: 0,
             scale: 0.98,
           }}
           animate={{
-            x: previewPositionState.x,
-            y: previewPositionState.y,
+            x: previewMotionState.x,
+            y: previewMotionState.y,
             opacity: isPreviewVisible ? 1 : 0,
+            rotate: previewMotionState.rotate,
             scale: isPreviewVisible ? 1 : 0.98,
           }}
           transition={{
-            x: { type: "spring", stiffness: 260, damping: 28, mass: 0.45 },
-            y: { type: "spring", stiffness: 260, damping: 28, mass: 0.45 },
+            x: { type: "spring", stiffness: 140, damping: 18, mass: 0.85 },
+            y: { type: "spring", stiffness: 140, damping: 18, mass: 0.85 },
             opacity: { duration: 0.16, ease: "easeOut" },
+            rotate: { type: "spring", stiffness: 95, damping: 14, mass: 0.8 },
             scale: { duration: 0.16, ease: "easeOut" },
           }}
         >
@@ -238,7 +251,10 @@ function firstImageUrl(items: readonly unknown[], keys: readonly string[]): stri
   return undefined;
 }
 
-function previewPosition(event: PointerEvent<HTMLLIElement>) {
+function previewMotion(
+  event: PointerEvent<HTMLLIElement>,
+  previousSample?: PointerSample,
+): PreviewMotion {
   const previewWidth = 208;
   const previewHeight = 112;
   const margin = 12;
@@ -246,15 +262,44 @@ function previewPosition(event: PointerEvent<HTMLLIElement>) {
   const viewport = event.currentTarget.ownerDocument.documentElement;
   const maxX = viewport.clientWidth - previewWidth - margin;
   const maxY = viewport.clientHeight - previewHeight - margin;
-  const preferredX = event.clientX + offset;
-  const preferredY = event.clientY + offset;
+  const dynamics = previewDynamics(pointerSample(event), previousSample);
+  const preferredX = event.clientX + offset + dynamics.driftX;
+  const preferredY = event.clientY + offset + dynamics.driftY;
   const x = preferredX > maxX ? event.clientX - previewWidth - offset : preferredX;
   const y = preferredY > maxY ? event.clientY - previewHeight - offset : preferredY;
 
   return {
     x: Math.max(margin, Math.min(x, maxX)),
     y: Math.max(margin, Math.min(y, maxY)),
+    rotate: dynamics.rotate,
   };
+}
+
+function previewDynamics(sample: PointerSample, previousSample?: PointerSample) {
+  if (!previousSample) return { driftX: 0, driftY: 0, rotate: 0 };
+
+  const elapsed = Math.max(16, sample.time - previousSample.time);
+  const velocityX = ((sample.clientX - previousSample.clientX) / elapsed) * 1_000;
+  const velocityY = ((sample.clientY - previousSample.clientY) / elapsed) * 1_000;
+  const speed = Math.hypot(velocityX, velocityY);
+
+  return {
+    driftX: clamp(velocityX * 0.028, -28, 28),
+    driftY: clamp(velocityY * 0.02 - speed * 0.006, -24, 20),
+    rotate: clamp(velocityX * 0.006 + velocityY * 0.002, -7, 7),
+  };
+}
+
+function pointerSample(event: PointerEvent<HTMLLIElement>): PointerSample {
+  return {
+    clientX: event.clientX,
+    clientY: event.clientY,
+    time: event.timeStamp,
+  };
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(value, max));
 }
 
 function displayDomain(url: string) {
