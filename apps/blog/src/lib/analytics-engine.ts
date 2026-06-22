@@ -285,6 +285,7 @@ function isBotRequest(request: Request) {
 function normalizePathname(pathname: string) {
   if (pathname === "/") return "/";
   if (pathname === "/posts" || pathname === "/posts/") return "/posts";
+  if (pathname === "/links" || pathname === "/links/") return "/links";
   if (pathname.startsWith("/posts/tags/")) return "/posts/tags/:tag";
   if (pathname.startsWith("/posts/")) return "/posts/:slug";
   if (pathname === "/about" || pathname === "/about/") return "/about";
