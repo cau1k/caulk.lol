@@ -1,4 +1,9 @@
-import { type CreateLinkInput, type GoodLink, type LinkStatus } from "@caulk.lol/api/links";
+import {
+  type CreateLinkInput,
+  type GoodLink,
+  type LinkStatus,
+  type UpdateLinkInput,
+} from "@caulk.lol/api/links";
 import { type LinkPreviewResponse, linkPreviewResponseSchema } from "@caulk.lol/api/link-preview";
 import { env } from "@caulk.lol/env/web";
 import { Badge } from "@caulk.lol/ui/components/badge";
@@ -7,10 +12,11 @@ import { LinkCard } from "@caulk.lol/ui/components/link-preview";
 import { Separator } from "@caulk.lol/ui/components/separator";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { PlusIcon, RefreshCwIcon } from "lucide-react";
+import { PencilIcon, PlusIcon, RefreshCwIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
+import { LinkEditDialog } from "@/components/link-edit-dialog";
 import { LinkForm } from "@/components/link-form";
 import { useTRPC, useTRPCClient } from "@/utils/trpc";
 
@@ -23,6 +29,10 @@ type LinkMutationInput = {
   id: string;
   status: LinkStatus;
 };
+type LinkUpdateMutationInput = {
+  id: string;
+  input: UpdateLinkInput;
+};
 
 const filterOptions = ["all", "published", "draft", "archived"] satisfies LinkFilter[];
 
@@ -30,6 +40,7 @@ function LinksRoute() {
   const trpc = useTRPC();
   const trpcClient = useTRPCClient();
   const queryClient = useQueryClient();
+  const [editingLink, setEditingLink] = useState<GoodLink | null>(null);
   const [filter, setFilter] = useState<LinkFilter>("all");
 
   const linksQuery = useQuery({
@@ -51,6 +62,16 @@ function LinksRoute() {
       await trpcClient.links.update.mutate({ id, input: { status } }),
     onError: (error) => toast.error(errorMessage(error)),
     onSuccess: async () => {
+      await queryClient.invalidateQueries(trpc.links.adminList.queryFilter());
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, input }: LinkUpdateMutationInput) =>
+      await trpcClient.links.update.mutate({ id, input }),
+    onError: (error) => toast.error(errorMessage(error)),
+    onSuccess: async () => {
+      toast.success("Link updated.");
       await queryClient.invalidateQueries(trpc.links.adminList.queryFilter());
     },
   });
@@ -160,6 +181,7 @@ function LinksRoute() {
                     link={link}
                     isPreviewPending={previewRefreshMutation.isPending}
                     isStatusPending={statusMutation.isPending}
+                    onEdit={() => setEditingLink(link)}
                     onPreviewRefresh={() => previewRefreshMutation.mutate(link.url)}
                     onStatusChange={(status) => statusMutation.mutate({ id: link.id, status })}
                   />
@@ -168,6 +190,15 @@ function LinksRoute() {
             )}
           </div>
         </section>
+
+        <LinkEditDialog
+          isPending={updateMutation.isPending}
+          link={editingLink}
+          onOpenChange={(open) => {
+            if (!open) setEditingLink(null);
+          }}
+          onUpdate={(id, input, onSuccess) => updateMutation.mutate({ id, input }, { onSuccess })}
+        />
       </div>
     </main>
   );
@@ -186,12 +217,14 @@ function LinkRow({
   isPreviewPending,
   isStatusPending,
   link,
+  onEdit,
   onPreviewRefresh,
   onStatusChange,
 }: {
   isPreviewPending: boolean;
   isStatusPending: boolean;
   link: GoodLink;
+  onEdit: () => void;
   onPreviewRefresh: () => void;
   onStatusChange: (status: LinkStatus) => void;
 }) {
@@ -204,15 +237,21 @@ function LinkRow({
           <Badge variant={statusVariant(link.status)}>{link.status}</Badge>
           <span className="text-xs text-muted-foreground">{link.source}</span>
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={isStatusPending}
-          onClick={() => onStatusChange(nextStatus)}
-        >
-          {nextStatus === "archived" ? "Archive" : "Publish"}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" variant="ghost" size="sm" onClick={onEdit}>
+            <PencilIcon />
+            Edit
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={isStatusPending}
+            onClick={() => onStatusChange(nextStatus)}
+          >
+            {nextStatus === "archived" ? "Archive" : "Publish"}
+          </Button>
+        </div>
       </div>
       <div className="sm:col-span-2">
         <LinkCardPanel link={link} isRefreshing={isPreviewPending} onRefresh={onPreviewRefresh} />
