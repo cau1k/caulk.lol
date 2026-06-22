@@ -24,6 +24,7 @@ export function LinkForm({
   isPending,
   onCreate,
   onUrlChange,
+  onValuesChange,
   pendingLabel = "Adding",
   resetOnSuccess = true,
   submitLabel = "Add link",
@@ -32,11 +33,18 @@ export function LinkForm({
   isPending: boolean;
   onCreate: (input: CreateLinkInput, onSuccess: () => void) => void;
   onUrlChange?: (url: string) => void;
+  onValuesChange?: (values: LinkFormInitialValues) => void;
   pendingLabel?: string;
   resetOnSuccess?: boolean;
   submitLabel?: string;
 }) {
   const status = initialValues?.status ?? "published";
+
+  function change(event: FormEvent<HTMLFormElement>) {
+    const values = formValues(event.currentTarget);
+    onUrlChange?.(values.url ?? "");
+    onValuesChange?.(values);
+  }
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -63,7 +71,7 @@ export function LinkForm({
   }
 
   return (
-    <form className="grid h-max gap-4" onSubmit={submit}>
+    <form className="grid h-max gap-4" onSubmit={submit} onChange={change}>
       <div>
         <h2 className="text-sm font-medium">Add link</h2>
         <p className="mt-1 text-xs text-muted-foreground">
@@ -80,7 +88,6 @@ export function LinkForm({
           inputMode="url"
           autoCapitalize="none"
           autoComplete="url"
-          onChange={(event) => onUrlChange?.(event.currentTarget.value)}
           required
         />
       </Field>
@@ -141,6 +148,35 @@ function splitTags(value: string) {
     .split(",")
     .map((tag) => tag.trim())
     .filter((tag) => tag.length > 0);
+}
+
+function formValues(form: HTMLFormElement): LinkFormInitialValues {
+  const formData = new FormData(form);
+  return {
+    description: optionalStringFormValue(formData, "description"),
+    reason: optionalStringFormValue(formData, "reason"),
+    status: createLinkStatus(stringFormValue(formData, "status")),
+    tags: optionalStringFormValue(formData, "tags"),
+    title: optionalStringFormValue(formData, "title"),
+    url: optionalStringFormValue(formData, "url"),
+  };
+}
+
+function createLinkStatus(value: string | undefined): CreateLinkStatus | undefined {
+  if (value === "draft" || value === "published") return value;
+  return undefined;
+}
+
+function optionalStringFormValue(formData: FormData, name: string) {
+  const value = stringFormValue(formData, name);
+  if (!value) return undefined;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
+function stringFormValue(formData: FormData, name: string) {
+  const value = formData.get(name);
+  return typeof value === "string" ? value : undefined;
 }
 
 function fieldValue(formData: FormData, name: string) {

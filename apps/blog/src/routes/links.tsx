@@ -1,7 +1,7 @@
 import { type LinkPreviewResponse, linkPreviewResponseSchema } from "@caulk.lol/api/link-preview";
 import { type GoodLink, linksResponseSchema } from "@caulk.lol/api/links";
 import { env } from "@caulk.lol/env/web";
-import { LinkPreviewCard } from "@caulk.lol/ui/components/link-preview";
+import { LinkCard } from "@caulk.lol/ui/components/link-preview";
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { EmptyState } from "@/components/empty-state";
@@ -71,41 +71,20 @@ function LinkRow({ item }: { item: LinkListItem }) {
   const { link, preview, previewError } = item;
 
   return (
-    <article className="-mx-3 px-3 py-5 transition-all duration-200 ease-out group-has-hover/list:opacity-50 hover:opacity-100!">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-        <a
-          href={link.url}
-          className="font-medium transition-colors hover:text-primary"
-          target="_blank"
-          rel="noreferrer"
-        >
-          {link.title}
-        </a>
-        <time
-          className="text-sm text-muted-foreground shrink-0"
-          title={formatDateTime(link.createdAt)}
-        >
-          {formatDate(link.createdAt)}
-        </time>
-      </div>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{link.reason}</p>
-      {link.tags.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
-          {link.tags.map((tag) => (
-            <span key={tag}>#{tag}</span>
-          ))}
-        </div>
-      )}
-      {preview ? (
-        <LinkPreviewCard
-          preview={preview}
-          tweetApiUrl={(tweetId) => `/api/tweet/${tweetId}`}
-          className="mt-4"
-        />
-      ) : previewError ? (
-        <p className="mt-3 text-xs text-muted-foreground">Preview unavailable: {previewError}</p>
-      ) : null}
-    </article>
+    <LinkCard
+      className="-mx-3 px-3 transition-all duration-200 ease-out group-has-hover/list:opacity-50 hover:opacity-100!"
+      link={{
+        url: link.url,
+        title: link.title,
+        reason: link.reason,
+        tags: link.tags,
+        dateLabel: formatDate(link.createdAt),
+        dateTitle: formatDateTime(link.createdAt),
+      }}
+      preview={preview}
+      previewError={previewError}
+      tweetApiUrl={(tweetId) => `/api/tweet/${tweetId}`}
+    />
   );
 }
 

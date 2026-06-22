@@ -3,11 +3,11 @@ import { type LinkPreviewResponse, linkPreviewResponseSchema } from "@caulk.lol/
 import { env } from "@caulk.lol/env/web";
 import { Badge } from "@caulk.lol/ui/components/badge";
 import { Button } from "@caulk.lol/ui/components/button";
-import { LinkPreviewCard } from "@caulk.lol/ui/components/link-preview";
+import { LinkCard } from "@caulk.lol/ui/components/link-preview";
 import { Separator } from "@caulk.lol/ui/components/separator";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { ArrowUpRightIcon, PlusIcon, RefreshCwIcon } from "lucide-react";
+import { PlusIcon, RefreshCwIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -198,60 +198,41 @@ function LinkRow({
   const nextStatus = link.status === "published" ? "archived" : "published";
 
   return (
-    <article className="grid gap-3 py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
-      <div className="min-w-0">
+    <div className="grid gap-3 py-4 sm:grid-cols-[minmax(0,1fr)_auto]">
+      <div className="flex flex-col gap-3 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant={statusVariant(link.status)}>{link.status}</Badge>
-          <span className="text-xs text-muted-foreground">{formatDate(link.createdAt)}</span>
+          <span className="text-xs text-muted-foreground">{link.source}</span>
         </div>
-        <a
-          href={link.url}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-2 inline-flex max-w-full items-center gap-2 text-sm font-medium hover:text-emerald-400"
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={isStatusPending}
+          onClick={() => onStatusChange(nextStatus)}
         >
-          <span className="truncate">{link.title}</span>
-          <ArrowUpRightIcon className="size-3.5 shrink-0" />
-        </a>
-        <p className="mt-1 line-clamp-2 text-xs leading-5 text-muted-foreground">{link.reason}</p>
-        {link.tags.length > 0 && (
-          <p className="mt-2 text-xs text-muted-foreground">
-            {link.tags.map((tag) => `#${tag}`).join(" ")}
-          </p>
-        )}
+          {nextStatus === "archived" ? "Archive" : "Publish"}
+        </Button>
       </div>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        disabled={isStatusPending}
-        onClick={() => onStatusChange(nextStatus)}
-      >
-        {nextStatus === "archived" ? "Archive" : "Publish"}
-      </Button>
       <div className="sm:col-span-2">
-        <LinkPreviewPanel
-          url={link.url}
-          isRefreshing={isPreviewPending}
-          onRefresh={onPreviewRefresh}
-        />
+        <LinkCardPanel link={link} isRefreshing={isPreviewPending} onRefresh={onPreviewRefresh} />
       </div>
-    </article>
+    </div>
   );
 }
 
-function LinkPreviewPanel({
+function LinkCardPanel({
   isRefreshing,
+  link,
   onRefresh,
-  url,
 }: {
   isRefreshing: boolean;
+  link: GoodLink;
   onRefresh: () => void;
-  url: string;
 }) {
   const previewQuery = useQuery({
-    queryKey: linkPreviewQueryKey(url),
-    queryFn: async () => await fetchLinkPreview(url),
+    queryKey: linkPreviewQueryKey(link.url),
+    queryFn: async () => await fetchLinkPreview(link.url),
     staleTime: 60 * 60 * 1000,
   });
   const preview = previewQuery.data;
@@ -270,16 +251,20 @@ function LinkPreviewPanel({
           Refresh
         </Button>
       </div>
-      {preview ? (
-        <LinkPreviewCard
-          preview={preview}
-          tweetApiUrl={(tweetId) => `${env.VITE_SERVER_URL}/api/link/preview/tweet/${tweetId}`}
-        />
-      ) : previewQuery.isError ? (
-        <p className="border border-dashed p-3 text-xs text-muted-foreground">
-          {errorMessage(previewQuery.error)}
-        </p>
-      ) : null}
+      <LinkCard
+        className="border p-3 sm:p-4"
+        link={{
+          url: link.url,
+          title: link.title,
+          reason: link.reason,
+          tags: link.tags,
+          dateLabel: formatDate(link.createdAt),
+          dateTitle: formatDate(link.createdAt),
+        }}
+        preview={preview}
+        previewError={previewQuery.isError ? errorMessage(previewQuery.error) : undefined}
+        tweetApiUrl={(tweetId) => `${env.VITE_SERVER_URL}/api/link/preview/tweet/${tweetId}`}
+      />
     </div>
   );
 }

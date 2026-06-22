@@ -2,7 +2,7 @@ import type { CreateLinkInput } from "@caulk.lol/api/links";
 import { type LinkPreviewResponse, linkPreviewResponseSchema } from "@caulk.lol/api/link-preview";
 import { env } from "@caulk.lol/env/web";
 import { Button } from "@caulk.lol/ui/components/button";
-import { LinkPreviewCard } from "@caulk.lol/ui/components/link-preview";
+import { LinkCard } from "@caulk.lol/ui/components/link-preview";
 import { Separator } from "@caulk.lol/ui/components/separator";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
@@ -44,6 +44,7 @@ type AddLinkSearch = z.infer<typeof addLinkSearchSchema>;
 function AddLinkRoute() {
   const search = Route.useSearch();
   const initialValues = initialValuesFromSearch(search);
+  const [draftValues, setDraftValues] = useState<LinkFormInitialValues>(initialValues);
   const [previewUrl, setPreviewUrl] = useState(initialValues.url ?? "");
   const trpc = useTRPC();
   const trpcClient = useTRPCClient();
@@ -85,6 +86,7 @@ function AddLinkRoute() {
               initialValues={initialValues}
               isPending={createMutation.isPending}
               onUrlChange={setPreviewUrl}
+              onValuesChange={setDraftValues}
               pendingLabel="Saving"
               resetOnSuccess={false}
               submitLabel="Save link"
@@ -93,7 +95,7 @@ function AddLinkRoute() {
           </div>
 
           <aside className="grid gap-4 text-xs text-muted-foreground">
-            <PreviewPanel url={previewUrl} />
+            <PreviewPanel values={{ ...draftValues, url: previewUrl }} />
             <ShortcutPanel />
             <PrefillPanel />
           </aside>
@@ -103,8 +105,8 @@ function AddLinkRoute() {
   );
 }
 
-function PreviewPanel({ url }: { url: string }) {
-  const trimmedUrl = url.trim();
+function PreviewPanel({ values }: { values: LinkFormInitialValues }) {
+  const trimmedUrl = values.url?.trim() ?? "";
   const previewQuery = useQuery({
     queryKey: ["link-preview", trimmedUrl],
     queryFn: async () => await fetchLinkPreview(trimmedUrl),
@@ -120,16 +122,22 @@ function PreviewPanel({ url }: { url: string }) {
       </div>
       {!trimmedUrl ? (
         <p className="leading-5">Paste a URL to preview the cached embed.</p>
-      ) : previewQuery.isLoading ? (
-        <p className="leading-5">Loading preview.</p>
-      ) : previewQuery.isError ? (
-        <p className="leading-5">{errorMessage(previewQuery.error)}</p>
-      ) : previewQuery.data ? (
-        <LinkPreviewCard
+      ) : (
+        <LinkCard
+          className="border p-3"
+          link={{
+            url: trimmedUrl,
+            title: values.title,
+            reason: values.reason,
+            tags: splitTags(values.tags),
+            dateLabel: "draft",
+            dateTitle: "Draft link",
+          }}
           preview={previewQuery.data}
+          previewError={previewQuery.isError ? errorMessage(previewQuery.error) : undefined}
           tweetApiUrl={(tweetId) => `${env.VITE_SERVER_URL}/api/link/preview/tweet/${tweetId}`}
         />
-      ) : null}
+      )}
     </section>
   );
 }
@@ -187,6 +195,14 @@ function optionalSearchValue(value: string | undefined): string | undefined {
   if (value === undefined) return undefined;
   const trimmed = value.trim();
   return trimmed.length > 0 ? trimmed : undefined;
+}
+
+function splitTags(value: string | undefined) {
+  if (!value) return [];
+  return value
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter((tag) => tag.length > 0);
 }
 
 async function fetchLinkPreview(url: string): Promise<LinkPreviewResponse> {

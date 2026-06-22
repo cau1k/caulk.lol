@@ -13,6 +13,65 @@ export type LinkPreviewCardProps = {
   tweetApiUrl?: (tweetId: string) => string;
 };
 
+export type LinkCardData = {
+  url: string;
+  title?: string;
+  reason?: string | null;
+  tags?: string[];
+  dateLabel?: string;
+  dateTitle?: string;
+};
+
+export type LinkCardProps = {
+  link: LinkCardData;
+  preview?: LinkPreviewResponse;
+  previewError?: string;
+  className?: string;
+  tweetApiUrl?: (tweetId: string) => string;
+};
+
+export function LinkCard({ className, link, preview, previewError, tweetApiUrl }: LinkCardProps) {
+  const title = displayTitle(link, preview);
+
+  return (
+    <article className={cn("py-5", className)}>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+        <a
+          href={link.url}
+          className="inline-flex min-w-0 items-center gap-1 font-medium transition-colors hover:text-primary"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <span className="truncate">{title}</span>
+          <ExternalLinkIcon className="size-3 shrink-0" />
+        </a>
+        {link.dateLabel && (
+          <time className="shrink-0 text-sm text-muted-foreground" title={link.dateTitle}>
+            {link.dateLabel}
+          </time>
+        )}
+      </div>
+      {link.reason && (
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{link.reason}</p>
+      )}
+      {link.tags && link.tags.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+          {link.tags.map((tag) => (
+            <span key={tag}>#{tag}</span>
+          ))}
+        </div>
+      )}
+      {preview ? (
+        <LinkPreviewCard preview={preview} tweetApiUrl={tweetApiUrl} className="mt-4" />
+      ) : previewError ? (
+        <p className="mt-3 border border-dashed p-3 text-xs text-muted-foreground">
+          Preview unavailable: {previewError}
+        </p>
+      ) : null}
+    </article>
+  );
+}
+
 export function LinkPreviewCard({ className, preview, tweetApiUrl }: LinkPreviewCardProps) {
   if (preview.preview.kind === "tweet") {
     if (tweetApiUrl) {
@@ -41,17 +100,8 @@ export function LinkPreviewCard({ className, preview, tweetApiUrl }: LinkPreview
           title={preview.preview.title}
           thumbnailUrl={preview.preview.thumbnailUrl}
         />
-        <a
-          href={preview.preview.url}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-2 inline-flex items-center gap-1 text-sm font-medium hover:text-primary"
-        >
-          {preview.preview.title}
-          <ExternalLinkIcon className="size-3" />
-        </a>
         {preview.preview.authorName && (
-          <p className="text-xs text-muted-foreground">{preview.preview.authorName}</p>
+          <p className="mt-2 text-xs text-muted-foreground">{preview.preview.authorName}</p>
         )}
       </div>
     );
@@ -91,6 +141,15 @@ export function LinkPreviewCard({ className, preview, tweetApiUrl }: LinkPreview
       <p className="mt-1">{preview.preview.message}</p>
     </div>
   );
+}
+
+function displayTitle(link: LinkCardData, preview: LinkPreviewResponse | undefined) {
+  if (link.title) return link.title;
+  if (!preview) return link.url;
+  if (preview.preview.kind === "youtube") return preview.preview.title;
+  if (preview.preview.kind === "generic") return preview.preview.title;
+  if (preview.preview.kind === "tweet") return `Tweet ${preview.preview.tweetId}`;
+  return link.url;
 }
 
 function PreviewShell({
