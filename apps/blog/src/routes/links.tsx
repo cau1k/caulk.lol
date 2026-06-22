@@ -1,25 +1,36 @@
-import { type LinkPreviewResponse, linkPreviewResponseSchema } from "@caulk.lol/api/link-preview";
-import { type GoodLink, linksResponseSchema } from "@caulk.lol/api/links";
+import {
+  type LinkPreviewResponse,
+  linkPreviewResponseSchema,
+} from "@caulk.lol/api/link-preview";
+import { type GoodLink, listLinks } from "@caulk.lol/api/links";
+import { requireBinding } from "@caulk.lol/env/runtime";
 import { env } from "@caulk.lol/env/web";
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
+import { getRequest } from "@tanstack/react-start/server";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+} from "motion/react";
 import { type PointerEvent, useRef, useState } from "react";
 import { EmptyState } from "@/components/empty-state";
 import { HomeLayout } from "@/components/layout/home";
 import { formatDate } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
+import { getLinksDb } from "@/lib/worker-env";
 
 type LinksLoaderData = {
-  items: LinkListItem[];
+  items: GoodLink[];
   error?: string;
 };
 
-type LinkListItem = {
-  link: GoodLink;
-  preview?: LinkPreviewResponse;
-  previewError?: string;
-};
+type PreviewLoadState =
+  | { status: "loading" }
+  | { status: "ok"; preview: LinkPreviewResponse }
+  | { status: "error"; message: string };
 
 type HoverPreviewImage = {
   id: string;
@@ -47,18 +58,24 @@ type PointerVelocity = {
 type LinkDayGroup = {
   dateLabel: string;
   start: number;
-  items: LinkListItem[];
+  items: GoodLink[];
 };
 
 export const Route = createFileRoute("/links")({
   loader: () => serverLoader(),
+  staleTime: 60_000,
+  gcTime: 5 * 60_000,
+  headers: () => ({
+    "Cache-Control":
+      "public, max-age=0, s-maxage=60, stale-while-revalidate=300",
+  }),
   component: LinksPage,
 });
 
 const serverLoader = createServerFn({ method: "GET" }).handler(
   async (): Promise<LinksLoaderData> => {
     try {
-      return { items: await fetchLinkItems() };
+      return { items: await fetchLinks() };
     } catch (error) {
       return {
         items: [],
@@ -77,7 +94,9 @@ function LinksPage() {
       <main className="mx-auto w-full max-w-2xl px-4 py-16">
         <header className="mb-12">
           <h1 className="text-3xl font-bold tracking-tight">Good Links</h1>
-          <p className="mt-4 text-muted-foreground">Things worth someone else's time.</p>
+          <p className="mt-4 text-muted-foreground">
+            Things worth someone else's time.
+          </p>
         </header>
 
         {groups.length > 0 ? (
@@ -99,18 +118,67 @@ function LinkGroups({ groups }: { groups: LinkDayGroup[] }) {
   const lastPointerSample = useRef<PointerSample | undefined>(undefined);
   const pointerVelocity = useRef<PointerVelocity>(zeroPointerVelocity());
   const isPreviewVisibleRef = useRef(false);
+  const previewRequests = useRef(new Map<string, Promise<void>>());
   const targetPreviewX = useMotionValue(0);
   const targetPreviewY = useMotionValue(0);
   const targetPreviewRotate = useMotionValue(0);
-  const previewX = useSpring(targetPreviewX, { stiffness: 90, damping: 22, mass: 1.15 });
-  const previewY = useSpring(targetPreviewY, { stiffness: 90, damping: 22, mass: 1.15 });
+  const previewX = useSpring(targetPreviewX, {
+    stiffness: 90,
+    damping: 22,
+    mass: 1.15,
+  });
+  const previewY = useSpring(targetPreviewY, {
+    stiffness: 90,
+    damping: 22,
+    mass: 1.15,
+  });
   const previewRotate = useSpring(targetPreviewRotate, {
     stiffness: 70,
     damping: 18,
     mass: 1.1,
   });
-  const [activePreviewImage, setActivePreviewImage] = useState<HoverPreviewImage>();
+  const [activePreviewImage, setActivePreviewImage] =
+    useState<HoverPreviewImage>();
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+  const [previewByLinkId, setPreviewByLinkId] = useState(
+    () => new Map<string, PreviewLoadState>(),
+  );
+
+  function requestPreview(link: GoodLink) {
+    const previewState = previewByLinkId.get(link.id);
+    if (previewState || previewRequests.current.has(link.id)) return;
+
+    setPreviewByLinkId((current) =>
+      new Map(current).set(link.id, { status: "loading" }),
+    );
+
+    const request = loadPreview(link.url)
+      .then((result) => {
+        setPreviewByLinkId((current) => {
+          const next = new Map(current);
+          if (result.status === "ok") {
+            next.set(link.id, { status: "ok", preview: result.preview });
+            return next;
+          }
+
+          next.set(link.id, { status: "error", message: result.message });
+          return next;
+        });
+      })
+      .catch((error: unknown) => {
+        setPreviewByLinkId((current) =>
+          new Map(current).set(link.id, {
+            status: "error",
+            message: errorMessage(error),
+          }),
+        );
+      })
+      .finally(() => {
+        previewRequests.current.delete(link.id);
+      });
+
+    previewRequests.current.set(link.id, request);
+  }
 
   function setPreviewMotion(motion: PreviewMotion) {
     targetPreviewX.set(motion.x);
@@ -127,7 +195,10 @@ function LinkGroups({ groups }: { groups: LinkDayGroup[] }) {
     previewRotate.jump(motion.rotate);
   }
 
-  function showPreview(image: HoverPreviewImage, event: PointerEvent<HTMLElement>) {
+  function showPreview(
+    image: HoverPreviewImage,
+    event: PointerEvent<HTMLElement>,
+  ) {
     if (shouldReduceMotion || event.pointerType === "touch") return;
 
     const shouldJump = !isPreviewVisibleRef.current;
@@ -146,22 +217,12 @@ function LinkGroups({ groups }: { groups: LinkDayGroup[] }) {
     else setPreviewMotion(motion);
 
     setActivePreviewImage((currentImage) => {
-      if (currentImage?.id === image.id && currentImage.src === image.src) return currentImage;
+      if (currentImage?.id === image.id && currentImage.src === image.src)
+        return currentImage;
       return image;
     });
     isPreviewVisibleRef.current = true;
     setIsPreviewVisible(true);
-  }
-
-  function movePreview(event: PointerEvent<HTMLElement>) {
-    if (shouldReduceMotion || event.pointerType === "touch" || !isPreviewVisibleRef.current) {
-      return;
-    }
-
-    const motion = previewMotion(event, lastPointerSample.current, pointerVelocity.current);
-    pointerVelocity.current = motion.velocity;
-    lastPointerSample.current = pointerSample(event);
-    setPreviewMotion(motion);
   }
 
   function hidePreview() {
@@ -183,13 +244,14 @@ function LinkGroups({ groups }: { groups: LinkDayGroup[] }) {
             {group.dateLabel}
           </h2>
           <ol className="group/list list-decimal pl-6" start={group.start}>
-            {group.items.map((item) => (
+            {group.items.map((link) => (
               <LinkRow
-                key={item.link.id}
-                item={item}
+                key={link.id}
+                link={link}
+                previewState={previewByLinkId.get(link.id)}
                 onPreviewClear={hidePreview}
                 onPreviewEnter={showPreview}
-                onPreviewMove={movePreview}
+                onPreviewRequest={requestPreview}
               />
             ))}
           </ol>
@@ -230,18 +292,29 @@ function LinkGroups({ groups }: { groups: LinkDayGroup[] }) {
 }
 
 type LinkRowProps = {
-  item: LinkListItem;
+  link: GoodLink;
+  previewState?: PreviewLoadState;
   onPreviewClear: () => void;
-  onPreviewEnter: (image: HoverPreviewImage, event: PointerEvent<HTMLElement>) => void;
-  onPreviewMove: (event: PointerEvent<HTMLElement>) => void;
+  onPreviewEnter: (
+    image: HoverPreviewImage,
+    event: PointerEvent<HTMLElement>,
+  ) => void;
+  onPreviewRequest: (link: GoodLink) => void;
 };
 
-function LinkRow({ item, onPreviewClear, onPreviewEnter, onPreviewMove }: LinkRowProps) {
-  const { link } = item;
-  const hoverImage = hoverPreviewImage(item);
+function LinkRow({
+  link,
+  onPreviewClear,
+  onPreviewEnter,
+  onPreviewRequest,
+  previewState,
+}: LinkRowProps) {
+  const hoverImage = hoverPreviewImage(link, previewState);
   const domain = displayDomain(link.url);
 
   function handlePointerEnter(event: PointerEvent<HTMLLIElement>) {
+    onPreviewRequest(link);
+
     if (!hoverImage) {
       onPreviewClear();
       return;
@@ -252,7 +325,7 @@ function LinkRow({ item, onPreviewClear, onPreviewEnter, onPreviewMove }: LinkRo
 
   function handlePointerMove(event: PointerEvent<HTMLLIElement>) {
     if (!hoverImage) return;
-    onPreviewMove(event);
+    onPreviewEnter(hoverImage, event);
   }
 
   return (
@@ -275,18 +348,20 @@ function LinkRow({ item, onPreviewClear, onPreviewEnter, onPreviewMove }: LinkRo
             [{domain}]
           </span>
         </div>
-        <p className="mt-1 text-sm leading-6 text-muted-foreground">{link.reason}</p>
+        <p className="mt-1 text-sm leading-6 text-muted-foreground">
+          {link.reason}
+        </p>
       </div>
     </li>
   );
 }
 
-function groupLinkItemsByDay(items: LinkListItem[]): LinkDayGroup[] {
+function groupLinkItemsByDay(items: GoodLink[]): LinkDayGroup[] {
   const groups: LinkDayGroup[] = [];
   let currentGroup: LinkDayGroup | undefined;
 
   items.forEach((item, index) => {
-    const dateLabel = formatDate(item.link.createdAt) || "Unknown date";
+    const dateLabel = formatDate(item.createdAt) || "Unknown date";
 
     if (!currentGroup || currentGroup.dateLabel !== dateLabel) {
       currentGroup = { dateLabel, start: index + 1, items: [] };
@@ -299,8 +374,12 @@ function groupLinkItemsByDay(items: LinkListItem[]): LinkDayGroup[] {
   return groups;
 }
 
-function hoverPreviewImage(item: LinkListItem): HoverPreviewImage | undefined {
-  const { link, preview } = item;
+function hoverPreviewImage(
+  link: GoodLink,
+  previewState: PreviewLoadState | undefined,
+): HoverPreviewImage | undefined {
+  const preview =
+    previewState?.status === "ok" ? previewState.preview : undefined;
   if (!preview) return undefined;
 
   if (preview.preview.kind === "generic" && preview.preview.imageUrl) {
@@ -328,7 +407,10 @@ function tweetPreviewImage(data: Record<string, unknown>): string | undefined {
   return firstImageUrl(mediaDetails, ["media_url_https", "url"]);
 }
 
-function firstImageUrl(items: readonly unknown[], keys: readonly string[]): string | undefined {
+function firstImageUrl(
+  items: readonly unknown[],
+  keys: readonly string[],
+): string | undefined {
   for (const item of items) {
     const record = recordValue(item);
     if (!record) continue;
@@ -354,11 +436,17 @@ function previewMotion(
   const viewport = event.currentTarget.ownerDocument.documentElement;
   const maxX = viewport.clientWidth - previewWidth - margin;
   const maxY = viewport.clientHeight - previewHeight - margin;
-  const dynamics = previewDynamics(pointerSample(event), previousSample, previousVelocity);
+  const dynamics = previewDynamics(
+    pointerSample(event),
+    previousSample,
+    previousVelocity,
+  );
   const preferredX = event.clientX + offset + dynamics.driftX;
   const preferredY = event.clientY + offset + dynamics.driftY;
-  const x = preferredX > maxX ? event.clientX - previewWidth - offset : preferredX;
-  const y = preferredY > maxY ? event.clientY - previewHeight - offset : preferredY;
+  const x =
+    preferredX > maxX ? event.clientX - previewWidth - offset : preferredX;
+  const y =
+    preferredY > maxY ? event.clientY - previewHeight - offset : preferredY;
 
   return {
     x: Math.max(margin, Math.min(x, maxX)),
@@ -378,8 +466,10 @@ function previewDynamics(
   }
 
   const elapsed = Math.max(16, sample.time - previousSample.time);
-  const instantVelocityX = ((sample.clientX - previousSample.clientX) / elapsed) * 1_000;
-  const instantVelocityY = ((sample.clientY - previousSample.clientY) / elapsed) * 1_000;
+  const instantVelocityX =
+    ((sample.clientX - previousSample.clientX) / elapsed) * 1_000;
+  const instantVelocityY =
+    ((sample.clientY - previousSample.clientY) / elapsed) * 1_000;
   const velocityX = lerp(previousVelocity.x, instantVelocityX, 0.16);
   const velocityY = lerp(previousVelocity.y, instantVelocityY, 0.16);
   const speed = Math.hypot(velocityX, velocityY);
@@ -430,19 +520,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function stringValue(value: unknown): string | undefined {
-  return typeof value === "string" && value.trim().length > 0 ? value.trim() : undefined;
-}
-
-async function fetchLinkItems(): Promise<LinkListItem[]> {
-  const links = await fetchLinks();
-  return await Promise.all(
-    links.map(async (link) => {
-      const preview = await loadPreview(link.url);
-      return preview.status === "ok"
-        ? { link, preview: preview.preview }
-        : { link, previewError: preview.message };
-    }),
-  );
+  return typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : undefined;
 }
 
 type PreviewLoadResult =
@@ -455,27 +535,27 @@ async function loadPreview(url: string): Promise<PreviewLoadResult> {
   } catch (error) {
     return {
       status: "error",
-      message: error instanceof Error ? error.message : "Failed to load preview.",
+      message:
+        error instanceof Error ? error.message : "Failed to load preview.",
     };
   }
 }
 
 async function fetchLinks(): Promise<GoodLink[]> {
-  const response = await fetch(new URL("/api/links", env.VITE_SERVER_URL));
-  if (!response.ok) {
-    throw new Error(`Links API returned ${response.status}.`);
-  }
-
-  const payload: unknown = await response.json();
-  return linksResponseSchema.parse(payload).links;
+  return await listLinks(requireBinding(getLinksDb(getRequest()), "LINKS_DB"));
 }
 
 async function fetchLinkPreview(url: string): Promise<LinkPreviewResponse> {
   const previewUrl = new URL("/api/link/preview", env.VITE_SERVER_URL);
   previewUrl.searchParams.set("url", url);
   const response = await fetch(previewUrl);
-  if (!response.ok) throw new Error(`Link preview API returned ${response.status}.`);
+  if (!response.ok)
+    throw new Error(`Link preview API returned ${response.status}.`);
 
   const payload: unknown = await response.json();
   return linkPreviewResponseSchema.parse(payload);
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : "Request failed.";
 }

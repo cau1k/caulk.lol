@@ -50,8 +50,9 @@ const memoryPreviewCache = new Map<string, string>();
 export const linksApi = new Hono<LinksApiEnv>();
 
 linksApi.get("/links", async (c) => {
-  const includeArchived =
-    c.req.query("include") === "archived" && Boolean(await getAdminSession(c));
+  const requestedArchived = c.req.query("include") === "archived";
+  const includeArchived = requestedArchived && Boolean(await getAdminSession(c));
+  setLinksCacheControl(c, { requestedArchived });
 
   return c.json({
     links: await listLinks(getLinksDb(c), { includeArchived }),
@@ -228,6 +229,15 @@ function getLinksDb(c: LinksApiContext) {
 
 function getLinkPreviewCache(c: LinksApiContext): LinkPreviewCacheStore {
   return c.env.LINK_PREVIEW_CACHE ?? c.env.TWEET_CACHE ?? memoryCacheStore;
+}
+
+function setLinksCacheControl(c: LinksApiContext, options: { requestedArchived: boolean }) {
+  if (options.requestedArchived) {
+    c.header("Cache-Control", "private, no-store");
+    return;
+  }
+
+  c.header("Cache-Control", "public, max-age=0, s-maxage=60, stale-while-revalidate=300");
 }
 
 async function resolveCreateLinkMetadata(
