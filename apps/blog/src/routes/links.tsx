@@ -7,6 +7,7 @@ import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/reac
 import { type PointerEvent, useState } from "react";
 import { EmptyState } from "@/components/empty-state";
 import { HomeLayout } from "@/components/layout/home";
+import { formatDate, formatDateTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
 
 type LinksLoaderData = {
@@ -110,19 +111,28 @@ function LinkRow({ item }: { item: LinkListItem }) {
       onPointerMove={updatePreviewPosition}
       onPointerLeave={handlePointerLeave}
     >
-      <div className="rounded-sm px-1 py-0.5 transition-colors duration-150 hover:bg-muted/25">
-        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-          <a
-            href={link.url}
-            target="_blank"
-            rel="noreferrer"
-            className="font-medium leading-snug text-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+      <div className="group/entry rounded-sm px-1 py-0.5">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-3 gap-y-1">
+          <div className="min-w-0">
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noreferrer"
+              className="font-medium leading-snug text-foreground underline-offset-4 transition-colors group-hover/entry:text-primary group-hover/entry:underline hover:text-primary hover:underline"
+            >
+              {link.title}
+            </a>
+            <span className="ml-2 font-mono text-[11px] leading-none text-muted-foreground">
+              [{domain}]
+            </span>
+          </div>
+          <time
+            className="justify-self-end font-mono text-[11px] leading-none text-muted-foreground/60"
+            dateTime={link.createdAt}
+            title={formatDateTime(link.createdAt)}
           >
-            {link.title}
-          </a>
-          <span className="font-mono text-[11px] leading-none text-muted-foreground">
-            [{domain}]
-          </span>
+            {formatDate(link.createdAt)}
+          </time>
         </div>
         <p className="mt-1 text-sm leading-6 text-muted-foreground">{link.reason}</p>
       </div>
