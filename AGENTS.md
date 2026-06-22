@@ -8,6 +8,10 @@
 - `pnpm lint` - biome check
 - `pnpm format` - biome format
 
+## Deploying
+
+- Use git push to deploy to prod. Do not deploy from this machine.
+
 ## Code Style
 
 - **Formatting**: 2-space indent, biome handles organization
