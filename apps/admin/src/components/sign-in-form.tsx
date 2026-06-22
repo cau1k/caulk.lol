@@ -202,12 +202,16 @@ function goAfterSignIn({
   navigate: ReturnType<typeof useNavigate>;
   redirectTo?: string;
 }) {
-  if (redirectTo?.startsWith("/")) {
+  if (isSafeLocalRedirect(redirectTo)) {
     window.location.assign(redirectTo);
     return;
   }
 
   navigate({ to: "/dashboard" });
+}
+
+function isSafeLocalRedirect(value: string | undefined): value is string {
+  return typeof value === "string" && value.startsWith("/") && !value.startsWith("//");
 }
 
 function AuthPanel({

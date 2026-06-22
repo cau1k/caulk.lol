@@ -53,12 +53,9 @@ const linksDb = await D1Database("links-db", {
 });
 
 const authSecret = requiredSecret("BETTER_AUTH_SECRET", "better-auth-secret");
-const adminBootstrapToken = requiredSecret(
-  "ADMIN_BOOTSTRAP_TOKEN",
-  "admin-bootstrap-token",
-);
-const betterAuthUrl = requiredEnv("BETTER_AUTH_URL");
-const corsOrigin = requiredEnv("CORS_ORIGIN");
+const adminBootstrapToken = requiredSecret("ADMIN_BOOTSTRAP_TOKEN", "admin-bootstrap-token");
+const betterAuthUrl = resolveBetterAuthUrl(stage, requiredEnv("BETTER_AUTH_URL"));
+const corsOrigin = resolveCorsOrigin(stage, requiredEnv("CORS_ORIGIN"));
 const ownerEmail = requiredEnv("OWNER_EMAIL");
 const authEmailFrom = "noreply@caulk.lol";
 const serverEmailSender = EmailSender({
@@ -118,7 +115,8 @@ export const server = await Worker("server", {
   },
 });
 
-const serverUrl = stage === "prod" ? `https://${apiDomainName}` : requireResourceUrl("server", server.url);
+const serverUrl =
+  stage === "prod" ? `https://${apiDomainName}` : requireResourceUrl("server", server.url);
 
 const sharedSiteBindings = {
   DB: linksDb,
@@ -177,9 +175,7 @@ export const blog = await TanStackStart("blog", {
   ...blogPublicConfig,
   assets: {
     run_worker_first:
-      stage === "prod"
-        ? ["/*", "!/assets/*", "!/fonts/*", "!/media/*", "!/cdn-cgi/*"]
-        : false,
+      stage === "prod" ? ["/*", "!/assets/*", "!/fonts/*", "!/media/*", "!/cdn-cgi/*"] : false,
   },
   build: {
     memoize:
@@ -242,6 +238,31 @@ function requiredSecret(envName: string, secretName: string) {
 function requireResourceUrl(name: string, url: string | undefined): string {
   if (!url) throw new Error(`${name} URL was not created.`);
   return url;
+}
+
+function resolveBetterAuthUrl(currentStage: string, value: string): string {
+  return currentStage === "prod" ? `https://${apiDomainName}` : value;
+}
+
+function resolveCorsOrigin(currentStage: string, value: string): string {
+  const origins =
+    currentStage === "prod"
+      ? ["https://caulk.lol", "https://admin.caulk.lol"]
+      : uniqueOrigins(parseOriginList(value));
+
+  if (origins.length === 0) throw new Error("CORS_ORIGIN must include at least one origin.");
+  return origins.join(",");
+}
+
+function parseOriginList(value: string): string[] {
+  return value
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter((origin) => origin.length > 0);
+}
+
+function uniqueOrigins(origins: string[]): string[] {
+  return Array.from(new Set(origins));
 }
 
 function optionalPlainBinding(name: string, value: string | undefined): Record<string, string> {

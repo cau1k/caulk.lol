@@ -1,22 +1,14 @@
-import {
-  type CreateLinkInput,
-  type GoodLink,
-  type LinkStatus,
-  createLinkInputSchema,
-} from "@caulk.lol/api/links";
+import { type CreateLinkInput, type GoodLink, type LinkStatus } from "@caulk.lol/api/links";
 import { Badge } from "@caulk.lol/ui/components/badge";
 import { Button } from "@caulk.lol/ui/components/button";
-import { Input } from "@caulk.lol/ui/components/input";
-import { Label } from "@caulk.lol/ui/components/label";
-import { NativeSelect, NativeSelectOption } from "@caulk.lol/ui/components/native-select";
 import { Separator } from "@caulk.lol/ui/components/separator";
-import { Textarea } from "@caulk.lol/ui/components/textarea";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { ArrowUpRightIcon } from "lucide-react";
-import { type FormEvent, type ReactNode, useMemo, useState } from "react";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import { ArrowUpRightIcon, PlusIcon } from "lucide-react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
+import { LinkForm } from "@/components/link-form";
 import { useTRPC, useTRPCClient } from "@/utils/trpc";
 
 export const Route = createFileRoute("/_auth/links")({
@@ -70,11 +62,17 @@ function LinksRoute() {
   return (
     <main className="min-h-full bg-background text-foreground">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
-        <header className="space-y-1">
-          <h1 className="text-2xl font-medium tracking-tight">Links</h1>
-          <p className="text-xs text-muted-foreground">
-            Add, publish, and archive links shown on caulk.lol.
-          </p>
+        <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-1">
+            <h1 className="text-2xl font-medium tracking-tight">Links</h1>
+            <p className="text-xs text-muted-foreground">
+              Add, publish, and archive links shown on caulk.lol.
+            </p>
+          </div>
+          <Button className="w-full sm:w-auto" render={<Link to="/links/add" />}>
+            <PlusIcon />
+            Add link
+          </Button>
         </header>
 
         <Separator />
@@ -89,7 +87,7 @@ function LinksRoute() {
         <Separator />
 
         <section className="grid gap-8 lg:grid-cols-[22rem_minmax(0,1fr)]">
-          <CreateLinkForm
+          <LinkForm
             isPending={createMutation.isPending}
             onCreate={(input, onSuccess) => createMutation.mutate(input, { onSuccess })}
           />
@@ -148,71 +146,6 @@ function Metric({ label, value }: { label: string; value: string }) {
   );
 }
 
-function CreateLinkForm({
-  isPending,
-  onCreate,
-}: {
-  isPending: boolean;
-  onCreate: (input: CreateLinkInput, onSuccess: () => void) => void;
-}) {
-  function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-    const parsed = createLinkInputSchema.safeParse({
-      description: optionalFieldValue(formData, "description"),
-      reason: fieldValue(formData, "reason"),
-      source: "admin",
-      status: fieldValue(formData, "status"),
-      tags: splitTags(fieldValue(formData, "tags")),
-      title: optionalFieldValue(formData, "title"),
-      url: fieldValue(formData, "url"),
-    });
-
-    if (!parsed.success) {
-      toast.error(parsed.error.issues.map((issue) => issue.message).join(" "));
-      return;
-    }
-
-    onCreate(parsed.data, () => form.reset());
-  }
-
-  return (
-    <form className="grid h-max gap-4" onSubmit={submit}>
-      <div>
-        <h2 className="text-sm font-medium">Add link</h2>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Metadata is fetched when title or description is empty.
-        </p>
-      </div>
-      <Separator />
-      <Field label="URL">
-        <Input name="url" placeholder="https://" type="url" required />
-      </Field>
-      <Field label="Title override">
-        <Input name="title" placeholder="Fetched when empty" />
-      </Field>
-      <Field label="Reason">
-        <Textarea name="reason" placeholder="Why this belongs on the list" required />
-      </Field>
-      <div className="grid gap-4 sm:grid-cols-[1fr_9rem] lg:grid-cols-1 xl:grid-cols-[1fr_9rem]">
-        <Field label="Tags">
-          <Input name="tags" placeholder="tools, writing" />
-        </Field>
-        <Field label="Status">
-          <NativeSelect name="status" defaultValue="published" className="w-full">
-            <NativeSelectOption value="published">published</NativeSelectOption>
-            <NativeSelectOption value="draft">draft</NativeSelectOption>
-          </NativeSelect>
-        </Field>
-      </div>
-      <Button type="submit" disabled={isPending}>
-        {isPending ? "Adding" : "Add link"}
-      </Button>
-    </form>
-  );
-}
-
 function LinkRow({
   isPending,
   link,
@@ -260,15 +193,6 @@ function LinkRow({
   );
 }
 
-function Field({ children, label }: { children: ReactNode; label: string }) {
-  return (
-    <Label className="grid gap-2 text-xs font-normal text-muted-foreground">
-      <span>{label}</span>
-      {children}
-    </Label>
-  );
-}
-
 function EmptyPanel({ description, title }: { description: string; title: string }) {
   return (
     <div className="py-12 text-center">
@@ -301,24 +225,6 @@ function linkMetrics(links: GoodLink[]) {
     Array.from(tagCounts.entries()).sort((left, right) => right[1] - left[1])[0]?.[0] ?? "none";
 
   return { archived, draft, published, topTag };
-}
-
-function splitTags(value: string) {
-  return value
-    .split(",")
-    .map((tag) => tag.trim())
-    .filter((tag) => tag.length > 0);
-}
-
-function fieldValue(formData: FormData, name: string) {
-  const value = formData.get(name);
-  if (typeof value !== "string") throw new Error(`Missing ${name}.`);
-  return value.trim();
-}
-
-function optionalFieldValue(formData: FormData, name: string) {
-  const value = fieldValue(formData, name);
-  return value.length > 0 ? value : undefined;
 }
 
 function errorMessage(error: unknown): string {

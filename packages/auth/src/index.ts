@@ -207,7 +207,11 @@ function getAdminOrigin(runtimeEnv: RuntimeEnv) {
 }
 
 function getPasskeyRpId(runtimeEnv: RuntimeEnv) {
-  return isDevelopmentEnvironment(runtimeEnv) ? "localhost" : "caulk.lol";
+  const hostname = getOriginHostname(getAdminOrigin(runtimeEnv));
+
+  if (isLocalHostname(hostname)) return "localhost";
+  if (hostname === "caulk.lol" || hostname.endsWith(".caulk.lol")) return "caulk.lol";
+  return hostname;
 }
 
 function isDevelopmentEnvironment(runtimeEnv: RuntimeEnv) {
@@ -219,8 +223,16 @@ function isDevelopmentEnvironment(runtimeEnv: RuntimeEnv) {
 function isLocalOrigin(value: string) {
   try {
     const { hostname } = new URL(value);
-    return ["localhost", "127.0.0.1", "[::1]"].includes(hostname);
+    return isLocalHostname(hostname);
   } catch {
     return false;
   }
+}
+
+function getOriginHostname(value: string) {
+  return new URL(value).hostname;
+}
+
+function isLocalHostname(hostname: string) {
+  return ["localhost", "127.0.0.1", "[::1]"].includes(hostname);
 }
