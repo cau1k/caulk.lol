@@ -1,19 +1,13 @@
 "use client";
 
-import { useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 
 const RUM_ENDPOINT = "/api/analytics/rum";
 const EXCLUDED_PATHS = new Set(["/analytics"]);
 
 export function SiteRum() {
-  const pathname = useRouterState({
-    select: (state) => state.location.pathname,
-  });
-
   useEffect(() => {
-    const initialPathname = window.location.pathname;
-    if (pathname !== initialPathname) return;
+    const pathname = window.location.pathname;
     if (EXCLUDED_PATHS.has(pathname)) return;
 
     const report = () => {
@@ -37,13 +31,13 @@ export function SiteRum() {
     };
 
     if (document.readyState === "complete") {
-      window.setTimeout(report, 0);
-      return;
+      const timeoutId = window.setTimeout(report, 0);
+      return () => window.clearTimeout(timeoutId);
     }
 
     window.addEventListener("load", report, { once: true });
     return () => window.removeEventListener("load", report);
-  }, [pathname]);
+  }, []);
 
   return null;
 }
