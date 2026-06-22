@@ -52,6 +52,9 @@ export const navItemVariants = cva("[&_svg]:size-4", {
   },
 });
 
+const generatedLinkItemKeys = new WeakMap<LinkItemType, string>();
+let generatedLinkItemKeyCounter = 0;
+
 export function Header({
   nav = {},
   i18n = false,
@@ -137,29 +140,24 @@ export function Header({
         {typeof nav.title === "function" ? nav.title({}) : nav.title}
       </LayoutLink>
       {nav.children}
-      <ul
-        className={cn(
-          "flex flex-row items-center gap-2 px-6",
-          isCondensed && "hidden",
-        )}
-      >
-        {navItems
-          .filter((item) => !isSecondary(item))
-          .map((item, i) => (
-            <NavigationMenuLinkItem
-              key={i}
-              item={item}
-              className="text-sm"
-              onFeedback={triggerNavigationFeedback}
-            />
-          ))}
-      </ul>
       <div
         className={cn(
           "flex flex-row items-center justify-end gap-1.5 flex-1",
           isCondensed && "hidden",
         )}
       >
+        <ul className="flex flex-row items-center gap-2 empty:hidden">
+          {navItems
+            .filter((item) => !isSecondary(item))
+            .map((item) => (
+              <NavigationMenuLinkItem
+                key={getLinkItemKey(item)}
+                item={item}
+                className="text-sm"
+                onFeedback={triggerNavigationFeedback}
+              />
+            ))}
+        </ul>
         {searchToggle.enabled !== false &&
           (searchToggle.components?.lg ?? (
             <LargeSearchToggle
@@ -175,9 +173,9 @@ export function Header({
           </LanguageToggle>
         )}
         <ul className="flex flex-row gap-2 items-center empty:hidden">
-          {navItems.filter(isSecondary).map((item, i) => (
+          {navItems.filter(isSecondary).map((item) => (
             <NavigationMenuLinkItem
-              key={i}
+              key={getLinkItemKey(item)}
               className={cn(
                 item.type === "icon" && "-mx-1 first:ms-0 last:me-0",
               )}
@@ -217,24 +215,24 @@ export function Header({
           <NavigationMenuContent className="flex flex-col p-4 sm:flex-row sm:items-center sm:justify-end">
             {menuItems
               .filter((item) => !isSecondary(item))
-              .map((item, i) => (
+              .map((item) => (
                 <MobileNavigationMenuLinkItem
-                  key={i}
+                  key={getLinkItemKey(item)}
                   item={item}
                   className="sm:hidden"
                   onFeedback={triggerNavigationFeedback}
                 />
               ))}
             <div className="-ms-1.5 flex flex-row items-center gap-2 max-sm:mt-2">
-              {menuItems.filter(isSecondary).map((item, i) => (
+              {menuItems.filter(isSecondary).map((item) => (
                 <MobileNavigationMenuLinkItem
-                  key={i}
+                  key={getLinkItemKey(item)}
                   item={item}
                   className={cn(item.type === "icon" && "-mx-1 first:ms-0")}
                   onFeedback={triggerNavigationFeedback}
                 />
               ))}
-              <div role="separator" className="flex-1" />
+              <div className="flex-1" />
               {i18n && (
                 <LanguageToggle>
                   <Languages className="size-5" />
@@ -258,6 +256,27 @@ function isSecondary(item: LinkItemType): boolean {
   if ("secondary" in item && item.secondary != null) return item.secondary;
 
   return item.type === "icon";
+}
+
+function getLinkItemKey(item: LinkItemType): string {
+  if (item.type === "custom") return getGeneratedLinkItemKey(item);
+
+  if (item.type === "menu") {
+    if (item.url) return `menu:${item.url}`;
+    return getGeneratedLinkItemKey(item);
+  }
+
+  return `${item.type ?? "main"}:${item.url}`;
+}
+
+function getGeneratedLinkItemKey(item: LinkItemType): string {
+  const existingKey = generatedLinkItemKeys.get(item);
+  if (existingKey) return existingKey;
+
+  generatedLinkItemKeyCounter += 1;
+  const key = `generated:${generatedLinkItemKeyCounter}`;
+  generatedLinkItemKeys.set(item, key);
+  return key;
 }
 
 function HeaderNavigationMenu({
@@ -312,9 +331,11 @@ function NavigationMenuLinkItem({
   if (item.type === "custom") return <div {...props}>{item.children}</div>;
 
   if (item.type === "menu") {
-    const children = item.items.map((child, j) => {
+    const children = item.items.map((child) => {
       if (child.type === "custom") {
-        return <Fragment key={j}>{child.children}</Fragment>;
+        return (
+          <Fragment key={getLinkItemKey(child)}>{child.children}</Fragment>
+        );
       }
 
       const {
@@ -327,7 +348,7 @@ function NavigationMenuLinkItem({
       } = child.menu ?? {};
 
       return (
-        <NavigationMenuLink key={`${j}-${child.url}`} asChild>
+        <NavigationMenuLink key={getLinkItemKey(child)} asChild>
           <LayoutLink
             {...rest}
             href={child.url}
@@ -426,9 +447,9 @@ function MobileNavigationMenuLinkItem({
             header
           )}
         </p>
-        {item.items.map((child, i) => (
+        {item.items.map((child) => (
           <MobileNavigationMenuLinkItem
-            key={i}
+            key={getLinkItemKey(child)}
             item={child}
             onFeedback={onFeedback}
           />
