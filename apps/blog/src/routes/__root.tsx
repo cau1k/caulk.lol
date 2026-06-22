@@ -13,9 +13,30 @@ import {
   useBackgroundStarsOptional,
 } from "@/components/background-stars-context";
 import { NotFound } from "@/components/not-found";
-import { SiteRum } from "@/components/site-rum";
 import { TerminalFooter } from "@/components/terminal-footer";
 import appCss from "@/styles/app.css?url";
+
+const siteRumScript = `(function () {
+  var excluded = { '/analytics': true };
+  function report() {
+    var pathname = window.location.pathname;
+    if (excluded[pathname] || !navigator.sendBeacon) return;
+    var entry = performance.getEntriesByType('navigation')[0];
+    if (!entry || entry.loadEventEnd <= 0) return;
+    navigator.sendBeacon(
+      '/api/analytics/rum',
+      new Blob([
+        JSON.stringify({
+          pathname: pathname,
+          referrer: document.referrer,
+          durationMs: entry.loadEventEnd - entry.startTime,
+        }),
+      ], { type: 'application/json' }),
+    );
+  }
+  if (document.readyState === 'complete') window.setTimeout(report, 0);
+  else window.addEventListener('load', report, { once: true });
+})();`;
 
 export const Route = createRootRoute({
   notFoundComponent: NotFound,
@@ -93,11 +114,11 @@ function RootDocument({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body className="flex flex-col min-h-screen">
+        <script>{siteRumScript}</script>
         <BackgroundStarsProvider>
           <BackgroundStarsRouteSync />
           <BackgroundStars />
           <RootProvider search={{ hotKey: [{ key: "/", display: "/" }] }}>
-            <SiteRum />
             {children}
             <TerminalFooter />
           </RootProvider>
