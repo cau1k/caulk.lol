@@ -1,12 +1,12 @@
 import { type LinkPreviewResponse, linkPreviewResponseSchema } from "@caulk.lol/api/link-preview";
 import { type GoodLink, linksResponseSchema } from "@caulk.lol/api/links";
 import { env } from "@caulk.lol/env/web";
-import { LinkCard } from "@caulk.lol/ui/components/link-preview";
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
+import { type PointerEvent, useState } from "react";
 import { EmptyState } from "@/components/empty-state";
 import { HomeLayout } from "@/components/layout/home";
-import { formatDate, formatDateTime } from "@/lib/format-date";
 import { baseOptions } from "@/lib/layout.shared";
 
 type LinksLoaderData = {
@@ -18,6 +18,10 @@ type LinkListItem = {
   link: GoodLink;
   preview?: LinkPreviewResponse;
   previewError?: string;
+};
+
+type HoverPreviewImage = {
+  src: string;
 };
 
 export const Route = createFileRoute("/links")({
@@ -50,11 +54,11 @@ function LinksPage() {
         </header>
 
         {items.length > 0 ? (
-          <div className="group/list">
+          <ol className="group/list space-y-5 pl-6">
             {items.map((item) => (
               <LinkRow key={item.link.id} item={item} />
             ))}
-          </div>
+          </ol>
         ) : (
           <EmptyState
             title={error ? "Links unavailable" : "No links yet"}
@@ -68,24 +72,158 @@ function LinksPage() {
 }
 
 function LinkRow({ item }: { item: LinkListItem }) {
-  const { link, preview, previewError } = item;
+  const { link, preview } = item;
+  const hoverImage = hoverPreviewImage(preview);
+  const shouldReduceMotion = useReducedMotion();
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springX = useSpring(x, { stiffness: 260, damping: 28, mass: 0.45 });
+  const springY = useSpring(y, { stiffness: 260, damping: 28, mass: 0.45 });
+  const [hasActivatedPreview, setHasActivatedPreview] = useState(false);
+  const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+  const domain = displayDomain(link.url);
+
+  function updatePreviewPosition(event: PointerEvent<HTMLLIElement>) {
+    if (!hoverImage || shouldReduceMotion || event.pointerType === "touch") return;
+
+    const position = previewPosition(event);
+    x.set(position.x);
+    y.set(position.y);
+  }
+
+  function handlePointerEnter(event: PointerEvent<HTMLLIElement>) {
+    if (!hoverImage || shouldReduceMotion || event.pointerType === "touch") return;
+
+    updatePreviewPosition(event);
+    setHasActivatedPreview(true);
+    setIsPreviewVisible(true);
+  }
+
+  function handlePointerLeave() {
+    setIsPreviewVisible(false);
+  }
 
   return (
-    <LinkCard
-      className="-mx-3 px-3 transition-all duration-200 ease-out group-has-hover/list:opacity-50 hover:opacity-100!"
-      link={{
-        url: link.url,
-        title: link.title,
-        reason: link.reason,
-        tags: link.tags,
-        dateLabel: formatDate(link.createdAt),
-        dateTitle: formatDateTime(link.createdAt),
-      }}
-      preview={preview}
-      previewError={previewError}
-      tweetApiUrl={(tweetId) => `/api/tweet/${tweetId}`}
-    />
+    <li
+      className="relative pl-1 marker:font-mono marker:text-xs marker:text-muted-foreground/55 transition-opacity duration-150 ease-out group-has-hover/list:opacity-45 hover:opacity-100!"
+      onPointerEnter={handlePointerEnter}
+      onPointerMove={updatePreviewPosition}
+      onPointerLeave={handlePointerLeave}
+    >
+      <div className="rounded-sm px-1 py-0.5 transition-colors duration-150 hover:bg-muted/25">
+        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+          <a
+            href={link.url}
+            target="_blank"
+            rel="noreferrer"
+            className="font-medium leading-snug text-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+          >
+            {link.title}
+          </a>
+          <span className="font-mono text-[11px] leading-none text-muted-foreground">
+            [{domain}]
+          </span>
+        </div>
+        <p className="mt-1 text-sm leading-6 text-muted-foreground">{link.reason}</p>
+      </div>
+
+      {hoverImage && !shouldReduceMotion && hasActivatedPreview ? (
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none fixed left-0 top-0 z-50 hidden h-28 w-52 overflow-hidden rounded-md border border-border/60 bg-background shadow-[0_16px_50px_rgb(0_0_0/0.22)] md:block motion-reduce:hidden"
+          style={{ x: springX, y: springY }}
+          animate={{ opacity: isPreviewVisible ? 1 : 0, scale: isPreviewVisible ? 1 : 0.98 }}
+          transition={{ duration: 0.16, ease: "easeOut" }}
+        >
+          <img src={hoverImage.src} alt="" className="h-full w-full object-cover" />
+        </motion.div>
+      ) : null}
+    </li>
   );
+}
+
+function hoverPreviewImage(
+  preview: LinkPreviewResponse | undefined,
+): HoverPreviewImage | undefined {
+  if (!preview) return undefined;
+
+  if (preview.preview.kind === "generic" && preview.preview.imageUrl) {
+    return { src: preview.preview.imageUrl };
+  }
+
+  if (preview.preview.kind === "youtube" && preview.preview.thumbnailUrl) {
+    return { src: preview.preview.thumbnailUrl };
+  }
+
+  if (preview.preview.kind === "tweet") {
+    const tweetImage = tweetPreviewImage(preview.preview.data);
+    return tweetImage ? { src: tweetImage } : undefined;
+  }
+
+  return undefined;
+}
+
+function tweetPreviewImage(data: Record<string, unknown>): string | undefined {
+  const photos = arrayValue(data.photos);
+  const photoUrl = firstImageUrl(photos, ["url", "media_url_https"]);
+  if (photoUrl) return photoUrl;
+
+  const mediaDetails = arrayValue(data.mediaDetails);
+  return firstImageUrl(mediaDetails, ["media_url_https", "url"]);
+}
+
+function firstImageUrl(items: readonly unknown[], keys: readonly string[]): string | undefined {
+  for (const item of items) {
+    const record = recordValue(item);
+    if (!record) continue;
+
+    for (const key of keys) {
+      const value = stringValue(record[key]);
+      if (value) return value;
+    }
+  }
+
+  return undefined;
+}
+
+function previewPosition(event: PointerEvent<HTMLLIElement>) {
+  const previewWidth = 208;
+  const previewHeight = 112;
+  const margin = 12;
+  const offset = 18;
+  const viewport = event.currentTarget.ownerDocument.documentElement;
+  const maxX = viewport.clientWidth - previewWidth - margin;
+  const maxY = viewport.clientHeight - previewHeight - margin;
+  const preferredX = event.clientX + offset;
+  const preferredY = event.clientY + offset;
+  const x = preferredX > maxX ? event.clientX - previewWidth - offset : preferredX;
+  const y = preferredY > maxY ? event.clientY - previewHeight - offset : preferredY;
+
+  return {
+    x: Math.max(margin, Math.min(x, maxX)),
+    y: Math.max(margin, Math.min(y, maxY)),
+  };
+}
+
+function displayDomain(url: string) {
+  const hostname = new URL(url).hostname;
+  return hostname.startsWith("www.") ? hostname.slice(4) : hostname;
+}
+
+function arrayValue(value: unknown): readonly unknown[] {
+  return Array.isArray(value) ? value : [];
+}
+
+function recordValue(value: unknown): Record<string, unknown> | undefined {
+  return isRecord(value) ? value : undefined;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function stringValue(value: unknown): string | undefined {
+  return typeof value === "string" && value.trim().length > 0 ? value.trim() : undefined;
 }
 
 async function fetchLinkItems(): Promise<LinkListItem[]> {
