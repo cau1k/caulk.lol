@@ -1,12 +1,10 @@
 /* CMU Serif - for headings/titles */
 @font-face {
   font-family: "CMU Serif";
-  src:
-    url("/fonts/cmu-serif/cmunrm-webfont.woff") format("woff"),
-    url("/fonts/cmu-serif/cmunrm-webfont.ttf") format("truetype");
+  src: url("/fonts/cmu-serif/cmunrm-webfont-latin.woff") format("woff");
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
   font-synthesis: none;
   size-adjust: 106.25%;
   ascent-override: 81%;
@@ -16,12 +14,10 @@
 
 @font-face {
   font-family: "CMU Serif";
-  src:
-    url("/fonts/cmu-serif/cmunti-webfont.woff") format("woff"),
-    url("/fonts/cmu-serif/cmunti-webfont.ttf") format("truetype");
+  src: url("/fonts/cmu-serif/cmunti-webfont-latin.woff") format("woff");
   font-weight: 400;
   font-style: italic;
-  font-display: swap;
+  font-display: optional;
   font-synthesis: none;
   size-adjust: 126.25%;
   ascent-override: 81%;
@@ -31,12 +27,10 @@
 
 @font-face {
   font-family: "CMU Serif";
-  src:
-    url("/fonts/cmu-serif/cmunbx-webfont.woff") format("woff"),
-    url("/fonts/cmu-serif/cmunbx-webfont.ttf") format("truetype");
+  src: url("/fonts/cmu-serif/cmunbx-webfont-latin.woff") format("woff");
   font-weight: 700;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
   font-synthesis: none;
   size-adjust: 126.25%;
   ascent-override: 81%;
@@ -46,12 +40,10 @@
 
 @font-face {
   font-family: "CMU Serif";
-  src:
-    url("/fonts/cmu-serif/cmunbi-webfont.woff") format("woff"),
-    url("/fonts/cmu-serif/cmunbi-webfont.ttf") format("truetype");
+  src: url("/fonts/cmu-serif/cmunbi-webfont-latin.woff") format("woff");
   font-weight: 700;
   font-style: italic;
-  font-display: swap;
+  font-display: optional;
   font-synthesis: none;
   size-adjust: 126.25%;
   ascent-override: 81%;
@@ -62,12 +54,10 @@
 /* CMU Sans Serif - for body text */
 @font-face {
   font-family: "CMU Sans Serif";
-  src:
-    url("/fonts/cmu-sans/cmunss-webfont.woff") format("woff"),
-    url("/fonts/cmu-sans/cmunss-webfont.ttf") format("truetype");
+  src: url("/fonts/cmu-sans/cmunss-webfont-latin.woff") format("woff");
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
   font-synthesis: none;
   ascent-override: 81%;
   descent-override: 19%;
@@ -76,12 +66,10 @@
 
 @font-face {
   font-family: "CMU Sans Serif";
-  src:
-    url("/fonts/cmu-sans/cmunsi-webfont.woff") format("woff"),
-    url("/fonts/cmu-sans/cmunsi-webfont.ttf") format("truetype");
+  src: url("/fonts/cmu-sans/cmunsi-webfont-latin.woff") format("woff");
   font-weight: 400;
   font-style: italic;
-  font-display: swap;
+  font-display: optional;
   font-synthesis: none;
   ascent-override: 81%;
   descent-override: 19%;
@@ -90,12 +78,10 @@
 
 @font-face {
   font-family: "CMU Sans Serif";
-  src:
-    url("/fonts/cmu-sans/cmunsx-webfont.woff") format("woff"),
-    url("/fonts/cmu-sans/cmunsx-webfont.ttf") format("truetype");
+  src: url("/fonts/cmu-sans/cmunsx-webfont-latin.woff") format("woff");
   font-weight: 700;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
   font-synthesis: none;
   ascent-override: 81%;
   descent-override: 19%;
@@ -104,47 +90,12 @@
 
 @font-face {
   font-family: "CMU Sans Serif";
-  src:
-    url("/fonts/cmu-sans/cmunso-webfont.woff") format("woff"),
-    url("/fonts/cmu-sans/cmunso-webfont.ttf") format("truetype");
+  src: url("/fonts/cmu-sans/cmunso-webfont-latin.woff") format("woff");
   font-weight: 700;
   font-style: italic;
-  font-display: swap;
+  font-display: optional;
   font-synthesis: none;
   ascent-override: 81%;
   descent-override: 19%;
   line-gap-override: 0%;
-}
-
-/* JetBrains Mono - for code */
-@font-face {
-  font-family: "JetBrains Mono";
-  src: url("/fonts/jetbrains-mono/JetBrainsMono-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "JetBrains Mono";
-  src: url("/fonts/jetbrains-mono/JetBrainsMono-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "JetBrains Mono";
-  src: url("/fonts/jetbrains-mono/JetBrainsMono-Bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "JetBrains Mono";
-  src: url("/fonts/jetbrains-mono/JetBrainsMono-Italic.woff2") format("woff2");
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
 }

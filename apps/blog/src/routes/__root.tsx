@@ -6,15 +6,24 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import { RootProvider } from "fumadocs-ui/provider/tanstack";
-import { type ReactNode, useLayoutEffect } from "react";
-import { BackgroundStars } from "@/components/background-stars";
+import { lazy, type ReactNode, Suspense, useLayoutEffect } from "react";
 import {
   BackgroundStarsProvider,
   useBackgroundStarsOptional,
 } from "@/components/background-stars-context";
 import { NotFound } from "@/components/not-found";
-import { TerminalFooter } from "@/components/terminal-footer";
 import appCss from "@/styles/app.css?url";
+
+const BackgroundStars = lazy(() =>
+  import("@/components/background-stars").then((module) => ({
+    default: module.BackgroundStars,
+  })),
+);
+const TerminalFooter = lazy(() =>
+  import("@/components/terminal-footer").then((module) => ({
+    default: module.TerminalFooter,
+  })),
+);
 
 const siteRumScript = `(function () {
   var excluded = { '/analytics': true };
@@ -59,21 +68,7 @@ export const Route = createRootRoute({
     links: [
       {
         rel: "preload",
-        href: "/fonts/cmu-serif/cmunbx-webfont.woff",
-        as: "font",
-        type: "font/woff",
-        crossOrigin: "anonymous",
-      },
-      {
-        rel: "preload",
-        href: "/fonts/cmu-serif/cmunrm-webfont.woff",
-        as: "font",
-        type: "font/woff",
-        crossOrigin: "anonymous",
-      },
-      {
-        rel: "preload",
-        href: "/fonts/cmu-sans/cmunss-webfont.woff",
+        href: "/fonts/cmu-sans/cmunss-webfont-latin.woff",
         as: "font",
         type: "font/woff",
         crossOrigin: "anonymous",
@@ -120,10 +115,14 @@ function RootDocument({ children }: { children: ReactNode }) {
         <script>{siteRumScript}</script>
         <BackgroundStarsProvider>
           <BackgroundStarsRouteSync />
-          <BackgroundStars />
-          <RootProvider search={{ hotKey: [{ key: "/", display: "/" }] }}>
+          <Suspense fallback={null}>
+            <BackgroundStars />
+          </Suspense>
+          <RootProvider search={{ enabled: false }}>
             {children}
-            <TerminalFooter />
+            <Suspense fallback={null}>
+              <TerminalFooter />
+            </Suspense>
           </RootProvider>
         </BackgroundStarsProvider>
         <Scripts />

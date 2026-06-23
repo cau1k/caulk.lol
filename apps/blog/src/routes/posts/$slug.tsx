@@ -15,6 +15,7 @@ import { getPostOgImageUrl } from "@/lib/og/urls";
 import { calculateReadingTime, formatReadingTime } from "@/lib/reading-time";
 import { posts } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
+import postCss from "@/styles/post.css?url";
 
 export const Route = createFileRoute("/posts/$slug")({
   loader: async ({ params }) => {
@@ -27,8 +28,7 @@ export const Route = createFileRoute("/posts/$slug")({
   gcTime: 30 * 60_000, // 30 min memory retention
   headers: () => ({
     // CDN cache 1h, serve stale up to 7d while revalidating
-    "Cache-Control":
-      "public, max-age=0, s-maxage=3600, stale-while-revalidate=604800",
+    "Cache-Control": "public, max-age=0, s-maxage=3600, stale-while-revalidate=604800",
   }),
   head: ({ loaderData }) => {
     if (!loaderData) {
@@ -39,6 +39,7 @@ export const Route = createFileRoute("/posts/$slug")({
     const description = loaderData.description ?? "";
 
     return {
+      links: [{ rel: "stylesheet", href: postCss }],
       meta: [
         { title: loaderData.title },
         { name: "description", content: description },
@@ -89,8 +90,7 @@ const serverLoader = createServerFn({ method: "GET" })
 
     const currentIndex = allPages.findIndex((p) => p.url === page.url);
     const prevPage = currentIndex > 0 ? allPages[currentIndex - 1] : null;
-    const nextPage =
-      currentIndex < allPages.length - 1 ? allPages[currentIndex + 1] : null;
+    const nextPage = currentIndex < allPages.length - 1 ? allPages[currentIndex + 1] : null;
 
     const toLink = (p: (typeof allPages)[number] | null): NeighbourLink => {
       if (!p) return null;
@@ -125,13 +125,7 @@ const clientLoader = browserCollections.posts.createClientLoader({
   },
 });
 
-function PostContent({
-  toc,
-  children,
-}: {
-  toc?: TOCItemType[];
-  children: React.ReactNode;
-}) {
+function PostContent({ toc, children }: { toc?: TOCItemType[]; children: React.ReactNode }) {
   const { setToc, setContentVisible } = usePostTOC();
 
   useEffect(() => {
@@ -181,13 +175,7 @@ function SidebarTOC() {
   );
 }
 
-function PostNavigation({
-  previous,
-  next,
-}: {
-  previous: NeighbourLink;
-  next: NeighbourLink;
-}) {
+function PostNavigation({ previous, next }: { previous: NeighbourLink; next: NeighbourLink }) {
   if (!previous && !next) return null;
 
   return (
@@ -200,9 +188,7 @@ function PostNavigation({
           <ChevronLeftIcon className="size-4 transition-transform group-hover:-translate-x-0.5" />
           <div className="min-w-0">
             <div className="text-xs uppercase tracking-wide">Previous</div>
-            <div className="truncate font-medium text-foreground">
-              {previous.title}
-            </div>
+            <div className="truncate font-medium text-foreground">{previous.title}</div>
           </div>
         </Link>
       ) : (
@@ -215,9 +201,7 @@ function PostNavigation({
         >
           <div className="min-w-0">
             <div className="text-xs uppercase tracking-wide">Next</div>
-            <div className="truncate font-medium text-foreground">
-              {next.title}
-            </div>
+            <div className="truncate font-medium text-foreground">{next.title}</div>
           </div>
           <ChevronRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
         </Link>
@@ -243,9 +227,7 @@ function Post() {
   }, [starsCtx]);
 
   const dateTime = data.date ? formatDateTime(data.date) : "";
-  const machineDateTime = data.date
-    ? new Date(data.date).toISOString()
-    : undefined;
+  const machineDateTime = data.date ? new Date(data.date).toISOString() : undefined;
 
   // Capitalize first letter only if tag is all lowercase, otherwise preserve original
   const category = data.category
@@ -295,11 +277,7 @@ function Post() {
 
           {/* Author + Actions row */}
           <div className="mt-8 mb-6 flex items-center justify-between gap-4">
-            {data.author && (
-              <span className="text-sm text-muted-foreground">
-                {data.author}
-              </span>
-            )}
+            {data.author && <span className="text-sm text-muted-foreground">{data.author}</span>}
 
             <div className="ml-auto flex items-center gap-2">
               <LLMCopyButton markdownUrl={`/posts/${data.slug}.mdx`} />
