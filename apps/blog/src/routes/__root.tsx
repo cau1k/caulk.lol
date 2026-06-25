@@ -68,6 +68,20 @@ export const Route = createRootRoute({
     links: [
       {
         rel: "preload",
+        href: "/fonts/cmu-serif/cmunrm-webfont-latin.woff",
+        as: "font",
+        type: "font/woff",
+        crossOrigin: "anonymous",
+      },
+      {
+        rel: "preload",
+        href: "/fonts/cmu-serif/cmunbx-webfont-latin.woff",
+        as: "font",
+        type: "font/woff",
+        crossOrigin: "anonymous",
+      },
+      {
+        rel: "preload",
         href: "/fonts/cmu-sans/cmunss-webfont-latin.woff",
         as: "font",
         type: "font/woff",

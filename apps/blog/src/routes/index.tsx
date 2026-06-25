@@ -68,10 +68,13 @@ function Home() {
               <section className="mb-16">
                 <Link to={featured.url} className="group block">
                   <article>
-                    <h2 className="text-sm font-medium font-mono text-muted-foreground uppercase tracking-wider">
-                      [Latest]
-                    </h2>
-                    <h2 className="text-2xl font-semibold mt-2 group-hover:text-primary transition-colors">
+                    <time
+                      className="text-sm text-muted-foreground"
+                      title={featured.date ? formatDateTime(featured.date) : undefined}
+                    >
+                      {featured.date && formatDate(featured.date)}
+                    </time>
+                    <h2 className="mt-2 font-serif text-2xl font-semibold transition-colors group-hover:text-primary">
                       {featured.title}
                     </h2>
                     {featured.description && (
@@ -79,6 +82,9 @@ function Home() {
                         {featured.description}
                       </p>
                     )}
+                    <span className="mt-4 inline-block text-sm font-medium text-primary group-hover:underline">
+                      Read more
+                    </span>
                   </article>
                 </Link>
               </section>
@@ -86,8 +92,8 @@ function Home() {
 
             {rest.length > 0 && (
               <section>
-                <h2 className="text-sm font-medium font-mono text-muted-foreground uppercase tracking-wider">
-                  [Older]
+                <h2 className="mb-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                  Recent
                 </h2>
                 <div className="group/list">
                   {rest.slice(0, 3).map((post) => (
@@ -96,7 +102,7 @@ function Home() {
                       to={post.url}
                       className="group/item flex items-baseline justify-between gap-4 py-3 -mx-3 px-3 rounded-lg transition-all duration-200 ease-out group-has-hover/list:opacity-50 hover:!opacity-100"
                     >
-                      <span className="font-medium group-hover/item:text-primary transition-colors truncate">
+                      <span className="truncate font-serif font-medium transition-colors group-hover/item:text-primary">
                         {post.title}
                       </span>
                       <time

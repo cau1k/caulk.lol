@@ -28,8 +28,7 @@ async function getExcerpt(absolutePath: string, maxLen = 100): Promise<string> {
     let paragraph = "";
     for (const line of lines) {
       const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith("#") || trimmed.startsWith("import "))
-        continue;
+      if (!trimmed || trimmed.startsWith("#") || trimmed.startsWith("import ")) continue;
       paragraph = trimmed;
       break;
     }
@@ -51,8 +50,7 @@ export const Route = createFileRoute("/posts/")({
   staleTime: 5 * 60_000, // 5 min
   gcTime: 30 * 60_000,
   headers: () => ({
-    "Cache-Control":
-      "public, max-age=0, s-maxage=300, stale-while-revalidate=3600",
+    "Cache-Control": "public, max-age=0, s-maxage=300, stale-while-revalidate=3600",
   }),
   component: BlogIndex,
 });
@@ -105,18 +103,13 @@ function BlogIndex() {
                   {post.date && formatDate(post.date)}
                 </time>
                 <div className="flex-1 min-w-0">
-                  <h2 className="font-medium font-sans group-hover/item:text-primary transition-colors">
+                  <h2 className="font-serif font-medium transition-colors group-hover/item:text-primary">
                     {post.title}
                   </h2>
                   {post.tags.length > 0 && (
                     <div className="mt-1 flex flex-wrap gap-2">
                       {post.tags.map((tag) => (
-                        <TagBadge
-                          key={tag}
-                          tag={tag}
-                          size="inline"
-                          linked={false}
-                        />
+                        <TagBadge key={tag} tag={tag} size="inline" linked={false} />
                       ))}
                     </div>
                   )}
