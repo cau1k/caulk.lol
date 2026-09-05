@@ -1,16 +1,14 @@
 import { Link } from "@tanstack/react-router";
-import { HomeLayout } from "@/components/layout/home";
-import { baseOptions } from "@/lib/layout.shared";
 
 export function NotFound() {
   return (
-    <HomeLayout {...baseOptions()} className="text-center py-32 justify-center">
+    <div className="flex flex-1 flex-col text-center py-32 justify-center">
       <div className="flex flex-col items-center gap-4">
         <h1 className="text-6xl font-bold text-muted-foreground">404</h1>
         <h2 className="text-2xl font-semibold">Page Not Found</h2>
         <p className="text-muted-foreground max-w-md">
-          The page you are looking for might have been removed, had its name
-          changed, or is temporarily unavailable.
+          The page you are looking for might have been removed, had its name changed, or is
+          temporarily unavailable.
         </p>
         <Link
           to="/"
@@ -19,6 +17,6 @@ export function NotFound() {
           Back to Home
         </Link>
       </div>
-    </HomeLayout>
+    </div>
   );
 }

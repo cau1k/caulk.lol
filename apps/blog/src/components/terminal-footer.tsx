@@ -1,8 +1,7 @@
 "use client";
 
 import { Link } from "@tanstack/react-router";
-import { motion, useInView } from "motion/react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePageTiming } from "@/lib/use-page-timing";
 
 const NAV_LINKS = [
@@ -17,27 +16,36 @@ const SOCIAL_LINKS = [
 
 export function TerminalFooter() {
   const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-20px" });
+  const [isInView, setIsInView] = useState(false);
   const timing = usePageTiming();
+  const reveal = `transition-[opacity,transform] duration-300 ease-out ${isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`;
+
+  // This once-only reveal needs no animation runtime. Match the existing
+  // viewport margin, duration, displacement, and stagger with native CSS.
+  useEffect(() => {
+    const footer = ref.current;
+    if (!footer) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setIsInView(true);
+        observer.disconnect();
+      },
+      { rootMargin: "-20px" },
+    );
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <footer
-      ref={ref}
-      className="mt-auto"
-    >
+    <footer ref={ref} className="mt-auto">
       <div className="max-w-2xl mx-auto px-4 py-24">
         <div className="font-mono text-sm">
           {/* Main grid */}
           <div className="flex justify-between">
             {/* Nav column */}
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.3, delay: 0 }}
-            >
-              <div className="text-muted-foreground text-xs uppercase tracking-wider mb-4">
-                nav
-              </div>
+            <div className={reveal}>
+              <div className="text-muted-foreground text-xs uppercase tracking-wider mb-4">nav</div>
               <ul className="space-y-2">
                 {NAV_LINKS.map((link) => (
                   <li key={link.label}>
@@ -53,14 +61,10 @@ export function TerminalFooter() {
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
 
             {/* Social column */}
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.3, delay: 0.05 }}
-            >
+            <div className={reveal} style={{ transitionDelay: "50ms" }}>
               <div className="text-muted-foreground text-xs uppercase tracking-wider mb-4">
                 social
               </div>
@@ -81,14 +85,10 @@ export function TerminalFooter() {
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
 
             {/* Status column */}
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.3, delay: 0.1 }}
-            >
+            <div className={reveal} style={{ transitionDelay: "100ms" }}>
               <div className="text-muted-foreground text-xs uppercase tracking-wider mb-4">
                 status
               </div>
@@ -101,15 +101,13 @@ export function TerminalFooter() {
                   {new Date().getFullYear()}
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
 
           {/* Bottom bar */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.3, delay: 0.2 }}
-            className="mt-12 pt-6 border-t border-border flex items-center justify-between text-xs text-muted-foreground"
+          <div
+            style={{ transitionDelay: "200ms" }}
+            className={`mt-12 pt-6 border-t border-border flex items-center justify-between text-xs text-muted-foreground transition-opacity duration-300 ease-out ${isInView ? "opacity-100" : "opacity-0"}`}
           >
             <span>zerocaulk</span>
             <span className="flex items-center gap-3 font-mono">
@@ -126,7 +124,7 @@ export function TerminalFooter() {
                 </span>
               )}
             </span>
-          </motion.div>
+          </div>
         </div>
       </div>
     </footer>

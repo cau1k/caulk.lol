@@ -35,6 +35,7 @@ catalog:
   zod: ^4.5.4
 
 patchedDependencies:
+  "@tanstack/start-plugin-core@1.171.39": patches/@tanstack__start-plugin-core@1.171.39.patch
   alchemy: patches/alchemy.patch
 
 # Alchemy imports Undici at runtime but declares it only as a dev dependency.

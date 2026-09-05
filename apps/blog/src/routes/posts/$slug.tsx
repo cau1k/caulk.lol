@@ -9,7 +9,6 @@ import { clientLoader } from "@/components/post";
 import { TOCProvider } from "@/components/toc";
 import { WheelTOCItems } from "@/components/toc/wheel";
 import { formatDateTime } from "@/lib/format-date";
-import { baseOptions } from "@/lib/layout.shared";
 import { getPostOgImageUrl } from "@/lib/og/urls";
 import { calculateReadingTime, formatReadingTime } from "@/lib/reading-time";
 import { posts } from "@/lib/source";
@@ -40,6 +39,10 @@ export const Route = createFileRoute("/posts/$slug")({
     const description = loaderData.description ?? "";
 
     return {
+      links: loaderData.modulePreloads.map((href) => ({
+        rel: "modulepreload",
+        href,
+      })),
       meta: [
         { title: loaderData.title },
         { name: "description", content: description },
@@ -109,11 +112,23 @@ const serverLoader = createServerFn({ method: "GET" })
       author: page.data.author,
       tags,
       category: tags[0] ?? null,
+      modulePreloads: await getPostModulePreloads(page.path),
       readingTime: formatReadingTime(readingTime),
       previous: toLink(prevPage),
       next: toLink(nextPage),
     };
   });
+
+async function getPostModulePreloads(path: string) {
+  if (import.meta.env.DEV) return [];
+
+  const { default: postAssetMap } = await import("virtual:post-assets");
+  const preloads = postAssetMap[path.replace(/^\.\//, "").replace(/\.mdx$/, "")];
+  if (!preloads) {
+    throw new Error(`Missing post asset preload entry for ${path}`);
+  }
+  return preloads;
+}
 
 function SidebarTOC() {
   const { toc } = usePostTOC();
@@ -193,7 +208,7 @@ function Post() {
     : null;
 
   return (
-    <PostLayout {...baseOptions()}>
+    <PostLayout>
       <article className="relative mx-auto w-full max-w-2xl px-4 py-16 sm:py-20">
         <header className="mb-12">
           {/* Metadata line: Category · Date · Read time */}

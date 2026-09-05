@@ -81,6 +81,31 @@ copy/open controls, accordions, image decoding, the Excalidraw diagram, links an
 hover-preview responses, Analytics cards/source, stars, footer links, and public
 resource types. Screenshots and JSON are under `test-results/performance/`.
 
+The pinned TanStack Start plugin patch makes its module preloads include the full
+static import graph. Without it, deeper dependencies are discovered only after
+their parent modules download. `apps/blog/test/start-manifest.test.mjs` exercises
+the installed builder, including cycles and dynamic imports. Recheck that test
+when upgrading the plugin; remove the patch once upstream covers this behavior.
+
+Font sources remain in `apps/blog/public/fonts/`. Regenerate the CMU WOFF2 core
+and extension ranges with `apps/blog/scripts/fonts/woff2.py`; it requires
+FontTools and the WOFF2 command-line tools. The generator checks coverage,
+outlines, and metrics locally; Node-only asset freshness checks run in CI.
+
+The Dither integration has a separate populated-data interaction check:
+`PERF_CHROMIUM=/usr/bin/chromium node scripts/performance/dither.mjs` while the
+local production server runs. It intercepts Analytics with a labeled fixture
+to exercise theme repainting, tooltips, graph zoom/pan/reset/focus, and mobile
+containment. This fixture is never used by the timing runner.
+
+Export a completed paired run with `node scripts/performance/export.mjs
+--baseline test-results/performance/baseline-complete-rounds.json --candidate
+test-results/performance/final-deployed.json`. It rejects incomplete samples and
+candidate errors, but reports the missed 3× cells accepted in the final scope.
+Then run `node scripts/performance/charts.mjs` for eight light/dark PNGs rendered
+from the site's actual Dither component and CSS. The renderer's temporary Vite
+preview stays under ignored test results; it adds no public route.
+
 References: [Playwright caching](https://playwright.dev/docs/api/class-browsercontext#browser-context-route),
 [Chrome network emulation](https://chromedevtools.github.io/devtools-protocol/tot/Network/#method-emulateNetworkConditionsByRule),
 [Cloudflare asset headers](https://developers.cloudflare.com/workers/static-assets/headers/).

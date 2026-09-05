@@ -1,7 +1,6 @@
 "use client";
 
 import type { TOCItemType } from "fumadocs-core/toc";
-import { HomeLayout, type HomeLayoutProps } from "@/components/layout/home";
 import { ChevronDown, List } from "lucide-react";
 import {
   createContext,
@@ -13,11 +12,7 @@ import {
 } from "react";
 import { TOCProvider } from "@/components/toc";
 import { WheelTOCItems } from "@/components/toc/wheel";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 type PostTOCContextType = {
   toc: TOCItemType[];
@@ -34,21 +29,19 @@ export function usePostTOC() {
   return ctx;
 }
 
-type PostLayoutProps = HomeLayoutProps & {
+type PostLayoutProps = {
   children: ReactNode;
 };
 
-export function PostLayout({ children, ...props }: PostLayoutProps) {
+export function PostLayout({ children }: PostLayoutProps) {
   const [toc, setToc] = useState<TOCItemType[]>([]);
   const [contentVisible, setContentVisible] = useState(false);
   const hasToc = toc.length > 0;
 
   return (
     <PostTOCContext value={{ toc, setToc, contentVisible, setContentVisible }}>
-      <HomeLayout {...props}>
-        {hasToc && <MobileTOCBar items={toc} />}
-        {children}
-      </HomeLayout>
+      {hasToc && <MobileTOCBar items={toc} />}
+      {children}
     </PostTOCContext>
   );
 }

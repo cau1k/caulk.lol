@@ -1,0 +1,169 @@
+diff --git a/dist/esm/start-manifest-plugin/manifestBuilder.d.ts b/dist/esm/start-manifest-plugin/manifestBuilder.d.ts
+index 2fb31d47ac30428d7e8c3daea48cd316ecf58d2c..cdbae1c9a29325d9ce69eaf1d556170260457d67 100644
+--- a/dist/esm/start-manifest-plugin/manifestBuilder.d.ts
++++ b/dist/esm/start-manifest-plugin/manifestBuilder.d.ts
+@@ -43,7 +43,10 @@ export declare function buildStartManifest(options: {
+ }): StartManifest;
+ export declare function serializeStartManifest(startManifest: StartManifest): string;
+ export declare function scanClientChunks(clientBuild: NormalizedClientBuild): ScannedClientChunks;
+-export declare function createManifestAssetResolvers(basePath: string): ManifestAssetResolvers;
++export declare function createManifestAssetResolvers(options: {
++    basePath: string;
++    chunksByFileName?: ReadonlyMap<string, NormalizedClientChunk>;
++}): ManifestAssetResolvers;
+ export declare function createChunkCssAssetCollector(options: {
+     chunksByFileName: ReadonlyMap<string, NormalizedClientChunk>;
+     getStylesheetLink: (cssFile: string) => ManifestCssLink;
+diff --git a/dist/esm/start-manifest-plugin/manifestBuilder.js b/dist/esm/start-manifest-plugin/manifestBuilder.js
+index 997896d916ba5db3fed4e92449165ae149cdffbe..2ab996f40f54b0580d15967b3ada47f9ef0c78ed 100644
+--- a/dist/esm/start-manifest-plugin/manifestBuilder.js
++++ b/dist/esm/start-manifest-plugin/manifestBuilder.js
+@@ -86,7 +86,10 @@ function appendAdditionalRouteEntries(route, entries) {
+ }
+ function buildStartManifest(options) {
+ 	const scannedChunks = scanClientChunks(options.clientBuild);
+-	const assetResolvers = createManifestAssetResolvers(options.basePath);
++	const assetResolvers = createManifestAssetResolvers({
++		basePath: options.basePath,
++		chunksByFileName: scannedChunks.chunksByFileName
++	});
+ 	const routes = buildRouteManifestRoutes({
+ 		routeTreeRoutes: options.routeTreeRoutes,
+ 		routeChunksByFilePath: scannedChunks.routeChunksByFilePath,
+@@ -140,14 +143,14 @@ function scanClientChunks(clientBuild) {
+ 		routeChunksByFilePath
+ 	};
+ }
+-function createManifestAssetResolvers(basePath) {
++function createManifestAssetResolvers(options) {
+ 	const assetPathByFileName = /* @__PURE__ */ new Map();
+ 	const stylesheetLinkByFileName = /* @__PURE__ */ new Map();
+ 	const preloadsByChunk = /* @__PURE__ */ new Map();
+ 	const getAssetPath = (fileName) => {
+ 		const cachedPath = assetPathByFileName.get(fileName);
+ 		if (cachedPath) return cachedPath;
+-		const assetPath = joinURL(basePath, fileName);
++		const assetPath = joinURL(options.basePath, fileName);
+ 		assetPathByFileName.set(fileName, assetPath);
+ 		return assetPath;
+ 	};
+@@ -161,8 +164,23 @@ function createManifestAssetResolvers(basePath) {
+ 	const getChunkPreloads = (chunk) => {
+ 		const cachedPreloads = preloadsByChunk.get(chunk);
+ 		if (cachedPreloads) return cachedPreloads;
+-		const preloads = [getAssetPath(chunk.fileName)];
+-		for (let i = 0; i < chunk.imports.length; i++) preloads.push(getAssetPath(chunk.imports[i]));
++		const preloads = [];
++		const seenChunks = /* @__PURE__ */ new Set();
++		const visitChunk = (current) => {
++			if (seenChunks.has(current.fileName)) return;
++			seenChunks.add(current.fileName);
++			preloads.push(getAssetPath(current.fileName));
++			for (let i = 0; i < current.imports.length; i++) {
++				const importedFileName = current.imports[i];
++				const importedChunk = options.chunksByFileName?.get(importedFileName);
++				if (importedChunk) {
++					visitChunk(importedChunk);
++					continue;
++				}
++				preloads.push(getAssetPath(importedFileName));
++			}
++		};
++		visitChunk(chunk);
+ 		preloadsByChunk.set(chunk, preloads);
+ 		return preloads;
+ 	};
+@@ -205,7 +223,9 @@ function buildInlineCssManifestData(options) {
+ 	for (const route of Object.values(options.routes)) for (const link of route.css ?? []) stylesheetHrefs.add(getStylesheetHref(link));
+ 	if (stylesheetHrefs.size === 0) return { styles: {} };
+ 	if (!options.cssContentByFileName) throw new Error("TanStack Start inlineCss is enabled, but the client build did not provide CSS content");
+-	const { getAssetPath } = createManifestAssetResolvers(options.basePath);
++	const { getAssetPath } = createManifestAssetResolvers({
++		basePath: options.basePath
++	});
+ 	const styles = {};
+ 	let templates;
+ 	const missingHrefs = new Set(stylesheetHrefs);
+diff --git a/src/start-manifest-plugin/manifestBuilder.ts b/src/start-manifest-plugin/manifestBuilder.ts
+index 02a8586592816037dbeb76c97eaed72437a91fa9..1946f961eb99565ede4f95bbf516163143e13521 100644
+--- a/src/start-manifest-plugin/manifestBuilder.ts
++++ b/src/start-manifest-plugin/manifestBuilder.ts
+@@ -265,7 +265,10 @@ export function buildStartManifest(options: {
+   >
+ }): StartManifest {
+   const scannedChunks = scanClientChunks(options.clientBuild)
+-  const assetResolvers = createManifestAssetResolvers(options.basePath)
++  const assetResolvers = createManifestAssetResolvers({
++    basePath: options.basePath,
++    chunksByFileName: scannedChunks.chunksByFileName,
++  })
+ 
+   const routes = buildRouteManifestRoutes({
+     routeTreeRoutes: options.routeTreeRoutes,
+@@ -353,9 +356,10 @@ export function scanClientChunks(
+   }
+ }
+ 
+-export function createManifestAssetResolvers(
+-  basePath: string,
+-): ManifestAssetResolvers {
++export function createManifestAssetResolvers(options: {
++  basePath: string
++  chunksByFileName?: ReadonlyMap<string, NormalizedClientChunk>
++}): ManifestAssetResolvers {
+   const assetPathByFileName = new Map<string, string>()
+   const stylesheetLinkByFileName = new Map<string, ManifestCssLink>()
+   const preloadsByChunk = new Map<NormalizedClientChunk, Array<string>>()
+@@ -366,7 +370,7 @@ export function createManifestAssetResolvers(
+       return cachedPath
+     }
+ 
+-    const assetPath = joinURL(basePath, fileName)
++    const assetPath = joinURL(options.basePath, fileName)
+     assetPathByFileName.set(fileName, assetPath)
+     return assetPath
+   }
+@@ -390,12 +394,29 @@ export function createManifestAssetResolvers(
+       return cachedPreloads
+     }
+ 
+-    const preloads = [getAssetPath(chunk.fileName)]
++    const preloads: Array<string> = []
++    const seenChunks = new Set<string>()
+ 
+-    for (let i = 0; i < chunk.imports.length; i++) {
+-      preloads.push(getAssetPath(chunk.imports[i]!))
++    const visitChunk = (current: NormalizedClientChunk) => {
++      if (seenChunks.has(current.fileName)) {
++        return
++      }
++      seenChunks.add(current.fileName)
++      preloads.push(getAssetPath(current.fileName))
++
++      for (let i = 0; i < current.imports.length; i++) {
++        const importedFileName = current.imports[i]!
++        const importedChunk = options.chunksByFileName?.get(importedFileName)
++        if (importedChunk) {
++          visitChunk(importedChunk)
++          continue
++        }
++
++        preloads.push(getAssetPath(importedFileName))
++      }
+     }
+ 
++    visitChunk(chunk)
+     preloadsByChunk.set(chunk, preloads)
+     return preloads
+   }
+@@ -491,7 +512,9 @@ function buildInlineCssManifestData(options: {
+     )
+   }
+ 
+-  const { getAssetPath } = createManifestAssetResolvers(options.basePath)
++  const { getAssetPath } = createManifestAssetResolvers({
++    basePath: options.basePath,
++  })
+   const styles: Record<string, string> = {}
+   let templates: Record<string, InlineCssTemplate> | undefined
+   const missingHrefs = new Set(stylesheetHrefs)

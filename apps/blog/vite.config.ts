@@ -7,6 +7,7 @@ import alchemy from "alchemy/cloudflare/tanstack-start";
 import mdx from "fumadocs-mdx/vite";
 import { defineConfig } from "vite";
 import { parse } from "yaml";
+import { postAssetsPlugin } from "./plugins/posts";
 
 // Seed every published post/tag explicitly. Link crawling alone can omit a
 // valid route when a navigation component stops linking to it.
@@ -81,6 +82,7 @@ export default defineConfig({
   },
   plugins: [
     mdx(await import("./source.config")),
+    postAssetsPlugin(),
     tailwindcss(),
     ...(shouldUseAlchemy ? [alchemy({ configPath: alchemyConfigPath })] : []),
     tanstackStart({

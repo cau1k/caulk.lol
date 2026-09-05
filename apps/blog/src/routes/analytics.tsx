@@ -1,15 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Activity, Clock, Gauge, TriangleAlert } from "lucide-react";
 import { useEffect, useState } from "react";
-import { EmptyChartState, LatencyChart, NetworkGraph } from "@/components/analytics/charts";
-import { HomeLayout } from "@/components/layout/home";
+import {
+  EmptyChartState,
+  LatencyChart,
+  NetworkGraph,
+} from "@/components/analytics/charts";
 import type { SiteAnalyticsData } from "@/lib/analytics-engine";
 import { cn } from "@/lib/cn";
-import { baseOptions } from "@/lib/layout.shared";
 
 export const Route = createFileRoute("/analytics")({
   headers: () => ({
-    "Cache-Control": "public, max-age=0, s-maxage=60, stale-while-revalidate=300",
+    "Cache-Control":
+      "public, max-age=0, s-maxage=60, stale-while-revalidate=300",
   }),
   component: AnalyticsPage,
 });
@@ -37,7 +40,9 @@ function AnalyticsPage() {
           createEmptySiteAnalytics(
             "error",
             new Date().toISOString(),
-            error instanceof Error ? error.message : "Failed to load analytics.",
+            error instanceof Error
+              ? error.message
+              : "Failed to load analytics.",
           ),
         );
       } finally {
@@ -53,68 +58,89 @@ function AnalyticsPage() {
   }, []);
 
   return (
-    <HomeLayout {...baseOptions()}>
-      <main className="mx-auto w-full max-w-5xl px-4 py-16 sm:py-24">
-        <header className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="mb-3 text-sm text-muted-foreground">public worker telemetry</p>
-            <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            last {analytics.rangeHours}h · {analytics.bucketMinutes}m buckets
+    <main className="mx-auto w-full max-w-5xl px-4 py-16 sm:py-24">
+      <header className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="mb-3 text-sm text-muted-foreground">
+            public worker telemetry
           </p>
-        </header>
-
-        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Metric icon={Activity} label="Requests" value={formatCount(analytics.totals.requests)} />
-          <Metric icon={Gauge} label="p95 latency" value={formatMs(analytics.totals.p95Ms)} />
-          <Metric icon={Clock} label="Average" value={formatMs(analytics.totals.avgMs)} />
-          <Metric icon={TriangleAlert} label="5xx" value={formatCount(analytics.totals.errors)} />
-        </section>
-
-        <section className="mt-8 border border-border bg-background/70 p-4 backdrop-blur-sm sm:p-6">
-          <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 className="font-medium">Latency over time</h2>
-            </div>
-            <div className="flex gap-4 text-xs text-muted-foreground">
-              <Legend color="bg-chart-1" label="p95" />
-              <Legend color="bg-chart-3" label="p50" />
-            </div>
-          </div>
-
-          {hasData ? (
-            <LatencyChart points={analytics.points} />
-          ) : (
-            <EmptyChartState
-              message={
-                isLoading
-                  ? "Loading Analytics Engine data..."
-                  : (analytics.error ??
-                    "Waiting for Analytics Engine data. The dataset is created after production traffic writes its first point.")
-              }
-            />
-          )}
-        </section>
-
-        <section className="mt-8 border border-border bg-background/70 p-4 backdrop-blur-sm sm:p-6">
-          <div className="mb-6">
-            <h2 className="font-medium">Route network</h2>
-          </div>
-
-          {analytics.network.nodes.length > 0 ? (
-            <NetworkGraph nodes={analytics.network.nodes} edges={analytics.network.edges} />
-          ) : (
-            <EmptyChartState message="Network flow appears after visitors move between pages with a same-origin referrer." />
-          )}
-        </section>
-
-        <p className="mt-4 text-xs text-muted-foreground">
-          source: {analytics.source} · generated{" "}
-          {analytics.generatedAt ? new Date(analytics.generatedAt).toLocaleString() : "pending"}
+          <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          last {analytics.rangeHours}h · {analytics.bucketMinutes}m buckets
         </p>
-      </main>
-    </HomeLayout>
+      </header>
+
+      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Metric
+          icon={Activity}
+          label="Requests"
+          value={formatCount(analytics.totals.requests)}
+        />
+        <Metric
+          icon={Gauge}
+          label="p95 latency"
+          value={formatMs(analytics.totals.p95Ms)}
+        />
+        <Metric
+          icon={Clock}
+          label="Average"
+          value={formatMs(analytics.totals.avgMs)}
+        />
+        <Metric
+          icon={TriangleAlert}
+          label="5xx"
+          value={formatCount(analytics.totals.errors)}
+        />
+      </section>
+
+      <section className="mt-8 border border-border bg-background/70 p-4 backdrop-blur-sm sm:p-6">
+        <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="font-medium">Latency over time</h2>
+          </div>
+          <div className="flex gap-4 text-xs text-muted-foreground">
+            <Legend color="bg-primary" label="p95" />
+            <Legend color="bg-primary/60" label="p50" />
+          </div>
+        </div>
+
+        {hasData ? (
+          <LatencyChart points={analytics.points} />
+        ) : (
+          <EmptyChartState
+            message={
+              isLoading
+                ? "Loading Analytics Engine data..."
+                : (analytics.error ??
+                  "Waiting for Analytics Engine data. The dataset is created after production traffic writes its first point.")
+            }
+          />
+        )}
+      </section>
+
+      <section className="mt-8 border border-border bg-background/70 p-4 backdrop-blur-sm sm:p-6">
+        <div className="mb-6">
+          <h2 className="font-medium">Route network</h2>
+        </div>
+
+        {analytics.network.nodes.length > 0 ? (
+          <NetworkGraph
+            nodes={analytics.network.nodes}
+            edges={analytics.network.edges}
+          />
+        ) : (
+          <EmptyChartState message="Network flow appears after visitors move between pages with a same-origin referrer." />
+        )}
+      </section>
+
+      <p className="mt-4 text-xs text-muted-foreground">
+        source: {analytics.source} · generated{" "}
+        {analytics.generatedAt
+          ? new Date(analytics.generatedAt).toLocaleString()
+          : "pending"}
+      </p>
+    </main>
   );
 }
 
@@ -133,7 +159,9 @@ function Metric({
         <span className="text-sm">{label}</span>
         <Icon className="size-4" aria-hidden />
       </div>
-      <div className="font-mono text-2xl font-semibold tabular-nums">{value}</div>
+      <div className="font-mono text-2xl font-semibold tabular-nums">
+        {value}
+      </div>
     </div>
   );
 }

@@ -97,13 +97,18 @@ try {
             await expect(page.getByRole("link", { name: new RegExp(name) })).toBeVisible();
           }
           await page.keyboard.press("Escape");
+          const markdownResponse = await context.request.get(
+            new URL(`${route.path}.mdx`, origin).href,
+          );
+          assert.equal(markdownResponse.status(), 200);
+          const markdown = await markdownResponse.text();
+          await page.evaluate(() => navigator.clipboard.writeText(""));
           await page.getByRole("button", { name: "Copy", exact: true }).first().click();
-          await page.waitForFunction(
-            async () => (await navigator.clipboard.readText()).length > 100,
-          );
-          result.markdownLength = await page.evaluate(
-            async () => (await navigator.clipboard.readText()).length,
-          );
+          const copied = await page.waitForFunction(async (expected) => {
+            const text = await navigator.clipboard.readText();
+            return text === expected && text;
+          }, markdown);
+          result.markdownLength = (await copied.jsonValue()).length;
           // Fingerprint substantive article text; footer timing and dynamic canvas
           // labels are excluded. This catches content lost through lazy rendering.
           const prose = page.locator("article .prose");
@@ -162,11 +167,37 @@ try {
         if (await menu.isVisible()) {
           await menu.click();
           await expect(menu).toHaveAttribute("aria-expanded", "true");
+          await page.getByRole("checkbox", { name: "Toggle theme" }).click();
+          await page.waitForFunction(() => !document.documentElement.classList.contains("dark"));
+          await page.waitForTimeout(200);
           await page.keyboard.press("Escape");
+          await expect(menu).toHaveAttribute("aria-expanded", "false");
+          await expect(menu).toBeFocused();
+          await page.keyboard.press("d");
+          await page.waitForFunction(() => document.documentElement.classList.contains("dark"));
         }
         await page.screenshot({
           path: `${values.output}/${target}-${route.path.replaceAll("/", "_") || "home"}.png`,
         });
+        if (route.path === "/") {
+          // Exercise real client navigation; direct document loads alone cannot
+          // catch a broken split loader or lost browser-history behavior.
+          await page.setViewportSize({ width: 1440, height: 900 });
+          const timeOrigin = await page.evaluate(() => performance.timeOrigin);
+          await page.locator("#nd-nav").getByRole("link", { name: "archive", exact: true }).click();
+          await page.waitForURL(new URL("/posts", origin).href);
+          const post = routes.find((item) => item.kind === "post");
+          await page.locator(`main a[href="${post.path}"]`).first().click();
+          await page.waitForURL(new URL(post.path, origin).href);
+          await expect(page.locator("article > header h1")).toHaveText(post.title);
+          await page.goBack();
+          await page.waitForURL(new URL("/posts", origin).href);
+          assert.equal(
+            await page.evaluate(() => performance.timeOrigin),
+            timeOrigin,
+            "Client navigation reloaded the document",
+          );
+        }
       } catch (error) {
         errors.push(error.stack ?? error.message);
       }

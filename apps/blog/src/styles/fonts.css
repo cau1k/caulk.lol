@@ -1,7 +1,7 @@
 /* CMU Serif - for headings/titles */
 @font-face {
   font-family: "CMU Serif";
-  src: url("/fonts/cmu-serif/cmunrm-webfont-latin.woff2") format("woff2");
+  src: url("/fonts/cmu-serif/cmunrm-webfont-latin-core.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -10,11 +10,26 @@
   ascent-override: 81%;
   descent-override: 19%;
   line-gap-override: 0%;
+  unicode-range: U+0020-007E, U+2010-2014, U+2018-201A, U+201C-201E, U+2022, U+2026;
 }
 
 @font-face {
   font-family: "CMU Serif";
-  src: url("/fonts/cmu-serif/cmunti-webfont-latin.woff2") format("woff2");
+  src: url("/fonts/cmu-serif/cmunrm-webfont-latin-ext.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  font-synthesis: none;
+  size-adjust: 106.25%;
+  ascent-override: 81%;
+  descent-override: 19%;
+  line-gap-override: 0%;
+  unicode-range: U+00A0-00FF, U+2039-203A, U+205F;
+}
+
+@font-face {
+  font-family: "CMU Serif";
+  src: url("/fonts/cmu-serif/cmunti-webfont-latin-core.woff2") format("woff2");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -23,11 +38,26 @@
   ascent-override: 81%;
   descent-override: 19%;
   line-gap-override: 0%;
+  unicode-range: U+0020-007E, U+2010-2014, U+2018-201A, U+201C-201E, U+2022, U+2026;
 }
 
 @font-face {
   font-family: "CMU Serif";
-  src: url("/fonts/cmu-serif/cmunbx-webfont-latin.woff2") format("woff2");
+  src: url("/fonts/cmu-serif/cmunti-webfont-latin-ext.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  font-synthesis: none;
+  size-adjust: 126.25%;
+  ascent-override: 81%;
+  descent-override: 19%;
+  line-gap-override: 0%;
+  unicode-range: U+00A0-00FF, U+2039-203A, U+205F;
+}
+
+@font-face {
+  font-family: "CMU Serif";
+  src: url("/fonts/cmu-serif/cmunbx-webfont-latin-core.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -36,11 +66,26 @@
   ascent-override: 81%;
   descent-override: 19%;
   line-gap-override: 0%;
+  unicode-range: U+0020-007E, U+2010-2014, U+2018-201A, U+201C-201E, U+2022, U+2026;
 }
 
 @font-face {
   font-family: "CMU Serif";
-  src: url("/fonts/cmu-serif/cmunbi-webfont-latin.woff2") format("woff2");
+  src: url("/fonts/cmu-serif/cmunbx-webfont-latin-ext.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  font-synthesis: none;
+  size-adjust: 126.25%;
+  ascent-override: 81%;
+  descent-override: 19%;
+  line-gap-override: 0%;
+  unicode-range: U+00A0-00FF, U+2039-203A, U+205F;
+}
+
+@font-face {
+  font-family: "CMU Serif";
+  src: url("/fonts/cmu-serif/cmunbi-webfont-latin-core.woff2") format("woff2");
   font-weight: 700;
   font-style: italic;
   font-display: swap;
@@ -49,12 +94,27 @@
   ascent-override: 81%;
   descent-override: 19%;
   line-gap-override: 0%;
+  unicode-range: U+0020-007E, U+2010-2014, U+2018-201A, U+201C-201E, U+2022, U+2026;
+}
+
+@font-face {
+  font-family: "CMU Serif";
+  src: url("/fonts/cmu-serif/cmunbi-webfont-latin-ext.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+  font-synthesis: none;
+  size-adjust: 126.25%;
+  ascent-override: 81%;
+  descent-override: 19%;
+  line-gap-override: 0%;
+  unicode-range: U+00A0-00FF, U+2039-203A, U+205F;
 }
 
 /* CMU Sans Serif - for body text */
 @font-face {
   font-family: "CMU Sans Serif";
-  src: url("/fonts/cmu-sans/cmunss-webfont-latin.woff2") format("woff2");
+  src: url("/fonts/cmu-sans/cmunss-webfont-latin-core.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -62,11 +122,25 @@
   ascent-override: 81%;
   descent-override: 19%;
   line-gap-override: 0%;
+  unicode-range: U+0020-007E, U+2010-2014, U+2018-201A, U+201C-201E, U+2022, U+2026;
 }
 
 @font-face {
   font-family: "CMU Sans Serif";
-  src: url("/fonts/cmu-sans/cmunsi-webfont-latin.woff2") format("woff2");
+  src: url("/fonts/cmu-sans/cmunss-webfont-latin-ext.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  font-synthesis: none;
+  ascent-override: 81%;
+  descent-override: 19%;
+  line-gap-override: 0%;
+  unicode-range: U+00A0-00FF, U+2039-203A, U+205F;
+}
+
+@font-face {
+  font-family: "CMU Sans Serif";
+  src: url("/fonts/cmu-sans/cmunsi-webfont-latin-core.woff2") format("woff2");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -74,11 +148,25 @@
   ascent-override: 81%;
   descent-override: 19%;
   line-gap-override: 0%;
+  unicode-range: U+0020-007E, U+2010-2014, U+2018-201A, U+201C-201E, U+2022, U+2026;
 }
 
 @font-face {
   font-family: "CMU Sans Serif";
-  src: url("/fonts/cmu-sans/cmunsx-webfont-latin.woff2") format("woff2");
+  src: url("/fonts/cmu-sans/cmunsi-webfont-latin-ext.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  font-synthesis: none;
+  ascent-override: 81%;
+  descent-override: 19%;
+  line-gap-override: 0%;
+  unicode-range: U+00A0-00FF, U+2039-203A, U+205F;
+}
+
+@font-face {
+  font-family: "CMU Sans Serif";
+  src: url("/fonts/cmu-sans/cmunsx-webfont-latin-core.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -86,11 +174,25 @@
   ascent-override: 81%;
   descent-override: 19%;
   line-gap-override: 0%;
+  unicode-range: U+0020-007E, U+2010-2014, U+2018-201A, U+201C-201E, U+2022, U+2026;
 }
 
 @font-face {
   font-family: "CMU Sans Serif";
-  src: url("/fonts/cmu-sans/cmunso-webfont-latin.woff2") format("woff2");
+  src: url("/fonts/cmu-sans/cmunsx-webfont-latin-ext.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  font-synthesis: none;
+  ascent-override: 81%;
+  descent-override: 19%;
+  line-gap-override: 0%;
+  unicode-range: U+00A0-00FF, U+2039-203A, U+205F;
+}
+
+@font-face {
+  font-family: "CMU Sans Serif";
+  src: url("/fonts/cmu-sans/cmunso-webfont-latin-core.woff2") format("woff2");
   font-weight: 700;
   font-style: italic;
   font-display: swap;
@@ -98,4 +200,18 @@
   ascent-override: 81%;
   descent-override: 19%;
   line-gap-override: 0%;
+  unicode-range: U+0020-007E, U+2010-2014, U+2018-201A, U+201C-201E, U+2022, U+2026;
+}
+
+@font-face {
+  font-family: "CMU Sans Serif";
+  src: url("/fonts/cmu-sans/cmunso-webfont-latin-ext.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+  font-synthesis: none;
+  ascent-override: 81%;
+  descent-override: 19%;
+  line-gap-override: 0%;
+  unicode-range: U+00A0-00FF, U+2039-203A, U+205F;
 }

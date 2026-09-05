@@ -1,8 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { HomeLayout } from "@/components/layout/home";
 import { formatDate, formatDateTime } from "@/lib/format-date";
-import { baseOptions } from "@/lib/layout.shared";
 import { posts } from "@/lib/source";
 
 type TaggedPost = {
@@ -15,12 +13,22 @@ type TaggedPost = {
 };
 
 export const Route = createFileRoute("/posts/tags/$tag")({
+  head: () => ({
+    links: [
+      {
+        rel: "preload",
+        href: "/fonts/cmu-serif/cmunrm-webfont-latin-core.woff2",
+        as: "font",
+        type: "font/woff2",
+        crossOrigin: "anonymous",
+      },
+    ],
+  }),
   loader: ({ params }) => serverLoader({ data: params.tag }),
   staleTime: 5 * 60_000,
   gcTime: 30 * 60_000,
   headers: () => ({
-    "Cache-Control":
-      "public, max-age=0, s-maxage=300, stale-while-revalidate=3600",
+    "Cache-Control": "public, max-age=0, s-maxage=300, stale-while-revalidate=3600",
   }),
   component: TagPosts,
 });
@@ -65,7 +73,7 @@ function TagPosts() {
   };
 
   return (
-    <HomeLayout {...baseOptions()}>
+    <>
       <main className="mx-auto w-full max-w-2xl px-4 py-16">
         <header className="mb-12">
           {/* <Link */}
@@ -75,8 +83,8 @@ function TagPosts() {
           {/*   <span className="mr-1">&larr;</span> All tags */}
           {/* </Link> */}
           <h1 className="text-3xl font-bold tracking-tight">
-            {posts.length.toString()} {posts.length === 1 ? "post" : "posts"}{" "}
-            tagged with <span className="font-mono font-normal">"{tag}"</span>
+            {posts.length.toString()} {posts.length === 1 ? "post" : "posts"} tagged with{" "}
+            <span className="font-mono font-normal">"{tag}"</span>
           </h1>
         </header>
 
@@ -109,6 +117,6 @@ function TagPosts() {
           ))}
         </div>
       </main>
-    </HomeLayout>
+    </>
   );
 }

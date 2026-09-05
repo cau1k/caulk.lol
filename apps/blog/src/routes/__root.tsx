@@ -6,29 +6,20 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import { RootProvider } from "fumadocs-ui/provider/tanstack";
-import { Hydrate } from "@tanstack/react-start";
-import { visible } from "@tanstack/react-start/hydration";
-import { lazy, type ReactNode, Suspense, useLayoutEffect } from "react";
+import { type ReactNode, useLayoutEffect } from "react";
+import { BackgroundStars } from "@/components/background-stars";
 import {
   BackgroundStarsProvider,
   useBackgroundStarsOptional,
 } from "@/components/background-stars-context";
 import { NotFound } from "@/components/not-found";
+import { TerminalFooter } from "@/components/terminal-footer";
+import { HomeLayout } from "@/components/layout/home";
+import { baseOptions } from "@/lib/layout.shared";
 // Keep global and theme CSS in the entry's manifest so both are available in
 // the first response, without a late stylesheet fetch during hydration.
 import "@/styles/app.css";
 import "@/components/layout/theme-toggle.css";
-
-const BackgroundStars = lazy(() =>
-  import("@/components/background-stars").then((module) => ({
-    default: module.BackgroundStars,
-  })),
-);
-const TerminalFooter = lazy(() =>
-  import("@/components/terminal-footer").then((module) => ({
-    default: module.TerminalFooter,
-  })),
-);
 
 const siteRumScript = `(function () {
   var excluded = { '/analytics': true };
@@ -73,21 +64,21 @@ export const Route = createRootRoute({
     links: [
       {
         rel: "preload",
-        href: "/fonts/cmu-serif/cmunbx-webfont-latin.woff2",
+        href: "/fonts/cmu-serif/cmunbx-webfont-latin-core.woff2",
         as: "font",
         type: "font/woff2",
         crossOrigin: "anonymous",
       },
       {
         rel: "preload",
-        href: "/fonts/cmu-sans/cmunss-webfont-latin.woff2",
+        href: "/fonts/cmu-sans/cmunss-webfont-latin-core.woff2",
         as: "font",
         type: "font/woff2",
         crossOrigin: "anonymous",
       },
       {
         rel: "preload",
-        href: "/fonts/cmu-sans/cmunsx-webfont-latin.woff2",
+        href: "/fonts/cmu-sans/cmunsx-webfont-latin-core.woff2",
         as: "font",
         type: "font/woff2",
         crossOrigin: "anonymous",
@@ -133,23 +124,28 @@ function RootDocument({ children }: { children: ReactNode }) {
         <script>{siteRumScript}</script>
         <BackgroundStarsProvider>
           <BackgroundStarsRouteSync />
-          <Suspense fallback={null}>
-            <BackgroundStars />
-          </Suspense>
+          <BackgroundStars />
           <RootProvider search={{ enabled: false }}>
-            {children}
-            {/* Preserve footer HTML and animations, but load its motion runtime
-                only as the reader approaches it. Start also splits the JS chunk. */}
-            <Hydrate when={visible({ rootMargin: "400px" })}>
-              <Suspense fallback={null}>
-                <TerminalFooter />
-              </Suspense>
-            </Hydrate>
+            <PublicShell>{children}</PublicShell>
+            <TerminalFooter />
           </RootProvider>
         </BackgroundStarsProvider>
         <Scripts />
       </body>
     </html>
+  );
+}
+
+function PublicShell({ children }: { children: ReactNode }) {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  if (pathname.startsWith("/admin/")) return children;
+
+  // The shared header hydrates with the root, independently of lazy page content.
+  // Keep the existing outer DOM and the homepage's header/content offset.
+  return (
+    <HomeLayout {...baseOptions()} className={pathname === "/" ? "pt-24 sm:pt-32" : undefined}>
+      {children}
+    </HomeLayout>
   );
 }
 

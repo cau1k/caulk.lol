@@ -1,0 +1,221 @@
+{
+  "generator_sha256": "87ff4224faded48cf0b50e70c85800cfcb6fcb3db5b0000827fce8730b750458",
+  "families": [
+    {
+      "source": "apps/blog/public/fonts/cmu-sans/cmunsi-webfont-latin.woff",
+      "full": {
+        "source": "apps/blog/public/fonts/cmu-sans/cmunsi-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-sans/cmunsi-webfont-latin.woff2",
+        "source_sha256": "5fb8f0a49c526e5d3057cea77f00d0797aed062cb86ea1ac66b3fbeecee2cb54",
+        "output_sha256": "e0ee56454850499606e9807768c8710d322aa6c37a13c15f9f994b0d688f5c4f",
+        "glyphs": 203,
+        "cmap_entries": 198
+      },
+      "core": {
+        "source": "apps/blog/public/fonts/cmu-sans/cmunsi-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-sans/cmunsi-webfont-latin-core.woff2",
+        "source_sha256": "5fb8f0a49c526e5d3057cea77f00d0797aed062cb86ea1ac66b3fbeecee2cb54",
+        "output_sha256": "18e13855fa2492e43e66ae14a8379b85b083c0e300983f2fda64cd19c878f650",
+        "glyphs": 113,
+        "cmap_entries": 108
+      },
+      "ext": {
+        "source": "apps/blog/public/fonts/cmu-sans/cmunsi-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-sans/cmunsi-webfont-latin-ext.woff2",
+        "source_sha256": "5fb8f0a49c526e5d3057cea77f00d0797aed062cb86ea1ac66b3fbeecee2cb54",
+        "output_sha256": "fcd7b2d92fb8d6c8f743372c83e9afe7798df9d96a1d46725ea6da060f2e0786",
+        "glyphs": 94,
+        "cmap_entries": 90
+      }
+    },
+    {
+      "source": "apps/blog/public/fonts/cmu-sans/cmunso-webfont-latin.woff",
+      "full": {
+        "source": "apps/blog/public/fonts/cmu-sans/cmunso-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-sans/cmunso-webfont-latin.woff2",
+        "source_sha256": "adfabca2a422ddc4beb22857186395d85d5f37ef8a4b8c24ec6b6bd85eeaa91f",
+        "output_sha256": "8d112c62ed15e36541e323e800a287f50a2372f1d7f5c618a17b04a55a14b6b3",
+        "glyphs": 203,
+        "cmap_entries": 198
+      },
+      "core": {
+        "source": "apps/blog/public/fonts/cmu-sans/cmunso-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-sans/cmunso-webfont-latin-core.woff2",
+        "source_sha256": "adfabca2a422ddc4beb22857186395d85d5f37ef8a4b8c24ec6b6bd85eeaa91f",
+        "output_sha256": "b2fbef20fb3c4d922eb219162952a519a2b7ccd27db0e910142576363159dac0",
+        "glyphs": 113,
+        "cmap_entries": 108
+      },
+      "ext": {
+        "source": "apps/blog/public/fonts/cmu-sans/cmunso-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-sans/cmunso-webfont-latin-ext.woff2",
+        "source_sha256": "adfabca2a422ddc4beb22857186395d85d5f37ef8a4b8c24ec6b6bd85eeaa91f",
+        "output_sha256": "0b273cf78dfa5ef22f0b599aae1c6cfbddceae2df4f141f5ca91f86fbf322abb",
+        "glyphs": 94,
+        "cmap_entries": 90
+      }
+    },
+    {
+      "source": "apps/blog/public/fonts/cmu-sans/cmunss-webfont-latin.woff",
+      "full": {
+        "source": "apps/blog/public/fonts/cmu-sans/cmunss-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-sans/cmunss-webfont-latin.woff2",
+        "source_sha256": "9b514e501c8eb2f0702908cccecde4506588b45455c09515f9502a75907cb7a2",
+        "output_sha256": "0d1d85a56fff3d95f5a9995e424691531bf160b2c730e17fe13f707b76536c55",
+        "glyphs": 203,
+        "cmap_entries": 198
+      },
+      "core": {
+        "source": "apps/blog/public/fonts/cmu-sans/cmunss-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-sans/cmunss-webfont-latin-core.woff2",
+        "source_sha256": "9b514e501c8eb2f0702908cccecde4506588b45455c09515f9502a75907cb7a2",
+        "output_sha256": "6e03827d9dc601fa3499bcec80f533909aaaaf2c04d6cbfc553bb92cd808deeb",
+        "glyphs": 113,
+        "cmap_entries": 108
+      },
+      "ext": {
+        "source": "apps/blog/public/fonts/cmu-sans/cmunss-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-sans/cmunss-webfont-latin-ext.woff2",
+        "source_sha256": "9b514e501c8eb2f0702908cccecde4506588b45455c09515f9502a75907cb7a2",
+        "output_sha256": "e0bedfb1751adc03aa10c339ff8f8bd8708953d589f0eec76879b6a12a0dd2bf",
+        "glyphs": 94,
+        "cmap_entries": 90
+      }
+    },
+    {
+      "source": "apps/blog/public/fonts/cmu-sans/cmunsx-webfont-latin.woff",
+      "full": {
+        "source": "apps/blog/public/fonts/cmu-sans/cmunsx-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-sans/cmunsx-webfont-latin.woff2",
+        "source_sha256": "b402abf0917b269054092f1a30711f211791c62b8f2ca1df072cb2f0c30bd029",
+        "output_sha256": "4412924b0cad88e21ad28353040b6fd2667ee3db528d8d1b51d902fed0ec1642",
+        "glyphs": 203,
+        "cmap_entries": 198
+      },
+      "core": {
+        "source": "apps/blog/public/fonts/cmu-sans/cmunsx-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-sans/cmunsx-webfont-latin-core.woff2",
+        "source_sha256": "b402abf0917b269054092f1a30711f211791c62b8f2ca1df072cb2f0c30bd029",
+        "output_sha256": "ace0024972043f03efe74394cd5f7bc366f1f006416f3eaa5fbcf467a628cc19",
+        "glyphs": 113,
+        "cmap_entries": 108
+      },
+      "ext": {
+        "source": "apps/blog/public/fonts/cmu-sans/cmunsx-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-sans/cmunsx-webfont-latin-ext.woff2",
+        "source_sha256": "b402abf0917b269054092f1a30711f211791c62b8f2ca1df072cb2f0c30bd029",
+        "output_sha256": "fb1066e80ecc4562761649a12b78f15ef724b069ee74c79f7837b3d52aa567a4",
+        "glyphs": 94,
+        "cmap_entries": 90
+      }
+    },
+    {
+      "source": "apps/blog/public/fonts/cmu-serif/cmunbi-webfont-latin.woff",
+      "full": {
+        "source": "apps/blog/public/fonts/cmu-serif/cmunbi-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-serif/cmunbi-webfont-latin.woff2",
+        "source_sha256": "6284a70a97bdaaaea3627c7ad71942fe3f784843b859052f5052417808e3ee3d",
+        "output_sha256": "3ef3d65eb87d6458f0b70e29b7d5aa0ca23d6228799146232b668fd28bd5842e",
+        "glyphs": 203,
+        "cmap_entries": 198
+      },
+      "core": {
+        "source": "apps/blog/public/fonts/cmu-serif/cmunbi-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-serif/cmunbi-webfont-latin-core.woff2",
+        "source_sha256": "6284a70a97bdaaaea3627c7ad71942fe3f784843b859052f5052417808e3ee3d",
+        "output_sha256": "a79f11abc0037a0d9714bd55f558780d5959892139bf641f94b739ac767990f5",
+        "glyphs": 113,
+        "cmap_entries": 108
+      },
+      "ext": {
+        "source": "apps/blog/public/fonts/cmu-serif/cmunbi-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-serif/cmunbi-webfont-latin-ext.woff2",
+        "source_sha256": "6284a70a97bdaaaea3627c7ad71942fe3f784843b859052f5052417808e3ee3d",
+        "output_sha256": "a3e8c6bd185098b5c17ff3b5b3f85f7b2475a78ec94cc3f3d7eb69cfc33d6dc5",
+        "glyphs": 94,
+        "cmap_entries": 90
+      }
+    },
+    {
+      "source": "apps/blog/public/fonts/cmu-serif/cmunbx-webfont-latin.woff",
+      "full": {
+        "source": "apps/blog/public/fonts/cmu-serif/cmunbx-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-serif/cmunbx-webfont-latin.woff2",
+        "source_sha256": "ade42faa95fca2a54662a81982548526ac03a596d4c8394521f29444c56587a0",
+        "output_sha256": "6fac4ed50953c7b25ac200de33d27e931fd26d98925db747445f53ae91159c7d",
+        "glyphs": 203,
+        "cmap_entries": 198
+      },
+      "core": {
+        "source": "apps/blog/public/fonts/cmu-serif/cmunbx-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-serif/cmunbx-webfont-latin-core.woff2",
+        "source_sha256": "ade42faa95fca2a54662a81982548526ac03a596d4c8394521f29444c56587a0",
+        "output_sha256": "9801bfb90c147b71e60ad95259f27acc2d913c6a3cef6e21839b5a59e6659b6e",
+        "glyphs": 113,
+        "cmap_entries": 108
+      },
+      "ext": {
+        "source": "apps/blog/public/fonts/cmu-serif/cmunbx-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-serif/cmunbx-webfont-latin-ext.woff2",
+        "source_sha256": "ade42faa95fca2a54662a81982548526ac03a596d4c8394521f29444c56587a0",
+        "output_sha256": "ed891c0d21a6c435180df28b486395b5c5966567ddce0614a58fe20371437155",
+        "glyphs": 94,
+        "cmap_entries": 90
+      }
+    },
+    {
+      "source": "apps/blog/public/fonts/cmu-serif/cmunrm-webfont-latin.woff",
+      "full": {
+        "source": "apps/blog/public/fonts/cmu-serif/cmunrm-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-serif/cmunrm-webfont-latin.woff2",
+        "source_sha256": "5eae7130251c59cce031fe01ecaaf2c825e1211914ac0a80462f3cc645e4008a",
+        "output_sha256": "0eadb2cc29ef26920798bf56464dda0a4fbcd10b0db32c224b1ce50828eb31b1",
+        "glyphs": 203,
+        "cmap_entries": 198
+      },
+      "core": {
+        "source": "apps/blog/public/fonts/cmu-serif/cmunrm-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-serif/cmunrm-webfont-latin-core.woff2",
+        "source_sha256": "5eae7130251c59cce031fe01ecaaf2c825e1211914ac0a80462f3cc645e4008a",
+        "output_sha256": "c35a425b3340e2cfbd1aa542ec2942822714ffb336b874f8f7c9ae24e35061e3",
+        "glyphs": 113,
+        "cmap_entries": 108
+      },
+      "ext": {
+        "source": "apps/blog/public/fonts/cmu-serif/cmunrm-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-serif/cmunrm-webfont-latin-ext.woff2",
+        "source_sha256": "5eae7130251c59cce031fe01ecaaf2c825e1211914ac0a80462f3cc645e4008a",
+        "output_sha256": "65c1f1945f9f4543faeaf4a9dc6e0c1b7f9bae7e943320687be2e022acc95708",
+        "glyphs": 94,
+        "cmap_entries": 90
+      }
+    },
+    {
+      "source": "apps/blog/public/fonts/cmu-serif/cmunti-webfont-latin.woff",
+      "full": {
+        "source": "apps/blog/public/fonts/cmu-serif/cmunti-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-serif/cmunti-webfont-latin.woff2",
+        "source_sha256": "dc23d1d773d6c8dbaf0c0e61ac765af0274e9ffdde0b7193b97929712b10135e",
+        "output_sha256": "1c86d97f68d8c923c18ee14adc944840d5e4634406f92f1d2796ffde628c2339",
+        "glyphs": 203,
+        "cmap_entries": 198
+      },
+      "core": {
+        "source": "apps/blog/public/fonts/cmu-serif/cmunti-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-serif/cmunti-webfont-latin-core.woff2",
+        "source_sha256": "dc23d1d773d6c8dbaf0c0e61ac765af0274e9ffdde0b7193b97929712b10135e",
+        "output_sha256": "0b700e277c0185d8ea291d45733f5bede0760cdb043d08159f67340bf96ca000",
+        "glyphs": 113,
+        "cmap_entries": 108
+      },
+      "ext": {
+        "source": "apps/blog/public/fonts/cmu-serif/cmunti-webfont-latin.woff",
+        "output": "apps/blog/public/fonts/cmu-serif/cmunti-webfont-latin-ext.woff2",
+        "source_sha256": "dc23d1d773d6c8dbaf0c0e61ac765af0274e9ffdde0b7193b97929712b10135e",
+        "output_sha256": "9c128cb8dfc56c027221fdcff4ec05f39b1a36dfd4e9815ab674974d9e53b5c7",
+        "glyphs": 94,
+        "cmap_entries": 90
+      }
+    }
+  ]
+}

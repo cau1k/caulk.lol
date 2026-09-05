@@ -1,0 +1,9 @@
+{
+  "metadata": { "status": "Awaiting final paired measurement" },
+  "charts": {
+    "localCold": [],
+    "localWarm": [],
+    "liveCold": [],
+    "liveWarm": []
+  }
+}

@@ -1,9 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { EmptyState } from "@/components/empty-state";
-import { HomeLayout } from "@/components/layout/home";
 import { formatDate, formatDateTime } from "@/lib/format-date";
-import { baseOptions } from "@/lib/layout.shared";
 import { posts } from "@/lib/source";
 
 type HomePost = {
@@ -15,6 +13,18 @@ type HomePost = {
 };
 
 export const Route = createFileRoute("/")({
+  // Recent titles use regular serif; start its download with the document.
+  head: () => ({
+    links: [
+      {
+        rel: "preload",
+        href: "/fonts/cmu-serif/cmunrm-webfont-latin-core.woff2",
+        as: "font",
+        type: "font/woff2",
+        crossOrigin: "anonymous",
+      },
+    ],
+  }),
   loader: () => serverLoader(),
   component: Home,
 });
@@ -44,7 +54,7 @@ function Home() {
   const [featured, ...rest] = posts;
 
   return (
-    <HomeLayout {...baseOptions()} className="pt-24 sm:pt-32">
+    <>
       <main className="mx-auto w-full max-w-2xl px-4 pt-16 py-0!">
         <p className="text-muted-foreground text-lg">
           Thoughts on software, philosophy, and hacking on agent harnesses.
@@ -129,6 +139,6 @@ function Home() {
           </div>
         </footer>
       </main>
-    </HomeLayout>
+    </>
   );
 }

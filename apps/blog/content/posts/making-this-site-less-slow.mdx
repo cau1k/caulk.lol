@@ -1,0 +1,93 @@
+---
+title: Making this site less slow
+description: Prerendering that wasn't serving anything, expensive diagrams, and the difference between a faster page and a passing benchmark.
+author: Caulk
+date: "2026-09-05"
+tags: ["web", "performance", "infra"]
+draft: true
+---
+
+import { PerformanceComparisonChart } from "../../src/components/analytics/performance";
+import report from "../../src/generated/performance.json";
+
+This site was generating static HTML and then making the Worker render those pages again when someone requested them.
+
+Good start.
+
+I asked Codex to make every public page at least three times faster, with cold and warm browser caches, without losing features. Twenty pages, including the articles, archives, tags, links, and analytics. The little stars had to stay. So did the menus, theme controls, diagrams, and all the other stuff that makes this my website.
+
+FINAL_RESULT_SENTENCE
+
+There was plenty to fix. There was also plenty of opportunity to produce a flattering number that didn't mean what it appeared to mean.
+
+## First, define faster
+
+The original baseline contains 240 samples: twenty pages, two origins, two cache states, and three complete paired rounds. The local origin runs the production Worker through workerd. The other origin is the live site. A Vite development server would have answered a different question.
+
+The comparison profile stayed fixed: Chromium 151, a 1440×900 viewport, dark mode, 4× CPU slowdown, 10 Mbps download, 5 Mbps upload, and 40 ms minimum request latency. Pages run sequentially, with the origin order alternating. Building the app while measuring it would be a pretty stupid way to investigate CPU overhead.
+
+Cold means a fresh browser context with its HTTP cache cleared. Warm means another document navigation with that cache retained. Neither operation empties Cloudflare's cache. Edge response headers are recorded separately.
+
+There are two numbers I care about here. **Load** is the browser's `loadEventEnd`. **Ready** also accounts for observed paint, loaded fonts, the theme control reflecting hydration, and the analytics request where applicable. That hydration signal has limits, so a separate feature suite actually uses the controls.
+
+Each origin is compared with its own baseline. During development, live samples provided a control while the code changed locally. The final comparison was run after CI deployed the candidate, so its live samples measure the deployed changes too.
+
+### Local, warm browser
+
+<PerformanceComparisonChart rows={report.charts.localWarm} />
+
+Mean browser load time (`loadEventEnd`) in milliseconds. Lower is better. The DitherKit chart uses the captured report data rather than hand-entered example values. Readiness is reported separately.
+
+## Actually serve the HTML
+
+Prerendering was configured. The files existed. The request path still needed to resolve the public URL to the corresponding built `index.html` through the Worker asset binding.
+
+The fix makes that relationship explicit. A request for an archive or article reads its generated document while retaining the public URL. Missing artifacts fail visibly. Generating a file at build time only helps if requests reach it.
+
+Caching needed the same attention. Fingerprinted Vite assets get a year of freshness with `immutable`. Public HTML gets a short browser freshness window. Fonts have their own policy because their paths aren't content hashes. Applying one giant cache rule to everything would make publishing unnecessarily exciting.
+
+Cloudflare's [`_headers` handling](https://developers.cloudflare.com/workers/static-assets/headers/) applies to static asset responses; responses constructed by Worker code need their headers set there. The distinction matters when your server framework and asset service both touch the same request.
+
+## Pay for the page you opened
+
+The header carried more machinery than its links and theme toggle needed. Its implementation is now smaller, and the shared public header lives in the root layout. Page-specific content can load independently while navigation and theme controls initialize with the shell.
+
+MDX had a similar problem. Registering every optional widget made ordinary articles pay for components they didn't render. Those widgets now have separate imports. The article itself is loaded by its own content path.
+
+Of course, splitting JavaScript creates another problem if the browser discovers each piece one request too late.
+
+The installed TanStack Start manifest builder included a chunk and its direct imports in module preloads, but didn't walk the complete static import graph. A pinned patch now walks it recursively, handles cycles, and leaves dynamic imports separate. An additional build-time mapping connects an article's MDX path to its actual emitted assets, so its document can preload the right files.
+
+[`modulepreload`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/rel/modulepreload) lets the browser fetch and prepare those modules earlier. The useful part is identifying the dependencies this document actually needs. Preloading the entire site would just undo the split.
+
+There are regression tests against the installed manifest builder. A package patch is still maintenance debt, and an upgrade needs to prove that behavior again.
+
+## Stop making the browser rebuild things
+
+The Excalidraw diagram in the prompt caching article fetched its editable scene and imported Excalidraw to export an SVG in the reader's browser. For a diagram that changes when I edit the article.
+
+That export now happens during an explicit generation step. The checked-in SVG is about 19 KB. It stays inline so its text and colors inherit the site's font and theme variables. The editable source stays in the repo, with hashes that make stale generated output fail a test. Readers keep the diagram; they stop running its exporter.
+
+Fonts got a more careful treatment than deleting everything outside ASCII. The CMU faces use WOFF2 with core and extension ranges. The smaller core covers ordinary text, while extension files retain the additional glyphs. Generation checks coverage, outlines, and metrics against the sources. Font selection and appearance still matter on a text-heavy site.
+
+The smaller fixes added up too. Date labels reuse `Intl` formatters. A footer hydration mismatch was removed, and its reveal uses an intersection observer plus CSS rather than pulling in an animation runtime for that one job.
+
+The stars were particularly dumb. Every animation frame cleared both full-screen canvases, even when the asteroid layer was empty. Most stars hadn't changed opacity either. Now unchanged star frames retain their pixels. The asteroid layer clears when it has something to update, including once when the last trail disappears.
+
+The random draws, spawn clock, movement, and theme behavior stay intact. Six renderer tests cover those decisions. No artificial timeout that makes the benchmark finish before the feature appears.
+
+Finally, article images use the browser's native [`loading="lazy"`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#loading), while retaining an explicit eager override. Offscreen screenshots don't all need to compete with the first viewport. This also changes what the load event waits for, which is another reason to keep readiness and image feature checks alongside it.
+
+## Keep the misses
+
+### Live, cold browser
+
+<PerformanceComparisonChart rows={report.charts.liveCold} />
+
+Mean browser load time (`loadEventEnd`) in milliseconds before and after deployment. A cold browser still may receive a warm edge response.
+
+The original target required every page, origin, and cache combination to improve by three times for both mean load and mean readiness. One fast homepage couldn't carry a slow article. Neither could a pleasant overall average.
+
+The final report keeps the misses and the individual samples. Local links use captured fixtures, local analytics lacks production Analytics Engine credentials, and a single machine with an emulated connection doesn't represent every reader. The baseline also had an Analytics hydration error, and I edited the Nietzsche and prompt-caching articles during this work. Those comparisons include content changes; they cannot isolate the optimization alone. Those limits belong next to the numbers.
+
+I'm stopping this pass with the report and the remaining misses documented. The useful result is a site that does less unnecessary work, plus a way to catch it when that work creeps back in. I don't need to rename the target after the run to make the graph look better.

@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { HomeLayout } from "@/components/layout/home";
 import { TagBadge } from "@/components/tag-badge";
-import { baseOptions } from "@/lib/layout.shared";
 import { posts } from "@/lib/source";
 
 type TagCount = {
@@ -15,8 +13,7 @@ export const Route = createFileRoute("/posts/tags/")({
   staleTime: 5 * 60_000,
   gcTime: 30 * 60_000,
   headers: () => ({
-    "Cache-Control":
-      "public, max-age=0, s-maxage=300, stale-while-revalidate=3600",
+    "Cache-Control": "public, max-age=0, s-maxage=300, stale-while-revalidate=3600",
   }),
   component: TagsIndex,
 });
@@ -49,7 +46,7 @@ function TagsIndex() {
   };
 
   return (
-    <HomeLayout {...baseOptions()}>
+    <>
       <main className="mx-auto w-full max-w-2xl px-4 py-16">
         <header className="mb-12">
           <h1 className="text-3xl font-bold tracking-tight">Tags</h1>
@@ -69,10 +66,8 @@ function TagsIndex() {
           ))}
         </div>
 
-        {tags.length === 0 && (
-          <p className="text-muted-foreground">No tags yet.</p>
-        )}
+        {tags.length === 0 && <p className="text-muted-foreground">No tags yet.</p>}
       </main>
-    </HomeLayout>
+    </>
   );
 }

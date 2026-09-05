@@ -2,10 +2,8 @@ import { readFile } from "node:fs/promises";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { EmptyState } from "@/components/empty-state";
-import { HomeLayout } from "@/components/layout/home";
 import { TagBadge } from "@/components/tag-badge";
 import { formatDate, formatDateTime } from "@/lib/format-date";
-import { baseOptions } from "@/lib/layout.shared";
 import { posts } from "@/lib/source";
 
 type ArchivePost = {
@@ -45,6 +43,17 @@ async function getExcerpt(absolutePath: string, maxLen = 100): Promise<string> {
 }
 
 export const Route = createFileRoute("/posts/")({
+  head: () => ({
+    links: [
+      {
+        rel: "preload",
+        href: "/fonts/cmu-serif/cmunrm-webfont-latin-core.woff2",
+        as: "font",
+        type: "font/woff2",
+        crossOrigin: "anonymous",
+      },
+    ],
+  }),
   loader: () => serverLoader(),
   // Post index updates when new posts are added
   staleTime: 5 * 60_000, // 5 min
@@ -82,7 +91,7 @@ function BlogIndex() {
   const { posts } = Route.useLoaderData() as { posts: ArchivePost[] };
 
   return (
-    <HomeLayout {...baseOptions()}>
+    <>
       <main className="mx-auto w-full max-w-2xl px-4 py-16">
         <header className="mb-12">
           <h1 className="text-3xl font-bold tracking-tight">Archive</h1>
@@ -132,6 +141,6 @@ function BlogIndex() {
           />
         )}
       </main>
-    </HomeLayout>
+    </>
   );
 }

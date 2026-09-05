@@ -1,17 +1,17 @@
-import { Graph as VisxGraph } from "@visx/network";
-import { ParentSize } from "@visx/responsive";
-import {
-  AreaSeries,
-  Axis,
-  buildChartTheme,
-  Grid,
-  LineSeries,
-  Tooltip,
-  XYChart,
-} from "@visx/xychart";
-import { Zoom } from "@visx/zoom";
 import { Minus, Plus, RotateCcw } from "lucide-react";
-import { type ReactNode, useMemo, useState } from "react";
+import {
+  type PointerEvent,
+  type ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { Area, Line } from "@/components/dither-kit/area";
+import { AreaChart } from "@/components/dither-kit/area-chart";
+import { Grid } from "@/components/dither-kit/grid";
+import { XAxis } from "@/components/dither-kit/x-axis";
+import { YAxis } from "@/components/dither-kit/y-axis";
 import type {
   NetworkEdge,
   NetworkNode,
@@ -19,32 +19,8 @@ import type {
 } from "@/lib/analytics-engine";
 import { cn } from "@/lib/cn";
 
-const chartTheme = buildChartTheme({
-  backgroundColor: "transparent",
-  colors: [
-    "var(--color-chart-1)",
-    "var(--color-chart-3)",
-    "var(--color-chart-5)",
-  ],
-  gridColor: "var(--color-border)",
-  gridColorDark: "var(--color-border)",
-  tickLength: 0,
-  svgLabelSmall: {
-    fill: "var(--color-muted-foreground)",
-    fontFamily: "var(--font-sans)",
-    fontSize: 11,
-  },
-  htmlLabel: {
-    background: "var(--color-popover)",
-    border: "1px solid var(--color-border)",
-    color: "var(--color-popover-foreground)",
-    fontFamily: "var(--font-sans)",
-    lineHeight: 1.4,
-  },
-});
-
 type LatencyDatum = SiteMetricPoint & {
-  date: Date;
+  label: string;
 };
 
 type RouteNode = NetworkNode & {
@@ -59,6 +35,11 @@ type RouteLink = {
   requests: number;
 };
 
+const latencyConfig = {
+  p95Ms: { label: "p95", color: "primary" },
+  p50Ms: { label: "p50", color: "primaryMuted" },
+} as const;
+
 export function EmptyChartState({ message }: { message: string }) {
   return (
     <div className="flex min-h-72 items-center justify-center border border-dashed border-border px-4 text-center text-sm text-muted-foreground">
@@ -68,111 +49,49 @@ export function EmptyChartState({ message }: { message: string }) {
 }
 
 export function LatencyChart({ points }: { points: SiteMetricPoint[] }) {
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const data = useMemo<LatencyDatum[]>(
     () =>
       points.map((point) => ({
         ...point,
-        date: new Date(point.timestamp),
+        label: formatTime(point.timestamp),
       })),
     [points],
   );
   const maxLatency = Math.max(...points.map((point) => point.p95Ms), 1);
+  const activeDatum = hoverIndex === null ? null : data[hoverIndex];
 
   return (
     <div className="overflow-x-auto">
-      <div className="h-[340px] min-w-[720px]">
-        <ParentSize>
-          {({ width }) => {
-            if (width <= 0) return null;
-
-            return (
-              <XYChart
-                height={340}
-                margin={{ top: 16, right: 18, bottom: 34, left: 46 }}
-                theme={chartTheme}
-                width={width}
-                xScale={{ type: "time" }}
-                yScale={{ nice: true, type: "linear", zero: true }}
-              >
-                <Grid columns={false} numTicks={4} />
-                <Axis
-                  numTicks={4}
-                  orientation="bottom"
-                  tickFormat={(value) => formatTime(String(value))}
-                />
-                <Axis
-                  numTicks={4}
-                  orientation="left"
-                  tickFormat={(value) => formatMs(Number(value))}
-                />
-                <AreaSeries
-                  data={data}
-                  dataKey="p95 area"
-                  fill="var(--color-chart-1)"
-                  fillOpacity={0.14}
-                  xAccessor={(datum) => datum.date}
-                  yAccessor={(datum) => datum.p95Ms}
-                />
-                <LineSeries
-                  data={data}
-                  dataKey="p95"
-                  stroke="var(--color-chart-1)"
-                  strokeWidth={2.5}
-                  xAccessor={(datum) => datum.date}
-                  yAccessor={(datum) => datum.p95Ms}
-                />
-                <LineSeries
-                  data={data}
-                  dataKey="p50"
-                  stroke="var(--color-chart-3)"
-                  strokeWidth={2}
-                  xAccessor={(datum) => datum.date}
-                  yAccessor={(datum) => datum.p50Ms}
-                />
-                <Tooltip<LatencyDatum>
-                  className="border border-border bg-popover/95 p-3 text-popover-foreground shadow-sm backdrop-blur"
-                  detectBounds
-                  glyphStyle={{
-                    fill: "var(--color-background)",
-                    r: 4,
-                    stroke: "var(--color-chart-1)",
-                    strokeWidth: 2,
-                  }}
-                  renderTooltip={({ tooltipData }) => {
-                    const datum = tooltipData?.nearestDatum?.datum;
-                    if (!datum) return null;
-
-                    return (
-                      <div className="min-w-40">
-                        <div className="mb-2 font-mono text-[11px] text-muted-foreground">
-                          {formatDateTime(datum.timestamp)}
-                        </div>
-                        <TooltipRow label="p95" value={formatMs(datum.p95Ms)} />
-                        <TooltipRow label="p50" value={formatMs(datum.p50Ms)} />
-                        <TooltipRow
-                          label="average"
-                          value={formatMs(datum.avgMs)}
-                        />
-                        <TooltipRow
-                          label="requests"
-                          value={formatCount(datum.requests)}
-                        />
-                      </div>
-                    );
-                  }}
-                  showDatumGlyph
-                  showVerticalCrosshair
-                  snapTooltipToDatumX
-                  verticalCrosshairStyle={{
-                    stroke: "var(--color-muted-foreground)",
-                    strokeDasharray: "4 4",
-                    strokeOpacity: 0.35,
-                  }}
-                />
-              </XYChart>
-            );
-          }}
-        </ParentSize>
+      <div className="relative h-[340px] min-w-[720px]">
+        <AreaChart
+          animate={false}
+          bloom="off"
+          config={latencyConfig}
+          data={data}
+          margins={{ top: 16, right: 18, bottom: 34, left: 46 }}
+          onHoverChange={setHoverIndex}
+        >
+          <Grid />
+          <XAxis dataKey="label" maxTicks={4} />
+          <YAxis tickFormatter={formatMs} />
+          <Area dataKey="p95Ms" variant="gradient" />
+          <Line dataKey="p50Ms" strokeVariant="dashed" />
+        </AreaChart>
+        {activeDatum && (
+          <div className="pointer-events-none absolute right-3 top-3 z-10 min-w-40 border border-border bg-popover/95 p-3 text-popover-foreground shadow-sm backdrop-blur">
+            <div className="mb-2 font-mono text-[11px] text-muted-foreground">
+              {formatDateTime(activeDatum.timestamp)}
+            </div>
+            <TooltipRow label="p95" value={formatMs(activeDatum.p95Ms)} />
+            <TooltipRow label="p50" value={formatMs(activeDatum.p50Ms)} />
+            <TooltipRow label="average" value={formatMs(activeDatum.avgMs)} />
+            <TooltipRow
+              label="requests"
+              value={formatCount(activeDatum.requests)}
+            />
+          </div>
+        )}
       </div>
       <div className="mt-3 flex justify-between text-xs text-muted-foreground">
         <span>0ms</span>
@@ -190,6 +109,9 @@ export function NetworkGraph({
   edges: NetworkEdge[];
 }) {
   const [activeRoute, setActiveRoute] = useState<string | null>(null);
+  const [view, setView] = useState({ scale: 1, x: 0, y: 0 });
+  const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
   const width = 860;
   const height = 360;
   const graph = useMemo(
@@ -200,204 +122,216 @@ export function NetworkGraph({
     ? graph.nodes.find((node) => node.route === activeRoute)
     : null;
 
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+
+    const onWheel = (event: globalThis.WheelEvent) => {
+      event.preventDefault();
+      zoomBy(
+        1 - Math.max(-0.15, Math.min(0.15, event.deltaY / 600)),
+        svgPointFromClient(svg, event.clientX, event.clientY),
+      );
+    };
+
+    svg.addEventListener("wheel", onWheel, { passive: false });
+    return () => svg.removeEventListener("wheel", onWheel);
+  });
+
+  function startDrag(event: PointerEvent<SVGSVGElement>) {
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setDrag({ x: event.clientX, y: event.clientY });
+  }
+
+  function moveDrag(event: PointerEvent<SVGSVGElement>) {
+    if (!drag) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const dx = ((event.clientX - drag.x) / rect.width) * width;
+    const dy = ((event.clientY - drag.y) / rect.height) * height;
+    setDrag({ x: event.clientX, y: event.clientY });
+    setView((current) => ({
+      ...current,
+      x: current.x + dx,
+      y: current.y + dy,
+    }));
+  }
+
+  function endDrag(event: PointerEvent<SVGSVGElement>) {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    setDrag(null);
+  }
+
+  function zoomBy(nextScale: number, anchor = { x: width / 2, y: height / 2 }) {
+    setView((current) => {
+      const scale = Math.max(0.65, Math.min(2.8, current.scale * nextScale));
+      const ratio = scale / current.scale;
+      return {
+        scale,
+        x: anchor.x - (anchor.x - current.x) * ratio,
+        y: anchor.y - (anchor.y - current.y) * ratio,
+      };
+    });
+  }
+
+  function svgPointFromClient(
+    svg: SVGSVGElement,
+    clientX: number,
+    clientY: number,
+  ) {
+    const rect = svg.getBoundingClientRect();
+    return {
+      x: ((clientX - rect.left) / rect.width) * width,
+      y: ((clientY - rect.top) / rect.height) * height,
+    };
+  }
+
   return (
     <div className="relative overflow-x-auto">
-      <Zoom<SVGSVGElement>
-        height={height}
-        initialTransformMatrix={{
-          scaleX: 1,
-          scaleY: 1,
-          skewX: 0,
-          skewY: 0,
-          translateX: 0,
-          translateY: 0,
-        }}
-        scaleXMax={2.8}
-        scaleXMin={0.65}
-        scaleYMax={2.8}
-        scaleYMin={0.65}
-        wheelDelta={(event) => {
-          const scale = 1 - Math.max(-0.15, Math.min(0.15, event.deltaY / 600));
-          return { scaleX: scale, scaleY: scale };
-        }}
-        width={width}
-      >
-        {(zoom) => (
-          <>
-            <div className="absolute right-3 top-3 z-10 flex items-center gap-1 border border-border bg-background/85 p-1 backdrop-blur">
-              <GraphToolButton
-                label="Zoom in"
-                onClick={() =>
-                  zoom.scale({
-                    scaleX: 1.18,
-                    scaleY: 1.18,
-                    point: { x: width / 2, y: height / 2 },
-                  })
-                }
-              >
-                <Plus className="size-3.5" aria-hidden />
-              </GraphToolButton>
-              <GraphToolButton
-                label="Zoom out"
-                onClick={() =>
-                  zoom.scale({
-                    scaleX: 0.84,
-                    scaleY: 0.84,
-                    point: { x: width / 2, y: height / 2 },
-                  })
-                }
-              >
-                <Minus className="size-3.5" aria-hidden />
-              </GraphToolButton>
-              <GraphToolButton label="Reset" onClick={zoom.reset}>
-                <RotateCcw className="size-3.5" aria-hidden />
-              </GraphToolButton>
-            </div>
-            <svg
-              aria-label="Route network graph"
-              className={cn(
-                "min-h-[360px] w-full min-w-[760px] touch-none outline-none",
-                zoom.isDragging ? "cursor-grabbing" : "cursor-grab",
-              )}
-              onMouseDown={zoom.dragStart}
-              onMouseLeave={() => {
-                zoom.dragEnd();
-                setActiveRoute(null);
-              }}
-              onMouseMove={zoom.dragMove}
-              onMouseUp={zoom.dragEnd}
-              onTouchEnd={zoom.dragEnd}
-              onTouchMove={zoom.dragMove}
-              onTouchStart={zoom.dragStart}
-              onWheel={zoom.handleWheel}
-              ref={zoom.containerRef}
-              role="img"
-              viewBox={`0 0 ${width} ${height}`}
-            >
-              <title>Route network graph</title>
-              <rect
-                className="fill-background/20"
-                height={height}
-                width={width}
-              />
-              <g transform={zoom.toString()}>
-                <VisxGraph<RouteLink, RouteNode>
-                  graph={graph}
-                  linkComponent={({ link }) => {
-                    const isActive =
-                      activeRoute === null ||
-                      activeRoute === link.source.route ||
-                      activeRoute === link.target.route;
-                    return (
-                      <path
-                        className={cn(
-                          "stroke-muted-foreground/45 transition-opacity",
-                          isActive ? "opacity-100" : "opacity-55",
-                          activeRoute && isActive && "stroke-chart-1",
-                        )}
-                        d={makeFlowPath(link.source, link.target)}
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeWidth={Math.max(
-                          1.25,
-                          Math.min(link.requests / 22 + 1, 5),
-                        )}
-                      />
-                    );
-                  }}
-                  nodeComponent={({ node }) => {
-                    const isActive =
-                      activeRoute === null || activeRoute === node.route;
-                    const isSelected = activeRoute === node.route;
-                    const labelWidth = Math.max(96, node.route.length * 7.2);
-                    const labelX = node.r + 12;
-                    return (
-                      // biome-ignore lint/a11y/useSemanticElements: SVG graph nodes cannot render HTML buttons.
-                      <g
-                        className="cursor-pointer outline-none"
-                        onFocus={() => setActiveRoute(node.route)}
-                        onMouseEnter={() => setActiveRoute(node.route)}
-                        role="button"
-                        tabIndex={0}
-                      >
-                        <circle
-                          className={cn(
-                            "fill-chart-1/35 stroke-chart-1 transition-opacity",
-                            isActive ? "opacity-100" : "opacity-70",
-                          )}
-                          cx="0"
-                          cy="0"
-                          r={node.r + 5}
-                          strokeWidth={isSelected ? 3 : 1.5}
-                        />
-                        <rect
-                          className={cn(
-                            "fill-background/90 transition-opacity",
-                            isActive ? "opacity-100" : "opacity-75",
-                          )}
-                          height="38"
-                          rx="5"
-                          width={labelWidth}
-                          x={labelX - 8}
-                          y="-22"
-                        />
-                        <text
-                          className={cn(
-                            "fill-foreground text-[12px] transition-opacity",
-                            isActive ? "opacity-100" : "opacity-80",
-                          )}
-                          x={labelX}
-                          y="-5"
-                        >
-                          {node.route}
-                        </text>
-                        <text
-                          className={cn(
-                            "fill-muted-foreground text-[11px] transition-opacity",
-                            isActive ? "opacity-100" : "opacity-75",
-                          )}
-                          x={labelX}
-                          y="13"
-                        >
-                          {formatCount(node.requests)} · p95{" "}
-                          {formatMs(node.p95Ms)}
-                        </text>
-                      </g>
-                    );
-                  }}
-                />
-              </g>
-              {activeNode && (
-                <foreignObject height={102} width={220} x={24} y={24}>
-                  <div className="h-full border border-border bg-popover/95 p-3 text-popover-foreground shadow-sm backdrop-blur">
-                    <div className="mb-2 truncate font-mono text-xs">
-                      {activeNode.route}
-                    </div>
-                    <TooltipRow
-                      label="requests"
-                      value={formatCount(activeNode.requests)}
-                    />
-                    <TooltipRow
-                      label="p95"
-                      value={formatMs(activeNode.p95Ms)}
-                    />
-                    <TooltipRow
-                      label="linked"
-                      value={formatCount(
-                        edges.filter(
-                          (edge) =>
-                            edge.source === activeNode.route ||
-                            edge.target === activeNode.route,
-                        ).length,
-                      )}
-                    />
-                  </div>
-                </foreignObject>
-              )}
-            </svg>
-          </>
+      <div className="absolute right-3 top-3 z-10 flex items-center gap-1 border border-border bg-background/85 p-1 backdrop-blur">
+        <GraphToolButton label="Zoom in" onClick={() => zoomBy(1.18)}>
+          <Plus className="size-3.5" aria-hidden />
+        </GraphToolButton>
+        <GraphToolButton label="Zoom out" onClick={() => zoomBy(0.84)}>
+          <Minus className="size-3.5" aria-hidden />
+        </GraphToolButton>
+        <GraphToolButton
+          label="Reset"
+          onClick={() => setView({ scale: 1, x: 0, y: 0 })}
+        >
+          <RotateCcw className="size-3.5" aria-hidden />
+        </GraphToolButton>
+      </div>
+      <svg
+        aria-label="Route network graph"
+        className={cn(
+          "min-h-[360px] w-full min-w-[760px] touch-none outline-none",
+          drag ? "cursor-grabbing" : "cursor-grab",
         )}
-      </Zoom>
+        onMouseLeave={() => setActiveRoute(null)}
+        onPointerCancel={endDrag}
+        onPointerDown={startDrag}
+        onPointerMove={moveDrag}
+        onPointerUp={endDrag}
+        ref={svgRef}
+        role="img"
+        viewBox={`0 0 ${width} ${height}`}
+      >
+        <title>Route network graph</title>
+        <rect className="fill-background/20" height={height} width={width} />
+        <g transform={`translate(${view.x} ${view.y}) scale(${view.scale})`}>
+          {graph.links.map((link) => {
+            const isActive =
+              activeRoute === null ||
+              activeRoute === link.source.route ||
+              activeRoute === link.target.route;
+            return (
+              <path
+                key={`${link.source.route}-${link.target.route}`}
+                className={cn(
+                  "stroke-muted-foreground/45 transition-opacity",
+                  isActive ? "opacity-100" : "opacity-55",
+                  activeRoute && isActive && "stroke-primary",
+                )}
+                d={makeFlowPath(link.source, link.target)}
+                fill="none"
+                strokeLinecap="round"
+                strokeWidth={Math.max(
+                  1.25,
+                  Math.min(link.requests / 22 + 1, 5),
+                )}
+              />
+            );
+          })}
+          {graph.nodes.map((node) => {
+            const isActive = activeRoute === null || activeRoute === node.route;
+            const isSelected = activeRoute === node.route;
+            const labelWidth = Math.max(96, node.route.length * 7.2);
+            const labelX = node.r + 12;
+            return (
+              <g key={node.route} transform={`translate(${node.x} ${node.y})`}>
+                {/* biome-ignore lint/a11y/useSemanticElements: SVG graph nodes cannot render HTML buttons. */}
+                <g
+                  className="cursor-pointer outline-none"
+                  onBlur={() => setActiveRoute(null)}
+                  onFocus={() => setActiveRoute(node.route)}
+                  onMouseEnter={() => setActiveRoute(node.route)}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <circle
+                    className={cn(
+                      "fill-primary/35 stroke-primary transition-opacity",
+                      isActive ? "opacity-100" : "opacity-70",
+                    )}
+                    cx="0"
+                    cy="0"
+                    r={node.r + 5}
+                    strokeWidth={isSelected ? 3 : 1.5}
+                  />
+                  <rect
+                    className={cn(
+                      "fill-background/90 transition-opacity",
+                      isActive ? "opacity-100" : "opacity-75",
+                    )}
+                    height="38"
+                    rx="5"
+                    width={labelWidth}
+                    x={labelX - 8}
+                    y="-22"
+                  />
+                  <text
+                    className={cn(
+                      "fill-foreground text-[12px] transition-opacity",
+                      isActive ? "opacity-100" : "opacity-80",
+                    )}
+                    x={labelX}
+                    y="-5"
+                  >
+                    {node.route}
+                  </text>
+                  <text
+                    className={cn(
+                      "fill-muted-foreground text-[11px] transition-opacity",
+                      isActive ? "opacity-100" : "opacity-75",
+                    )}
+                    x={labelX}
+                    y="13"
+                  >
+                    {formatCount(node.requests)} · p95 {formatMs(node.p95Ms)}
+                  </text>
+                </g>
+              </g>
+            );
+          })}
+        </g>
+        {activeNode && (
+          <foreignObject height={102} width={220} x={24} y={24}>
+            <div className="h-full border border-border bg-popover/95 p-3 text-popover-foreground shadow-sm backdrop-blur">
+              <div className="mb-2 truncate font-mono text-xs">
+                {activeNode.route}
+              </div>
+              <TooltipRow
+                label="requests"
+                value={formatCount(activeNode.requests)}
+              />
+              <TooltipRow label="p95" value={formatMs(activeNode.p95Ms)} />
+              <TooltipRow
+                label="linked"
+                value={formatCount(
+                  edges.filter(
+                    (edge) =>
+                      edge.source === activeNode.route ||
+                      edge.target === activeNode.route,
+                  ).length,
+                )}
+              />
+            </div>
+          </foreignObject>
+        )}
+      </svg>
     </div>
   );
 }

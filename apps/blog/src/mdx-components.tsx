@@ -50,6 +50,9 @@ const YouTube = lazy(() =>
 export function getMDXComponents(overrides?: MDXComponents): MDXComponents {
   return {
     ...defaultMdxComponents,
+    // Keep offscreen article images out of the initial download queue. Retain
+    // Fumadocs' image component and allow an explicit eager image when needed.
+    img: (props) => <defaultMdxComponents.img loading="lazy" {...props} />,
     pre: (props) => (
       <CodeBlock {...props}>
         <Pre>{props.children}</Pre>
