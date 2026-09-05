@@ -1,0 +1,23 @@
+{
+  "generator": "782502ca5fbad029b345f1ff07772e41f648d1f8875a74b58b7c33f7bcb8454c",
+  "scenes": [
+    {
+      "source": "/media/context-pruning-sucks/dynamic-context.excalidraw",
+      "file": "media/context-pruning-sucks/dynamic-context.svg",
+      "sourceHash": "8a24e01f07efaa52c835f53213b793ef4389ddfe0496f74f0aa4b74146edd9e6",
+      "svgHash": "4299c352a69429db2962ea86ca64cda3bef45bafda96959b6f58eb5b7fb4076a",
+      "viewBox": "0 0 494.57564094421826 419.56099835465426",
+      "width": "494.57564094421826",
+      "height": "419.56099835465426"
+    },
+    {
+      "source": "/media/dynamic-context.excalidraw",
+      "file": "media/context-pruning-sucks/dynamic-context.svg",
+      "sourceHash": "8a24e01f07efaa52c835f53213b793ef4389ddfe0496f74f0aa4b74146edd9e6",
+      "svgHash": "4299c352a69429db2962ea86ca64cda3bef45bafda96959b6f58eb5b7fb4076a",
+      "viewBox": "0 0 494.57564094421826 419.56099835465426",
+      "width": "494.57564094421826",
+      "height": "419.56099835465426"
+    }
+  ]
+}

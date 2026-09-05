@@ -1,12 +1,11 @@
-import browserCollections from "fumadocs-mdx:collections/browser";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import type { TOCItemType } from "fumadocs-core/toc";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useBackgroundStarsOptional } from "@/components/background-stars-context";
 import { PostLayout, usePostTOC } from "@/components/layout/post";
 import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
+import { clientLoader } from "@/components/post";
 import { TOCProvider } from "@/components/toc";
 import { WheelTOCItems } from "@/components/toc/wheel";
 import { formatDateTime } from "@/lib/format-date";
@@ -14,13 +13,15 @@ import { baseOptions } from "@/lib/layout.shared";
 import { getPostOgImageUrl } from "@/lib/og/urls";
 import { calculateReadingTime, formatReadingTime } from "@/lib/reading-time";
 import { posts } from "@/lib/source";
-import { getMDXComponents } from "@/mdx-components";
-import postCss from "@/styles/post.css?url";
+import "@/styles/post.css";
 
 export const Route = createFileRoute("/posts/$slug")({
   loader: async ({ params }) => {
-    const data = await serverLoader({ data: params.slug });
-    await clientLoader.preload(data.path);
+    const [data, content] = await Promise.all([
+      serverLoader({ data: params.slug }),
+      import("@/components/post"),
+    ]);
+    await content.clientLoader.preload(data.path);
     return data;
   },
   // Blog posts rarely change - aggressive caching
@@ -39,7 +40,6 @@ export const Route = createFileRoute("/posts/$slug")({
     const description = loaderData.description ?? "";
 
     return {
-      links: [{ rel: "stylesheet", href: postCss }],
       meta: [
         { title: loaderData.title },
         { name: "description", content: description },
@@ -114,50 +114,6 @@ const serverLoader = createServerFn({ method: "GET" })
       next: toLink(nextPage),
     };
   });
-
-const clientLoader = browserCollections.posts.createClientLoader({
-  component({ toc, default: MDX }) {
-    return (
-      <PostContent toc={toc}>
-        <MDX components={getMDXComponents()} />
-      </PostContent>
-    );
-  },
-});
-
-function PostContent({ toc, children }: { toc?: TOCItemType[]; children: React.ReactNode }) {
-  const { setToc, setContentVisible } = usePostTOC();
-
-  useEffect(() => {
-    setToc(toc ?? []);
-    return () => setToc([]);
-  }, [toc, setToc]);
-
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        // TOC visible when sentinel has scrolled past top of viewport
-        setContentVisible(!entry.isIntersecting);
-      },
-      { threshold: 0, rootMargin: "-64px 0px 0px 0px" },
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [setContentVisible]);
-
-  return (
-    <div className="prose prose-fd max-w-none overflow-x-hidden">
-      <div ref={sentinelRef} className="h-0 w-full" aria-hidden="true" />
-      {children}
-    </div>
-  );
-}
 
 function SidebarTOC() {
   const { toc } = usePostTOC();

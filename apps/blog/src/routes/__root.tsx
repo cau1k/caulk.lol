@@ -14,7 +14,10 @@ import {
   useBackgroundStarsOptional,
 } from "@/components/background-stars-context";
 import { NotFound } from "@/components/not-found";
-import appCss from "@/styles/app.css?url";
+// Keep global and theme CSS in the entry's manifest so both are available in
+// the first response, without a late stylesheet fetch during hydration.
+import "@/styles/app.css";
+import "@/components/layout/theme-toggle.css";
 
 const BackgroundStars = lazy(() =>
   import("@/components/background-stars").then((module) => ({
@@ -70,33 +73,25 @@ export const Route = createRootRoute({
     links: [
       {
         rel: "preload",
-        href: "/fonts/cmu-serif/cmunrm-webfont-latin.woff",
+        href: "/fonts/cmu-serif/cmunbx-webfont-latin.woff2",
         as: "font",
-        type: "font/woff",
+        type: "font/woff2",
         crossOrigin: "anonymous",
       },
       {
         rel: "preload",
-        href: "/fonts/cmu-serif/cmunbx-webfont-latin.woff",
+        href: "/fonts/cmu-sans/cmunss-webfont-latin.woff2",
         as: "font",
-        type: "font/woff",
+        type: "font/woff2",
         crossOrigin: "anonymous",
       },
       {
         rel: "preload",
-        href: "/fonts/cmu-sans/cmunss-webfont-latin.woff",
+        href: "/fonts/cmu-sans/cmunsx-webfont-latin.woff2",
         as: "font",
-        type: "font/woff",
+        type: "font/woff2",
         crossOrigin: "anonymous",
       },
-      {
-        rel: "preload",
-        href: "/fonts/cmu-sans/cmunsx-webfont-latin.woff",
-        as: "font",
-        type: "font/woff",
-        crossOrigin: "anonymous",
-      },
-      { rel: "stylesheet", href: appCss },
     ],
   }),
   component: RootComponent,

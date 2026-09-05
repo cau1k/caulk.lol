@@ -12,7 +12,8 @@
     "types:check": "pnpm check-types",
     "postinstall": "fumadocs-mdx",
     "lint": "biome check",
-    "format": "biome format --write"
+    "format": "biome format --write",
+    "diagrams:generate": "node scripts/diagrams/generate.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -21,7 +22,6 @@
     "@caulk.lol/auth": "workspace:*",
     "@caulk.lol/env": "workspace:*",
     "@caulk.lol/ui": "workspace:*",
-    "@excalidraw/excalidraw": "^0.18.1",
     "@fuma-translate/react": "^1.0.2",
     "@icons-pack/react-simple-icons": "^13.15.1",
     "@radix-ui/react-accordion": "^1.2.20",
@@ -79,6 +79,7 @@
     "@biomejs/biome": "^2.5.12",
     "@caulk.lol/config": "workspace:*",
     "@cloudflare/vite-plugin": "^1.54.4",
+    "@excalidraw/excalidraw": "^0.18.1",
     "@shikijs/types": "^4.4.3",
     "@tailwindcss/vite": "^4.3.3",
     "@types/d3-force": "^3.0.10",

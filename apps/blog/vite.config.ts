@@ -76,7 +76,6 @@ export default defineConfig({
     noExternal: ["react-tweet", /^@radix-ui\//],
     optimizeDeps: {
       noDiscovery: true,
-      include: ["@excalidraw/excalidraw"],
       ignoreOutdatedRequests: true,
     },
   },
@@ -85,7 +84,6 @@ export default defineConfig({
     tailwindcss(),
     ...(shouldUseAlchemy ? [alchemy({ configPath: alchemyConfigPath })] : []),
     tanstackStart({
-      server: { build: { inlineCss: true } },
       pages: [...prerenderPaths].map((path) => ({ path })),
       prerender: {
         enabled: true,

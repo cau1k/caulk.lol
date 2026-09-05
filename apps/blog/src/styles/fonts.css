@@ -1,7 +1,7 @@
 /* CMU Serif - for headings/titles */
 @font-face {
   font-family: "CMU Serif";
-  src: url("/fonts/cmu-serif/cmunrm-webfont-latin.woff") format("woff");
+  src: url("/fonts/cmu-serif/cmunrm-webfont-latin.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -14,7 +14,7 @@
 
 @font-face {
   font-family: "CMU Serif";
-  src: url("/fonts/cmu-serif/cmunti-webfont-latin.woff") format("woff");
+  src: url("/fonts/cmu-serif/cmunti-webfont-latin.woff2") format("woff2");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -27,7 +27,7 @@
 
 @font-face {
   font-family: "CMU Serif";
-  src: url("/fonts/cmu-serif/cmunbx-webfont-latin.woff") format("woff");
+  src: url("/fonts/cmu-serif/cmunbx-webfont-latin.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -40,7 +40,7 @@
 
 @font-face {
   font-family: "CMU Serif";
-  src: url("/fonts/cmu-serif/cmunbi-webfont-latin.woff") format("woff");
+  src: url("/fonts/cmu-serif/cmunbi-webfont-latin.woff2") format("woff2");
   font-weight: 700;
   font-style: italic;
   font-display: swap;
@@ -54,7 +54,7 @@
 /* CMU Sans Serif - for body text */
 @font-face {
   font-family: "CMU Sans Serif";
-  src: url("/fonts/cmu-sans/cmunss-webfont-latin.woff") format("woff");
+  src: url("/fonts/cmu-sans/cmunss-webfont-latin.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -66,7 +66,7 @@
 
 @font-face {
   font-family: "CMU Sans Serif";
-  src: url("/fonts/cmu-sans/cmunsi-webfont-latin.woff") format("woff");
+  src: url("/fonts/cmu-sans/cmunsi-webfont-latin.woff2") format("woff2");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -78,7 +78,7 @@
 
 @font-face {
   font-family: "CMU Sans Serif";
-  src: url("/fonts/cmu-sans/cmunsx-webfont-latin.woff") format("woff");
+  src: url("/fonts/cmu-sans/cmunsx-webfont-latin.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -90,7 +90,7 @@
 
 @font-face {
   font-family: "CMU Sans Serif";
-  src: url("/fonts/cmu-sans/cmunso-webfont-latin.woff") format("woff");
+  src: url("/fonts/cmu-sans/cmunso-webfont-latin.woff2") format("woff2");
   font-weight: 700;
   font-style: italic;
   font-display: swap;

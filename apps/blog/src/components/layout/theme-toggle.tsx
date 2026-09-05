@@ -1,5 +1,5 @@
 import { useTheme } from "next-themes";
-import { type ComponentProps, useCallback, useEffect, useState } from "react";
+import { type ComponentProps, useCallback, useLayoutEffect, useState } from "react";
 import { cn } from "../../lib/cn";
 import { useInteractionFeedback } from "../../lib/interaction-feedback";
 
@@ -16,7 +16,9 @@ export function ThemeToggle({
   const { triggerThemeDark, triggerThemeLight } = useInteractionFeedback();
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
+  // Match the already-themed document before its first hydrated paint, so the
+  // control does not briefly advertise the opposite action.
+  useLayoutEffect(() => {
     setMounted(true);
   }, []);
 
@@ -40,10 +42,7 @@ export function ThemeToggle({
   }, [isDark, setTheme, triggerThemeDark, triggerThemeLight]);
 
   return (
-    <span
-      className={cn("theme-toggle", className)}
-      {...props}
-    >
+    <span className={cn("theme-toggle", className)} {...props}>
       <input
         id="theme-toggle-input"
         type="checkbox"

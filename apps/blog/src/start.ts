@@ -14,6 +14,7 @@ const staticPages = new Set([
   "/posts/tags",
   ...posts
     .getPages()
+    .filter((page) => !page.data.draft)
     .flatMap((page) => [
       page.url,
       ...(page.data.tags ?? []).map(

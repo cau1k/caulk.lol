@@ -9,36 +9,33 @@ function toDate(input: string | Date): Date {
 }
 
 const authorTimeZone = "America/New_York";
+// Creating an Intl formatter initializes locale data. Reuse it across the
+// archive's dates and subsequent renders instead of doing that for each label.
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+  timeZone: authorTimeZone,
+});
+const timeFormatter = new Intl.DateTimeFormat("en-US", {
+  hour: "numeric",
+  minute: "2-digit",
+  timeZone: authorTimeZone,
+});
+const relativeFormatter = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
 export function formatDate(date: string | Date) {
   const d = toDate(date);
   if (Number.isNaN(d.getTime())) return "";
 
-  return d.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone: authorTimeZone,
-  });
+  return dateFormatter.format(d);
 }
 
 export function formatDateTime(date: string | Date) {
   const d = toDate(date);
   if (Number.isNaN(d.getTime())) return "";
 
-  const datePart = d.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone: authorTimeZone,
-  });
-  const timePart = d.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    timeZone: authorTimeZone,
-  });
-
-  return `${datePart} at ${timePart}`;
+  return `${dateFormatter.format(d)} at ${timeFormatter.format(d)}`;
 }
 
 export function formatRelativeTime(date: string | Date, now = new Date()) {
@@ -55,7 +52,7 @@ export function formatRelativeTime(date: string | Date, now = new Date()) {
   const MONTH = 30 * DAY;
   const YEAR = 365 * DAY;
 
-  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+  const rtf = relativeFormatter;
 
   if (absMs < MINUTE) return rtf.format(Math.round(diffMs / 1_000), "second");
   if (absMs < HOUR) return rtf.format(Math.round(diffMs / MINUTE), "minute");
