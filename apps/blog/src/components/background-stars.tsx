@@ -37,6 +37,7 @@ export const BackgroundStars = memo(
     const isDarkRef = useRef<boolean>(true);
     const nextShootingStarRef = useRef<number>(0);
     const pausedRef = useRef(paused);
+    const prefersReducedMotionRef = useRef(false);
     // Retained pixels must be repainted after initialization, theme, resize, or resume.
     const starsDirtyRef = useRef(true);
     const canvasSizeRef = useRef<CanvasSize>({ width: 0, height: 0 });
@@ -96,7 +97,7 @@ export const BackgroundStars = memo(
     }, []);
 
     const animate = useCallback((time: number) => {
-      if (pausedRef.current) {
+      if (pausedRef.current || prefersReducedMotionRef.current) {
         return;
       }
 
@@ -194,7 +195,10 @@ export const BackgroundStars = memo(
       updateTheme();
       nextShootingStarRef.current = performance.now() + 1000 + Math.random() * 2000;
 
-      if (!pausedRef.current) {
+      const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+      prefersReducedMotionRef.current = motionQuery.matches;
+
+      if (!pausedRef.current && !prefersReducedMotionRef.current) {
         animationRef.current = requestAnimationFrame(animate);
       } else {
         const starsCtx = starsCanvas.getContext("2d");
@@ -219,9 +223,24 @@ export const BackgroundStars = memo(
 
       const pageObserver = new ResizeObserver(updatePageSize);
       pageObserver.observe(document.body);
+      const updateMotionPreference = (event: MediaQueryListEvent) => {
+        prefersReducedMotionRef.current = event.matches;
+        lastFrameTimeRef.current = null;
+        if (event.matches) {
+          if (animationRef.current) {
+            cancelAnimationFrame(animationRef.current);
+            animationRef.current = null;
+          }
+          return;
+        }
+        if (!pausedRef.current && !animationRef.current) {
+          animationRef.current = requestAnimationFrame(animate);
+        }
+      };
+      motionQuery.addEventListener("change", updateMotionPreference);
       // A deliberate pause freezes time, not the camera's view of the page.
       const scroll = () => {
-        if (!pausedRef.current) return;
+        if (!pausedRef.current && !prefersReducedMotionRef.current) return;
         const context = asteroidCanvas.getContext("2d");
         if (!context) return;
         shootingStarsRef.current = renderShootingStars(
@@ -245,13 +264,14 @@ export const BackgroundStars = memo(
         }
         themeObserver.disconnect();
         pageObserver.disconnect();
+        motionQuery.removeEventListener("change", updateMotionPreference);
         window.removeEventListener("resize", resize);
         window.removeEventListener("scroll", scroll);
       };
     }, [animate, initStars, updateTheme]);
 
     useEffect(() => {
-      if (!paused && !animationRef.current) {
+      if (!paused && !prefersReducedMotionRef.current && !animationRef.current) {
         animationRef.current = requestAnimationFrame(animate);
       }
     }, [paused, animate]);

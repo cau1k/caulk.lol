@@ -50,6 +50,16 @@ export async function assertShootingStarMotion(page, origin) {
     resumed.y >= paused.y - 50 && resumed.y <= paused.y - 40,
     "resuming must not jump ahead by the intentionally paused time",
   );
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.clock.runFor(32);
+  const reduced = await meteor.evaluate((canvas) => canvas.toDataURL());
+  await page.clock.fastForward(2000);
+  assert.equal(
+    await meteor.evaluate((canvas) => canvas.toDataURL()),
+    reduced,
+    "reduced-motion preference must pause the animation",
+  );
 }
 
 function headBounds(meteor) {

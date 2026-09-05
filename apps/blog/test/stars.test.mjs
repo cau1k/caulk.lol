@@ -17,8 +17,35 @@ function canvas() {
     clearRect(...args) {
       commands.push(["clear", ...args]);
     },
+    createLinearGradient(...args) {
+      const stops = [];
+      commands.push(["linearGradient", ...args, stops]);
+      return {
+        addColorStop(offset, color) {
+          stops.push([offset, color]);
+        },
+      };
+    },
+    createRadialGradient(...args) {
+      const stops = [];
+      commands.push(["radialGradient", ...args, stops]);
+      return {
+        addColorStop(offset, color) {
+          stops.push([offset, color]);
+        },
+      };
+    },
     fillRect(...args) {
       commands.push(["rectangle", ...args]);
+    },
+    moveTo(...args) {
+      commands.push(["moveTo", ...args]);
+    },
+    lineTo(...args) {
+      commands.push(["lineTo", ...args]);
+    },
+    stroke() {
+      commands.push(["stroke", this.strokeStyle, this.globalAlpha, this.lineWidth]);
     },
     save() {},
     restore() {},
@@ -110,7 +137,7 @@ test("an empty asteroid layer is untouched, including after its last trail disap
   assert.deepEqual(ctx.commands, [["clear", 0, 0, 100, 100]]);
 });
 
-test("active asteroids still move and paint on every frame with unchanged speed and trail decay", () => {
+test("active meteors still move and paint on every frame with unchanged speed and trail decay", () => {
   const ctx = canvas();
   const shootingStar = {
     x: 10,
@@ -134,7 +161,44 @@ test("active asteroids still move and paint on every frame with unchanged speed 
   assert.equal(shootingStar.distance, 3);
   assert.equal(shootingStar.trail[0].opacity, 0.975);
   assert.equal(ctx.commands.filter(([command]) => command === "clear").length, 1);
-  assert.equal(ctx.commands.filter(([command]) => command === "rectangle").length, 2);
+  assert.ok(ctx.commands.some(([command]) => command === "stroke"));
+});
+
+test("active meteors paint as a tapered glow with a compact bright head", () => {
+  const ctx = canvas();
+  const shootingStar = {
+    x: 10,
+    y: 20,
+    angle: 45,
+    speed: 180,
+    distance: 0,
+    trail: [{ x: 5, y: 10, opacity: 1 }],
+    asteroid: {
+      pixels: [{ x: 0, y: 0, shade: "light" }],
+      segments: [],
+      rotation: 0,
+      scale: 1,
+      alpha: 0.5,
+    },
+  };
+  renderShootingStars(ctx, [shootingStar], true, frame());
+  const linear = ctx.commands.find(([command]) => command === "linearGradient");
+  const radial = ctx.commands.find(([command]) => command === "radialGradient");
+  assert.ok(linear, "meteor trail needs a directional gradient");
+  assert.ok(radial, "meteor head needs a local glow");
+  assert.ok(
+    linear.at(-1).some(([offset, color]) => offset === 0 && color.includes("0)")),
+    "trail fades to transparent at its tail",
+  );
+  assert.ok(
+    ctx.commands.filter(([command]) => command === "stroke").length >= 3,
+    "meteor uses separate ambient, core, and tail strokes",
+  );
+  assert.ok(
+    ctx.commands.some(([command]) => command === "arc"),
+    "meteor keeps a compact head",
+  );
+  assert.equal(ctx.commands.filter(([command]) => command === "rectangle").length, 0);
 });
 
 function meteor() {

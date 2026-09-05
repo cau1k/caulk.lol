@@ -7,6 +7,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { chromium } from "playwright";
 import { expect } from "playwright/test";
 import { assertShootingStarMotion } from "./motion.mjs";
+import { assertMeteorAppearance } from "./meteor.mjs";
 
 const repository = fileURLToPath(new URL("../../", import.meta.url));
 const blog = resolve(repository, "apps/blog");
@@ -56,11 +57,19 @@ after(async () => {
 test("shooting stars continue in page space offscreen and preserve explicit pauses", async (t) => {
   const page = await browser.newPage({
     viewport: { width: 800, height: 300 },
-    reducedMotion: "reduce",
+    reducedMotion: "no-preference",
   });
   t.after(() => page.close());
   await assertShootingStarMotion(page, origin);
 });
+
+for (const theme of ["light", "dark"]) {
+  test(`shooting-star light is continuous and subdued in ${theme} mode`, async (t) => {
+    const page = await browser.newPage({ viewport: { width: 800, height: 600 } });
+    t.after(() => page.close());
+    await assertMeteorAppearance(page, origin, blog, theme, repository);
+  });
+}
 
 for (const width of [320, 390, 640, 1440]) {
   for (const theme of ["light", "dark"]) {

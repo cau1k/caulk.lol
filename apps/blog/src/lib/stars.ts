@@ -15,28 +15,6 @@ type TrailPoint = {
   opacity: number;
 };
 
-type AsteroidPixel = {
-  x: number;
-  y: number;
-  shade: AsteroidShade;
-};
-
-type AsteroidSegment = {
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-  shade: AsteroidShade;
-};
-
-type AsteroidSprite = {
-  pixels: AsteroidPixel[];
-  segments: AsteroidSegment[];
-  rotation: number;
-  scale: number;
-  alpha: number;
-};
-
 export type ShootingStar = {
   /** Position in document CSS pixels; scrolling never changes the simulation. */
   x: number;
@@ -46,11 +24,9 @@ export type ShootingStar = {
   speed: number;
   distance: number;
   trail: TrailPoint[];
-  asteroid: AsteroidSprite;
 };
 
 type StarColor = "muted" | "accent" | "primary";
-type AsteroidShade = "light" | "mid" | "dark";
 
 export type CanvasSize = {
   width: number;
@@ -86,113 +62,6 @@ export const SHOOTING_STAR_CONFIG = {
   trailSpacing: 12,
   trailFadeRate: 1.5,
 } as const;
-
-const ASTEROID_VARIANTS: Array<{
-  pixels: AsteroidPixel[];
-  segments: AsteroidSegment[];
-}> = [
-  {
-    pixels: [
-      { x: 1, y: 0, shade: "light" },
-      { x: 2, y: 0, shade: "mid" },
-      { x: 0, y: 1, shade: "mid" },
-      { x: 1, y: 1, shade: "dark" },
-      { x: 2, y: 1, shade: "mid" },
-    ],
-    segments: [
-      { x1: 3, y1: 0, x2: 4, y2: 1, shade: "light" },
-      { x1: 0, y1: 1, x2: -1, y2: 2, shade: "dark" },
-      { x1: 3, y1: 1, x2: 4, y2: 2, shade: "mid" },
-    ],
-  },
-  {
-    pixels: [
-      { x: 1, y: 0, shade: "mid" },
-      { x: 2, y: 0, shade: "light" },
-      { x: 0, y: 1, shade: "dark" },
-      { x: 1, y: 1, shade: "mid" },
-      { x: 2, y: 1, shade: "mid" },
-      { x: 1, y: 2, shade: "dark" },
-    ],
-    segments: [
-      { x1: 3, y1: 0, x2: 4, y2: 1, shade: "mid" },
-      { x1: 0, y1: 1, x2: -1, y2: 2, shade: "mid" },
-    ],
-  },
-  {
-    pixels: [
-      { x: 1, y: 0, shade: "light" },
-      { x: 2, y: 0, shade: "dark" },
-      { x: 0, y: 1, shade: "mid" },
-      { x: 1, y: 1, shade: "mid" },
-      { x: 2, y: 1, shade: "light" },
-      { x: 3, y: 1, shade: "dark" },
-    ],
-    segments: [
-      { x1: 3, y1: 0, x2: 4, y2: 1, shade: "dark" },
-      { x1: 0, y1: 1, x2: -1, y2: 2, shade: "light" },
-      { x1: 4, y1: 1, x2: 5, y2: 2, shade: "mid" },
-    ],
-  },
-  {
-    pixels: [
-      { x: 0, y: 0, shade: "dark" },
-      { x: 1, y: 0, shade: "mid" },
-      { x: 2, y: 0, shade: "light" },
-      { x: 1, y: 1, shade: "mid" },
-      { x: 2, y: 1, shade: "dark" },
-      { x: 3, y: 1, shade: "mid" },
-    ],
-    segments: [
-      { x1: 0, y1: 1, x2: -1, y2: 2, shade: "mid" },
-      { x1: 3, y1: 0, x2: 4, y2: 1, shade: "dark" },
-    ],
-  },
-  {
-    pixels: [
-      { x: 1, y: 0, shade: "dark" },
-      { x: 0, y: 1, shade: "light" },
-      { x: 1, y: 1, shade: "mid" },
-      { x: 2, y: 1, shade: "mid" },
-      { x: 0, y: 2, shade: "dark" },
-      { x: 1, y: 2, shade: "mid" },
-    ],
-    segments: [
-      { x1: 2, y1: 0, x2: 3, y2: 1, shade: "light" },
-      { x1: 2, y1: 2, x2: 3, y2: 3, shade: "dark" },
-    ],
-  },
-  {
-    pixels: [
-      { x: 2, y: 0, shade: "light" },
-      { x: 0, y: 1, shade: "mid" },
-      { x: 1, y: 1, shade: "dark" },
-      { x: 2, y: 1, shade: "mid" },
-      { x: 3, y: 1, shade: "light" },
-      { x: 1, y: 2, shade: "mid" },
-      { x: 2, y: 2, shade: "dark" },
-    ],
-    segments: [
-      { x1: 4, y1: 1, x2: 5, y2: 2, shade: "mid" },
-      { x1: 1, y1: 0, x2: 0, y2: 1, shade: "dark" },
-    ],
-  },
-  {
-    pixels: [
-      { x: 0, y: 0, shade: "mid" },
-      { x: 1, y: 0, shade: "light" },
-      { x: 2, y: 0, shade: "mid" },
-      { x: 0, y: 1, shade: "dark" },
-      { x: 1, y: 1, shade: "mid" },
-      { x: 2, y: 1, shade: "dark" },
-      { x: 3, y: 1, shade: "mid" },
-    ],
-    segments: [
-      { x1: 3, y1: 0, x2: 4, y2: 1, shade: "light" },
-      { x1: 0, y1: 2, x2: 1, y2: 1, shade: "dark" },
-    ],
-  },
-];
 
 function getStarColor(color: StarColor, isDark: boolean): string {
   switch (color) {
@@ -242,20 +111,6 @@ export function createShootingStar(width: number, pageY: number): ShootingStar {
       Math.random() * (SHOOTING_STAR_CONFIG.maxSpeed - SHOOTING_STAR_CONFIG.minSpeed),
     distance: 0,
     trail: [],
-    asteroid: createAsteroidSprite(),
-  };
-}
-
-function createAsteroidSprite(): AsteroidSprite {
-  const variant =
-    ASTEROID_VARIANTS[Math.floor(Math.random() * ASTEROID_VARIANTS.length)] ?? ASTEROID_VARIANTS[0];
-
-  return {
-    pixels: variant.pixels,
-    segments: variant.segments,
-    rotation: (Math.random() - 0.5) * 0.7,
-    scale: 0.82 + Math.random() * 0.38,
-    alpha: 0.48 + Math.random() * 0.18,
   };
 }
 
@@ -304,75 +159,83 @@ function drawShootingStar(
   star: ShootingStar,
   isDark: boolean,
 ): void {
-  const px = SHOOTING_STAR_CONFIG.pixelSize;
   const radians = (star.angle * Math.PI) / 180;
+  const dx = Math.cos(radians);
+  const dy = Math.sin(radians);
+  const tailLength = Math.min(star.distance, star.speed / SHOOTING_STAR_CONFIG.trailFadeRate);
+  const tailX = star.x - tailLength * dx;
+  const tailY = star.y - tailLength * dy;
+  const palette = getMeteorPalette(isDark);
+  const trail = ctx.createLinearGradient(tailX, tailY, star.x, star.y);
+  trail.addColorStop(0, palette.transparent);
+  trail.addColorStop(0.58, palette.wake);
+  trail.addColorStop(0.88, palette.core);
+  trail.addColorStop(1, palette.head);
 
-  for (const point of star.trail) {
-    ctx.save();
-    ctx.translate(point.x, point.y);
-    ctx.rotate(radians);
-    ctx.translate(-point.x, -point.y);
-
-    ctx.globalAlpha = point.opacity * (isDark ? 0.34 : 0.26);
-    ctx.fillStyle = isDark ? "rgba(168, 145, 118, 1)" : "rgba(95, 82, 68, 1)";
-    ctx.fillRect(point.x, point.y, px, px);
-
-    ctx.restore();
-  }
-
+  // Keep the glow bounded and faint: the page needs atmosphere without reducing
+  // prose contrast when a meteor crosses behind text.
   ctx.save();
-  ctx.translate(star.x, star.y);
-  ctx.rotate(radians + star.asteroid.rotation);
-  ctx.translate(-star.x, -star.y);
+  ctx.lineCap = "round";
+  ctx.strokeStyle = trail;
+  ctx.globalAlpha = isDark ? 0.17 : 0.16;
+  ctx.lineWidth = isDark ? 14 : 13;
+  ctx.beginPath();
+  ctx.moveTo(tailX, tailY);
+  ctx.lineTo(star.x, star.y);
+  ctx.stroke();
 
-  ctx.globalAlpha = star.asteroid.alpha * (isDark ? 0.78 : 0.64);
-  drawAsteroid(ctx, star, isDark);
+  ctx.globalAlpha = isDark ? 0.28 : 0.28;
+  ctx.lineWidth = 4.5;
+  ctx.beginPath();
+  ctx.moveTo(tailX + tailLength * 0.18 * dx, tailY + tailLength * 0.18 * dy);
+  ctx.lineTo(star.x, star.y);
+  ctx.stroke();
 
+  ctx.globalAlpha = isDark ? 0.38 : 0.4;
+  ctx.lineWidth = 1.25;
+  ctx.beginPath();
+  ctx.moveTo(tailX + tailLength * 0.48 * dx, tailY + tailLength * 0.48 * dy);
+  ctx.lineTo(star.x, star.y);
+  ctx.stroke();
+
+  const halo = ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, isDark ? 22 : 18);
+  halo.addColorStop(0, palette.halo);
+  halo.addColorStop(0.45, palette.aura);
+  halo.addColorStop(1, palette.transparent);
+  ctx.fillStyle = halo;
+  ctx.globalAlpha = 1;
+  ctx.beginPath();
+  ctx.arc(star.x, star.y, isDark ? 22 : 18, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = palette.head;
+  ctx.globalAlpha = isDark ? 0.62 : 0.68;
+  ctx.beginPath();
+  ctx.arc(star.x, star.y, 2.4, 0, Math.PI * 2);
+  ctx.fill();
   ctx.restore();
 }
 
-function drawAsteroid(ctx: CanvasRenderingContext2D, star: ShootingStar, isDark: boolean): void {
-  const px = SHOOTING_STAR_CONFIG.pixelSize * star.asteroid.scale;
-  const originX = star.x - px * 1.3;
-  const originY = star.y - px;
-
-  ctx.lineWidth = px;
-  ctx.lineCap = "square";
-
-  for (const segment of star.asteroid.segments) {
-    ctx.strokeStyle = getAsteroidColor(segment.shade, isDark);
-    ctx.beginPath();
-    ctx.moveTo(originX + segment.x1 * px, originY + segment.y1 * px);
-    ctx.lineTo(originX + segment.x2 * px, originY + segment.y2 * px);
-    ctx.stroke();
-  }
-
-  for (const pixel of star.asteroid.pixels) {
-    ctx.fillStyle = getAsteroidColor(pixel.shade, isDark);
-    ctx.fillRect(originX + pixel.x * px, originY + pixel.y * px, px, px);
-  }
-}
-
-function getAsteroidColor(shade: AsteroidShade, isDark: boolean): string {
+function getMeteorPalette(isDark: boolean) {
   if (isDark) {
-    switch (shade) {
-      case "light":
-        return "#d6c7a9";
-      case "dark":
-        return "#74685c";
-      case "mid":
-        return "#a8967e";
-    }
+    return {
+      transparent: "rgba(120, 220, 160, 0)",
+      wake: "rgba(120, 220, 160, 0.08)",
+      core: "rgba(190, 255, 218, 0.2)",
+      head: "rgba(226, 255, 238, 0.38)",
+      halo: "rgba(120, 220, 160, 0.035)",
+      aura: "rgba(120, 220, 160, 0.011)",
+    };
   }
 
-  switch (shade) {
-    case "light":
-      return "#8a7b68";
-    case "dark":
-      return "#3f3a34";
-    case "mid":
-      return "#665b4d";
-  }
+  return {
+    transparent: "rgba(60, 140, 90, 0)",
+    wake: "rgba(60, 140, 90, 0.06)",
+    core: "rgba(42, 118, 74, 0.2)",
+    head: "rgba(25, 91, 56, 0.48)",
+    halo: "rgba(60, 140, 90, 0.035)",
+    aura: "rgba(60, 140, 90, 0.012)",
+  };
 }
 
 export function drawStaticFrame(
