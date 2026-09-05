@@ -251,21 +251,40 @@ async function assertColophonContrast(copyright) {
           return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
         })
         .reduce((sum, value, index) => sum + value * [0.2126, 0.7152, 0.0722][index], 0);
-    const background = pixels(getComputedStyle(row).backgroundColor);
-    const backgroundLuminance = luminance(background);
     return {
-      alpha: background[3],
-      ratios: Array.from(row.querySelectorAll("p"), (paragraph) => {
-        const foreground = luminance(pixels(getComputedStyle(paragraph).color));
-        return (
-          (Math.max(foreground, backgroundLuminance) + 0.05) /
-          (Math.min(foreground, backgroundLuminance) + 0.05)
-        );
+      rowAlpha: pixels(getComputedStyle(row).backgroundColor)[3],
+      rowShadow: getComputedStyle(row).boxShadow,
+      groups: Array.from(row.querySelectorAll("p"), (paragraph) => {
+        const style = getComputedStyle(paragraph);
+        const background = pixels(style.backgroundColor);
+        const backgroundLuminance = luminance(background);
+        const foreground = luminance(pixels(style.color));
+        return {
+          bounds: paragraph.getBoundingClientRect().toJSON(),
+          alpha: background[3],
+          shadow: style.boxShadow,
+          shadowColor: style.getPropertyValue("--tw-shadow-color"),
+          shadowAlpha: pixels(style.getPropertyValue("--tw-shadow-color"))[3],
+          ratio:
+            (Math.max(foreground, backgroundLuminance) + 0.05) /
+            (Math.min(foreground, backgroundLuminance) + 0.05),
+        };
       }),
     };
   });
-  assert.equal(contrast.alpha, 255, "a solid backing keeps scenery from reducing text contrast");
-  contrast.ratios.forEach((ratio) =>
-    assert.ok(ratio >= 4.5, `colophon contrast ${ratio.toFixed(2)} must meet 4.5:1`),
+  assert.equal(contrast.rowAlpha, 0, "the gap between text groups must reveal the artwork");
+  assert.equal(contrast.rowShadow, "none", "a shared shadow must not bridge the gap");
+  const [copyrightBounds, timingBounds] = contrast.groups.map((group) => group.bounds);
+  assert.ok(
+    timingBounds.left - copyrightBounds.right >= 32 ||
+      timingBounds.top - copyrightBounds.bottom >= 16,
+    "copyright and timings need space between their separate backings",
   );
+  contrast.groups.forEach(({ alpha, shadow, shadowColor, shadowAlpha, ratio }) => {
+    assert.equal(alpha, 255, "each text group retains its own solid contrast backing");
+    assert.notEqual(shadow, "none", "each text group needs its own soft shadow");
+    assert.ok(shadowColor, "the theme supplies the shadow color");
+    assert.ok(shadowAlpha >= 128 && shadowAlpha <= 204, "shadows must be partly transparent");
+    assert.ok(ratio >= 4.5, `colophon contrast ${ratio.toFixed(2)} must meet 4.5:1`);
+  });
 }

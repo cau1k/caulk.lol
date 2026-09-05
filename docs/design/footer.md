@@ -6,9 +6,11 @@ Mobile stacks the brand above the columns. Layout, color, and typography use
 the existing Tailwind theme and CMU typefaces.
 
 All text uses the same `max-w-2xl px-4` content column as the page. Only the
-artwork spans the viewport. The colophon sits at the bottom over the drawing;
-an opaque `bg-background` backing guarantees text contrast, and a broad shadow
-in the same color softens its edges. Both adapt to the active theme.
+artwork spans the viewport. The colophon sits at the bottom over the drawing.
+Copyright and timings have separate opaque `bg-background` backings for text
+contrast, with clear space between them. Each has a soft theme-colored shadow
+at 70% opacity, letting the scenery show through its edges. Both adapt to the
+active theme.
 
 The original Roman engraving was generated with the built-in image generation
 tool. Its white ink and black sky form a **luminance mask**, so `bg-primary`

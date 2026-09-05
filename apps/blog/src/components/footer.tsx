@@ -20,6 +20,8 @@ const elsewhereLinks = [
 const linkClassName =
   "inline-block py-2 text-foreground/70 underline-offset-4 transition-colors hover:text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary";
 
+const colophonClassName = "bg-background shadow-[0_0_1.5rem_0.75rem] shadow-background/70";
+
 /** A full-width colophon. Only the decorative artwork waits for the viewport. */
 export function Footer() {
   const timing = usePageTiming();
@@ -125,15 +127,17 @@ export function Footer() {
           visibility: loadArtwork ? "visible" : "hidden",
         }}
       />
-      {/* Opaque backing guarantees contrast over every part of the drawing;
-          the wide, background-colored shadow softens its edges into the art. */}
+      {/* Separate backings protect text contrast without hiding the scenery
+          between them. Translucent theme-colored shadows soften each edge. */}
       <div className="absolute inset-x-0 bottom-8 z-10 mx-auto w-full max-w-2xl px-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-background font-serif text-sm text-foreground shadow-[0_0_2rem_1.5rem_var(--background)]">
-          <p>
+        <div className="flex flex-wrap items-center justify-between gap-x-16 gap-y-6 font-serif text-sm text-foreground">
+          <p className={colophonClassName}>
             caulk.lol &copy; <span suppressHydrationWarning>{new Date().getFullYear()}</span>{" "}
             &mdash; Zero Caulk
           </p>
-          <p className="flex gap-4 font-mono text-[0.625rem] text-muted-foreground">
+          <p
+            className={`${colophonClassName} flex gap-4 font-mono text-[0.625rem] text-muted-foreground`}
+          >
             {timing.initialLoad !== null && <span>load: {timing.initialLoad}ms</span>}
             {timing.navigation !== null && <span>page: {timing.navigation}ms</span>}
           </p>
