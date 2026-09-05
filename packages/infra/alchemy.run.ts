@@ -12,7 +12,7 @@ import {
 } from "alchemy/cloudflare";
 import { CloudflareStateStore } from "alchemy/state";
 import { config } from "dotenv";
-import { blogAssets } from "./assets";
+import { blogAssets } from "./assets.ts";
 
 config({ path: "../../.env" });
 config({ path: "./.env" });
