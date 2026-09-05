@@ -6,6 +6,7 @@
     "./alchemy.run": "./alchemy.run.ts"
   },
   "scripts": {
+    "test": "node --test test/*.test.mjs",
     "dev": "alchemy dev",
     "deploy": "alchemy deploy",
     "destroy": "alchemy destroy",

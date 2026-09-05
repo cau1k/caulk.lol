@@ -37,6 +37,13 @@ catalog:
 patchedDependencies:
   alchemy: patches/alchemy.patch
 
+# Alchemy imports Undici at runtime but declares it only as a dev dependency.
+# Keep its dispatcher compatible with Node 24's built-in fetch.
+packageExtensions:
+  alchemy@0.94.0:
+    dependencies:
+      undici: ^7.29.1
+
 # Patch vulnerable transitive ranges until their upstream packages update.
 overrides:
   "esbuild@<=0.24.2": ^0.28.2
