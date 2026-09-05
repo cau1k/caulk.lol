@@ -9,7 +9,9 @@ import { createRoot } from "react-dom/client";
 import { Footer } from "@/components/footer";
 import "./tooltip.css";
 
-// The real footer and router; the long page also exercises deferred image loading.
+// The real footer and router. The short page matches the homepage's ~600px
+// content height; the long page exercises deferred image loading.
+const shortPage = new URLSearchParams(location.search).has("short");
 document.documentElement.classList.toggle(
   "dark",
   new URLSearchParams(location.search).get("theme") === "dark",
@@ -17,7 +19,7 @@ document.documentElement.classList.toggle(
 const rootRoute = createRootRoute({
   component: () => (
     <>
-      <main className="mx-auto w-full max-w-2xl px-4" style={{ minHeight: 4000 }}>
+      <main className="mx-auto w-full max-w-2xl px-4" style={{ minHeight: shortPage ? 600 : 4000 }}>
         <h1>Footer layout</h1>
       </main>
       <Footer />

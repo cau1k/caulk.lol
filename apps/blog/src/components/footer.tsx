@@ -113,11 +113,13 @@ export function Footer() {
 
       {/* White ink becomes the theme's green; black sky becomes transparent.
           Luminance (not alpha) preserves this opaque engraving's fine lines.
-          Reserve the wide frame before requesting the mask near the viewport. */}
+          Overlap the empty sky with the intro so the scenery peeks above the
+          homepage fold. The overlap scales with the full-width 16:9 mask;
+          visible ink still starts below the links at every breakpoint. */}
       <div
         ref={artworkRef}
         aria-hidden="true"
-        className="pointer-events-none mt-16 aspect-video w-full bg-primary [mask-mode:luminance] [mask-size:100%_100%] [mask-repeat:no-repeat] dark:opacity-70"
+        className="pointer-events-none -mt-[6vw] aspect-video w-full bg-primary [mask-mode:luminance] [mask-size:100%_100%] [mask-repeat:no-repeat] dark:opacity-70"
         style={{
           maskImage: loadArtwork ? 'url("/media/roman.webp")' : "none",
           visibility: loadArtwork ? "visible" : "hidden",

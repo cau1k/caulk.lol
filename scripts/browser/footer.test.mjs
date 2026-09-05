@@ -145,7 +145,8 @@ for (const width of [320, 390, 640, 1440]) {
         "the scene must occupy a 16:9 frame",
       );
       const nav = await footer.getByRole("navigation").boundingBox();
-      assert.ok(nav.y + nav.height < bounds.y, "artwork must remain below the links");
+      const inkTop = await firstInkTop(artwork);
+      assert.ok(nav.y + nav.height + 8 < inkTop, "visible ink must remain clear of the links");
       const copyright = footer.getByText(/caulk.lol ©/);
       const creditBounds = await copyright.boundingBox();
       assert.ok(
@@ -174,6 +175,60 @@ for (const width of [320, 390, 640, 1440]) {
       assert.deepEqual(errors, []);
     });
   }
+}
+
+for (const theme of ["light", "dark"]) {
+  test(`scenery peeks into the initial short-page viewport in ${theme} mode`, async (t) => {
+    const page = await browser.newPage({
+      viewport: { width: 1314, height: 1034 },
+      colorScheme: theme,
+    });
+    t.after(() => page.close());
+    await page.goto(`${origin}/footer.html?short&theme=${theme}`);
+    await page.evaluate(() => document.fonts.ready);
+    const footer = page.getByRole("contentinfo");
+    const artwork = footer.locator(':scope > div[aria-hidden="true"]');
+    await expect(artwork).toBeVisible();
+    const inkTop = await firstInkTop(artwork);
+    const visibleHeight = page.viewportSize().height - inkTop;
+    assert.ok(
+      visibleHeight >= 24 && visibleHeight <= 180,
+      `only a little scenery should appear without scrolling; found ${visibleHeight.toFixed(1)}px`,
+    );
+    assert.equal(await page.evaluate(() => scrollY), 0, "visibility must not require scrolling");
+    assert.ok(
+      (await footer.getByText(/caulk.lol ©/).boundingBox()).y > page.viewportSize().height,
+      "copyright stays at the page bottom",
+    );
+    await page.screenshot({ path: resolve(repository, `test-results/footer/fold-${theme}.png`) });
+  });
+}
+
+/** Measure visible engraving, not the mask box's transparent sky. Ignore isolated
+ * compression specks by requiring at least 16 bright pixels in a source row. */
+async function firstInkTop(artwork) {
+  return artwork.evaluate(async (element) => {
+    const image = new Image();
+    image.src = getComputedStyle(element).maskImage.slice(5, -2);
+    await image.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Missing mask measurement context");
+    context.drawImage(image, 0, 0);
+    const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
+    const row = Array.from({ length: canvas.height }, (_, y) => y).find((y) => {
+      let ink = 0;
+      for (let x = 0; x < canvas.width; x++) {
+        if (data[(y * canvas.width + x) * 4] > 128) ink++;
+      }
+      return ink >= 16;
+    });
+    if (row === undefined) throw new Error("Mask contains no visible engraving");
+    const bounds = element.getBoundingClientRect();
+    return bounds.top + (row / canvas.height) * bounds.height;
+  });
 }
 
 /** Resolve actual theme colors through the browser, then apply WCAG contrast math. */

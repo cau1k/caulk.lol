@@ -16,6 +16,10 @@ supplies the exact green for each theme. Alpha masking would turn this opaque
 image into a rectangle. The 16:9 artwork fits without cutting off the stairs or
 colonnade. Dark mode reduces ink opacity. The decorative mask requests its asset
 within 600px of the viewport; its reserved frame prevents layout shifts.
+The empty sky overlaps the introduction by 6vw, proportional to the wide mask.
+This brings a small part of the engraving into the homepage's initial desktop
+viewport while keeping the visible ink below the links and the credits at the
+bottom of the artwork. Shorter viewports still use normal document scrolling.
 
 Final asset: `apps/blog/public/media/roman.webp`, 1672 × 941, 390,398 bytes.
 Encoded from the generated PNG with ImageMagick at WebP quality 88; no runtime
@@ -25,6 +29,9 @@ image library or new dependency. The supplied portrait remains untouched.
 both themes, horizontal overflow, deferred asset loading, the 16:9 frame,
 luminance masking, active-theme ink color, text column alignment, colophon
 placement, and at least 4.5:1 contrast for its copyright and timing text.
+Two initial-viewport checks at 1314 × 1034 also decode the mask pixels to verify
+that actual engraving is visible without scrolling, rather than just its empty
+sky. The same pixel measurement checks clearance below the navigation.
 The fixture renders the actual footer, router, fonts, and styles outside public
 application routes. Browser suites use separate Vite caches and entry scans.
 
