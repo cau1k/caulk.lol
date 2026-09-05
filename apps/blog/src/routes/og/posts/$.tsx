@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { env } from "cloudflare:workers";
 import { getOgFonts } from "@/lib/og/fonts";
 import { PostImage } from "@/lib/og/post-image";
 import { posts } from "@/lib/source";
@@ -35,7 +36,8 @@ export const Route = createFileRoute("/og/posts/$")({
             return new Response("Not found", { status: 404 });
           }
 
-          const fonts = await getOgFonts(request);
+          // Fetch assets directly; Worker requests do not carry request.runtime.
+          const fonts = await getOgFonts(request, (url) => env.ASSETS.fetch(url));
           const [{ ImageResponse }, { default: takumiModule }] = await Promise.all([
             import("takumi-js/response"),
             import("@takumi-rs/wasm/auto"),

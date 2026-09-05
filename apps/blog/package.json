@@ -4,6 +4,7 @@
   "type": "module",
   "sideEffects": false,
   "scripts": {
+    "test": "node --test test/*.test.mjs",
     "build": "vite build",
     "serve": "vite preview",
     "dev:bare": "vite dev",

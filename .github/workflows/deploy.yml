@@ -33,6 +33,9 @@ jobs:
       - name: Verify deployment HTTP client
         run: pnpm --filter @caulk.lol/infra test
 
+      - name: Verify OG asset loading
+        run: pnpm --filter blog test
+
       - name: Deploy
         timeout-minutes: 10
         run: pnpm --filter @caulk.lol/infra run deploy
