@@ -72,8 +72,17 @@ export function Header({ nav = {}, links, githubUrl, themeSwitch = {} }: HomeLay
   }, [isCondensed]);
 
   useEffect(() => {
+    if (previousPathnameRef.current === pathname) return;
+    previousPathnameRef.current = pathname;
+    setMenuOpen(false);
+    // Reset before the measurement effect, so it can retain a newly required menu.
+    setIsCondensed(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    // Route-specific titles can change width without resizing the nav container.
     updateCondensedState();
-  }, [updateCondensedState]);
+  }, [pathname, updateCondensedState]);
 
   useEffect(() => {
     const navElement = navRef.current;
@@ -114,14 +123,6 @@ export function Header({ nav = {}, links, githubUrl, themeSwitch = {} }: HomeLay
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [closeMenu, menuOpen]);
-
-  useEffect(() => {
-    if (previousPathnameRef.current === pathname) return;
-    previousPathnameRef.current = pathname;
-    setMenuOpen(false);
-    // Remeasure the full navigation when the homepage subtitle appears or leaves.
-    setIsCondensed(false);
-  }, [pathname]);
 
   useEffect(() => {
     if (!menuOpen || !shouldFocusMenuRef.current) return;

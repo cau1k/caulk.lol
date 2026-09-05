@@ -5,7 +5,7 @@ import { Logo } from "@/components/logo";
 export function baseOptions({ subtitle }: { subtitle?: string } = {}): BaseLayoutProps {
   return {
     nav: {
-      title: <Logo size={42} subtitle={subtitle} />,
+      title: <Logo size={48} variant={subtitle ? "subheader" : "text"} subtitle={subtitle} />,
     },
     links: [
       { text: "archive", url: "/posts" },
