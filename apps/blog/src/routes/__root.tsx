@@ -6,6 +6,8 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import { RootProvider } from "fumadocs-ui/provider/tanstack";
+import { Hydrate } from "@tanstack/react-start";
+import { visible } from "@tanstack/react-start/hydration";
 import { lazy, type ReactNode, Suspense, useLayoutEffect } from "react";
 import {
   BackgroundStarsProvider,
@@ -87,6 +89,13 @@ export const Route = createRootRoute({
         type: "font/woff",
         crossOrigin: "anonymous",
       },
+      {
+        rel: "preload",
+        href: "/fonts/cmu-sans/cmunsx-webfont-latin.woff",
+        as: "font",
+        type: "font/woff",
+        crossOrigin: "anonymous",
+      },
       { rel: "stylesheet", href: appCss },
     ],
   }),
@@ -134,9 +143,13 @@ function RootDocument({ children }: { children: ReactNode }) {
           </Suspense>
           <RootProvider search={{ enabled: false }}>
             {children}
-            <Suspense fallback={null}>
-              <TerminalFooter />
-            </Suspense>
+            {/* Preserve footer HTML and animations, but load its motion runtime
+                only as the reader approaches it. Start also splits the JS chunk. */}
+            <Hydrate when={visible({ rootMargin: "400px" })}>
+              <Suspense fallback={null}>
+                <TerminalFooter />
+              </Suspense>
+            </Hydrate>
           </RootProvider>
         </BackgroundStarsProvider>
         <Scripts />

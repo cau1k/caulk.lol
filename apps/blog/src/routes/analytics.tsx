@@ -16,7 +16,9 @@ export const Route = createFileRoute("/analytics")({
 
 function AnalyticsPage() {
   const [analytics, setAnalytics] = useState<SiteAnalyticsData>(() =>
-    createEmptySiteAnalytics("empty", new Date().toISOString()),
+    // The initial server and browser renders must agree. Live timestamps arrive
+    // with the Analytics response after hydration.
+    createEmptySiteAnalytics("empty", ""),
   );
   const [isLoading, setIsLoading] = useState(true);
   const hasData = analytics.points.length > 0;
@@ -108,7 +110,8 @@ function AnalyticsPage() {
         </section>
 
         <p className="mt-4 text-xs text-muted-foreground">
-          source: {analytics.source} · generated {new Date(analytics.generatedAt).toLocaleString()}
+          source: {analytics.source} · generated{" "}
+          {analytics.generatedAt ? new Date(analytics.generatedAt).toLocaleString() : "pending"}
         </p>
       </main>
     </HomeLayout>

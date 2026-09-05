@@ -1,0 +1,23 @@
+[
+  {
+    "id": "perf-0",
+    "url": "https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/",
+    "title": "Parse, don't validate",
+    "reason": "Every engineer should know this.",
+    "createdAt": "2026-09-04T12:00:00.000Z"
+  },
+  {
+    "id": "perf-1",
+    "url": "https://youtu.be/-mL7VVvkLGM?si=TaYZB_0YHq3kFnd3",
+    "title": "Effectifying OpenCode || Kit Langton || Cause & Effect 8",
+    "reason": "Kit's love for type safety and teaching is contagious.",
+    "createdAt": "2026-09-04T12:00:00.000Z"
+  },
+  {
+    "id": "perf-2",
+    "url": "https://youtu.be/--Ef5Q-3Iq8?si=JUDd9i4dgu2DvW-9",
+    "title": "Palmer Luckey Wants America to Win",
+    "reason": "Fantastic video on why and how America will win.",
+    "createdAt": "2026-09-04T12:00:00.000Z"
+  }
+]

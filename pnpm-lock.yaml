@@ -97,12 +97,18 @@ importers:
       oxlint:
         specifier: ^1.81.0
         version: 1.81.0
+      playwright:
+        specifier: 1.63.0
+        version: 1.63.0
       turbo:
         specifier: ^2.10.12
         version: 2.10.12
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
+      yaml:
+        specifier: 2.9.0
+        version: 2.9.0
 
   apps/admin:
     dependencies:
@@ -450,6 +456,9 @@ importers:
       wrangler:
         specifier: 'catalog:'
         version: 4.129.0(@cloudflare/workers-types@5.20260905.1)
+      yaml:
+        specifier: ^2.9.0
+        version: 2.9.0
 
   apps/server:
     dependencies:
@@ -8052,6 +8061,16 @@ packages:
   pkg-up@3.1.0:
     resolution: {integrity: sha512-nDywThFk1i4BQK4twPQ6TA4RT8bDY96yeuCVBWL3ePARCiEKDRSrNGbFIgUJpLp+XeIR65v8ra7WuJOFUBtkMA==}
     engines: {node: '>=8'}
+
+  playwright-core@1.63.0:
+    resolution: {integrity: sha512-rYCsBF/M5HjUch52bbtVONEFjv6Xu8sm8h72dNlR5bzIE1fvC/bxgspzkjSfU+MweEMmPM8KJebG6nnyxo5mCg==}
+    engines: {node: '>=20'}
+    hasBin: true
+
+  playwright@1.63.0:
+    resolution: {integrity: sha512-+7ziBLidS4NaNCdt57SUDT+wYmmd5fmiQejUic/kb+YsYSCPyOOE9sebzMjNmQrsnNpDJqd4WHvV/8lfKfUDUg==}
+    engines: {node: '>=20'}
+    hasBin: true
 
   png-chunk-text@1.0.0:
     resolution: {integrity: sha512-DEROKU3SkkLGWNMzru3xPVgxyd48UGuMSZvioErCure6yhOc/pRH2ZV+SEn7nmaf7WNf3NdIpH+UTrRdKyq9Lw==}
@@ -16380,6 +16399,12 @@ snapshots:
   pkg-up@3.1.0:
     dependencies:
       find-up: 3.0.0
+
+  playwright-core@1.63.0: {}
+
+  playwright@1.63.0:
+    dependencies:
+      playwright-core: 1.63.0
 
   png-chunk-text@1.0.0: {}
 

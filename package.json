@@ -8,6 +8,10 @@
   ],
   "type": "module",
   "scripts": {
+    "perf:serve": "node scripts/performance/serve.mjs",
+    "perf": "node scripts/performance/run.mjs",
+    "perf:test": "node --test scripts/performance/*.test.mjs",
+    "perf:features": "node scripts/performance/features.mjs",
     "dev": "turbo dev",
     "build": "turbo build",
     "check-types": "turbo check-types",
@@ -35,8 +39,10 @@
     "@types/node": "24.13.3",
     "oxfmt": "^0.66.0",
     "oxlint": "^1.81.0",
+    "playwright": "1.63.0",
     "turbo": "^2.10.12",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "yaml": "2.9.0"
   },
   "packageManager": "pnpm@11.25.0"
 }

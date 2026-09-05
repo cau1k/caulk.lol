@@ -90,6 +90,7 @@
     "alchemy": "0.94.0",
     "tailwindcss": "^4.3.3",
     "typescript": "catalog:",
-    "wrangler": "catalog:"
+    "wrangler": "catalog:",
+    "yaml": "^2.9.0"
   }
 }

@@ -12,6 +12,7 @@ import {
 } from "alchemy/cloudflare";
 import { CloudflareStateStore } from "alchemy/state";
 import { config } from "dotenv";
+import { blogAssets } from "./assets";
 
 config({ path: "../../.env" });
 config({ path: "./.env" });
@@ -178,10 +179,7 @@ export const blog = await TanStackStart("blog", {
   cwd: "../../apps/blog",
   name: `${app.name}-${app.stage}-blog`,
   ...blogPublicConfig,
-  assets: {
-    run_worker_first:
-      stage === "prod" ? ["/*", "!/assets/*", "!/fonts/*", "!/media/*", "!/cdn-cgi/*"] : false,
-  },
+  assets: stage === "prod" ? blogAssets : { run_worker_first: false },
   build: {
     memoize:
       process.env.CI || !hasBlogBuildOutput
