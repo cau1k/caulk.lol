@@ -19,5 +19,6 @@ Local changes from generated files:
 - `palette.ts` adds `primary` and `primaryMuted`, resolving them from the live CSS `--primary` and `--background` variables. This keeps the canvas charts aligned with light/dark theme instead of freezing sampled RGB values.
 - `area.tsx` allows `<Line>` inside `<AreaChart>`. The shared cartesian canvas already supports line series there, and mixed area/line charts need it for comparison overlays.
 - Canvas paint signatures include resolved RGB values so changing themes repaints existing series.
+- `tooltip.tsx` measures the card, opens below high points when there is insufficient space above, and clamps horizontal positioning to the visible clipping bounds. Browser regression coverage lives in `scripts/browser/` and runs before deployment.
 - `dither-paint.ts` uses `Array.from({ length })` for the project's `unicorn/no-new-array` lint rule.
 - `chart-context.tsx` and `polar-context.tsx` omit stable React state setters from hook dependency arrays for the project's exhaustive-deps lint rule.

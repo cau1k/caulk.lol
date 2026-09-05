@@ -41,6 +41,12 @@ jobs:
       - name: Verify blog regressions
         run: pnpm --filter blog test
 
+      - name: Install browser for chart regressions
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Verify chart tooltip visibility
+        run: pnpm test:browser
+
       - name: Deploy
         timeout-minutes: 10
         run: pnpm --filter @caulk.lol/infra run deploy

@@ -66,6 +66,9 @@ for (const width of [1200, 390]) {
           // exercises the unmodified vendor component before the fix.
           const tooltip = chart.getByText(label, { exact: true }).locator("..");
           await expect(tooltip).toHaveCSS("opacity", "1");
+          // A longer heading can resize an already visible card while it is
+          // moving. Check that frame as well as the settled position.
+          await assertUnclipped(tooltip);
           await waitForPosition(tooltip);
           await assertUnclipped(tooltip);
           await expect(tooltip.getByText("baseline", { exact: true })).toBeVisible();
@@ -93,10 +96,7 @@ async function hoverCategory(page, chart, index) {
   await chart.scrollIntoViewIfNeeded();
   const box = await chart.boundingBox();
   // PerformanceComparisonChart's actual plot margins: left 54, right 16.
-  await page.mouse.move(
-    box.x + 54 + ((box.width - 70) * (index + 0.5)) / 20,
-    box.y + 80,
-  );
+  await page.mouse.move(box.x + 54 + ((box.width - 70) * (index + 0.5)) / 20, box.y + 80);
 }
 
 async function assertUnclipped(tooltip) {
@@ -139,11 +139,16 @@ async function assertUnclipped(tooltip) {
 async function waitForPosition(tooltip) {
   let previous;
   let stable = 0;
-  await expect.poll(async () => {
-    const box = await tooltip.boundingBox();
-    const position = JSON.stringify(Object.values(box).map((value) => Math.round(value * 10)));
-    stable = position === previous ? stable + 1 : 0;
-    previous = position;
-    return stable;
-  }, { timeout: 3000, intervals: [50] }).toBeGreaterThanOrEqual(3);
+  await expect
+    .poll(
+      async () => {
+        const box = await tooltip.boundingBox();
+        const position = JSON.stringify(Object.values(box).map((value) => Math.round(value * 10)));
+        stable = position === previous ? stable + 1 : 0;
+        previous = position;
+        return stable;
+      },
+      { timeout: 3000, intervals: [50] },
+    )
+    .toBeGreaterThanOrEqual(3);
 }
