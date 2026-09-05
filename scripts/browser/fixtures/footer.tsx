@@ -17,7 +17,7 @@ document.documentElement.classList.toggle(
 const rootRoute = createRootRoute({
   component: () => (
     <>
-      <main style={{ minHeight: 4000 }}>
+      <main className="mx-auto w-full max-w-2xl px-4" style={{ minHeight: 4000 }}>
         <h1>Footer layout</h1>
       </main>
       <Footer />

@@ -52,7 +52,7 @@ after(async () => {
   await server?.close();
 });
 
-for (const width of [320, 390, 1440]) {
+for (const width of [320, 390, 640, 1440]) {
   for (const theme of ["light", "dark"]) {
     test(`footer remains readable at ${width}px in ${theme} mode`, async (t) => {
       const page = await browser.newPage({ viewport: { width, height: 900 }, colorScheme: theme });
@@ -77,6 +77,10 @@ for (const width of [320, 390, 1440]) {
         "offscreen artwork must not compete with the page load",
       );
       await footer.scrollIntoViewIfNeeded();
+      const pageWidth = await page.getByRole("main").boundingBox();
+      const introduction = await footer.locator(":scope > div").first().boundingBox();
+      assert.ok(Math.abs(introduction.x - pageWidth.x) < 1, "footer text aligns with the page column");
+      assert.ok(Math.abs(introduction.width - pageWidth.width) < 1, "footer text uses the page's constrained width");
 
       // Measure glyphs rather than the grid cells: overflowing text can overlap
       // another column even when every cell itself fits inside the viewport.
@@ -131,6 +135,10 @@ for (const width of [320, 390, 1440]) {
       );
       const nav = await footer.getByRole("navigation").boundingBox();
       assert.ok(nav.y + nav.height < bounds.y, "artwork must remain below the links");
+      const copyright = footer.getByText(/caulk.lol ©/);
+      const creditBounds = await copyright.boundingBox();
+      assert.ok(creditBounds.y > bounds.y + bounds.height / 2, "copyright belongs near the bottom of the scenery");
+      assert.ok(creditBounds.y + creditBounds.height <= bounds.y + bounds.height, "copyright stays inside the scenery");
       await footer.screenshot({
         path: resolve(repository, `test-results/footer/${width}-${theme}.png`),
       });
