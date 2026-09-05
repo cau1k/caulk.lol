@@ -5,6 +5,11 @@ navigation columns at right, a quiet colophon, and full-width artwork below.
 Mobile stacks the brand above the columns. Layout, color, and typography use
 the existing Tailwind theme and CMU typefaces.
 
+All text uses the same `max-w-2xl px-4` content column as the page. Only the
+artwork spans the viewport. The colophon sits at the bottom over the drawing;
+an opaque `bg-background` backing guarantees text contrast, and a broad shadow
+in the same color softens its edges. Both adapt to the active theme.
+
 The original Roman engraving was generated with the built-in image generation
 tool. Its white ink and black sky form a **luminance mask**, so `bg-primary`
 supplies the exact green for each theme. Alpha masking would turn this opaque
@@ -16,9 +21,10 @@ Final asset: `apps/blog/public/media/roman.webp`, 1672 × 941, 390,398 bytes.
 Encoded from the generated PNG with ImageMagick at WebP quality 88; no runtime
 image library or new dependency. The supplied portrait remains untouched.
 
-`pnpm test:browser` checks heading clearance at 320, 390, and 1440 pixels in
+`pnpm test:browser` checks heading clearance at 320, 390, 640, and 1440 pixels in
 both themes, horizontal overflow, deferred asset loading, the 16:9 frame,
-luminance masking, active-theme ink color, and separation from navigation.
+luminance masking, active-theme ink color, text column alignment, colophon
+placement, and at least 4.5:1 contrast for its copyright and timing text.
 The fixture renders the actual footer, router, fonts, and styles outside public
 application routes. Browser suites use separate Vite caches and entry scans.
 

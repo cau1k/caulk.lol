@@ -42,8 +42,8 @@ export function Footer() {
 
   return (
     <footer className="relative isolate mt-32 w-full bg-background">
-      <div className="mx-auto max-w-[100rem] px-6 pt-16 sm:px-12 sm:pt-24 lg:px-20">
-        <div className="flex flex-col justify-between gap-16 md:flex-row md:gap-12">
+      <div className="mx-auto w-full max-w-2xl px-4 pt-16 sm:pt-24">
+        <div className="flex flex-col justify-between gap-12 sm:flex-row sm:gap-8">
           <div className="max-w-xs">
             <Link
               to="/"
@@ -56,10 +56,7 @@ export function Footer() {
             </p>
           </div>
 
-          <nav
-            aria-label="Footer"
-            className="grid grid-cols-3 gap-6 font-serif text-base sm:gap-12 lg:gap-20"
-          >
+          <nav aria-label="Footer" className="grid grid-cols-3 gap-6 font-serif text-base">
             <div>
               <h2 className="mb-5 text-xs font-normal uppercase tracking-wide text-primary sm:text-sm">
                 Explore
@@ -112,9 +109,25 @@ export function Footer() {
             </div>
           </nav>
         </div>
+      </div>
 
-        <div className="relative z-10 mt-16 flex flex-wrap items-center justify-between gap-4 font-serif text-sm sm:mt-24">
-          <p className="text-primary">
+      {/* White ink becomes the theme's green; black sky becomes transparent.
+          Luminance (not alpha) preserves this opaque engraving's fine lines.
+          Reserve the wide frame before requesting the mask near the viewport. */}
+      <div
+        ref={artworkRef}
+        aria-hidden="true"
+        className="pointer-events-none mt-16 aspect-video w-full bg-primary [mask-mode:luminance] [mask-size:100%_100%] [mask-repeat:no-repeat] dark:opacity-70"
+        style={{
+          maskImage: loadArtwork ? 'url("/media/roman.webp")' : "none",
+          visibility: loadArtwork ? "visible" : "hidden",
+        }}
+      />
+      {/* Opaque backing guarantees contrast over every part of the drawing;
+          the wide, background-colored shadow softens its edges into the art. */}
+      <div className="absolute inset-x-0 bottom-8 z-10 mx-auto w-full max-w-2xl px-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-background font-serif text-sm text-foreground shadow-[0_0_2rem_1.5rem_var(--background)]">
+          <p>
             caulk.lol &copy; <span suppressHydrationWarning>{new Date().getFullYear()}</span>{" "}
             &mdash; Zero Caulk
           </p>
@@ -124,19 +137,6 @@ export function Footer() {
           </p>
         </div>
       </div>
-
-      {/* White ink becomes the theme's green; black sky becomes transparent.
-          Luminance (not alpha) preserves this opaque engraving's fine lines.
-          Reserve the wide frame before requesting the mask near the viewport. */}
-      <div
-        ref={artworkRef}
-        aria-hidden="true"
-        className="pointer-events-none aspect-video w-full bg-primary [mask-mode:luminance] [mask-size:100%_100%] [mask-repeat:no-repeat] sm:-mt-20 dark:opacity-70"
-        style={{
-          maskImage: loadArtwork ? 'url("/media/roman.webp")' : "none",
-          visibility: loadArtwork ? "visible" : "hidden",
-        }}
-      />
     </footer>
   );
 }

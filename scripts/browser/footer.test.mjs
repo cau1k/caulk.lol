@@ -79,8 +79,14 @@ for (const width of [320, 390, 640, 1440]) {
       await footer.scrollIntoViewIfNeeded();
       const pageWidth = await page.getByRole("main").boundingBox();
       const introduction = await footer.locator(":scope > div").first().boundingBox();
-      assert.ok(Math.abs(introduction.x - pageWidth.x) < 1, "footer text aligns with the page column");
-      assert.ok(Math.abs(introduction.width - pageWidth.width) < 1, "footer text uses the page's constrained width");
+      assert.ok(
+        Math.abs(introduction.x - pageWidth.x) < 1,
+        "footer text aligns with the page column",
+      );
+      assert.ok(
+        Math.abs(introduction.width - pageWidth.width) < 1,
+        "footer text uses the page's constrained width",
+      );
 
       // Measure glyphs rather than the grid cells: overflowing text can overlap
       // another column even when every cell itself fits inside the viewport.
@@ -129,6 +135,11 @@ for (const width of [320, 390, 640, 1440]) {
         "ink follows the active theme primary",
       );
       const bounds = await artwork.boundingBox();
+      assert.equal(bounds.x, 0, "the artwork still reaches the viewport edge");
+      assert.ok(
+        Math.abs(bounds.width - (await page.locator("body").boundingBox()).width) < 1,
+        "only the artwork spans the viewport",
+      );
       assert.ok(
         Math.abs(bounds.width / bounds.height - 16 / 9) < 0.01,
         "the scene must occupy a 16:9 frame",
@@ -137,12 +148,69 @@ for (const width of [320, 390, 640, 1440]) {
       assert.ok(nav.y + nav.height < bounds.y, "artwork must remain below the links");
       const copyright = footer.getByText(/caulk.lol ©/);
       const creditBounds = await copyright.boundingBox();
-      assert.ok(creditBounds.y > bounds.y + bounds.height / 2, "copyright belongs near the bottom of the scenery");
-      assert.ok(creditBounds.y + creditBounds.height <= bounds.y + bounds.height, "copyright stays inside the scenery");
+      assert.ok(
+        creditBounds.y > bounds.y + bounds.height / 2,
+        "copyright belongs near the bottom of the scenery",
+      );
+      assert.ok(
+        creditBounds.y + creditBounds.height <= bounds.y + bounds.height,
+        "copyright stays inside the scenery",
+      );
+      const textBounds = await footer
+        .locator("a, p, h2")
+        .evaluateAll((elements) =>
+          elements.map((element) => element.getBoundingClientRect().toJSON()),
+        );
+      textBounds.forEach((box) =>
+        assert.ok(
+          box.x >= pageWidth.x && box.right <= pageWidth.x + pageWidth.width + 1,
+          "all footer text stays inside the content column",
+        ),
+      );
+      await assertColophonContrast(copyright);
       await footer.screenshot({
         path: resolve(repository, `test-results/footer/${width}-${theme}.png`),
       });
       assert.deepEqual(errors, []);
     });
   }
+}
+
+/** Resolve actual theme colors through the browser, then apply WCAG contrast math. */
+async function assertColophonContrast(copyright) {
+  const contrast = await copyright.evaluate((element) => {
+    const row = element.parentElement;
+    const context = document.createElement("canvas").getContext("2d");
+    if (!context) throw new Error("Missing color measurement context");
+    const pixels = (color) => {
+      context.clearRect(0, 0, 1, 1);
+      context.fillStyle = color;
+      context.fillRect(0, 0, 1, 1);
+      return Array.from(context.getImageData(0, 0, 1, 1).data);
+    };
+    const luminance = (rgba) =>
+      rgba
+        .slice(0, 3)
+        .map((value) => {
+          const channel = value / 255;
+          return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+        })
+        .reduce((sum, value, index) => sum + value * [0.2126, 0.7152, 0.0722][index], 0);
+    const background = pixels(getComputedStyle(row).backgroundColor);
+    const backgroundLuminance = luminance(background);
+    return {
+      alpha: background[3],
+      ratios: Array.from(row.querySelectorAll("p"), (paragraph) => {
+        const foreground = luminance(pixels(getComputedStyle(paragraph).color));
+        return (
+          (Math.max(foreground, backgroundLuminance) + 0.05) /
+          (Math.min(foreground, backgroundLuminance) + 0.05)
+        );
+      }),
+    };
+  });
+  assert.equal(contrast.alpha, 255, "a solid backing keeps scenery from reducing text contrast");
+  contrast.ratios.forEach((ratio) =>
+    assert.ok(ratio >= 4.5, `colophon contrast ${ratio.toFixed(2)} must meet 4.5:1`),
+  );
 }
