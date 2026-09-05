@@ -45,8 +45,9 @@ async function main() {
       baselineErrors: errorSummary(baseline.samples ?? []),
       chartImages: chartFiles,
       chartLightVariants: lightChartFiles,
-      deploymentAndFeatureProof:
-        "TODO(root): replace with deployed revision, CI URL, feature assertions, and live measurement proof after final paired run.",
+      deploymentAndFeatureProof: args.notes
+        ? await readFile(args.notes, "utf8")
+        : "Deployment and feature verification were not supplied to this timing export.",
     },
   };
 
@@ -69,6 +70,7 @@ function parseArgs(argv) {
     else if (flag === "--candidate") args.candidate = value;
     else if (flag === "--data") args.data = value;
     else if (flag === "--report") args.report = value;
+    else if (flag === "--notes") args.notes = value;
     else usage();
   }
   if (!args.baseline || !args.candidate) usage();
@@ -77,7 +79,7 @@ function parseArgs(argv) {
 
 function usage() {
   throw new Error(
-    "Usage: node scripts/performance/export.mjs --baseline baseline.json --candidate candidate.json [--data apps/blog/src/generated/performance.json] [--report docs/performance/2026-09-05.md]",
+    "Usage: node scripts/performance/export.mjs --baseline baseline.json --candidate candidate.json [--data apps/blog/src/generated/performance.json] [--report docs/performance/2026-09-05.md] [--notes verification.md]",
   );
 }
 
@@ -262,6 +264,8 @@ function markdown(data) {
     `Candidate: ${data.metadata.candidate.revision} (${data.metadata.candidate.label})`,
     `Browser: ${data.metadata.browser}. Harness: ${data.metadata.harnessHash}.`,
     "",
+    data.notes.deploymentAndFeatureProof,
+    "",
     "## Methodology",
     "",
     "The runner measures every public page as paired local and live browser navigations, with cold and warm browser cache cells. Cold means empty browser cache and storage for that browser context. It does not prove a cold Cloudflare edge cache; CDN cache state stays visible in response headers and should be interpreted separately.",
@@ -281,7 +285,7 @@ function markdown(data) {
     "![Live cold](assets/live-cold-dark.png)",
     "![Live warm](assets/live-warm-dark.png)",
     "",
-    "Light variants are expected beside them: `assets/local-cold-light.png`, `assets/local-warm-light.png`, `assets/live-cold-light.png`, `assets/live-warm-light.png`.",
+    "Light variants: [local cold](assets/local-cold-light.png), [local warm](assets/local-warm-light.png), [live cold](assets/live-cold-light.png), [live warm](assets/live-warm-light.png).",
     "",
     "## Equal-page overview",
     "",
@@ -304,13 +308,6 @@ function markdown(data) {
     "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|",
     ...data.rows.map(tableRow),
     "",
-    "## Implementation notes",
-    "",
-    "TODO(root): describe final code changes after the final paired measurement is complete.",
-    "",
-    "## Deployment and feature proof",
-    "",
-    "TODO(root): add deployed revision, CI run, feature assertion summary, and the four Dither charts.",
   ];
   return `${lines.join("\n")}\n`;
 }

@@ -16,7 +16,7 @@ Good start.
 
 I asked Codex to make every public page at least three times faster, with cold and warm browser caches, without losing features. Twenty pages, including the articles, archives, tags, links, and analytics. The little stars had to stay. So did the menus, theme controls, diagrams, and all the other stuff that makes this my website.
 
-FINAL_RESULT_SENTENCE
+The three-times-everywhere target didn't happen. Across the twenty pages, mean load time went from 340 to 108 ms locally with a warm cache, and from 292 to 233 ms on the live site. Cold loads went from 629 to 441 ms locally and 802 to 604 ms live. Those are useful gains. They aren't the same thing as passing the target.
 
 There was plenty to fix. There was also plenty of opportunity to produce a flattering number that didn't mean what it appeared to mean.
 
@@ -87,6 +87,10 @@ Finally, article images use the browser's native [`loading="lazy"`](https://deve
 Mean browser load time (`loadEventEnd`) in milliseconds before and after deployment. A cold browser still may receive a warm edge response.
 
 The original target required every page, origin, and cache combination to improve by three times for both mean load and mean readiness. One fast homepage couldn't carry a slow article. Neither could a pleasant overall average.
+
+Fifteen of the eighty combinations reached three times faster load. None reached three times faster readiness, so all eighty missed the combined gate. Readiness improved everywhere. The prompt-caching article's live warm load was about 1.2% slower, which stays in the report too. Three samples and a changing network don't tell me why.
+
+The measurement tooling also needed attention. Wrangler's CLI preview repeatedly exited without a useful error, so the final local run used its programmatic Worker API with the debugger and watching disabled. That changes the local comparison; the live comparison doesn't have that caveat. Network interface churn interrupted the archive page during the final run. I reran all twelve samples for that page after the full run finished, preserving the other 228. The raw run, complete-page repair, and selection rule are recorded together. No picking the fastest attempt.
 
 The final report keeps the misses and the individual samples. Local links use captured fixtures, local analytics lacks production Analytics Engine credentials, and a single machine with an emulated connection doesn't represent every reader. The baseline also had an Analytics hydration error, and I edited the Nietzsche and prompt-caching articles during this work. Those comparisons include content changes; they cannot isolate the optimization alone. Those limits belong next to the numbers.
 

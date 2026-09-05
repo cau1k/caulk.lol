@@ -1,0 +1,183 @@
+[
+  {
+    "target": "local",
+    "path": "/",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/about",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/analytics",
+    "errors": [],
+    "analyticsSource": "source: unconfigured · generated 9/5/2026, 1:28:11 AM"
+  },
+  {
+    "target": "local",
+    "path": "/links",
+    "errors": [],
+    "linkCount": 3
+  },
+  {
+    "target": "local",
+    "path": "/posts",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/posts/a-place-to-share-my-thoughts",
+    "errors": [],
+    "contentHash": "82c61c650bd91a76c59870f02537315daf86fbe4d923526f5dcbbf618470be45"
+  },
+  {
+    "target": "local",
+    "path": "/posts/on-neo-oss-and-nietzsche",
+    "errors": [],
+    "contentHash": "3043997ade630fbd758538f6e0444ada87c771937addba406090fb488176f784"
+  },
+  {
+    "target": "local",
+    "path": "/posts/prompt-caching-sucks",
+    "errors": [],
+    "contentHash": "713929c531ec9f9358ed1a377b0aef69ffe2deef1fc57f63077aec8a59a0b154"
+  },
+  {
+    "target": "local",
+    "path": "/posts/tags",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/posts/tags/ai",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/posts/tags/bun",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/posts/tags/dhh",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/posts/tags/infra",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/posts/tags/oss",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/posts/tags/personal",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/posts/tags/philosophy",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/posts/tags/prompt-caching",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/posts/tags/scripting",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/posts/tags/typescript",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/posts/typescript-as-a-scripting-language",
+    "errors": [],
+    "contentHash": "dc3fa5052a2a5583c0f02ed77a01770d7527b44585e55dfd86a8ed0715472376"
+  },
+  {
+    "target": "local",
+    "path": "/llms-full.txt",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/api/search?query=typescript",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/api/analytics",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/posts/a-place-to-share-my-thoughts.mdx",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/llms.mdx/a-place-to-share-my-thoughts",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/og/posts/a-place-to-share-my-thoughts/image.webp",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/posts/on-neo-oss-and-nietzsche.mdx",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/llms.mdx/on-neo-oss-and-nietzsche",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/og/posts/on-neo-oss-and-nietzsche/image.webp",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/posts/prompt-caching-sucks.mdx",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/llms.mdx/prompt-caching-sucks",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/og/posts/prompt-caching-sucks/image.webp",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/posts/typescript-as-a-scripting-language.mdx",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/llms.mdx/typescript-as-a-scripting-language",
+    "errors": []
+  },
+  {
+    "target": "local",
+    "path": "/og/posts/typescript-as-a-scripting-language/image.webp",
+    "errors": []
+  }
+]

@@ -1,7 +1,8 @@
-import { spawnSync, spawn } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { createRequire } from "node:module";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { blogAssets } from "../../packages/infra/assets.ts";
 
@@ -104,27 +105,41 @@ const seed = spawnSync(
   { cwd: root, stdio: "inherit" },
 );
 if (seed.status !== 0) process.exit(seed.status ?? 1);
-const child = spawn(
-  "pnpm",
-  [
-    "--filter",
-    "blog",
-    "exec",
-    "wrangler",
-    "dev",
-    "--local",
-    "--config",
-    configPath,
-    "--persist-to",
-    state,
-    "--port",
-    values.port,
-    "--log-level",
-    "warn",
-    "--show-interactive-dev-session",
-    "false",
-  ],
-  { cwd: root, stdio: "inherit", env: { ...process.env, CI: "true", NO_COLOR: "1" } },
+// Wrangler's CLI cannot disable the inspector: its UI flag only hides the TUI.
+// The installed API accepts dev.inspector=false (see Wrangler cli.d.ts).
+// Keep the production config and local storage; omit development watch/registry
+// channels after repeated CLI exits interrupted otherwise healthy measurements.
+const requireBlog = createRequire(path.join(root, "apps/blog/package.json"));
+const { unstable_startWorker: startWorker } = await import(
+  pathToFileURL(requireBlog.resolve("wrangler")).href
 );
-for (const signal of ["SIGINT", "SIGTERM"]) process.on(signal, () => child.kill(signal));
-child.on("exit", (code) => process.exit(code ?? 0));
+const worker = await startWorker({
+  config: configPath,
+  dev: {
+    remote: false,
+    server: { hostname: "127.0.0.1", port: Number(values.port) },
+    logLevel: "warn",
+    watch: false,
+    liveReload: false,
+    persist: state,
+    inspector: false,
+    inferOriginFromRoutes: false,
+    routeRequestsByRoutes: false,
+  },
+});
+await worker.ready;
+if (await worker.inspectorUrl)
+  throw new Error("Performance worker unexpectedly enabled its debugger");
+console.log(`Performance worker ready: ${(await worker.url).href}`);
+for (const signal of ["SIGINT", "SIGTERM"]) {
+  process.once(signal, () => {
+    void worker.dispose().then(
+      () => process.exit(0),
+      (error) => {
+        console.error(error);
+        process.exit(1);
+      },
+    );
+  });
+}
+await new Promise(() => {});

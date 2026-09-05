@@ -18,5 +18,6 @@ Local changes from generated files:
 
 - `palette.ts` adds `primary` and `primaryMuted`, resolving them from the live CSS `--primary` and `--background` variables. This keeps the canvas charts aligned with light/dark theme instead of freezing sampled RGB values.
 - `area.tsx` allows `<Line>` inside `<AreaChart>`. The shared cartesian canvas already supports line series there, and mixed area/line charts need it for comparison overlays.
-- `dither-paint.ts` uses `Array.from({ length })` for Biome's `unicorn/no-new-array` rule.
-- `chart-context.tsx` and `polar-context.tsx` omit stable React state setters from hook dependency arrays for Biome's exhaustive-deps rule.
+- Canvas paint signatures include resolved RGB values so changing themes repaints existing series.
+- `dither-paint.ts` uses `Array.from({ length })` for the project's `unicorn/no-new-array` lint rule.
+- `chart-context.tsx` and `polar-context.tsx` omit stable React state setters from hook dependency arrays for the project's exhaustive-deps lint rule.

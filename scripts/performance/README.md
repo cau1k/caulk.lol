@@ -26,6 +26,11 @@ Local Analytics has no production Analytics Engine credentials; its source is
 recorded by feature checks. Compare local against its own baseline and live
 against its own baseline, not the two origins against each other.
 
+The preview uses Wrangler's `unstable_startWorker` API with the debugger, registry,
+and file watching disabled. The September 5 baseline used the CLI; final local
+results include that tooling difference. The production bundle and local
+fixtures are unchanged by this runner choice. Live comparisons are unaffected.
+
 The default measurement covers every published HTML route: static routes from
 the route files, post slugs from frontmatter, and every published tag. Drafts and
 admin pages are excluded. Unknown public parameter routes fail discovery. Raw
@@ -98,10 +103,28 @@ local production server runs. It intercepts Analytics with a labeled fixture
 to exercise theme repainting, tooltips, graph zoom/pan/reset/focus, and mobile
 containment. This fixture is never used by the timing runner.
 
-Export a completed paired run with `node scripts/performance/export.mjs
---baseline test-results/performance/baseline-complete-rounds.json --candidate
-test-results/performance/final-deployed.json`. It rejects incomplete samples and
-candidate errors, but reports the missed 3× cells accepted in the final scope.
+The accepted September 5 run has three complete rounds. Two `/posts` navigations
+were interrupted by network interface churn. `merge.mjs` replaced that page's
+entire twelve-sample set using a subsequent three-round rerun on both origins:
+
+```sh
+node scripts/performance/merge.mjs \
+  --baseline test-results/performance/baseline-complete-rounds.json \
+  --candidate test-results/performance/final-verified.json \
+  --repair test-results/performance/final-posts-repair.json \
+  --output test-results/performance/final-complete
+node scripts/performance/export.mjs \
+  --baseline test-results/performance/baseline-complete-rounds.json \
+  --candidate test-results/performance/final-complete.json \
+  --notes docs/performance/verification.md
+```
+
+The merger validates revision, browser, profile, timing-code hash, round coverage,
+and repair chronology. It only accepts the recorded network-interruption errors;
+it does not retry or select samples by duration. Original inputs remain intact.
+The exporter rejects incomplete samples and candidate errors, but reports the
+missed 3× cells accepted in the final scope. `--notes` embeds separately reviewed
+deployment, feature, and methodology evidence in the generated report.
 Then run `node scripts/performance/charts.mjs` for eight light/dark PNGs rendered
 from the site's actual Dither component and CSS. The renderer's temporary Vite
 preview stays under ignored test results; it adds no public route.

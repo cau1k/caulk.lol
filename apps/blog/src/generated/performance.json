@@ -1,9 +1,6145 @@
 {
-  "metadata": { "status": "Awaiting final paired measurement" },
+  "schemaVersion": 1,
+  "metadata": {
+    "exportedAt": "2026-09-05T06:15:16.317Z",
+    "baseline": {
+      "label": "baseline-complete-rounds",
+      "revision": "ef58f12c67d436eb70757302c7c278e24d7077ba",
+      "startedAt": "2026-09-05T03:51:41.233Z",
+      "finishedAt": "2026-09-05T04:01:28.351Z",
+      "browser": "151.0.7922.173",
+      "profile": {
+        "networkRule": "global-empty-url-pattern",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "colorScheme": "dark",
+        "cpuRate": 4,
+        "latencyMs": 40,
+        "downloadBytesPerSecond": 1250000,
+        "uploadBytesPerSecond": 625000
+      },
+      "sampleCount": 240,
+      "cellCount": 80,
+      "rounds": 3,
+      "harnessHash": "b6ef10e2e2c4296c4e378280eb3d691772b9ab3a0a0e8c69e1a50e948a2eb5e5",
+      "dirty": true
+    },
+    "candidate": {
+      "label": "final-complete",
+      "revision": "78800cb04464616997a7356190c17fc200749125",
+      "startedAt": "2026-09-05T05:56:20.679Z",
+      "finishedAt": "2026-09-05T06:02:37.188Z",
+      "browser": "151.0.7922.173",
+      "profile": {
+        "networkRule": "global-empty-url-pattern",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "colorScheme": "dark",
+        "cpuRate": 4,
+        "latencyMs": 40,
+        "downloadBytesPerSecond": 1250000,
+        "uploadBytesPerSecond": 625000
+      },
+      "sampleCount": 240,
+      "cellCount": 80,
+      "rounds": 3,
+      "harnessHash": "b6ef10e2e2c4296c4e378280eb3d691772b9ab3a0a0e8c69e1a50e948a2eb5e5",
+      "dirty": true
+    },
+    "harnessHash": "b6ef10e2e2c4296c4e378280eb3d691772b9ab3a0a0e8c69e1a50e948a2eb5e5",
+    "browser": "151.0.7922.173",
+    "profile": {
+      "networkRule": "global-empty-url-pattern",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "colorScheme": "dark",
+      "cpuRate": 4,
+      "latencyMs": 40,
+      "downloadBytesPerSecond": 1250000,
+      "uploadBytesPerSecond": 625000
+    },
+    "rounds": {
+      "baseline": 3,
+      "candidate": 3
+    }
+  },
+  "rows": [
+    {
+      "id": "live|/|cold",
+      "path": "/",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 730.7999999920527,
+        "meanReadyMs": 1176.1666666467984,
+        "meanFcpMs": 497.3333333333333,
+        "meanLcpMs": 497.3333333333333,
+        "meanTransferBytes": 434533
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 638.5000000397364,
+        "meanReadyMs": 955.1666666666666,
+        "meanFcpMs": 522.6666666666666,
+        "meanLcpMs": 522.6666666666666,
+        "meanTransferBytes": 232669.66666666666
+      },
+      "ratios": {
+        "load": 1.144557556690011,
+        "ready": 1.2313732332718184,
+        "fcp": 0.951530612244898,
+        "lcp": 0.951530612244898
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/about|cold",
+      "path": "/about",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 959.2333333293597,
+        "meanReadyMs": 1366.7666666706402,
+        "meanFcpMs": 714.6666666666666,
+        "meanLcpMs": 714.6666666666666,
+        "meanTransferBytes": 459179
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 607.4666666984558,
+        "meanReadyMs": 951.5000000198683,
+        "meanFcpMs": 506.6666666666667,
+        "meanLcpMs": 506.6666666666667,
+        "meanTransferBytes": 228830.66666666666
+      },
+      "ratios": {
+        "load": 1.5790715539055569,
+        "ready": 1.4364337011477675,
+        "fcp": 1.4105263157894736,
+        "lcp": 1.4105263157894736
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/analytics|cold",
+      "path": "/analytics",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 3,
+        "meanLoadMs": 1129.3999999960263,
+        "meanReadyMs": 1816.4666666587193,
+        "meanFcpMs": 837.3333333333334,
+        "meanLcpMs": 837.3333333333334,
+        "meanTransferBytes": 489856.6666666667
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 621.7666666507721,
+        "meanReadyMs": 1548.8333333333333,
+        "meanFcpMs": 544,
+        "meanLcpMs": 544,
+        "meanTransferBytes": 266441.6666666667
+      },
+      "ratios": {
+        "load": 1.8164370342972675,
+        "ready": 1.1727967287154113,
+        "fcp": 1.5392156862745099,
+        "lcp": 1.5392156862745099
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 3,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/links|cold",
+      "path": "/links",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 882.7000000079473,
+        "meanReadyMs": 1256.7333333293598,
+        "meanFcpMs": 558.6666666666666,
+        "meanLcpMs": 558.6666666666666,
+        "meanTransferBytes": 437587.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 597.8999999960264,
+        "meanReadyMs": 946.8666666547457,
+        "meanFcpMs": 488,
+        "meanLcpMs": 488,
+        "meanTransferBytes": 262036.66666666666
+      },
+      "ratios": {
+        "load": 1.4763338351125834,
+        "ready": 1.3272548053353326,
+        "fcp": 1.1448087431693987,
+        "lcp": 1.1448087431693987
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts|cold",
+      "path": "/posts",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 688.7333333094915,
+        "meanReadyMs": 1111.199999988079,
+        "meanFcpMs": 485.3333333333333,
+        "meanLcpMs": 485.3333333333333,
+        "meanTransferBytes": 433688
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 539.9666666785876,
+        "meanReadyMs": 995.866666674614,
+        "meanFcpMs": 414.6666666666667,
+        "meanLcpMs": 414.6666666666667,
+        "meanTransferBytes": 233343.66666666666
+      },
+      "ratios": {
+        "load": 1.2755108339297851,
+        "ready": 1.115812023007643,
+        "fcp": 1.170418006430868,
+        "lcp": 1.170418006430868
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/a-place-to-share-my-thoughts|cold",
+      "path": "/posts/a-place-to-share-my-thoughts",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 736.1333333452543,
+        "meanReadyMs": 1242.8999999960263,
+        "meanFcpMs": 497.3333333333333,
+        "meanLcpMs": 497.3333333333333,
+        "meanTransferBytes": 472158.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 706.1999999880791,
+        "meanReadyMs": 1128.2999999920528,
+        "meanFcpMs": 612,
+        "meanLcpMs": 612,
+        "meanTransferBytes": 350428
+      },
+      "ratios": {
+        "load": 1.0423864816732944,
+        "ready": 1.1015687317245242,
+        "fcp": 0.812636165577342,
+        "lcp": 0.812636165577342
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/on-neo-oss-and-nietzsche|cold",
+      "path": "/posts/on-neo-oss-and-nietzsche",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 805.133333325386,
+        "meanReadyMs": 1231.5333333015442,
+        "meanFcpMs": 504,
+        "meanLcpMs": 504,
+        "meanTransferBytes": 474049.6666666667
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 746.5333333412806,
+        "meanReadyMs": 1200.6666666666667,
+        "meanFcpMs": 649.3333333333334,
+        "meanLcpMs": 649.3333333333334,
+        "meanTransferBytes": 356423
+      },
+      "ratios": {
+        "load": 1.0784961600064498,
+        "ready": 1.0257079400068385,
+        "fcp": 0.7761806981519507,
+        "lcp": 0.7761806981519507
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/prompt-caching-sucks|cold",
+      "path": "/posts/prompt-caching-sucks",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 892.933333337307,
+        "meanReadyMs": 1416.233333349228,
+        "meanFcpMs": 570.6666666666666,
+        "meanLcpMs": 570.6666666666666,
+        "meanTransferBytes": 952128
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 719.933333337307,
+        "meanReadyMs": 1185.4666666785877,
+        "meanFcpMs": 588,
+        "meanLcpMs": 588,
+        "meanTransferBytes": 470236
+      },
+      "ratios": {
+        "load": 1.2403000277790237,
+        "ready": 1.1946631425050498,
+        "fcp": 0.9705215419501133,
+        "lcp": 0.9705215419501133
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags|cold",
+      "path": "/posts/tags",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 724.066666662693,
+        "meanReadyMs": 1042.1333333452542,
+        "meanFcpMs": 454.6666666666667,
+        "meanLcpMs": 454.6666666666667,
+        "meanTransferBytes": 431426.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 475.29999999205273,
+        "meanReadyMs": 805.6999999880791,
+        "meanFcpMs": 358.6666666666667,
+        "meanLcpMs": 358.6666666666667,
+        "meanTransferBytes": 213221
+      },
+      "ratios": {
+        "load": 1.5233887369551857,
+        "ready": 1.2934508295403666,
+        "fcp": 1.2676579925650557,
+        "lcp": 1.2676579925650557
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/ai|cold",
+      "path": "/posts/tags/ai",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 797.2999999920527,
+        "meanReadyMs": 1036.866666694482,
+        "meanFcpMs": 450.6666666666667,
+        "meanLcpMs": 450.6666666666667,
+        "meanTransferBytes": 431351.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 493.70000000794727,
+        "meanReadyMs": 881.8666666547457,
+        "meanFcpMs": 376,
+        "meanLcpMs": 376,
+        "meanTransferBytes": 229711.66666666666
+      },
+      "ratios": {
+        "load": 1.6149483491578251,
+        "ready": 1.1757635319494613,
+        "fcp": 1.198581560283688,
+        "lcp": 1.198581560283688
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/bun|cold",
+      "path": "/posts/tags/bun",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 765.4666666587194,
+        "meanReadyMs": 1075.733333349228,
+        "meanFcpMs": 477.3333333333333,
+        "meanLcpMs": 477.3333333333333,
+        "meanTransferBytes": 431224.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 487.3333333333333,
+        "meanReadyMs": 840.3666666547457,
+        "meanFcpMs": 376,
+        "meanLcpMs": 376,
+        "meanTransferBytes": 229600.33333333334
+      },
+      "ratios": {
+        "load": 1.570725034183419,
+        "ready": 1.280076157270026,
+        "fcp": 1.2695035460992907,
+        "lcp": 1.2695035460992907
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/dhh|cold",
+      "path": "/posts/tags/dhh",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 771.5999999841055,
+        "meanReadyMs": 1158.1666666467984,
+        "meanFcpMs": 477.3333333333333,
+        "meanLcpMs": 477.3333333333333,
+        "meanTransferBytes": 431384.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 517.3333333333334,
+        "meanReadyMs": 873.0333333214124,
+        "meanFcpMs": 408,
+        "meanLcpMs": 408,
+        "meanTransferBytes": 229608
+      },
+      "ratios": {
+        "load": 1.4914948453301007,
+        "ready": 1.3266007407078149,
+        "fcp": 1.1699346405228759,
+        "lcp": 1.1699346405228759
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/infra|cold",
+      "path": "/posts/tags/infra",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 791.433333337307,
+        "meanReadyMs": 1147.3999999960263,
+        "meanFcpMs": 466.6666666666667,
+        "meanLcpMs": 466.6666666666667,
+        "meanTransferBytes": 431290
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 539.2333333492279,
+        "meanReadyMs": 903.4333333174387,
+        "meanFcpMs": 429.3333333333333,
+        "meanLcpMs": 429.3333333333333,
+        "meanTransferBytes": 229568
+      },
+      "ratios": {
+        "load": 1.4677010570204212,
+        "ready": 1.2700439065965536,
+        "fcp": 1.0869565217391306,
+        "lcp": 1.0869565217391306
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/oss|cold",
+      "path": "/posts/tags/oss",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 736.933333337307,
+        "meanReadyMs": 1095.7666666706402,
+        "meanFcpMs": 473.3333333333333,
+        "meanLcpMs": 473.3333333333333,
+        "meanTransferBytes": 431220.6666666667
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 694.1666666467985,
+        "meanReadyMs": 1057.1666666666667,
+        "meanFcpMs": 572,
+        "meanLcpMs": 572,
+        "meanTransferBytes": 229667
+      },
+      "ratios": {
+        "load": 1.0616086434934922,
+        "ready": 1.0365126911593632,
+        "fcp": 0.8275058275058275,
+        "lcp": 0.8275058275058275
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/personal|cold",
+      "path": "/posts/tags/personal",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 781.0333333214124,
+        "meanReadyMs": 1107.0333333015442,
+        "meanFcpMs": 482.6666666666667,
+        "meanLcpMs": 482.6666666666667,
+        "meanTransferBytes": 431231.6666666667
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 618.566666662693,
+        "meanReadyMs": 979.7333333293597,
+        "meanFcpMs": 500,
+        "meanLcpMs": 500,
+        "meanTransferBytes": 229577.33333333334
+      },
+      "ratios": {
+        "load": 1.2626502128465211,
+        "ready": 1.1299333151599424,
+        "fcp": 0.9653333333333334,
+        "lcp": 0.9653333333333334
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/philosophy|cold",
+      "path": "/posts/tags/philosophy",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 748.3999999960264,
+        "meanReadyMs": 1120.9666666587193,
+        "meanFcpMs": 494.6666666666667,
+        "meanLcpMs": 494.6666666666667,
+        "meanTransferBytes": 431399.6666666667
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 639.7333333492279,
+        "meanReadyMs": 1003.0666666825613,
+        "meanFcpMs": 512,
+        "meanLcpMs": 512,
+        "meanTransferBytes": 229746.66666666666
+      },
+      "ratios": {
+        "load": 1.1698624426491746,
+        "ready": 1.117539545368493,
+        "fcp": 0.9661458333333334,
+        "lcp": 0.9661458333333334
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/prompt-caching|cold",
+      "path": "/posts/tags/prompt-caching",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 730.9666666785876,
+        "meanReadyMs": 1077.133333325386,
+        "meanFcpMs": 473.3333333333333,
+        "meanLcpMs": 473.3333333333333,
+        "meanTransferBytes": 431170
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 505.3333333333333,
+        "meanReadyMs": 874.7333333293597,
+        "meanFcpMs": 378.6666666666667,
+        "meanLcpMs": 378.6666666666667,
+        "meanTransferBytes": 229579
+      },
+      "ratios": {
+        "load": 1.4465039578072314,
+        "ready": 1.2313848029840857,
+        "fcp": 1.2499999999999998,
+        "lcp": 1.2499999999999998
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/scripting|cold",
+      "path": "/posts/tags/scripting",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 745.3999999761581,
+        "meanReadyMs": 1087.4666666587193,
+        "meanFcpMs": 465.3333333333333,
+        "meanLcpMs": 465.3333333333333,
+        "meanTransferBytes": 431279.6666666667
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 622.1666666666666,
+        "meanReadyMs": 1003.5333333412806,
+        "meanFcpMs": 497.3333333333333,
+        "meanLcpMs": 497.3333333333333,
+        "meanTransferBytes": 229605.33333333334
+      },
+      "ratios": {
+        "load": 1.1980712563238545,
+        "ready": 1.0836378130440185,
+        "fcp": 0.935656836461126,
+        "lcp": 0.935656836461126
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/typescript|cold",
+      "path": "/posts/tags/typescript",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 785.133333325386,
+        "meanReadyMs": 1074.066666662693,
+        "meanFcpMs": 470.6666666666667,
+        "meanLcpMs": 470.6666666666667,
+        "meanTransferBytes": 431348.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 616.8333333333334,
+        "meanReadyMs": 978.8333333333334,
+        "meanFcpMs": 506.6666666666667,
+        "meanLcpMs": 506.6666666666667,
+        "meanTransferBytes": 229600.66666666666
+      },
+      "ratios": {
+        "load": 1.2728451769663107,
+        "ready": 1.0972926953816036,
+        "fcp": 0.9289473684210526,
+        "lcp": 0.9289473684210526
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/typescript-as-a-scripting-language|cold",
+      "path": "/posts/typescript-as-a-scripting-language",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 843.7999999920527,
+        "meanReadyMs": 1493.3333333134651,
+        "meanFcpMs": 617.3333333333334,
+        "meanLcpMs": 617.3333333333334,
+        "meanTransferBytes": 500719
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 698.3999999960264,
+        "meanReadyMs": 1175.5666666825612,
+        "meanFcpMs": 548,
+        "meanLcpMs": 548,
+        "meanTransferBytes": 390877.3333333333
+      },
+      "ratios": {
+        "load": 1.2081901489072933,
+        "ready": 1.2703093543198523,
+        "fcp": 1.1265206812652069,
+        "lcp": 1.1265206812652069
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/|warm",
+      "path": "/",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 267.5,
+        "meanReadyMs": 406.0000000198682,
+        "meanFcpMs": 176,
+        "meanLcpMs": 176,
+        "meanTransferBytes": 14165
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 209.16666668653488,
+        "meanReadyMs": 302.03333334128064,
+        "meanFcpMs": 77.33333333333333,
+        "meanLcpMs": 77.33333333333333,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.2788844620299165,
+        "ready": 1.344222492029087,
+        "fcp": 2.2758620689655173,
+        "lcp": 2.2758620689655173
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/about|warm",
+      "path": "/about",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 284.36666669448215,
+        "meanReadyMs": 399.4000000357628,
+        "meanFcpMs": 184,
+        "meanLcpMs": 184,
+        "meanTransferBytes": 14331.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 233.7666666507721,
+        "meanReadyMs": 341.13333332538605,
+        "meanFcpMs": 101.33333333333333,
+        "meanLcpMs": 101.33333333333333,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.2164551549143756,
+        "ready": 1.1708032051350425,
+        "fcp": 1.8157894736842106,
+        "lcp": 1.8157894736842106
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/analytics|warm",
+      "path": "/analytics",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 3,
+        "meanLoadMs": 312.2333333293597,
+        "meanReadyMs": 491,
+        "meanFcpMs": 196,
+        "meanLcpMs": 196,
+        "meanTransferBytes": 14916.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 234.23333332935968,
+        "meanReadyMs": 467.20000000794727,
+        "meanFcpMs": 118.66666666666667,
+        "meanLcpMs": 118.66666666666667,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 1.3330012807798062,
+        "ready": 1.0509417808040409,
+        "fcp": 1.651685393258427,
+        "lcp": 1.651685393258427
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 3,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/links|warm",
+      "path": "/links",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 278.63333330551785,
+        "meanReadyMs": 432.96666665871936,
+        "meanFcpMs": 194.66666666666666,
+        "meanLcpMs": 194.66666666666666,
+        "meanTransferBytes": 14317
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 183.2000000079473,
+        "meanReadyMs": 280.53333334128064,
+        "meanFcpMs": 144,
+        "meanLcpMs": 144,
+        "meanTransferBytes": 6055
+      },
+      "ratios": {
+        "load": 1.5209243083702544,
+        "ready": 1.5433697717910662,
+        "fcp": 1.3518518518518519,
+        "lcp": 1.3518518518518519
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts|warm",
+      "path": "/posts",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 280.2000000278155,
+        "meanReadyMs": 397.36666667461395,
+        "meanFcpMs": 173.33333333333334,
+        "meanLcpMs": 173.33333333333334,
+        "meanTransferBytes": 14304.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 255.60000000397363,
+        "meanReadyMs": 350.20000000794727,
+        "meanFcpMs": 93.33333333333333,
+        "meanLcpMs": 93.33333333333333,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.096244131547181,
+        "ready": 1.134684941934884,
+        "fcp": 1.8571428571428574,
+        "lcp": 1.8571428571428574
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/a-place-to-share-my-thoughts|warm",
+      "path": "/posts/a-place-to-share-my-thoughts",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 279.933333337307,
+        "meanReadyMs": 483.39999999602634,
+        "meanFcpMs": 176,
+        "meanLcpMs": 176,
+        "meanTransferBytes": 15507.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 240.7333333492279,
+        "meanReadyMs": 406.9666666785876,
+        "meanFcpMs": 112,
+        "meanLcpMs": 112,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.1628357795021775,
+        "ready": 1.1878122695925952,
+        "fcp": 1.5714285714285714,
+        "lcp": 1.5714285714285714
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/on-neo-oss-and-nietzsche|warm",
+      "path": "/posts/on-neo-oss-and-nietzsche",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 298.9999999801318,
+        "meanReadyMs": 518.7999999721845,
+        "meanFcpMs": 204,
+        "meanLcpMs": 204,
+        "meanTransferBytes": 16773
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 244.46666663885117,
+        "meanReadyMs": 401.7333333293597,
+        "meanFcpMs": 100,
+        "meanLcpMs": 100,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.2230706300006222,
+        "ready": 1.2914039163059643,
+        "fcp": 2.04,
+        "lcp": 2.04
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/prompt-caching-sucks|warm",
+      "path": "/posts/prompt-caching-sucks",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 300.7666666706403,
+        "meanReadyMs": 604.633333325386,
+        "meanFcpMs": 208,
+        "meanLcpMs": 208,
+        "meanTransferBytes": 21568
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 304.2666666706403,
+        "meanReadyMs": 447.83333335320157,
+        "meanFcpMs": 142.66666666666666,
+        "meanLcpMs": 142.66666666666666,
+        "meanTransferBytes": 900
+      },
+      "ratios": {
+        "load": 0.9884969325154876,
+        "ready": 1.3501302567143163,
+        "fcp": 1.457943925233645,
+        "lcp": 1.457943925233645
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags|warm",
+      "path": "/posts/tags",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 276.79999999205273,
+        "meanReadyMs": 386.36666667461395,
+        "meanFcpMs": 165.33333333333334,
+        "meanLcpMs": 165.33333333333334,
+        "meanTransferBytes": 13260
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 230.0666666428248,
+        "meanReadyMs": 347.6666666666667,
+        "meanFcpMs": 80,
+        "meanLcpMs": 80,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.2031295277632754,
+        "ready": 1.1113135187189278,
+        "fcp": 2.066666666666667,
+        "lcp": 2.066666666666667
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/ai|warm",
+      "path": "/posts/tags/ai",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 308.86666665474576,
+        "meanReadyMs": 421.79999999205273,
+        "meanFcpMs": 209.33333333333334,
+        "meanLcpMs": 209.33333333333334,
+        "meanTransferBytes": 13327.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 236.5,
+        "meanReadyMs": 333.46666665871936,
+        "meanFcpMs": 80,
+        "meanLcpMs": 80,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.305990133846705,
+        "ready": 1.26489404238936,
+        "fcp": 2.6166666666666667,
+        "lcp": 2.6166666666666667
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/bun|warm",
+      "path": "/posts/tags/bun",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 270.5999999841054,
+        "meanReadyMs": 361.46666665871936,
+        "meanFcpMs": 169.33333333333334,
+        "meanLcpMs": 169.33333333333334,
+        "meanTransferBytes": 13292
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 223.13333332538605,
+        "meanReadyMs": 314.13333332538605,
+        "meanFcpMs": 73.33333333333333,
+        "meanLcpMs": 73.33333333333333,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.212727815926546,
+        "ready": 1.15067911715152,
+        "fcp": 2.3090909090909095,
+        "lcp": 2.3090909090909095
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/dhh|warm",
+      "path": "/posts/tags/dhh",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 273.9666666785876,
+        "meanReadyMs": 387.36666665474576,
+        "meanFcpMs": 169.33333333333334,
+        "meanLcpMs": 169.33333333333334,
+        "meanTransferBytes": 13320.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 219.13333332538605,
+        "meanReadyMs": 333.13333332538605,
+        "meanFcpMs": 89.33333333333333,
+        "meanLcpMs": 89.33333333333333,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.2502281716847743,
+        "ready": 1.16279767859912,
+        "fcp": 1.8955223880597016,
+        "lcp": 1.8955223880597016
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/infra|warm",
+      "path": "/posts/tags/infra",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 307.20000000794727,
+        "meanReadyMs": 433.4666666785876,
+        "meanFcpMs": 197.33333333333334,
+        "meanLcpMs": 197.33333333333334,
+        "meanTransferBytes": 13273.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 193.9666666587194,
+        "meanReadyMs": 319.4666666785876,
+        "meanFcpMs": 78.66666666666667,
+        "meanLcpMs": 78.66666666666667,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.5837772814256779,
+        "ready": 1.3568447412220765,
+        "fcp": 2.5084745762711864,
+        "lcp": 2.5084745762711864
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/oss|warm",
+      "path": "/posts/tags/oss",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 357.0333333214124,
+        "meanReadyMs": 460.86666667461395,
+        "meanFcpMs": 226.66666666666666,
+        "meanLcpMs": 226.66666666666666,
+        "meanTransferBytes": 13304.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 203.43333333730698,
+        "meanReadyMs": 322.03333334128064,
+        "meanFcpMs": 89.33333333333333,
+        "meanLcpMs": 89.33333333333333,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.7550385055600777,
+        "ready": 1.4311147914188194,
+        "fcp": 2.537313432835821,
+        "lcp": 2.537313432835821
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/personal|warm",
+      "path": "/posts/tags/personal",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 260.13333332538605,
+        "meanReadyMs": 352.5,
+        "meanFcpMs": 162.66666666666666,
+        "meanLcpMs": 162.66666666666666,
+        "meanTransferBytes": 13242.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 213.39999999602637,
+        "meanReadyMs": 314.8333333333333,
+        "meanFcpMs": 80,
+        "meanLcpMs": 80,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.2189940643403463,
+        "ready": 1.119640021175225,
+        "fcp": 2.033333333333333,
+        "lcp": 2.033333333333333
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/philosophy|warm",
+      "path": "/posts/tags/philosophy",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 284.70000000794727,
+        "meanReadyMs": 391.39999999602634,
+        "meanFcpMs": 185.33333333333334,
+        "meanLcpMs": 185.33333333333334,
+        "meanTransferBytes": 13472
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 226.9666666587194,
+        "meanReadyMs": 343.9333333174388,
+        "meanFcpMs": 89.33333333333333,
+        "meanLcpMs": 89.33333333333333,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.25436921729145,
+        "ready": 1.138011242529893,
+        "fcp": 2.0746268656716422,
+        "lcp": 2.0746268656716422
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/prompt-caching|warm",
+      "path": "/posts/tags/prompt-caching",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 287.86666667461395,
+        "meanReadyMs": 408.3333333134651,
+        "meanFcpMs": 181.33333333333334,
+        "meanLcpMs": 181.33333333333334,
+        "meanTransferBytes": 13245.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 231.63333334525427,
+        "meanReadyMs": 335.36666667461395,
+        "meanFcpMs": 84,
+        "meanLcpMs": 84,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.2427687436744812,
+        "ready": 1.2175728057960105,
+        "fcp": 2.158730158730159,
+        "lcp": 2.158730158730159
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/scripting|warm",
+      "path": "/posts/tags/scripting",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 269.53333334128064,
+        "meanReadyMs": 372.63333334525424,
+        "meanFcpMs": 174.66666666666666,
+        "meanLcpMs": 174.66666666666666,
+        "meanTransferBytes": 13275.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 248.7999999920527,
+        "meanReadyMs": 352.86666665474576,
+        "meanFcpMs": 81.33333333333333,
+        "meanLcpMs": 81.33333333333333,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.0833333333998802,
+        "ready": 1.056017381516653,
+        "fcp": 2.1475409836065573,
+        "lcp": 2.1475409836065573
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/typescript|warm",
+      "path": "/posts/tags/typescript",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 288.1666666865349,
+        "meanReadyMs": 403.5666666825612,
+        "meanFcpMs": 177.33333333333334,
+        "meanLcpMs": 177.33333333333334,
+        "meanTransferBytes": 13259.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 222.43333333730698,
+        "meanReadyMs": 330.4000000158946,
+        "meanFcpMs": 84,
+        "meanLcpMs": 84,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.2955192567723075,
+        "ready": 1.2214487489804684,
+        "fcp": 2.111111111111111,
+        "lcp": 2.111111111111111
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/typescript-as-a-scripting-language|warm",
+      "path": "/posts/typescript-as-a-scripting-language",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 355.53333336114883,
+        "meanReadyMs": 707.5333333412806,
+        "meanFcpMs": 264,
+        "meanLcpMs": 264,
+        "meanTransferBytes": 20234.333333333332
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 310.9333333571752,
+        "meanReadyMs": 459.933333337307,
+        "meanFcpMs": 145.33333333333334,
+        "meanLcpMs": 145.33333333333334,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.1434391080635307,
+        "ready": 1.5383388896981471,
+        "fcp": 1.81651376146789,
+        "lcp": 1.81651376146789
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/|cold",
+      "path": "/",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 617.3999999761581,
+        "meanReadyMs": 894.6000000039736,
+        "meanFcpMs": 350.6666666666667,
+        "meanLcpMs": 350.6666666666667,
+        "meanTransferBytes": 421068.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 406.70000000794727,
+        "meanReadyMs": 616.0333333611488,
+        "meanFcpMs": 309.3333333333333,
+        "meanLcpMs": 309.3333333333333,
+        "meanTransferBytes": 227082
+      },
+      "ratios": {
+        "load": 1.5180722890683394,
+        "ready": 1.4521941452793357,
+        "fcp": 1.1336206896551726,
+        "lcp": 1.1336206896551726
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/about|cold",
+      "path": "/about",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 657.0333333214124,
+        "meanReadyMs": 899.566666662693,
+        "meanFcpMs": 340,
+        "meanLcpMs": 340,
+        "meanTransferBytes": 445727
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 396.2333333492279,
+        "meanReadyMs": 558.3333333333334,
+        "meanFcpMs": 270.6666666666667,
+        "meanLcpMs": 270.6666666666667,
+        "meanTransferBytes": 223274
+      },
+      "ratios": {
+        "load": 1.65819803136634,
+        "ready": 1.6111641790973605,
+        "fcp": 1.2561576354679802,
+        "lcp": 1.2561576354679802
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/analytics|cold",
+      "path": "/analytics",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 3,
+        "meanLoadMs": 598.3333333532015,
+        "meanReadyMs": 1074.7666666706402,
+        "meanFcpMs": 368,
+        "meanLcpMs": 368,
+        "meanTransferBytes": 473859.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 471.3333333333333,
+        "meanReadyMs": 825.133333325386,
+        "meanFcpMs": 397.3333333333333,
+        "meanLcpMs": 397.3333333333333,
+        "meanTransferBytes": 259326
+      },
+      "ratios": {
+        "load": 1.2694483734509225,
+        "ready": 1.3025369637403956,
+        "fcp": 0.9261744966442953,
+        "lcp": 0.9261744966442953
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 3,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/links|cold",
+      "path": "/links",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 622.433333337307,
+        "meanReadyMs": 888.133333325386,
+        "meanFcpMs": 318.6666666666667,
+        "meanLcpMs": 318.6666666666667,
+        "meanTransferBytes": 423740
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 424.566666662693,
+        "meanReadyMs": 610.5666666825613,
+        "meanFcpMs": 326.6666666666667,
+        "meanLcpMs": 326.6666666666667,
+        "meanTransferBytes": 253771.66666666666
+      },
+      "ratios": {
+        "load": 1.4660438093973445,
+        "ready": 1.4546050116868467,
+        "fcp": 0.9755102040816327,
+        "lcp": 0.9755102040816327
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts|cold",
+      "path": "/posts",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 609.8333333333334,
+        "meanReadyMs": 859.0999999841055,
+        "meanFcpMs": 322.6666666666667,
+        "meanLcpMs": 322.6666666666667,
+        "meanTransferBytes": 420476
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 428.2666666507721,
+        "meanReadyMs": 634.2666666309038,
+        "meanFcpMs": 324,
+        "meanLcpMs": 324,
+        "meanTransferBytes": 227760.66666666666
+      },
+      "ratios": {
+        "load": 1.4239570361674188,
+        "ready": 1.3544776119916104,
+        "fcp": 0.9958847736625515,
+        "lcp": 0.9958847736625515
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/a-place-to-share-my-thoughts|cold",
+      "path": "/posts/a-place-to-share-my-thoughts",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 578.6333333452543,
+        "meanReadyMs": 1020.3666666547457,
+        "meanFcpMs": 354.6666666666667,
+        "meanLcpMs": 354.6666666666667,
+        "meanTransferBytes": 458589.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 501.10000002384186,
+        "meanReadyMs": 748.6666666865349,
+        "meanFcpMs": 369.3333333333333,
+        "meanLcpMs": 369.3333333333333,
+        "meanTransferBytes": 339664
+      },
+      "ratios": {
+        "load": 1.15472626884399,
+        "ready": 1.3629118432248448,
+        "fcp": 0.96028880866426,
+        "lcp": 0.96028880866426
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/on-neo-oss-and-nietzsche|cold",
+      "path": "/posts/on-neo-oss-and-nietzsche",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 584.0999999841055,
+        "meanReadyMs": 950.6666666666666,
+        "meanFcpMs": 361.3333333333333,
+        "meanLcpMs": 950.6666666666666,
+        "meanTransferBytes": 460342.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 520.6000000039736,
+        "meanReadyMs": 765.8999999960264,
+        "meanFcpMs": 392,
+        "meanLcpMs": 392,
+        "meanTransferBytes": 345371
+      },
+      "ratios": {
+        "load": 1.1219746446017043,
+        "ready": 1.241241241247681,
+        "fcp": 0.9217687074829931,
+        "lcp": 2.4251700680272106
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/prompt-caching-sucks|cold",
+      "path": "/posts/prompt-caching-sucks",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 719.6333333452543,
+        "meanReadyMs": 1283.733333349228,
+        "meanFcpMs": 426.6666666666667,
+        "meanLcpMs": 426.6666666666667,
+        "meanTransferBytes": 889506
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 637.4000000158945,
+        "meanReadyMs": 903.7000000079473,
+        "meanFcpMs": 488,
+        "meanLcpMs": 488,
+        "meanTransferBytes": 458844
+      },
+      "ratios": {
+        "load": 1.1290137014862083,
+        "ready": 1.420530412014981,
+        "fcp": 0.8743169398907105,
+        "lcp": 0.8743169398907105
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags|cold",
+      "path": "/posts/tags",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 626.3999999960264,
+        "meanReadyMs": 840.5,
+        "meanFcpMs": 337.3333333333333,
+        "meanLcpMs": 337.3333333333333,
+        "meanTransferBytes": 418159.6666666667
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 389.7333333293597,
+        "meanReadyMs": 556.7999999920527,
+        "meanFcpMs": 269.3333333333333,
+        "meanLcpMs": 269.3333333333333,
+        "meanTransferBytes": 207762
+      },
+      "ratios": {
+        "load": 1.6072528224488873,
+        "ready": 1.5095186781824652,
+        "fcp": 1.2524752475247525,
+        "lcp": 1.2524752475247525
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/ai|cold",
+      "path": "/posts/tags/ai",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 616.2666666706403,
+        "meanReadyMs": 853.633333325386,
+        "meanFcpMs": 321.3333333333333,
+        "meanLcpMs": 321.3333333333333,
+        "meanTransferBytes": 418077
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 400.3333333333333,
+        "meanReadyMs": 621.5333333412806,
+        "meanFcpMs": 290.6666666666667,
+        "meanLcpMs": 290.6666666666667,
+        "meanTransferBytes": 224238
+      },
+      "ratios": {
+        "load": 1.539383846804264,
+        "ready": 1.3734312989077622,
+        "fcp": 1.1055045871559632,
+        "lcp": 1.1055045871559632
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/bun|cold",
+      "path": "/posts/tags/bun",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 630.7333333094915,
+        "meanReadyMs": 854.4666666587194,
+        "meanFcpMs": 324,
+        "meanLcpMs": 324,
+        "meanTransferBytes": 417980.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 400.60000000397366,
+        "meanReadyMs": 595.3333333333334,
+        "meanFcpMs": 280,
+        "meanLcpMs": 280,
+        "meanTransferBytes": 224142
+      },
+      "ratios": {
+        "load": 1.5744716258193587,
+        "ready": 1.4352743560896741,
+        "fcp": 1.1571428571428573,
+        "lcp": 1.1571428571428573
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/dhh|cold",
+      "path": "/posts/tags/dhh",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 628.5666666825613,
+        "meanReadyMs": 877.5333333412806,
+        "meanFcpMs": 336,
+        "meanLcpMs": 336,
+        "meanTransferBytes": 418013
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 402.9666666785876,
+        "meanReadyMs": 594.4333333571752,
+        "meanFcpMs": 290.6666666666667,
+        "meanLcpMs": 290.6666666666667,
+        "meanTransferBytes": 224175
+      },
+      "ratios": {
+        "load": 1.5598477955098844,
+        "ready": 1.4762518925128985,
+        "fcp": 1.1559633027522935,
+        "lcp": 1.1559633027522935
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/infra|cold",
+      "path": "/posts/tags/infra",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 635.0999999841055,
+        "meanReadyMs": 914.2333333293597,
+        "meanFcpMs": 333.3333333333333,
+        "meanLcpMs": 333.3333333333333,
+        "meanTransferBytes": 417940.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 403.4666666785876,
+        "meanReadyMs": 624.2333333492279,
+        "meanFcpMs": 294.6666666666667,
+        "meanLcpMs": 294.6666666666667,
+        "meanTransferBytes": 224102
+      },
+      "ratios": {
+        "load": 1.574107732894929,
+        "ready": 1.4645698723331249,
+        "fcp": 1.1312217194570133,
+        "lcp": 1.1312217194570133
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/oss|cold",
+      "path": "/posts/tags/oss",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 649.1000000039736,
+        "meanReadyMs": 914.4666666587194,
+        "meanFcpMs": 337.3333333333333,
+        "meanLcpMs": 337.3333333333333,
+        "meanTransferBytes": 418010.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 412.46666665871936,
+        "meanReadyMs": 647.8333333134651,
+        "meanFcpMs": 286.6666666666667,
+        "meanLcpMs": 286.6666666666667,
+        "meanTransferBytes": 224174
+      },
+      "ratios": {
+        "load": 1.573702925528884,
+        "ready": 1.4115770517418549,
+        "fcp": 1.1767441860465115,
+        "lcp": 1.1767441860465115
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/personal|cold",
+      "path": "/posts/tags/personal",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 640.6333333055178,
+        "meanReadyMs": 878.6999999682108,
+        "meanFcpMs": 326.6666666666667,
+        "meanLcpMs": 326.6666666666667,
+        "meanTransferBytes": 417958.6666666667
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 398.1666666666667,
+        "meanReadyMs": 615.9666666587194,
+        "meanFcpMs": 277.3333333333333,
+        "meanLcpMs": 277.3333333333333,
+        "meanTransferBytes": 224123
+      },
+      "ratios": {
+        "load": 1.6089577228267504,
+        "ready": 1.4265382325551401,
+        "fcp": 1.1778846153846156,
+        "lcp": 1.1778846153846156
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/philosophy|cold",
+      "path": "/posts/tags/philosophy",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 626.633333325386,
+        "meanReadyMs": 848.066666662693,
+        "meanFcpMs": 324,
+        "meanLcpMs": 324,
+        "meanTransferBytes": 418146
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 403.5,
+        "meanReadyMs": 611.1000000039736,
+        "meanFcpMs": 294.6666666666667,
+        "meanLcpMs": 294.6666666666667,
+        "meanTransferBytes": 224308
+      },
+      "ratios": {
+        "load": 1.5529946302983546,
+        "ready": 1.3877706867242325,
+        "fcp": 1.099547511312217,
+        "lcp": 1.099547511312217
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/prompt-caching|cold",
+      "path": "/posts/tags/prompt-caching",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 625.8333333333334,
+        "meanReadyMs": 828.9666666785876,
+        "meanFcpMs": 324,
+        "meanLcpMs": 324,
+        "meanTransferBytes": 417939.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 404.3333333333333,
+        "meanReadyMs": 627,
+        "meanFcpMs": 292,
+        "meanLcpMs": 292,
+        "meanTransferBytes": 224102
+      },
+      "ratios": {
+        "load": 1.547815333882935,
+        "ready": 1.3221158958191188,
+        "fcp": 1.1095890410958904,
+        "lcp": 1.1095890410958904
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/scripting|cold",
+      "path": "/posts/tags/scripting",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 619.3666666944822,
+        "meanReadyMs": 831.8000000119209,
+        "meanFcpMs": 322.6666666666667,
+        "meanLcpMs": 322.6666666666667,
+        "meanTransferBytes": 417983
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 420.2666666706403,
+        "meanReadyMs": 628.8000000119209,
+        "meanFcpMs": 313.3333333333333,
+        "meanLcpMs": 313.3333333333333,
+        "meanTransferBytes": 224146
+      },
+      "ratios": {
+        "load": 1.4737468274634187,
+        "ready": 1.322837150121106,
+        "fcp": 1.0297872340425533,
+        "lcp": 1.0297872340425533
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/typescript|cold",
+      "path": "/posts/tags/typescript",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 631.8999999761581,
+        "meanReadyMs": 896.5999999841055,
+        "meanFcpMs": 324,
+        "meanLcpMs": 324,
+        "meanTransferBytes": 417984
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 402.26666669050854,
+        "meanReadyMs": 611.7666666905085,
+        "meanFcpMs": 289.3333333333333,
+        "meanLcpMs": 289.3333333333333,
+        "meanTransferBytes": 224145
+      },
+      "ratios": {
+        "load": 1.570848524872488,
+        "ready": 1.4655914563545411,
+        "fcp": 1.1198156682027651,
+        "lcp": 1.1198156682027651
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/typescript-as-a-scripting-language|cold",
+      "path": "/posts/typescript-as-a-scripting-language",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 662.133333325386,
+        "meanReadyMs": 1211.6333333452542,
+        "meanFcpMs": 422.6666666666667,
+        "meanLcpMs": 422.6666666666667,
+        "meanTransferBytes": 487282
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 601.0999999642372,
+        "meanReadyMs": 871.9666666388512,
+        "meanFcpMs": 440,
+        "meanLcpMs": 440,
+        "meanTransferBytes": 380381
+      },
+      "ratios": {
+        "load": 1.1015360728078192,
+        "ready": 1.3895408846483868,
+        "fcp": 0.9606060606060607,
+        "lcp": 0.9606060606060607
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/|warm",
+      "path": "/",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 350.89999999602634,
+        "meanReadyMs": 473.20000000794727,
+        "meanFcpMs": 228,
+        "meanLcpMs": 228,
+        "meanTransferBytes": 13076.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 94.93333333730698,
+        "meanReadyMs": 169.9666666587194,
+        "meanFcpMs": 60,
+        "meanLcpMs": 60,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.6962780896910674,
+        "ready": 2.78407530906103,
+        "fcp": 3.8,
+        "lcp": 3.8
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/about|warm",
+      "path": "/about",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 323.0000000198682,
+        "meanReadyMs": 460.89999999602634,
+        "meanFcpMs": 230.66666666666666,
+        "meanLcpMs": 230.66666666666666,
+        "meanTransferBytes": 13308
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 95.13333332538605,
+        "meanReadyMs": 163.16666666666666,
+        "meanFcpMs": 66.66666666666667,
+        "meanLcpMs": 66.66666666666667,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.3952347587265357,
+        "ready": 2.8247191010992423,
+        "fcp": 3.4599999999999995,
+        "lcp": 3.4599999999999995
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/analytics|warm",
+      "path": "/analytics",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 3,
+        "meanLoadMs": 367.76666669050854,
+        "meanReadyMs": 530.9333333571752,
+        "meanFcpMs": 249.33333333333334,
+        "meanLcpMs": 249.33333333333334,
+        "meanTransferBytes": 13890
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 112.29999999205272,
+        "meanReadyMs": 262.29999999205273,
+        "meanFcpMs": 110.66666666666667,
+        "meanLcpMs": 110.66666666666667,
+        "meanTransferBytes": 0
+      },
+      "ratios": {
+        "load": 3.274859009051957,
+        "ready": 2.0241453807596708,
+        "fcp": 2.253012048192771,
+        "lcp": 2.253012048192771
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 3,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/links|warm",
+      "path": "/links",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 352.066666662693,
+        "meanReadyMs": 481.6666666865349,
+        "meanFcpMs": 228,
+        "meanLcpMs": 228,
+        "meanTransferBytes": 13037.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 144.2000000278155,
+        "meanReadyMs": 229,
+        "meanFcpMs": 104,
+        "meanLcpMs": 104,
+        "meanTransferBytes": 4611.333333333333
+      },
+      "ratios": {
+        "load": 2.4415164118916857,
+        "ready": 2.103347889460851,
+        "fcp": 2.1923076923076925,
+        "lcp": 2.1923076923076925
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts|warm",
+      "path": "/posts",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 353,
+        "meanReadyMs": 468.2666666507721,
+        "meanFcpMs": 232,
+        "meanLcpMs": 232,
+        "meanTransferBytes": 13286
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 119.93333333730698,
+        "meanReadyMs": 202.30000001192093,
+        "meanFcpMs": 82.66666666666667,
+        "meanLcpMs": 82.66666666666667,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 2.9433018342549,
+        "ready": 2.314714120727526,
+        "fcp": 2.8064516129032255,
+        "lcp": 2.8064516129032255
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/a-place-to-share-my-thoughts|warm",
+      "path": "/posts/a-place-to-share-my-thoughts",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 349.63333334525424,
+        "meanReadyMs": 545.2666666905085,
+        "meanFcpMs": 240,
+        "meanLcpMs": 240,
+        "meanTransferBytes": 14407
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 108.86666667461395,
+        "meanReadyMs": 226.49999998013178,
+        "meanFcpMs": 73.33333333333333,
+        "meanLcpMs": 73.33333333333333,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.2115737904445587,
+        "ready": 2.407358352045644,
+        "fcp": 3.272727272727273,
+        "lcp": 3.272727272727273
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/on-neo-oss-and-nietzsche|warm",
+      "path": "/posts/on-neo-oss-and-nietzsche",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 345.86666665474576,
+        "meanReadyMs": 558.6666666666666,
+        "meanFcpMs": 236,
+        "meanLcpMs": 558.6666666666666,
+        "meanTransferBytes": 15532
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 117.2666666507721,
+        "meanReadyMs": 244.39999999602637,
+        "meanFcpMs": 101.33333333333333,
+        "meanLcpMs": 101.33333333333333,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 2.9494030702242062,
+        "ready": 2.2858701582477488,
+        "fcp": 2.3289473684210527,
+        "lcp": 5.513157894736842
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/prompt-caching-sucks|warm",
+      "path": "/posts/prompt-caching-sucks",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 382.6666666865349,
+        "meanReadyMs": 668.8666666944822,
+        "meanFcpMs": 245.33333333333334,
+        "meanLcpMs": 245.33333333333334,
+        "meanTransferBytes": 20454
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 147.66666666666666,
+        "meanReadyMs": 271.19999998807907,
+        "meanFcpMs": 108,
+        "meanLcpMs": 108,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 2.5914221220307105,
+        "ready": 2.466322517418448,
+        "fcp": 2.271604938271605,
+        "lcp": 2.271604938271605
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags|warm",
+      "path": "/posts/tags",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 325.0333333214124,
+        "meanReadyMs": 437.4333333174388,
+        "meanFcpMs": 234.66666666666666,
+        "meanLcpMs": 234.66666666666666,
+        "meanTransferBytes": 12278
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 95.2666666507721,
+        "meanReadyMs": 174.7000000079473,
+        "meanFcpMs": 64,
+        "meanLcpMs": 64,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.4118264525084876,
+        "ready": 2.5039114670723497,
+        "fcp": 3.6666666666666665,
+        "lcp": 3.6666666666666665
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/ai|warm",
+      "path": "/posts/tags/ai",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 325.60000000397366,
+        "meanReadyMs": 429.8333333134651,
+        "meanFcpMs": 228,
+        "meanLcpMs": 228,
+        "meanTransferBytes": 12383
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 100.63333330551784,
+        "meanReadyMs": 187.19999998807907,
+        "meanFcpMs": 68,
+        "meanLcpMs": 68,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.2355084474392606,
+        "ready": 2.296118233658317,
+        "fcp": 3.3529411764705883,
+        "lcp": 3.3529411764705883
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/bun|warm",
+      "path": "/posts/tags/bun",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 322.7666666507721,
+        "meanReadyMs": 417.0999999841054,
+        "meanFcpMs": 233.33333333333334,
+        "meanLcpMs": 233.33333333333334,
+        "meanTransferBytes": 12284.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 91.16666666666667,
+        "meanReadyMs": 174.36666665474573,
+        "meanFcpMs": 58.666666666666664,
+        "meanLcpMs": 58.666666666666664,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.5404021936099315,
+        "ready": 2.3920856433528273,
+        "fcp": 3.9772727272727275,
+        "lcp": 3.9772727272727275
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/dhh|warm",
+      "path": "/posts/tags/dhh",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 328.10000000397366,
+        "meanReadyMs": 436.0999999841054,
+        "meanFcpMs": 228,
+        "meanLcpMs": 228,
+        "meanTransferBytes": 12316.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 94.5333333214124,
+        "meanReadyMs": 176,
+        "meanFcpMs": 74.66666666666667,
+        "meanLcpMs": 74.66666666666667,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.4707334278421866,
+        "ready": 2.477840909000599,
+        "fcp": 3.0535714285714284,
+        "lcp": 3.0535714285714284
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/infra|warm",
+      "path": "/posts/tags/infra",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 358.8333333333333,
+        "meanReadyMs": 489.13333332538605,
+        "meanFcpMs": 242.66666666666666,
+        "meanLcpMs": 242.66666666666666,
+        "meanTransferBytes": 12242.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 104.19999998807907,
+        "meanReadyMs": 195.7666666507721,
+        "meanFcpMs": 65.33333333333333,
+        "meanLcpMs": 65.33333333333333,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.4436980170286504,
+        "ready": 2.4985526989533433,
+        "fcp": 3.7142857142857144,
+        "lcp": 3.7142857142857144
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/oss|warm",
+      "path": "/posts/tags/oss",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 341.20000000794727,
+        "meanReadyMs": 459.39999999602634,
+        "meanFcpMs": 230.66666666666666,
+        "meanLcpMs": 230.66666666666666,
+        "meanTransferBytes": 12315.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 95.19999998807907,
+        "meanReadyMs": 177.7000000079473,
+        "meanFcpMs": 68,
+        "meanLcpMs": 68,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.58403361397765,
+        "ready": 2.5852560493836836,
+        "fcp": 3.392156862745098,
+        "lcp": 3.392156862745098
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/personal|warm",
+      "path": "/posts/tags/personal",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 321.3333333333333,
+        "meanReadyMs": 422.933333337307,
+        "meanFcpMs": 226.66666666666666,
+        "meanLcpMs": 226.66666666666666,
+        "meanTransferBytes": 12266
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 91.13333334525426,
+        "meanReadyMs": 176.13333332538605,
+        "meanFcpMs": 60,
+        "meanLcpMs": 60,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.52596927532517,
+        "ready": 2.401211203764516,
+        "fcp": 3.7777777777777777,
+        "lcp": 3.7777777777777777
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/philosophy|warm",
+      "path": "/posts/tags/philosophy",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 332.4666666785876,
+        "meanReadyMs": 439.2000000278155,
+        "meanFcpMs": 234.66666666666666,
+        "meanLcpMs": 234.66666666666666,
+        "meanTransferBytes": 12452
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 101.80000001192093,
+        "meanReadyMs": 186.23333332935968,
+        "meanFcpMs": 68,
+        "meanLcpMs": 68,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.265880811784433,
+        "ready": 2.3583318419752284,
+        "fcp": 3.4509803921568625,
+        "lcp": 3.4509803921568625
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/prompt-caching|warm",
+      "path": "/posts/tags/prompt-caching",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 319.0666666825612,
+        "meanReadyMs": 422.1666666865349,
+        "meanFcpMs": 226.66666666666666,
+        "meanLcpMs": 226.66666666666666,
+        "meanTransferBytes": 12243.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 104.66666668653488,
+        "meanReadyMs": 202,
+        "meanFcpMs": 65.33333333333333,
+        "meanLcpMs": 65.33333333333333,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.0484076428853006,
+        "ready": 2.0899339934976973,
+        "fcp": 3.469387755102041,
+        "lcp": 3.469387755102041
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/scripting|warm",
+      "path": "/posts/tags/scripting",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 321.933333337307,
+        "meanReadyMs": 418.39999999602634,
+        "meanFcpMs": 228,
+        "meanLcpMs": 228,
+        "meanTransferBytes": 12289.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 98.93333331743877,
+        "meanReadyMs": 180.86666665474573,
+        "meanFcpMs": 65.33333333333333,
+        "meanLcpMs": 65.33333333333333,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.2540431272475936,
+        "ready": 2.313306303116125,
+        "fcp": 3.489795918367347,
+        "lcp": 3.489795918367347
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/typescript|warm",
+      "path": "/posts/tags/typescript",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 320.29999999205273,
+        "meanReadyMs": 421.433333337307,
+        "meanFcpMs": 230.66666666666666,
+        "meanLcpMs": 230.66666666666666,
+        "meanTransferBytes": 12288.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 95.10000000397365,
+        "meanReadyMs": 180.16666666666666,
+        "meanFcpMs": 78.66666666666667,
+        "meanLcpMs": 78.66666666666667,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.3680336485664495,
+        "ready": 2.339130434804664,
+        "fcp": 2.932203389830508,
+        "lcp": 2.932203389830508
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/typescript-as-a-scripting-language|warm",
+      "path": "/posts/typescript-as-a-scripting-language",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 355.3333333134651,
+        "meanReadyMs": 687.8666666547457,
+        "meanFcpMs": 256,
+        "meanLcpMs": 256,
+        "meanTransferBytes": 19086.666666666668
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 150.16666666666666,
+        "meanReadyMs": 277.4666666785876,
+        "meanFcpMs": 121.33333333333333,
+        "meanLcpMs": 121.33333333333333,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 2.366259711299435,
+        "ready": 2.479096588029286,
+        "fcp": 2.10989010989011,
+        "lcp": 2.10989010989011
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    }
+  ],
+  "overview": {
+    "liveCold": {
+      "pages": 20,
+      "passed": 0,
+      "missed": 20,
+      "arithmeticMeanLoadRatio": 1.34705416725174,
+      "arithmeticMeanReadyRatio": 1.1959077844597983
+    },
+    "liveWarm": {
+      "pages": 20,
+      "passed": 0,
+      "missed": 20,
+      "arithmeticMeanLoadRatio": 1.2684613919704442,
+      "arithmeticMeanReadyRatio": 1.2421020806751606
+    },
+    "localCold": {
+      "pages": 20,
+      "passed": 0,
+      "missed": 20,
+      "arithmeticMeanLoadRatio": 1.451305000777012,
+      "arithmeticMeanReadyRatio": 1.409233943213668
+    },
+    "localWarm": {
+      "pages": 20,
+      "passed": 0,
+      "missed": 20,
+      "arithmeticMeanLoadRatio": 3.2009192727915083,
+      "arithmeticMeanReadyRatio": 2.39726640977144
+    }
+  },
+  "misses": [
+    {
+      "id": "live|/|cold",
+      "path": "/",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 730.7999999920527,
+        "meanReadyMs": 1176.1666666467984,
+        "meanFcpMs": 497.3333333333333,
+        "meanLcpMs": 497.3333333333333,
+        "meanTransferBytes": 434533
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 638.5000000397364,
+        "meanReadyMs": 955.1666666666666,
+        "meanFcpMs": 522.6666666666666,
+        "meanLcpMs": 522.6666666666666,
+        "meanTransferBytes": 232669.66666666666
+      },
+      "ratios": {
+        "load": 1.144557556690011,
+        "ready": 1.2313732332718184,
+        "fcp": 0.951530612244898,
+        "lcp": 0.951530612244898
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/about|cold",
+      "path": "/about",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 959.2333333293597,
+        "meanReadyMs": 1366.7666666706402,
+        "meanFcpMs": 714.6666666666666,
+        "meanLcpMs": 714.6666666666666,
+        "meanTransferBytes": 459179
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 607.4666666984558,
+        "meanReadyMs": 951.5000000198683,
+        "meanFcpMs": 506.6666666666667,
+        "meanLcpMs": 506.6666666666667,
+        "meanTransferBytes": 228830.66666666666
+      },
+      "ratios": {
+        "load": 1.5790715539055569,
+        "ready": 1.4364337011477675,
+        "fcp": 1.4105263157894736,
+        "lcp": 1.4105263157894736
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/analytics|cold",
+      "path": "/analytics",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 3,
+        "meanLoadMs": 1129.3999999960263,
+        "meanReadyMs": 1816.4666666587193,
+        "meanFcpMs": 837.3333333333334,
+        "meanLcpMs": 837.3333333333334,
+        "meanTransferBytes": 489856.6666666667
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 621.7666666507721,
+        "meanReadyMs": 1548.8333333333333,
+        "meanFcpMs": 544,
+        "meanLcpMs": 544,
+        "meanTransferBytes": 266441.6666666667
+      },
+      "ratios": {
+        "load": 1.8164370342972675,
+        "ready": 1.1727967287154113,
+        "fcp": 1.5392156862745099,
+        "lcp": 1.5392156862745099
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 3,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/links|cold",
+      "path": "/links",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 882.7000000079473,
+        "meanReadyMs": 1256.7333333293598,
+        "meanFcpMs": 558.6666666666666,
+        "meanLcpMs": 558.6666666666666,
+        "meanTransferBytes": 437587.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 597.8999999960264,
+        "meanReadyMs": 946.8666666547457,
+        "meanFcpMs": 488,
+        "meanLcpMs": 488,
+        "meanTransferBytes": 262036.66666666666
+      },
+      "ratios": {
+        "load": 1.4763338351125834,
+        "ready": 1.3272548053353326,
+        "fcp": 1.1448087431693987,
+        "lcp": 1.1448087431693987
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts|cold",
+      "path": "/posts",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 688.7333333094915,
+        "meanReadyMs": 1111.199999988079,
+        "meanFcpMs": 485.3333333333333,
+        "meanLcpMs": 485.3333333333333,
+        "meanTransferBytes": 433688
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 539.9666666785876,
+        "meanReadyMs": 995.866666674614,
+        "meanFcpMs": 414.6666666666667,
+        "meanLcpMs": 414.6666666666667,
+        "meanTransferBytes": 233343.66666666666
+      },
+      "ratios": {
+        "load": 1.2755108339297851,
+        "ready": 1.115812023007643,
+        "fcp": 1.170418006430868,
+        "lcp": 1.170418006430868
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/a-place-to-share-my-thoughts|cold",
+      "path": "/posts/a-place-to-share-my-thoughts",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 736.1333333452543,
+        "meanReadyMs": 1242.8999999960263,
+        "meanFcpMs": 497.3333333333333,
+        "meanLcpMs": 497.3333333333333,
+        "meanTransferBytes": 472158.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 706.1999999880791,
+        "meanReadyMs": 1128.2999999920528,
+        "meanFcpMs": 612,
+        "meanLcpMs": 612,
+        "meanTransferBytes": 350428
+      },
+      "ratios": {
+        "load": 1.0423864816732944,
+        "ready": 1.1015687317245242,
+        "fcp": 0.812636165577342,
+        "lcp": 0.812636165577342
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/on-neo-oss-and-nietzsche|cold",
+      "path": "/posts/on-neo-oss-and-nietzsche",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 805.133333325386,
+        "meanReadyMs": 1231.5333333015442,
+        "meanFcpMs": 504,
+        "meanLcpMs": 504,
+        "meanTransferBytes": 474049.6666666667
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 746.5333333412806,
+        "meanReadyMs": 1200.6666666666667,
+        "meanFcpMs": 649.3333333333334,
+        "meanLcpMs": 649.3333333333334,
+        "meanTransferBytes": 356423
+      },
+      "ratios": {
+        "load": 1.0784961600064498,
+        "ready": 1.0257079400068385,
+        "fcp": 0.7761806981519507,
+        "lcp": 0.7761806981519507
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/prompt-caching-sucks|cold",
+      "path": "/posts/prompt-caching-sucks",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 892.933333337307,
+        "meanReadyMs": 1416.233333349228,
+        "meanFcpMs": 570.6666666666666,
+        "meanLcpMs": 570.6666666666666,
+        "meanTransferBytes": 952128
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 719.933333337307,
+        "meanReadyMs": 1185.4666666785877,
+        "meanFcpMs": 588,
+        "meanLcpMs": 588,
+        "meanTransferBytes": 470236
+      },
+      "ratios": {
+        "load": 1.2403000277790237,
+        "ready": 1.1946631425050498,
+        "fcp": 0.9705215419501133,
+        "lcp": 0.9705215419501133
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags|cold",
+      "path": "/posts/tags",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 724.066666662693,
+        "meanReadyMs": 1042.1333333452542,
+        "meanFcpMs": 454.6666666666667,
+        "meanLcpMs": 454.6666666666667,
+        "meanTransferBytes": 431426.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 475.29999999205273,
+        "meanReadyMs": 805.6999999880791,
+        "meanFcpMs": 358.6666666666667,
+        "meanLcpMs": 358.6666666666667,
+        "meanTransferBytes": 213221
+      },
+      "ratios": {
+        "load": 1.5233887369551857,
+        "ready": 1.2934508295403666,
+        "fcp": 1.2676579925650557,
+        "lcp": 1.2676579925650557
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/ai|cold",
+      "path": "/posts/tags/ai",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 797.2999999920527,
+        "meanReadyMs": 1036.866666694482,
+        "meanFcpMs": 450.6666666666667,
+        "meanLcpMs": 450.6666666666667,
+        "meanTransferBytes": 431351.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 493.70000000794727,
+        "meanReadyMs": 881.8666666547457,
+        "meanFcpMs": 376,
+        "meanLcpMs": 376,
+        "meanTransferBytes": 229711.66666666666
+      },
+      "ratios": {
+        "load": 1.6149483491578251,
+        "ready": 1.1757635319494613,
+        "fcp": 1.198581560283688,
+        "lcp": 1.198581560283688
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/bun|cold",
+      "path": "/posts/tags/bun",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 765.4666666587194,
+        "meanReadyMs": 1075.733333349228,
+        "meanFcpMs": 477.3333333333333,
+        "meanLcpMs": 477.3333333333333,
+        "meanTransferBytes": 431224.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 487.3333333333333,
+        "meanReadyMs": 840.3666666547457,
+        "meanFcpMs": 376,
+        "meanLcpMs": 376,
+        "meanTransferBytes": 229600.33333333334
+      },
+      "ratios": {
+        "load": 1.570725034183419,
+        "ready": 1.280076157270026,
+        "fcp": 1.2695035460992907,
+        "lcp": 1.2695035460992907
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/dhh|cold",
+      "path": "/posts/tags/dhh",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 771.5999999841055,
+        "meanReadyMs": 1158.1666666467984,
+        "meanFcpMs": 477.3333333333333,
+        "meanLcpMs": 477.3333333333333,
+        "meanTransferBytes": 431384.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 517.3333333333334,
+        "meanReadyMs": 873.0333333214124,
+        "meanFcpMs": 408,
+        "meanLcpMs": 408,
+        "meanTransferBytes": 229608
+      },
+      "ratios": {
+        "load": 1.4914948453301007,
+        "ready": 1.3266007407078149,
+        "fcp": 1.1699346405228759,
+        "lcp": 1.1699346405228759
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/infra|cold",
+      "path": "/posts/tags/infra",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 791.433333337307,
+        "meanReadyMs": 1147.3999999960263,
+        "meanFcpMs": 466.6666666666667,
+        "meanLcpMs": 466.6666666666667,
+        "meanTransferBytes": 431290
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 539.2333333492279,
+        "meanReadyMs": 903.4333333174387,
+        "meanFcpMs": 429.3333333333333,
+        "meanLcpMs": 429.3333333333333,
+        "meanTransferBytes": 229568
+      },
+      "ratios": {
+        "load": 1.4677010570204212,
+        "ready": 1.2700439065965536,
+        "fcp": 1.0869565217391306,
+        "lcp": 1.0869565217391306
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/oss|cold",
+      "path": "/posts/tags/oss",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 736.933333337307,
+        "meanReadyMs": 1095.7666666706402,
+        "meanFcpMs": 473.3333333333333,
+        "meanLcpMs": 473.3333333333333,
+        "meanTransferBytes": 431220.6666666667
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 694.1666666467985,
+        "meanReadyMs": 1057.1666666666667,
+        "meanFcpMs": 572,
+        "meanLcpMs": 572,
+        "meanTransferBytes": 229667
+      },
+      "ratios": {
+        "load": 1.0616086434934922,
+        "ready": 1.0365126911593632,
+        "fcp": 0.8275058275058275,
+        "lcp": 0.8275058275058275
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/personal|cold",
+      "path": "/posts/tags/personal",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 781.0333333214124,
+        "meanReadyMs": 1107.0333333015442,
+        "meanFcpMs": 482.6666666666667,
+        "meanLcpMs": 482.6666666666667,
+        "meanTransferBytes": 431231.6666666667
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 618.566666662693,
+        "meanReadyMs": 979.7333333293597,
+        "meanFcpMs": 500,
+        "meanLcpMs": 500,
+        "meanTransferBytes": 229577.33333333334
+      },
+      "ratios": {
+        "load": 1.2626502128465211,
+        "ready": 1.1299333151599424,
+        "fcp": 0.9653333333333334,
+        "lcp": 0.9653333333333334
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/philosophy|cold",
+      "path": "/posts/tags/philosophy",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 748.3999999960264,
+        "meanReadyMs": 1120.9666666587193,
+        "meanFcpMs": 494.6666666666667,
+        "meanLcpMs": 494.6666666666667,
+        "meanTransferBytes": 431399.6666666667
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 639.7333333492279,
+        "meanReadyMs": 1003.0666666825613,
+        "meanFcpMs": 512,
+        "meanLcpMs": 512,
+        "meanTransferBytes": 229746.66666666666
+      },
+      "ratios": {
+        "load": 1.1698624426491746,
+        "ready": 1.117539545368493,
+        "fcp": 0.9661458333333334,
+        "lcp": 0.9661458333333334
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/prompt-caching|cold",
+      "path": "/posts/tags/prompt-caching",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 730.9666666785876,
+        "meanReadyMs": 1077.133333325386,
+        "meanFcpMs": 473.3333333333333,
+        "meanLcpMs": 473.3333333333333,
+        "meanTransferBytes": 431170
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 505.3333333333333,
+        "meanReadyMs": 874.7333333293597,
+        "meanFcpMs": 378.6666666666667,
+        "meanLcpMs": 378.6666666666667,
+        "meanTransferBytes": 229579
+      },
+      "ratios": {
+        "load": 1.4465039578072314,
+        "ready": 1.2313848029840857,
+        "fcp": 1.2499999999999998,
+        "lcp": 1.2499999999999998
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/scripting|cold",
+      "path": "/posts/tags/scripting",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 745.3999999761581,
+        "meanReadyMs": 1087.4666666587193,
+        "meanFcpMs": 465.3333333333333,
+        "meanLcpMs": 465.3333333333333,
+        "meanTransferBytes": 431279.6666666667
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 622.1666666666666,
+        "meanReadyMs": 1003.5333333412806,
+        "meanFcpMs": 497.3333333333333,
+        "meanLcpMs": 497.3333333333333,
+        "meanTransferBytes": 229605.33333333334
+      },
+      "ratios": {
+        "load": 1.1980712563238545,
+        "ready": 1.0836378130440185,
+        "fcp": 0.935656836461126,
+        "lcp": 0.935656836461126
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/typescript|cold",
+      "path": "/posts/tags/typescript",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 785.133333325386,
+        "meanReadyMs": 1074.066666662693,
+        "meanFcpMs": 470.6666666666667,
+        "meanLcpMs": 470.6666666666667,
+        "meanTransferBytes": 431348.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 616.8333333333334,
+        "meanReadyMs": 978.8333333333334,
+        "meanFcpMs": 506.6666666666667,
+        "meanLcpMs": 506.6666666666667,
+        "meanTransferBytes": 229600.66666666666
+      },
+      "ratios": {
+        "load": 1.2728451769663107,
+        "ready": 1.0972926953816036,
+        "fcp": 0.9289473684210526,
+        "lcp": 0.9289473684210526
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/typescript-as-a-scripting-language|cold",
+      "path": "/posts/typescript-as-a-scripting-language",
+      "origin": "live",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 843.7999999920527,
+        "meanReadyMs": 1493.3333333134651,
+        "meanFcpMs": 617.3333333333334,
+        "meanLcpMs": 617.3333333333334,
+        "meanTransferBytes": 500719
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 698.3999999960264,
+        "meanReadyMs": 1175.5666666825612,
+        "meanFcpMs": 548,
+        "meanLcpMs": 548,
+        "meanTransferBytes": 390877.3333333333
+      },
+      "ratios": {
+        "load": 1.2081901489072933,
+        "ready": 1.2703093543198523,
+        "fcp": 1.1265206812652069,
+        "lcp": 1.1265206812652069
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/|warm",
+      "path": "/",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 267.5,
+        "meanReadyMs": 406.0000000198682,
+        "meanFcpMs": 176,
+        "meanLcpMs": 176,
+        "meanTransferBytes": 14165
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 209.16666668653488,
+        "meanReadyMs": 302.03333334128064,
+        "meanFcpMs": 77.33333333333333,
+        "meanLcpMs": 77.33333333333333,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.2788844620299165,
+        "ready": 1.344222492029087,
+        "fcp": 2.2758620689655173,
+        "lcp": 2.2758620689655173
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/about|warm",
+      "path": "/about",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 284.36666669448215,
+        "meanReadyMs": 399.4000000357628,
+        "meanFcpMs": 184,
+        "meanLcpMs": 184,
+        "meanTransferBytes": 14331.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 233.7666666507721,
+        "meanReadyMs": 341.13333332538605,
+        "meanFcpMs": 101.33333333333333,
+        "meanLcpMs": 101.33333333333333,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.2164551549143756,
+        "ready": 1.1708032051350425,
+        "fcp": 1.8157894736842106,
+        "lcp": 1.8157894736842106
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/analytics|warm",
+      "path": "/analytics",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 3,
+        "meanLoadMs": 312.2333333293597,
+        "meanReadyMs": 491,
+        "meanFcpMs": 196,
+        "meanLcpMs": 196,
+        "meanTransferBytes": 14916.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 234.23333332935968,
+        "meanReadyMs": 467.20000000794727,
+        "meanFcpMs": 118.66666666666667,
+        "meanLcpMs": 118.66666666666667,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 1.3330012807798062,
+        "ready": 1.0509417808040409,
+        "fcp": 1.651685393258427,
+        "lcp": 1.651685393258427
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 3,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/links|warm",
+      "path": "/links",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 278.63333330551785,
+        "meanReadyMs": 432.96666665871936,
+        "meanFcpMs": 194.66666666666666,
+        "meanLcpMs": 194.66666666666666,
+        "meanTransferBytes": 14317
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 183.2000000079473,
+        "meanReadyMs": 280.53333334128064,
+        "meanFcpMs": 144,
+        "meanLcpMs": 144,
+        "meanTransferBytes": 6055
+      },
+      "ratios": {
+        "load": 1.5209243083702544,
+        "ready": 1.5433697717910662,
+        "fcp": 1.3518518518518519,
+        "lcp": 1.3518518518518519
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts|warm",
+      "path": "/posts",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 280.2000000278155,
+        "meanReadyMs": 397.36666667461395,
+        "meanFcpMs": 173.33333333333334,
+        "meanLcpMs": 173.33333333333334,
+        "meanTransferBytes": 14304.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 255.60000000397363,
+        "meanReadyMs": 350.20000000794727,
+        "meanFcpMs": 93.33333333333333,
+        "meanLcpMs": 93.33333333333333,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.096244131547181,
+        "ready": 1.134684941934884,
+        "fcp": 1.8571428571428574,
+        "lcp": 1.8571428571428574
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/a-place-to-share-my-thoughts|warm",
+      "path": "/posts/a-place-to-share-my-thoughts",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 279.933333337307,
+        "meanReadyMs": 483.39999999602634,
+        "meanFcpMs": 176,
+        "meanLcpMs": 176,
+        "meanTransferBytes": 15507.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 240.7333333492279,
+        "meanReadyMs": 406.9666666785876,
+        "meanFcpMs": 112,
+        "meanLcpMs": 112,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.1628357795021775,
+        "ready": 1.1878122695925952,
+        "fcp": 1.5714285714285714,
+        "lcp": 1.5714285714285714
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/on-neo-oss-and-nietzsche|warm",
+      "path": "/posts/on-neo-oss-and-nietzsche",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 298.9999999801318,
+        "meanReadyMs": 518.7999999721845,
+        "meanFcpMs": 204,
+        "meanLcpMs": 204,
+        "meanTransferBytes": 16773
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 244.46666663885117,
+        "meanReadyMs": 401.7333333293597,
+        "meanFcpMs": 100,
+        "meanLcpMs": 100,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.2230706300006222,
+        "ready": 1.2914039163059643,
+        "fcp": 2.04,
+        "lcp": 2.04
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/prompt-caching-sucks|warm",
+      "path": "/posts/prompt-caching-sucks",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 300.7666666706403,
+        "meanReadyMs": 604.633333325386,
+        "meanFcpMs": 208,
+        "meanLcpMs": 208,
+        "meanTransferBytes": 21568
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 304.2666666706403,
+        "meanReadyMs": 447.83333335320157,
+        "meanFcpMs": 142.66666666666666,
+        "meanLcpMs": 142.66666666666666,
+        "meanTransferBytes": 900
+      },
+      "ratios": {
+        "load": 0.9884969325154876,
+        "ready": 1.3501302567143163,
+        "fcp": 1.457943925233645,
+        "lcp": 1.457943925233645
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags|warm",
+      "path": "/posts/tags",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 276.79999999205273,
+        "meanReadyMs": 386.36666667461395,
+        "meanFcpMs": 165.33333333333334,
+        "meanLcpMs": 165.33333333333334,
+        "meanTransferBytes": 13260
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 230.0666666428248,
+        "meanReadyMs": 347.6666666666667,
+        "meanFcpMs": 80,
+        "meanLcpMs": 80,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.2031295277632754,
+        "ready": 1.1113135187189278,
+        "fcp": 2.066666666666667,
+        "lcp": 2.066666666666667
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/ai|warm",
+      "path": "/posts/tags/ai",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 308.86666665474576,
+        "meanReadyMs": 421.79999999205273,
+        "meanFcpMs": 209.33333333333334,
+        "meanLcpMs": 209.33333333333334,
+        "meanTransferBytes": 13327.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 236.5,
+        "meanReadyMs": 333.46666665871936,
+        "meanFcpMs": 80,
+        "meanLcpMs": 80,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.305990133846705,
+        "ready": 1.26489404238936,
+        "fcp": 2.6166666666666667,
+        "lcp": 2.6166666666666667
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/bun|warm",
+      "path": "/posts/tags/bun",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 270.5999999841054,
+        "meanReadyMs": 361.46666665871936,
+        "meanFcpMs": 169.33333333333334,
+        "meanLcpMs": 169.33333333333334,
+        "meanTransferBytes": 13292
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 223.13333332538605,
+        "meanReadyMs": 314.13333332538605,
+        "meanFcpMs": 73.33333333333333,
+        "meanLcpMs": 73.33333333333333,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.212727815926546,
+        "ready": 1.15067911715152,
+        "fcp": 2.3090909090909095,
+        "lcp": 2.3090909090909095
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/dhh|warm",
+      "path": "/posts/tags/dhh",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 273.9666666785876,
+        "meanReadyMs": 387.36666665474576,
+        "meanFcpMs": 169.33333333333334,
+        "meanLcpMs": 169.33333333333334,
+        "meanTransferBytes": 13320.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 219.13333332538605,
+        "meanReadyMs": 333.13333332538605,
+        "meanFcpMs": 89.33333333333333,
+        "meanLcpMs": 89.33333333333333,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.2502281716847743,
+        "ready": 1.16279767859912,
+        "fcp": 1.8955223880597016,
+        "lcp": 1.8955223880597016
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/infra|warm",
+      "path": "/posts/tags/infra",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 307.20000000794727,
+        "meanReadyMs": 433.4666666785876,
+        "meanFcpMs": 197.33333333333334,
+        "meanLcpMs": 197.33333333333334,
+        "meanTransferBytes": 13273.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 193.9666666587194,
+        "meanReadyMs": 319.4666666785876,
+        "meanFcpMs": 78.66666666666667,
+        "meanLcpMs": 78.66666666666667,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.5837772814256779,
+        "ready": 1.3568447412220765,
+        "fcp": 2.5084745762711864,
+        "lcp": 2.5084745762711864
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/oss|warm",
+      "path": "/posts/tags/oss",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 357.0333333214124,
+        "meanReadyMs": 460.86666667461395,
+        "meanFcpMs": 226.66666666666666,
+        "meanLcpMs": 226.66666666666666,
+        "meanTransferBytes": 13304.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 203.43333333730698,
+        "meanReadyMs": 322.03333334128064,
+        "meanFcpMs": 89.33333333333333,
+        "meanLcpMs": 89.33333333333333,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.7550385055600777,
+        "ready": 1.4311147914188194,
+        "fcp": 2.537313432835821,
+        "lcp": 2.537313432835821
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/personal|warm",
+      "path": "/posts/tags/personal",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 260.13333332538605,
+        "meanReadyMs": 352.5,
+        "meanFcpMs": 162.66666666666666,
+        "meanLcpMs": 162.66666666666666,
+        "meanTransferBytes": 13242.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 213.39999999602637,
+        "meanReadyMs": 314.8333333333333,
+        "meanFcpMs": 80,
+        "meanLcpMs": 80,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.2189940643403463,
+        "ready": 1.119640021175225,
+        "fcp": 2.033333333333333,
+        "lcp": 2.033333333333333
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/philosophy|warm",
+      "path": "/posts/tags/philosophy",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 284.70000000794727,
+        "meanReadyMs": 391.39999999602634,
+        "meanFcpMs": 185.33333333333334,
+        "meanLcpMs": 185.33333333333334,
+        "meanTransferBytes": 13472
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 226.9666666587194,
+        "meanReadyMs": 343.9333333174388,
+        "meanFcpMs": 89.33333333333333,
+        "meanLcpMs": 89.33333333333333,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.25436921729145,
+        "ready": 1.138011242529893,
+        "fcp": 2.0746268656716422,
+        "lcp": 2.0746268656716422
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/prompt-caching|warm",
+      "path": "/posts/tags/prompt-caching",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 287.86666667461395,
+        "meanReadyMs": 408.3333333134651,
+        "meanFcpMs": 181.33333333333334,
+        "meanLcpMs": 181.33333333333334,
+        "meanTransferBytes": 13245.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 231.63333334525427,
+        "meanReadyMs": 335.36666667461395,
+        "meanFcpMs": 84,
+        "meanLcpMs": 84,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.2427687436744812,
+        "ready": 1.2175728057960105,
+        "fcp": 2.158730158730159,
+        "lcp": 2.158730158730159
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/scripting|warm",
+      "path": "/posts/tags/scripting",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 269.53333334128064,
+        "meanReadyMs": 372.63333334525424,
+        "meanFcpMs": 174.66666666666666,
+        "meanLcpMs": 174.66666666666666,
+        "meanTransferBytes": 13275.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 248.7999999920527,
+        "meanReadyMs": 352.86666665474576,
+        "meanFcpMs": 81.33333333333333,
+        "meanLcpMs": 81.33333333333333,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.0833333333998802,
+        "ready": 1.056017381516653,
+        "fcp": 2.1475409836065573,
+        "lcp": 2.1475409836065573
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/tags/typescript|warm",
+      "path": "/posts/tags/typescript",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 288.1666666865349,
+        "meanReadyMs": 403.5666666825612,
+        "meanFcpMs": 177.33333333333334,
+        "meanLcpMs": 177.33333333333334,
+        "meanTransferBytes": 13259.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 222.43333333730698,
+        "meanReadyMs": 330.4000000158946,
+        "meanFcpMs": 84,
+        "meanLcpMs": 84,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.2955192567723075,
+        "ready": 1.2214487489804684,
+        "fcp": 2.111111111111111,
+        "lcp": 2.111111111111111
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "live|/posts/typescript-as-a-scripting-language|warm",
+      "path": "/posts/typescript-as-a-scripting-language",
+      "origin": "live",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 355.53333336114883,
+        "meanReadyMs": 707.5333333412806,
+        "meanFcpMs": 264,
+        "meanLcpMs": 264,
+        "meanTransferBytes": 20234.333333333332
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 310.9333333571752,
+        "meanReadyMs": 459.933333337307,
+        "meanFcpMs": 145.33333333333334,
+        "meanLcpMs": 145.33333333333334,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 1.1434391080635307,
+        "ready": 1.5383388896981471,
+        "fcp": 1.81651376146789,
+        "lcp": 1.81651376146789
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/|cold",
+      "path": "/",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 617.3999999761581,
+        "meanReadyMs": 894.6000000039736,
+        "meanFcpMs": 350.6666666666667,
+        "meanLcpMs": 350.6666666666667,
+        "meanTransferBytes": 421068.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 406.70000000794727,
+        "meanReadyMs": 616.0333333611488,
+        "meanFcpMs": 309.3333333333333,
+        "meanLcpMs": 309.3333333333333,
+        "meanTransferBytes": 227082
+      },
+      "ratios": {
+        "load": 1.5180722890683394,
+        "ready": 1.4521941452793357,
+        "fcp": 1.1336206896551726,
+        "lcp": 1.1336206896551726
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/about|cold",
+      "path": "/about",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 657.0333333214124,
+        "meanReadyMs": 899.566666662693,
+        "meanFcpMs": 340,
+        "meanLcpMs": 340,
+        "meanTransferBytes": 445727
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 396.2333333492279,
+        "meanReadyMs": 558.3333333333334,
+        "meanFcpMs": 270.6666666666667,
+        "meanLcpMs": 270.6666666666667,
+        "meanTransferBytes": 223274
+      },
+      "ratios": {
+        "load": 1.65819803136634,
+        "ready": 1.6111641790973605,
+        "fcp": 1.2561576354679802,
+        "lcp": 1.2561576354679802
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/analytics|cold",
+      "path": "/analytics",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 3,
+        "meanLoadMs": 598.3333333532015,
+        "meanReadyMs": 1074.7666666706402,
+        "meanFcpMs": 368,
+        "meanLcpMs": 368,
+        "meanTransferBytes": 473859.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 471.3333333333333,
+        "meanReadyMs": 825.133333325386,
+        "meanFcpMs": 397.3333333333333,
+        "meanLcpMs": 397.3333333333333,
+        "meanTransferBytes": 259326
+      },
+      "ratios": {
+        "load": 1.2694483734509225,
+        "ready": 1.3025369637403956,
+        "fcp": 0.9261744966442953,
+        "lcp": 0.9261744966442953
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 3,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/links|cold",
+      "path": "/links",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 622.433333337307,
+        "meanReadyMs": 888.133333325386,
+        "meanFcpMs": 318.6666666666667,
+        "meanLcpMs": 318.6666666666667,
+        "meanTransferBytes": 423740
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 424.566666662693,
+        "meanReadyMs": 610.5666666825613,
+        "meanFcpMs": 326.6666666666667,
+        "meanLcpMs": 326.6666666666667,
+        "meanTransferBytes": 253771.66666666666
+      },
+      "ratios": {
+        "load": 1.4660438093973445,
+        "ready": 1.4546050116868467,
+        "fcp": 0.9755102040816327,
+        "lcp": 0.9755102040816327
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts|cold",
+      "path": "/posts",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 609.8333333333334,
+        "meanReadyMs": 859.0999999841055,
+        "meanFcpMs": 322.6666666666667,
+        "meanLcpMs": 322.6666666666667,
+        "meanTransferBytes": 420476
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 428.2666666507721,
+        "meanReadyMs": 634.2666666309038,
+        "meanFcpMs": 324,
+        "meanLcpMs": 324,
+        "meanTransferBytes": 227760.66666666666
+      },
+      "ratios": {
+        "load": 1.4239570361674188,
+        "ready": 1.3544776119916104,
+        "fcp": 0.9958847736625515,
+        "lcp": 0.9958847736625515
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/a-place-to-share-my-thoughts|cold",
+      "path": "/posts/a-place-to-share-my-thoughts",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 578.6333333452543,
+        "meanReadyMs": 1020.3666666547457,
+        "meanFcpMs": 354.6666666666667,
+        "meanLcpMs": 354.6666666666667,
+        "meanTransferBytes": 458589.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 501.10000002384186,
+        "meanReadyMs": 748.6666666865349,
+        "meanFcpMs": 369.3333333333333,
+        "meanLcpMs": 369.3333333333333,
+        "meanTransferBytes": 339664
+      },
+      "ratios": {
+        "load": 1.15472626884399,
+        "ready": 1.3629118432248448,
+        "fcp": 0.96028880866426,
+        "lcp": 0.96028880866426
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/on-neo-oss-and-nietzsche|cold",
+      "path": "/posts/on-neo-oss-and-nietzsche",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 584.0999999841055,
+        "meanReadyMs": 950.6666666666666,
+        "meanFcpMs": 361.3333333333333,
+        "meanLcpMs": 950.6666666666666,
+        "meanTransferBytes": 460342.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 520.6000000039736,
+        "meanReadyMs": 765.8999999960264,
+        "meanFcpMs": 392,
+        "meanLcpMs": 392,
+        "meanTransferBytes": 345371
+      },
+      "ratios": {
+        "load": 1.1219746446017043,
+        "ready": 1.241241241247681,
+        "fcp": 0.9217687074829931,
+        "lcp": 2.4251700680272106
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/prompt-caching-sucks|cold",
+      "path": "/posts/prompt-caching-sucks",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 719.6333333452543,
+        "meanReadyMs": 1283.733333349228,
+        "meanFcpMs": 426.6666666666667,
+        "meanLcpMs": 426.6666666666667,
+        "meanTransferBytes": 889506
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 637.4000000158945,
+        "meanReadyMs": 903.7000000079473,
+        "meanFcpMs": 488,
+        "meanLcpMs": 488,
+        "meanTransferBytes": 458844
+      },
+      "ratios": {
+        "load": 1.1290137014862083,
+        "ready": 1.420530412014981,
+        "fcp": 0.8743169398907105,
+        "lcp": 0.8743169398907105
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags|cold",
+      "path": "/posts/tags",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 626.3999999960264,
+        "meanReadyMs": 840.5,
+        "meanFcpMs": 337.3333333333333,
+        "meanLcpMs": 337.3333333333333,
+        "meanTransferBytes": 418159.6666666667
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 389.7333333293597,
+        "meanReadyMs": 556.7999999920527,
+        "meanFcpMs": 269.3333333333333,
+        "meanLcpMs": 269.3333333333333,
+        "meanTransferBytes": 207762
+      },
+      "ratios": {
+        "load": 1.6072528224488873,
+        "ready": 1.5095186781824652,
+        "fcp": 1.2524752475247525,
+        "lcp": 1.2524752475247525
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/ai|cold",
+      "path": "/posts/tags/ai",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 616.2666666706403,
+        "meanReadyMs": 853.633333325386,
+        "meanFcpMs": 321.3333333333333,
+        "meanLcpMs": 321.3333333333333,
+        "meanTransferBytes": 418077
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 400.3333333333333,
+        "meanReadyMs": 621.5333333412806,
+        "meanFcpMs": 290.6666666666667,
+        "meanLcpMs": 290.6666666666667,
+        "meanTransferBytes": 224238
+      },
+      "ratios": {
+        "load": 1.539383846804264,
+        "ready": 1.3734312989077622,
+        "fcp": 1.1055045871559632,
+        "lcp": 1.1055045871559632
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/bun|cold",
+      "path": "/posts/tags/bun",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 630.7333333094915,
+        "meanReadyMs": 854.4666666587194,
+        "meanFcpMs": 324,
+        "meanLcpMs": 324,
+        "meanTransferBytes": 417980.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 400.60000000397366,
+        "meanReadyMs": 595.3333333333334,
+        "meanFcpMs": 280,
+        "meanLcpMs": 280,
+        "meanTransferBytes": 224142
+      },
+      "ratios": {
+        "load": 1.5744716258193587,
+        "ready": 1.4352743560896741,
+        "fcp": 1.1571428571428573,
+        "lcp": 1.1571428571428573
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/dhh|cold",
+      "path": "/posts/tags/dhh",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 628.5666666825613,
+        "meanReadyMs": 877.5333333412806,
+        "meanFcpMs": 336,
+        "meanLcpMs": 336,
+        "meanTransferBytes": 418013
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 402.9666666785876,
+        "meanReadyMs": 594.4333333571752,
+        "meanFcpMs": 290.6666666666667,
+        "meanLcpMs": 290.6666666666667,
+        "meanTransferBytes": 224175
+      },
+      "ratios": {
+        "load": 1.5598477955098844,
+        "ready": 1.4762518925128985,
+        "fcp": 1.1559633027522935,
+        "lcp": 1.1559633027522935
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/infra|cold",
+      "path": "/posts/tags/infra",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 635.0999999841055,
+        "meanReadyMs": 914.2333333293597,
+        "meanFcpMs": 333.3333333333333,
+        "meanLcpMs": 333.3333333333333,
+        "meanTransferBytes": 417940.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 403.4666666785876,
+        "meanReadyMs": 624.2333333492279,
+        "meanFcpMs": 294.6666666666667,
+        "meanLcpMs": 294.6666666666667,
+        "meanTransferBytes": 224102
+      },
+      "ratios": {
+        "load": 1.574107732894929,
+        "ready": 1.4645698723331249,
+        "fcp": 1.1312217194570133,
+        "lcp": 1.1312217194570133
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/oss|cold",
+      "path": "/posts/tags/oss",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 649.1000000039736,
+        "meanReadyMs": 914.4666666587194,
+        "meanFcpMs": 337.3333333333333,
+        "meanLcpMs": 337.3333333333333,
+        "meanTransferBytes": 418010.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 412.46666665871936,
+        "meanReadyMs": 647.8333333134651,
+        "meanFcpMs": 286.6666666666667,
+        "meanLcpMs": 286.6666666666667,
+        "meanTransferBytes": 224174
+      },
+      "ratios": {
+        "load": 1.573702925528884,
+        "ready": 1.4115770517418549,
+        "fcp": 1.1767441860465115,
+        "lcp": 1.1767441860465115
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/personal|cold",
+      "path": "/posts/tags/personal",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 640.6333333055178,
+        "meanReadyMs": 878.6999999682108,
+        "meanFcpMs": 326.6666666666667,
+        "meanLcpMs": 326.6666666666667,
+        "meanTransferBytes": 417958.6666666667
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 398.1666666666667,
+        "meanReadyMs": 615.9666666587194,
+        "meanFcpMs": 277.3333333333333,
+        "meanLcpMs": 277.3333333333333,
+        "meanTransferBytes": 224123
+      },
+      "ratios": {
+        "load": 1.6089577228267504,
+        "ready": 1.4265382325551401,
+        "fcp": 1.1778846153846156,
+        "lcp": 1.1778846153846156
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/philosophy|cold",
+      "path": "/posts/tags/philosophy",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 626.633333325386,
+        "meanReadyMs": 848.066666662693,
+        "meanFcpMs": 324,
+        "meanLcpMs": 324,
+        "meanTransferBytes": 418146
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 403.5,
+        "meanReadyMs": 611.1000000039736,
+        "meanFcpMs": 294.6666666666667,
+        "meanLcpMs": 294.6666666666667,
+        "meanTransferBytes": 224308
+      },
+      "ratios": {
+        "load": 1.5529946302983546,
+        "ready": 1.3877706867242325,
+        "fcp": 1.099547511312217,
+        "lcp": 1.099547511312217
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/prompt-caching|cold",
+      "path": "/posts/tags/prompt-caching",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 625.8333333333334,
+        "meanReadyMs": 828.9666666785876,
+        "meanFcpMs": 324,
+        "meanLcpMs": 324,
+        "meanTransferBytes": 417939.3333333333
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 404.3333333333333,
+        "meanReadyMs": 627,
+        "meanFcpMs": 292,
+        "meanLcpMs": 292,
+        "meanTransferBytes": 224102
+      },
+      "ratios": {
+        "load": 1.547815333882935,
+        "ready": 1.3221158958191188,
+        "fcp": 1.1095890410958904,
+        "lcp": 1.1095890410958904
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/scripting|cold",
+      "path": "/posts/tags/scripting",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 619.3666666944822,
+        "meanReadyMs": 831.8000000119209,
+        "meanFcpMs": 322.6666666666667,
+        "meanLcpMs": 322.6666666666667,
+        "meanTransferBytes": 417983
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 420.2666666706403,
+        "meanReadyMs": 628.8000000119209,
+        "meanFcpMs": 313.3333333333333,
+        "meanLcpMs": 313.3333333333333,
+        "meanTransferBytes": 224146
+      },
+      "ratios": {
+        "load": 1.4737468274634187,
+        "ready": 1.322837150121106,
+        "fcp": 1.0297872340425533,
+        "lcp": 1.0297872340425533
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/typescript|cold",
+      "path": "/posts/tags/typescript",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 631.8999999761581,
+        "meanReadyMs": 896.5999999841055,
+        "meanFcpMs": 324,
+        "meanLcpMs": 324,
+        "meanTransferBytes": 417984
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 402.26666669050854,
+        "meanReadyMs": 611.7666666905085,
+        "meanFcpMs": 289.3333333333333,
+        "meanLcpMs": 289.3333333333333,
+        "meanTransferBytes": 224145
+      },
+      "ratios": {
+        "load": 1.570848524872488,
+        "ready": 1.4655914563545411,
+        "fcp": 1.1198156682027651,
+        "lcp": 1.1198156682027651
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/typescript-as-a-scripting-language|cold",
+      "path": "/posts/typescript-as-a-scripting-language",
+      "origin": "local",
+      "cache": "cold",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 662.133333325386,
+        "meanReadyMs": 1211.6333333452542,
+        "meanFcpMs": 422.6666666666667,
+        "meanLcpMs": 422.6666666666667,
+        "meanTransferBytes": 487282
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 601.0999999642372,
+        "meanReadyMs": 871.9666666388512,
+        "meanFcpMs": 440,
+        "meanLcpMs": 440,
+        "meanTransferBytes": 380381
+      },
+      "ratios": {
+        "load": 1.1015360728078192,
+        "ready": 1.3895408846483868,
+        "fcp": 0.9606060606060607,
+        "lcp": 0.9606060606060607
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/|warm",
+      "path": "/",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 350.89999999602634,
+        "meanReadyMs": 473.20000000794727,
+        "meanFcpMs": 228,
+        "meanLcpMs": 228,
+        "meanTransferBytes": 13076.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 94.93333333730698,
+        "meanReadyMs": 169.9666666587194,
+        "meanFcpMs": 60,
+        "meanLcpMs": 60,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.6962780896910674,
+        "ready": 2.78407530906103,
+        "fcp": 3.8,
+        "lcp": 3.8
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/about|warm",
+      "path": "/about",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 323.0000000198682,
+        "meanReadyMs": 460.89999999602634,
+        "meanFcpMs": 230.66666666666666,
+        "meanLcpMs": 230.66666666666666,
+        "meanTransferBytes": 13308
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 95.13333332538605,
+        "meanReadyMs": 163.16666666666666,
+        "meanFcpMs": 66.66666666666667,
+        "meanLcpMs": 66.66666666666667,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.3952347587265357,
+        "ready": 2.8247191010992423,
+        "fcp": 3.4599999999999995,
+        "lcp": 3.4599999999999995
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/analytics|warm",
+      "path": "/analytics",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 3,
+        "meanLoadMs": 367.76666669050854,
+        "meanReadyMs": 530.9333333571752,
+        "meanFcpMs": 249.33333333333334,
+        "meanLcpMs": 249.33333333333334,
+        "meanTransferBytes": 13890
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 112.29999999205272,
+        "meanReadyMs": 262.29999999205273,
+        "meanFcpMs": 110.66666666666667,
+        "meanLcpMs": 110.66666666666667,
+        "meanTransferBytes": 0
+      },
+      "ratios": {
+        "load": 3.274859009051957,
+        "ready": 2.0241453807596708,
+        "fcp": 2.253012048192771,
+        "lcp": 2.253012048192771
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 3,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/links|warm",
+      "path": "/links",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 352.066666662693,
+        "meanReadyMs": 481.6666666865349,
+        "meanFcpMs": 228,
+        "meanLcpMs": 228,
+        "meanTransferBytes": 13037.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 144.2000000278155,
+        "meanReadyMs": 229,
+        "meanFcpMs": 104,
+        "meanLcpMs": 104,
+        "meanTransferBytes": 4611.333333333333
+      },
+      "ratios": {
+        "load": 2.4415164118916857,
+        "ready": 2.103347889460851,
+        "fcp": 2.1923076923076925,
+        "lcp": 2.1923076923076925
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts|warm",
+      "path": "/posts",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 353,
+        "meanReadyMs": 468.2666666507721,
+        "meanFcpMs": 232,
+        "meanLcpMs": 232,
+        "meanTransferBytes": 13286
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 119.93333333730698,
+        "meanReadyMs": 202.30000001192093,
+        "meanFcpMs": 82.66666666666667,
+        "meanLcpMs": 82.66666666666667,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 2.9433018342549,
+        "ready": 2.314714120727526,
+        "fcp": 2.8064516129032255,
+        "lcp": 2.8064516129032255
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/a-place-to-share-my-thoughts|warm",
+      "path": "/posts/a-place-to-share-my-thoughts",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 349.63333334525424,
+        "meanReadyMs": 545.2666666905085,
+        "meanFcpMs": 240,
+        "meanLcpMs": 240,
+        "meanTransferBytes": 14407
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 108.86666667461395,
+        "meanReadyMs": 226.49999998013178,
+        "meanFcpMs": 73.33333333333333,
+        "meanLcpMs": 73.33333333333333,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.2115737904445587,
+        "ready": 2.407358352045644,
+        "fcp": 3.272727272727273,
+        "lcp": 3.272727272727273
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/on-neo-oss-and-nietzsche|warm",
+      "path": "/posts/on-neo-oss-and-nietzsche",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 345.86666665474576,
+        "meanReadyMs": 558.6666666666666,
+        "meanFcpMs": 236,
+        "meanLcpMs": 558.6666666666666,
+        "meanTransferBytes": 15532
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 117.2666666507721,
+        "meanReadyMs": 244.39999999602637,
+        "meanFcpMs": 101.33333333333333,
+        "meanLcpMs": 101.33333333333333,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 2.9494030702242062,
+        "ready": 2.2858701582477488,
+        "fcp": 2.3289473684210527,
+        "lcp": 5.513157894736842
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/prompt-caching-sucks|warm",
+      "path": "/posts/prompt-caching-sucks",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 382.6666666865349,
+        "meanReadyMs": 668.8666666944822,
+        "meanFcpMs": 245.33333333333334,
+        "meanLcpMs": 245.33333333333334,
+        "meanTransferBytes": 20454
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 147.66666666666666,
+        "meanReadyMs": 271.19999998807907,
+        "meanFcpMs": 108,
+        "meanLcpMs": 108,
+        "meanTransferBytes": 600
+      },
+      "ratios": {
+        "load": 2.5914221220307105,
+        "ready": 2.466322517418448,
+        "fcp": 2.271604938271605,
+        "lcp": 2.271604938271605
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags|warm",
+      "path": "/posts/tags",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 325.0333333214124,
+        "meanReadyMs": 437.4333333174388,
+        "meanFcpMs": 234.66666666666666,
+        "meanLcpMs": 234.66666666666666,
+        "meanTransferBytes": 12278
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 95.2666666507721,
+        "meanReadyMs": 174.7000000079473,
+        "meanFcpMs": 64,
+        "meanLcpMs": 64,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.4118264525084876,
+        "ready": 2.5039114670723497,
+        "fcp": 3.6666666666666665,
+        "lcp": 3.6666666666666665
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/ai|warm",
+      "path": "/posts/tags/ai",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 325.60000000397366,
+        "meanReadyMs": 429.8333333134651,
+        "meanFcpMs": 228,
+        "meanLcpMs": 228,
+        "meanTransferBytes": 12383
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 100.63333330551784,
+        "meanReadyMs": 187.19999998807907,
+        "meanFcpMs": 68,
+        "meanLcpMs": 68,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.2355084474392606,
+        "ready": 2.296118233658317,
+        "fcp": 3.3529411764705883,
+        "lcp": 3.3529411764705883
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/bun|warm",
+      "path": "/posts/tags/bun",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 322.7666666507721,
+        "meanReadyMs": 417.0999999841054,
+        "meanFcpMs": 233.33333333333334,
+        "meanLcpMs": 233.33333333333334,
+        "meanTransferBytes": 12284.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 91.16666666666667,
+        "meanReadyMs": 174.36666665474573,
+        "meanFcpMs": 58.666666666666664,
+        "meanLcpMs": 58.666666666666664,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.5404021936099315,
+        "ready": 2.3920856433528273,
+        "fcp": 3.9772727272727275,
+        "lcp": 3.9772727272727275
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/dhh|warm",
+      "path": "/posts/tags/dhh",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 328.10000000397366,
+        "meanReadyMs": 436.0999999841054,
+        "meanFcpMs": 228,
+        "meanLcpMs": 228,
+        "meanTransferBytes": 12316.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 94.5333333214124,
+        "meanReadyMs": 176,
+        "meanFcpMs": 74.66666666666667,
+        "meanLcpMs": 74.66666666666667,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.4707334278421866,
+        "ready": 2.477840909000599,
+        "fcp": 3.0535714285714284,
+        "lcp": 3.0535714285714284
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/infra|warm",
+      "path": "/posts/tags/infra",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 358.8333333333333,
+        "meanReadyMs": 489.13333332538605,
+        "meanFcpMs": 242.66666666666666,
+        "meanLcpMs": 242.66666666666666,
+        "meanTransferBytes": 12242.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 104.19999998807907,
+        "meanReadyMs": 195.7666666507721,
+        "meanFcpMs": 65.33333333333333,
+        "meanLcpMs": 65.33333333333333,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.4436980170286504,
+        "ready": 2.4985526989533433,
+        "fcp": 3.7142857142857144,
+        "lcp": 3.7142857142857144
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/oss|warm",
+      "path": "/posts/tags/oss",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 341.20000000794727,
+        "meanReadyMs": 459.39999999602634,
+        "meanFcpMs": 230.66666666666666,
+        "meanLcpMs": 230.66666666666666,
+        "meanTransferBytes": 12315.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 95.19999998807907,
+        "meanReadyMs": 177.7000000079473,
+        "meanFcpMs": 68,
+        "meanLcpMs": 68,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.58403361397765,
+        "ready": 2.5852560493836836,
+        "fcp": 3.392156862745098,
+        "lcp": 3.392156862745098
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/personal|warm",
+      "path": "/posts/tags/personal",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 321.3333333333333,
+        "meanReadyMs": 422.933333337307,
+        "meanFcpMs": 226.66666666666666,
+        "meanLcpMs": 226.66666666666666,
+        "meanTransferBytes": 12266
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 91.13333334525426,
+        "meanReadyMs": 176.13333332538605,
+        "meanFcpMs": 60,
+        "meanLcpMs": 60,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.52596927532517,
+        "ready": 2.401211203764516,
+        "fcp": 3.7777777777777777,
+        "lcp": 3.7777777777777777
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/philosophy|warm",
+      "path": "/posts/tags/philosophy",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 332.4666666785876,
+        "meanReadyMs": 439.2000000278155,
+        "meanFcpMs": 234.66666666666666,
+        "meanLcpMs": 234.66666666666666,
+        "meanTransferBytes": 12452
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 101.80000001192093,
+        "meanReadyMs": 186.23333332935968,
+        "meanFcpMs": 68,
+        "meanLcpMs": 68,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.265880811784433,
+        "ready": 2.3583318419752284,
+        "fcp": 3.4509803921568625,
+        "lcp": 3.4509803921568625
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/prompt-caching|warm",
+      "path": "/posts/tags/prompt-caching",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 319.0666666825612,
+        "meanReadyMs": 422.1666666865349,
+        "meanFcpMs": 226.66666666666666,
+        "meanLcpMs": 226.66666666666666,
+        "meanTransferBytes": 12243.333333333334
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 104.66666668653488,
+        "meanReadyMs": 202,
+        "meanFcpMs": 65.33333333333333,
+        "meanLcpMs": 65.33333333333333,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.0484076428853006,
+        "ready": 2.0899339934976973,
+        "fcp": 3.469387755102041,
+        "lcp": 3.469387755102041
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/scripting|warm",
+      "path": "/posts/tags/scripting",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 321.933333337307,
+        "meanReadyMs": 418.39999999602634,
+        "meanFcpMs": 228,
+        "meanLcpMs": 228,
+        "meanTransferBytes": 12289.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 98.93333331743877,
+        "meanReadyMs": 180.86666665474573,
+        "meanFcpMs": 65.33333333333333,
+        "meanLcpMs": 65.33333333333333,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.2540431272475936,
+        "ready": 2.313306303116125,
+        "fcp": 3.489795918367347,
+        "lcp": 3.489795918367347
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/tags/typescript|warm",
+      "path": "/posts/tags/typescript",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 320.29999999205273,
+        "meanReadyMs": 421.433333337307,
+        "meanFcpMs": 230.66666666666666,
+        "meanLcpMs": 230.66666666666666,
+        "meanTransferBytes": 12288.666666666666
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 95.10000000397365,
+        "meanReadyMs": 180.16666666666666,
+        "meanFcpMs": 78.66666666666667,
+        "meanLcpMs": 78.66666666666667,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 3.3680336485664495,
+        "ready": 2.339130434804664,
+        "fcp": 2.932203389830508,
+        "lcp": 2.932203389830508
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    },
+    {
+      "id": "local|/posts/typescript-as-a-scripting-language|warm",
+      "path": "/posts/typescript-as-a-scripting-language",
+      "origin": "local",
+      "cache": "warm",
+      "baseline": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 355.3333333134651,
+        "meanReadyMs": 687.8666666547457,
+        "meanFcpMs": 256,
+        "meanLcpMs": 256,
+        "meanTransferBytes": 19086.666666666668
+      },
+      "candidate": {
+        "count": 3,
+        "errors": 0,
+        "meanLoadMs": 150.16666666666666,
+        "meanReadyMs": 277.4666666785876,
+        "meanFcpMs": 121.33333333333333,
+        "meanLcpMs": 121.33333333333333,
+        "meanTransferBytes": 300
+      },
+      "ratios": {
+        "load": 2.366259711299435,
+        "ready": 2.479096588029286,
+        "fcp": 2.10989010989011,
+        "lcp": 2.10989010989011
+      },
+      "passed": false,
+      "errors": {
+        "baseline": 0,
+        "candidate": 0
+      }
+    }
+  ],
   "charts": {
-    "localCold": [],
-    "localWarm": [],
-    "liveCold": [],
-    "liveWarm": []
+    "localCold": [
+      {
+        "label": "/",
+        "baselineMs": 617.3999999761581,
+        "candidateMs": 406.70000000794727
+      },
+      {
+        "label": "/about",
+        "baselineMs": 657.0333333214124,
+        "candidateMs": 396.2333333492279
+      },
+      {
+        "label": "/analytics",
+        "baselineMs": 598.3333333532015,
+        "candidateMs": 471.3333333333333
+      },
+      {
+        "label": "/links",
+        "baselineMs": 622.433333337307,
+        "candidateMs": 424.566666662693
+      },
+      {
+        "label": "/posts",
+        "baselineMs": 609.8333333333334,
+        "candidateMs": 428.2666666507721
+      },
+      {
+        "label": "/posts/a-place-to-share-my-thoughts",
+        "baselineMs": 578.6333333452543,
+        "candidateMs": 501.10000002384186
+      },
+      {
+        "label": "/posts/on-neo-oss-and-nietzsche",
+        "baselineMs": 584.0999999841055,
+        "candidateMs": 520.6000000039736
+      },
+      {
+        "label": "/posts/prompt-caching-sucks",
+        "baselineMs": 719.6333333452543,
+        "candidateMs": 637.4000000158945
+      },
+      {
+        "label": "/posts/tags",
+        "baselineMs": 626.3999999960264,
+        "candidateMs": 389.7333333293597
+      },
+      {
+        "label": "/posts/tags/ai",
+        "baselineMs": 616.2666666706403,
+        "candidateMs": 400.3333333333333
+      },
+      {
+        "label": "/posts/tags/bun",
+        "baselineMs": 630.7333333094915,
+        "candidateMs": 400.60000000397366
+      },
+      {
+        "label": "/posts/tags/dhh",
+        "baselineMs": 628.5666666825613,
+        "candidateMs": 402.9666666785876
+      },
+      {
+        "label": "/posts/tags/infra",
+        "baselineMs": 635.0999999841055,
+        "candidateMs": 403.4666666785876
+      },
+      {
+        "label": "/posts/tags/oss",
+        "baselineMs": 649.1000000039736,
+        "candidateMs": 412.46666665871936
+      },
+      {
+        "label": "/posts/tags/personal",
+        "baselineMs": 640.6333333055178,
+        "candidateMs": 398.1666666666667
+      },
+      {
+        "label": "/posts/tags/philosophy",
+        "baselineMs": 626.633333325386,
+        "candidateMs": 403.5
+      },
+      {
+        "label": "/posts/tags/prompt-caching",
+        "baselineMs": 625.8333333333334,
+        "candidateMs": 404.3333333333333
+      },
+      {
+        "label": "/posts/tags/scripting",
+        "baselineMs": 619.3666666944822,
+        "candidateMs": 420.2666666706403
+      },
+      {
+        "label": "/posts/tags/typescript",
+        "baselineMs": 631.8999999761581,
+        "candidateMs": 402.26666669050854
+      },
+      {
+        "label": "/posts/typescript-as-a-scripting-language",
+        "baselineMs": 662.133333325386,
+        "candidateMs": 601.0999999642372
+      }
+    ],
+    "localWarm": [
+      {
+        "label": "/",
+        "baselineMs": 350.89999999602634,
+        "candidateMs": 94.93333333730698
+      },
+      {
+        "label": "/about",
+        "baselineMs": 323.0000000198682,
+        "candidateMs": 95.13333332538605
+      },
+      {
+        "label": "/analytics",
+        "baselineMs": 367.76666669050854,
+        "candidateMs": 112.29999999205272
+      },
+      {
+        "label": "/links",
+        "baselineMs": 352.066666662693,
+        "candidateMs": 144.2000000278155
+      },
+      {
+        "label": "/posts",
+        "baselineMs": 353,
+        "candidateMs": 119.93333333730698
+      },
+      {
+        "label": "/posts/a-place-to-share-my-thoughts",
+        "baselineMs": 349.63333334525424,
+        "candidateMs": 108.86666667461395
+      },
+      {
+        "label": "/posts/on-neo-oss-and-nietzsche",
+        "baselineMs": 345.86666665474576,
+        "candidateMs": 117.2666666507721
+      },
+      {
+        "label": "/posts/prompt-caching-sucks",
+        "baselineMs": 382.6666666865349,
+        "candidateMs": 147.66666666666666
+      },
+      {
+        "label": "/posts/tags",
+        "baselineMs": 325.0333333214124,
+        "candidateMs": 95.2666666507721
+      },
+      {
+        "label": "/posts/tags/ai",
+        "baselineMs": 325.60000000397366,
+        "candidateMs": 100.63333330551784
+      },
+      {
+        "label": "/posts/tags/bun",
+        "baselineMs": 322.7666666507721,
+        "candidateMs": 91.16666666666667
+      },
+      {
+        "label": "/posts/tags/dhh",
+        "baselineMs": 328.10000000397366,
+        "candidateMs": 94.5333333214124
+      },
+      {
+        "label": "/posts/tags/infra",
+        "baselineMs": 358.8333333333333,
+        "candidateMs": 104.19999998807907
+      },
+      {
+        "label": "/posts/tags/oss",
+        "baselineMs": 341.20000000794727,
+        "candidateMs": 95.19999998807907
+      },
+      {
+        "label": "/posts/tags/personal",
+        "baselineMs": 321.3333333333333,
+        "candidateMs": 91.13333334525426
+      },
+      {
+        "label": "/posts/tags/philosophy",
+        "baselineMs": 332.4666666785876,
+        "candidateMs": 101.80000001192093
+      },
+      {
+        "label": "/posts/tags/prompt-caching",
+        "baselineMs": 319.0666666825612,
+        "candidateMs": 104.66666668653488
+      },
+      {
+        "label": "/posts/tags/scripting",
+        "baselineMs": 321.933333337307,
+        "candidateMs": 98.93333331743877
+      },
+      {
+        "label": "/posts/tags/typescript",
+        "baselineMs": 320.29999999205273,
+        "candidateMs": 95.10000000397365
+      },
+      {
+        "label": "/posts/typescript-as-a-scripting-language",
+        "baselineMs": 355.3333333134651,
+        "candidateMs": 150.16666666666666
+      }
+    ],
+    "liveCold": [
+      {
+        "label": "/",
+        "baselineMs": 730.7999999920527,
+        "candidateMs": 638.5000000397364
+      },
+      {
+        "label": "/about",
+        "baselineMs": 959.2333333293597,
+        "candidateMs": 607.4666666984558
+      },
+      {
+        "label": "/analytics",
+        "baselineMs": 1129.3999999960263,
+        "candidateMs": 621.7666666507721
+      },
+      {
+        "label": "/links",
+        "baselineMs": 882.7000000079473,
+        "candidateMs": 597.8999999960264
+      },
+      {
+        "label": "/posts",
+        "baselineMs": 688.7333333094915,
+        "candidateMs": 539.9666666785876
+      },
+      {
+        "label": "/posts/a-place-to-share-my-thoughts",
+        "baselineMs": 736.1333333452543,
+        "candidateMs": 706.1999999880791
+      },
+      {
+        "label": "/posts/on-neo-oss-and-nietzsche",
+        "baselineMs": 805.133333325386,
+        "candidateMs": 746.5333333412806
+      },
+      {
+        "label": "/posts/prompt-caching-sucks",
+        "baselineMs": 892.933333337307,
+        "candidateMs": 719.933333337307
+      },
+      {
+        "label": "/posts/tags",
+        "baselineMs": 724.066666662693,
+        "candidateMs": 475.29999999205273
+      },
+      {
+        "label": "/posts/tags/ai",
+        "baselineMs": 797.2999999920527,
+        "candidateMs": 493.70000000794727
+      },
+      {
+        "label": "/posts/tags/bun",
+        "baselineMs": 765.4666666587194,
+        "candidateMs": 487.3333333333333
+      },
+      {
+        "label": "/posts/tags/dhh",
+        "baselineMs": 771.5999999841055,
+        "candidateMs": 517.3333333333334
+      },
+      {
+        "label": "/posts/tags/infra",
+        "baselineMs": 791.433333337307,
+        "candidateMs": 539.2333333492279
+      },
+      {
+        "label": "/posts/tags/oss",
+        "baselineMs": 736.933333337307,
+        "candidateMs": 694.1666666467985
+      },
+      {
+        "label": "/posts/tags/personal",
+        "baselineMs": 781.0333333214124,
+        "candidateMs": 618.566666662693
+      },
+      {
+        "label": "/posts/tags/philosophy",
+        "baselineMs": 748.3999999960264,
+        "candidateMs": 639.7333333492279
+      },
+      {
+        "label": "/posts/tags/prompt-caching",
+        "baselineMs": 730.9666666785876,
+        "candidateMs": 505.3333333333333
+      },
+      {
+        "label": "/posts/tags/scripting",
+        "baselineMs": 745.3999999761581,
+        "candidateMs": 622.1666666666666
+      },
+      {
+        "label": "/posts/tags/typescript",
+        "baselineMs": 785.133333325386,
+        "candidateMs": 616.8333333333334
+      },
+      {
+        "label": "/posts/typescript-as-a-scripting-language",
+        "baselineMs": 843.7999999920527,
+        "candidateMs": 698.3999999960264
+      }
+    ],
+    "liveWarm": [
+      {
+        "label": "/",
+        "baselineMs": 267.5,
+        "candidateMs": 209.16666668653488
+      },
+      {
+        "label": "/about",
+        "baselineMs": 284.36666669448215,
+        "candidateMs": 233.7666666507721
+      },
+      {
+        "label": "/analytics",
+        "baselineMs": 312.2333333293597,
+        "candidateMs": 234.23333332935968
+      },
+      {
+        "label": "/links",
+        "baselineMs": 278.63333330551785,
+        "candidateMs": 183.2000000079473
+      },
+      {
+        "label": "/posts",
+        "baselineMs": 280.2000000278155,
+        "candidateMs": 255.60000000397363
+      },
+      {
+        "label": "/posts/a-place-to-share-my-thoughts",
+        "baselineMs": 279.933333337307,
+        "candidateMs": 240.7333333492279
+      },
+      {
+        "label": "/posts/on-neo-oss-and-nietzsche",
+        "baselineMs": 298.9999999801318,
+        "candidateMs": 244.46666663885117
+      },
+      {
+        "label": "/posts/prompt-caching-sucks",
+        "baselineMs": 300.7666666706403,
+        "candidateMs": 304.2666666706403
+      },
+      {
+        "label": "/posts/tags",
+        "baselineMs": 276.79999999205273,
+        "candidateMs": 230.0666666428248
+      },
+      {
+        "label": "/posts/tags/ai",
+        "baselineMs": 308.86666665474576,
+        "candidateMs": 236.5
+      },
+      {
+        "label": "/posts/tags/bun",
+        "baselineMs": 270.5999999841054,
+        "candidateMs": 223.13333332538605
+      },
+      {
+        "label": "/posts/tags/dhh",
+        "baselineMs": 273.9666666785876,
+        "candidateMs": 219.13333332538605
+      },
+      {
+        "label": "/posts/tags/infra",
+        "baselineMs": 307.20000000794727,
+        "candidateMs": 193.9666666587194
+      },
+      {
+        "label": "/posts/tags/oss",
+        "baselineMs": 357.0333333214124,
+        "candidateMs": 203.43333333730698
+      },
+      {
+        "label": "/posts/tags/personal",
+        "baselineMs": 260.13333332538605,
+        "candidateMs": 213.39999999602637
+      },
+      {
+        "label": "/posts/tags/philosophy",
+        "baselineMs": 284.70000000794727,
+        "candidateMs": 226.9666666587194
+      },
+      {
+        "label": "/posts/tags/prompt-caching",
+        "baselineMs": 287.86666667461395,
+        "candidateMs": 231.63333334525427
+      },
+      {
+        "label": "/posts/tags/scripting",
+        "baselineMs": 269.53333334128064,
+        "candidateMs": 248.7999999920527
+      },
+      {
+        "label": "/posts/tags/typescript",
+        "baselineMs": 288.1666666865349,
+        "candidateMs": 222.43333333730698
+      },
+      {
+        "label": "/posts/typescript-as-a-scripting-language",
+        "baselineMs": 355.53333336114883,
+        "candidateMs": 310.9333333571752
+      }
+    ]
+  },
+  "notes": {
+    "baseline": "The baseline retains all 240 timed samples from the first three complete, balanced rounds, including the Analytics errors described below. Later rounds had a readiness timeout and a local workerd abort; the full original run remains preserved separately.",
+    "acceptance": "The final scope accepts measured improvements with every missed 3× target documented. The original per-cell load-and-readiness gate remains unchanged in the results.",
+    "baselineErrors": [
+      {
+        "message": "Browser errors: Minified React error #418; visit https://react.dev/errors/418?args[]=text&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.",
+        "count": 12,
+        "cells": [
+          "live|/analytics|cold",
+          "live|/analytics|warm",
+          "local|/analytics|cold",
+          "local|/analytics|warm"
+        ]
+      }
+    ],
+    "chartImages": {
+      "localCold": "assets/local-cold-dark.png",
+      "localWarm": "assets/local-warm-dark.png",
+      "liveCold": "assets/live-cold-dark.png",
+      "liveWarm": "assets/live-warm-dark.png"
+    },
+    "chartLightVariants": {
+      "localCold": "assets/local-cold-light.png",
+      "localWarm": "assets/local-warm-light.png",
+      "liveCold": "assets/live-cold-light.png",
+      "liveWarm": "assets/live-warm-light.png"
+    },
+    "deploymentAndFeatureProof": "## Result\n\nThe site does less work and loads faster in most measured cases. The original\n3× target was **not achieved**. Zero accepted closing this pass with the misses\ndocumented; the benchmark threshold has not been lowered.\n\nThese are arithmetic means across all 20 pages, with equal page weight. The\nspeedup column divides the aggregate baseline load mean by the candidate mean;\nthe later overview also reports the distinct arithmetic mean of per-page ratios.\n\n| Scope               | Mean load before → after | Load speedup | Mean readiness before → after |\n| ------------------- | -----------------------: | -----------: | ----------------------------: |\n| Local, cold browser |         629.0 → 441.3 ms |        1.43× |              931.1 → 663.5 ms |\n| Local, warm browser |         339.8 → 108.2 ms |        3.14× |              483.4 → 202.9 ms |\n| Live, cold browser  |         802.3 → 604.3 ms |        1.33× |            1206.7 → 1014.5 ms |\n| Live, warm browser  |         292.2 → 233.3 ms |        1.25× |              441.0 → 355.2 ms |\n\nFifteen of 80 combinations reached 3× mean load speed, all local/warm. None\nreached 3× mean readiness, so **all 80 miss the combined gate**. Readiness\nimproved in every cell. One load regression remains: live/warm\n`/posts/prompt-caching-sucks`, approximately 1.2% slower. Three samples per cell,\nlive network variance, and simultaneous content edits do not establish its cause.\n\nThe homepage's local warm mean load fell from 350.9 to 94.9 ms; readiness fell\nfrom 473.2 to 170.0 ms. Live cold homepage transfer fell from approximately\n434.5 KB to 232.7 KB, while load improved from 730.8 to 638.5 ms. Less transfer\ndoes not guarantee a proportional timing improvement.\n\n## Changes shipped\n\n- **Serve generated HTML.** Published pages read exact prerender artifacts from\n  the Worker asset binding. The Worker retains telemetry; missing artifacts fail\n  visibly. Hashed assets use a year of immutable caching, HTML a short freshness\n  window, and unhashed fonts a separate policy.\n- **Finish the shared header.** The public header now belongs to the root layout,\n  so its navigation and theme controls can initialize independently of lazy page\n  content. Desktop/mobile controls, hotkeys, focus, and browser history remain.\n- **Finish image loading.** Article images retain the Fumadocs image component and\n  use native lazy loading, with an explicit eager override available. Scrolling\n  and image decoding are tested separately from the load event.\n- **Preload actual dependencies.** A pinned TanStack Start manifest patch walks\n  transitive static imports with cycle protection. A build plugin maps each MDX\n  article to its emitted entry and static imports. Dynamic optional widgets stay\n  separate. Tests exercise the installed manifest builder and plugin lifecycle.\n- **Keep expensive authoring work out of the reader's browser.** Excalidraw SVGs\n  are generated ahead of time; editable scenes and freshness hashes remain.\n  Optional MDX widgets have separate imports. Date labels reuse Intl formatters.\n- **Retain fonts and animation with less work.** CMU WOFF2 core/extension subsets\n  preserve coverage, outlines, metrics, and styles. The core subset step alone\n  reduces four common WOFF2 faces from 92,924 to 59,744 bytes. Unchanged star\n  frames retain their pixels; an empty asteroid layer is not cleared every frame.\n  The footer reveal uses CSS and an intersection observer. Regression tests\n  cover twinkle state, random draws, motion, final trail clearing, and font files.\n- **Replace VisX with Dither Kit.** The official CLI installed area/bar charts and\n  the shared engine, recording `apps/blog/dither-kit.json`. Analytics uses a p95\n  area and p50 line. The route network uses native SVG and retains hover, focus,\n  tooltips, zoom, wheel interaction, pan, and reset. Report charts use measured\n  data, visible page keys, and an accessible table. Canvas greens sample the\n  active Tailwind `--primary` and `--background`, including theme changes.\n\nThe retained software updates include Node 24.20.0, pnpm 11.25.0, Alchemy 0.94.0,\nReact 19.2.8, TanStack React Start 1.168.49, Fumadocs core/UI 16.15.7, Fumadocs MDX\n15.4.0, and Wrangler 4.129.0. Dither CLI 0.1.1 installed registry components\n0.1.0. See the vendor notes for official sources and local patches.\n\n## Deployment and feature verification\n\nThe measured application revision is `78800cb04464616997a7356190c17fc200749125`.\n[Deployment CI passed](https://github.com/cau1k/caulk.lol/actions/runs/33947734510).\nDeployment used a push to `main`; no local production deployment was run.\nAn initial CI failure exposed an extensionless infrastructure import. The\nexplicit `.ts` import, matching TypeScript setting, and a native-Node import\nregression test fixed it. Clean CI installation used the frozen lockfile.\nThe final handoff check also caught consumers of that exported TypeScript graph;\nthe import setting now lives in the shared base and standalone blog configs. CI checks workspace lint\nand types before deployment. These final configuration/report commits follow the\nmeasured application revision; it is not a new timing run.\n\nValidation completed: full workspace build and typecheck; root lint; 19 blog\nregressions; two infrastructure tests; three benchmark tests, including real\nbandwidth/latency emulation; and font generator coverage/outline/metric checks.\n\nThe browser feature suite passed **35 local and 35 live checks** across all 20\npages and 15 public resources. It exercised navigation, mobile menu and focus,\ntheme controls/hotkey, archive/tag coverage, article copy/open controls, prose,\naccordions, images, SVG diagrams, Links and previews, Analytics, stars, footer,\nsearch, Markdown, and OG images. All four live articles match the final local\ncontent fingerprints. A separate populated Analytics fixture passed theme\nrepainting, tooltip fields, zoom/wheel/pan/reset/focus, and mobile containment.\nThat intercepted fixture was never used for timing measurements.\n\n## Measurement provenance and limits\n\n- **Scope:** 20 canonical public HTML pages; admin pages and drafts excluded.\n  Three samples in each of 80 origin/cache/page cells: 240 baseline and 240 final\n  candidate samples. Final candidate samples contain zero errors.\n- **Baseline:** first three complete balanced rounds from the preserved original\n  run. Later rounds had a timeout and local preview exit. The 12 baseline\n  Analytics React #418 errors remain recorded with their actual timings.\n- **Interrupted final attempts:** `final-deployed` and `final-paired` are retained\n  under `test-results/performance/`. Wrangler's CLI exited with a blank error;\n  no application exception, OOM, or core dump established the cause.\n- **Local preview difference:** the successful candidate used Wrangler's\n  `unstable_startWorker` API with debugger, registry, and watching disabled. It\n  ran the same production bundle, routing, local bindings, and persisted data.\n  The baseline used the CLI. Local comparisons therefore also include a preview\n  tooling change; the live comparison does not. Browser/timing code and its hash\n  remained unchanged. The candidate's dirty flag records local harness/report\n  work after the deployed commit, not unpublished application changes.\n- **Network repair:** Docker interface churn interrupted `/posts` in\n  `final-verified`. After that full run finished, the entire page was remeasured\n  with three cold/warm rounds on both origins. All 12 `/posts` samples were\n  replaced by `final-posts-repair`; the other 228 samples were retained. Selection\n  was based on the infrastructure error, not duration. The merger rejects\n  unknown/app errors, duplicate runs, changed profiles, and incomplete repairs.\n- **Content changed:** Zero edited the Nietzsche and prompt-caching articles\n  during the pass. Their timings include those content changes. The other two\n  article fingerprints are unchanged from earlier checks.\n- **Interpretation:** cold means an empty browser cache, not an empty Cloudflare\n  cache. Local Links uses captured fixtures; local Analytics lacks production\n  credentials. Readiness is a global startup/paint/font/data signal, not proof\n  that every optional widget has hydrated. Separate interaction tests cover that\n  gap. The single host and emulated connection do not represent all visitors;\n  three samples do not support strong statistical confidence claims.\n\n## Evidence and reproduction\n\nCompressed raw measurements are preserved with this report:\n[baseline](data/baseline.json.gz), [final candidate](data/candidate.json.gz),\n[unrepaired full run](data/unrepaired.json.gz), and\n[archive-page repair](data/repair.json.gz). They include individual timings,\nresource waterfalls, response cache headers, long tasks, errors, and provenance.\nFeature evidence: [local](data/features-local.json),\n[live](data/features-live.json). Full screenshots and interrupted attempts remain\nin the workspace's `test-results/performance/` directory.\n\n```sh\nPERF_CHROMIUM=/usr/bin/chromium pnpm perf --serve --runs 3 --label next\nnode scripts/performance/export.mjs \\\n  --baseline test-results/performance/baseline-complete-rounds.json \\\n  --candidate test-results/performance/final-complete.json \\\n  --notes docs/performance/verification.md\nnode scripts/performance/charts.mjs\n```\n\nRun comparisons only with matching browser/profile/hash and all required cells.\nKeep build and browser jobs out of the timing run. Generated SVG/font and\nTanStack patch tests belong in the upgrade gate. Dither update instructions and\nlocal source adjustments live in\n`apps/blog/src/components/dither-kit/NOTES.md`; the full suite is documented in\n`scripts/performance/README.md`.\n"
   }
 }
