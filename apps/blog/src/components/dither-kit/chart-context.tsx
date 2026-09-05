@@ -116,6 +116,11 @@ const ROOT_OF: Record<ChartType, string> = {
   radar: "<RadarChart />",
 };
 
+// The tooltip translates itself upward by 115%. Two-series report cards are
+// roughly 96px tall, so cartesian anchors need this much room before they can
+// safely ride the highest visible point without clipping inside prose wrappers.
+const TOOLTIP_TOP_HEADROOM = 112;
+
 /** Generic accessor for internal layers (canvas/overlay) that work for any root. */
 export function useChart() {
   const ctx = use(ChartContext);
@@ -374,7 +379,7 @@ export function useChartController({
       // Follow the highest hovered node so the card rides the data path, but
       // keep enough headroom that the upward-lifted card never clips the top.
       tooltipTop: (() => {
-        const floor = mTop + 44;
+        const floor = mTop + TOOLTIP_TOP_HEADROOM;
         if (hoverIndex == null) return floor;
         let minY = Number.POSITIVE_INFINITY;
         for (const key of configKeys) {

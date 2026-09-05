@@ -217,8 +217,43 @@ async function captureChart(browser, url, panel, theme) {
     const destination = resolve(values.output, `${panel.file}-${theme}.png`);
     await page.locator("#report").screenshot({ path: destination, animations: "disabled" });
     assert.deepEqual(errors, [], `Browser errors capturing ${panel.file}/${theme}`);
+    await assertTooltipHeadroom(page, panel);
     console.log(destination);
   } finally {
     await context.close();
   }
+}
+
+async function assertTooltipHeadroom(page, panel) {
+  const chart = page
+    .locator("#report figure [role='img'][aria-label^='Performance comparison']")
+    .first();
+  const box = await chart.boundingBox();
+  assert.ok(box, `${panel.file}: chart has no rendered box`);
+  const violations = [];
+  for (const x of [0.12, 0.24, 0.36, 0.48, 0.6, 0.72, 0.84, 0.96]) {
+    await chart.hover({ position: { x: box.width * x, y: 60 } });
+    await page.waitForTimeout(160);
+    const bounds = await page.evaluate(() => {
+      const figure = document.querySelector("#report figure");
+      const chartRoot = figure?.querySelector("[role='img'][aria-label^='Performance comparison']");
+      const tooltip = [...(figure?.querySelectorAll(".pointer-events-none") ?? [])].find(
+        (element) =>
+          element.textContent?.includes("baseline") && element.textContent.includes("candidate"),
+      );
+      if (!(chartRoot instanceof HTMLElement) || !(tooltip instanceof HTMLElement)) {
+        return null;
+      }
+      const chartRect = chartRoot.getBoundingClientRect();
+      const tooltipRect = tooltip.getBoundingClientRect();
+      return {
+        chartTop: chartRect.top,
+        tooltipTop: tooltipRect.top,
+        tooltipText: tooltip.textContent,
+      };
+    });
+    assert.ok(bounds, `${panel.file}: tooltip did not appear on hover`);
+    if (bounds.tooltipTop < bounds.chartTop) violations.push(bounds);
+  }
+  assert.deepEqual(violations, [], `${panel.file}: tooltip clipped above chart`);
 }
