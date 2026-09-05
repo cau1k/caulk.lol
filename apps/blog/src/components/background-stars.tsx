@@ -115,12 +115,17 @@ export const BackgroundStars = memo(
       renderStars(starsCtx, starsRef.current, time, isDark, starsDirtyRef.current);
       starsDirtyRef.current = false;
 
-      shootingStarsRef.current = renderShootingStars(asteroidCtx, shootingStarsRef.current, isDark, {
-        elapsedMs,
-        scrollX: window.scrollX,
-        scrollY: window.scrollY,
-        bounds: pageSizeRef.current,
-      });
+      shootingStarsRef.current = renderShootingStars(
+        asteroidCtx,
+        shootingStarsRef.current,
+        isDark,
+        {
+          elapsedMs,
+          scrollX: window.scrollX,
+          scrollY: window.scrollY,
+          bounds: pageSizeRef.current,
+        },
+      );
 
       if (
         time > nextShootingStarRef.current &&
@@ -219,12 +224,17 @@ export const BackgroundStars = memo(
         if (!pausedRef.current) return;
         const context = asteroidCanvas.getContext("2d");
         if (!context) return;
-        shootingStarsRef.current = renderShootingStars(context, shootingStarsRef.current, isDarkRef.current, {
-          elapsedMs: 0,
-          scrollX: window.scrollX,
-          scrollY: window.scrollY,
-          bounds: pageSizeRef.current,
-        });
+        shootingStarsRef.current = renderShootingStars(
+          context,
+          shootingStarsRef.current,
+          isDarkRef.current,
+          {
+            elapsedMs: 0,
+            scrollX: window.scrollX,
+            scrollY: window.scrollY,
+            bounds: pageSizeRef.current,
+          },
+        );
       };
       window.addEventListener("resize", resize);
       window.addEventListener("scroll", scroll, { passive: true });

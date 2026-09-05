@@ -4,11 +4,19 @@ import { expect } from "playwright/test";
 /** Exercise the actual animation component with controlled time, not a parallel
  * simulation or production-only test hooks. Observe the meteor body's pixels. */
 export async function assertShootingStarMotion(page, origin) {
-  await page.addInitScript(() => { Math.random = () => 0.999; });
+  await page.addInitScript(() => {
+    Math.random = () => 0.999;
+  });
   await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
   await page.goto(`${origin}/footer.html`);
   const meteor = page.locator("canvas").nth(1);
-  await expect.poll(() => meteor.evaluate((canvas) => canvas.width)).toBe(785);
+  await expect
+    .poll(() =>
+      meteor.evaluate(
+        (canvas) => canvas.width > 0 && canvas.width === document.documentElement.clientWidth,
+      ),
+    )
+    .toBe(true);
   // Let startup finish, then skip to a new spawn and stop the clock. Any earlier
   // meteor has passed the document; the next one starts at page y=0.
   await page.clock.pauseAt(new Date("2026-01-01T00:01:00Z"));
@@ -22,8 +30,10 @@ export async function assertShootingStarMotion(page, origin) {
   assert.equal(await headBounds(meteor), null, "the same star is still above the camera");
   await page.clock.fastForward(2000);
   const returned = await headBounds(meteor);
-  assert.ok(returned && returned.y > 100 && returned.y < 180,
-    `the offscreen star must continue until it reaches the scrolled view: ${JSON.stringify(returned)}`);
+  assert.ok(
+    returned && returned.y > 100 && returned.y < 180,
+    `the offscreen star must continue until it reaches the scrolled view: ${JSON.stringify(returned)}`,
+  );
 
   await page.getByRole("button", { name: "Pause stars" }).evaluate((button) => button.click());
   await expect(page.getByRole("button", { name: "Resume stars" })).toBeVisible();
@@ -36,8 +46,10 @@ export async function assertShootingStarMotion(page, origin) {
   await expect(page.getByRole("button", { name: "Pause stars" })).toBeVisible();
   await page.clock.runFor(32);
   const resumed = await headBounds(meteor);
-  assert.ok(resumed.y >= paused.y - 50 && resumed.y <= paused.y - 40,
-    "resuming must not jump ahead by the intentionally paused time");
+  assert.ok(
+    resumed.y >= paused.y - 50 && resumed.y <= paused.y - 40,
+    "resuming must not jump ahead by the intentionally paused time",
+  );
 }
 
 function headBounds(meteor) {

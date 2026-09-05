@@ -279,7 +279,9 @@ function updateShootingStar(star: ShootingStar, frame: ShootingStarFrame): void 
     star.distance - star.speed / SHOOTING_STAR_CONFIG.trailFadeRate,
   );
   for (
-    let distance = (Math.floor(start / SHOOTING_STAR_CONFIG.trailSpacing) + 1) * SHOOTING_STAR_CONFIG.trailSpacing;
+    let distance =
+      (Math.floor(start / SHOOTING_STAR_CONFIG.trailSpacing) + 1) *
+      SHOOTING_STAR_CONFIG.trailSpacing;
     distance <= star.distance;
     distance += SHOOTING_STAR_CONFIG.trailSpacing
   ) {

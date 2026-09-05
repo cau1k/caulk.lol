@@ -1,9 +1,9 @@
 # Illustrated footer
 
-The layout follows the supplied reference: brand and description at left, three
-navigation columns at right, a quiet colophon, and full-width artwork below.
-Mobile stacks the brand above the columns. Layout, color, and typography use
-the existing Tailwind theme and CMU typefaces.
+The layout follows the supplied reference's generous spacing and full-width
+artwork. Three navigation columns precede the Aristotle mark, with a quiet
+colophon over the drawing. Layout, color, and typography use the existing
+Tailwind theme and CMU typefaces.
 
 All text uses the same `max-w-2xl px-4` content column as the page. Only the
 artwork spans the viewport. The colophon sits at the bottom over the drawing.
@@ -12,15 +12,18 @@ contrast, with clear space between them. Each has a soft theme-colored shadow
 at 70% opacity, letting the scenery show through its edges. Both adapt to the
 active theme.
 The footer stays transparent and does not isolate its children in a stacking
-context. Only the artwork rises above the shooting-star canvas: the engraving
-paints in front of passing stars while its transparent sky keeps the star field
-visible. The credits follow the artwork at the same layer so they remain readable.
+context. Only the artwork rises above the shooting-star canvas. A solid
+`bg-background` silhouette blocks stars behind the scenery, including gaps
+between engraved strokes. A second mask paints the green ink above it. Both
+leave the open sky transparent. The credits follow the artwork at the same
+layer so they remain readable.
 
 The original Roman engraving was generated with the built-in image generation
 tool. Its white ink and black sky form a **luminance mask**, so `bg-primary`
 supplies the exact green for each theme. Alpha masking would turn this opaque
 image into a rectangle. The 16:9 artwork fits without cutting off the stairs or
-colonnade. Dark mode reduces ink opacity. The decorative mask requests its asset
+colonnade. Dark mode reduces only ink opacity; the silhouette stays opaque.
+The decorative masks request their assets
 within 600px of the viewport; its reserved frame prevents layout shifts.
 The empty sky overlaps the introduction by 6vw, proportional to the wide mask.
 This brings a small part of the engraving into the homepage's initial desktop
@@ -31,6 +34,19 @@ Final asset: `apps/blog/public/media/roman.webp`, 1672 × 941, 390,398 bytes.
 Encoded from the generated PNG with ImageMagick at WebP quality 88; no runtime
 image library or new dependency. The supplied portrait remains untouched.
 
+The occlusion silhouette is `apps/blog/public/media/roman.svg`, 8,767 bytes. It
+uses an alpha mask and fills everything below the engraving's skyline. Rebuild
+it after changing the WebP with `node apps/blog/scripts/footer.mjs` (requires
+ImageMagick 7). The generator records the source SHA-256 in the SVG; a unit test
+checks that it matches the current image.
+
+Shooting stars use document coordinates and elapsed time. The canvas remains
+viewport-sized, projecting each position with `pagePosition - scrollOffset`.
+Stars continue advancing offscreen and retire only after leaving the document
+and fading their trails. Article and manual pauses still freeze motion. Scrolling
+while paused changes the view of the frozen positions; resuming excludes the
+paused time so stars do not jump ahead.
+
 `pnpm test:browser` checks heading clearance at 320, 390, 640, and 1440 pixels in
 both themes, horizontal overflow, deferred asset loading, the 16:9 frame,
 luminance masking, active-theme ink color, text column alignment, colophon
@@ -38,6 +54,11 @@ placement, and at least 4.5:1 contrast for its copyright and timing text.
 Two initial-viewport checks at 1314 × 1034 also decode the mask pixels to verify
 that actual engraving is visible without scrolling, rather than just its empty
 sky. The same pixel measurement checks clearance below the navigation.
+Pixel occlusion tests put a bright shooting-star layer behind the artwork and
+check that it remains visible in the sky but cannot leak through the scenery in
+either theme. A controlled-clock test follows one star out of view and back in,
+then verifies pause, scrolling while paused, and resuming without a jump. Unit
+tests also check equal travel at different frame rates and after skipped frames.
 The fixture renders the actual footer, router, fonts, and styles outside public
 application routes. Browser suites use separate Vite caches and entry scans.
 

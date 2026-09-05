@@ -33,7 +33,11 @@ const rootRoute = createRootRoute({
 
 function PauseStars() {
   const { paused, setPaused } = useBackgroundStars();
-  return <button type="button" onClick={() => setPaused((value) => !value)}>{paused ? "Resume stars" : "Pause stars"}</button>;
+  return (
+    <button type="button" onClick={() => setPaused((value) => !value)}>
+      {paused ? "Resume stars" : "Pause stars"}
+    </button>
+  );
 }
 const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: "/" });
 const router = createRouter({

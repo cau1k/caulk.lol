@@ -22,7 +22,9 @@ function canvas() {
     },
     save() {},
     restore() {},
-    translate(...args) { commands.push(["translate", ...args]); },
+    translate(...args) {
+      commands.push(["translate", ...args]);
+    },
     rotate() {},
   };
 }
@@ -137,7 +139,12 @@ test("active asteroids still move and paint on every frame with unchanged speed 
 
 function meteor() {
   return {
-    x: 40, y: 90, angle: 90, speed: 180, distance: 0, trail: [],
+    x: 40,
+    y: 90,
+    angle: 90,
+    speed: 180,
+    distance: 0,
+    trail: [],
     asteroid: { pixels: [], segments: [], rotation: 0, scale: 1, alpha: 0.5 },
   };
 }
