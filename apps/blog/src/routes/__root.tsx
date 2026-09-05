@@ -145,10 +145,7 @@ function PublicShell({ children }: { children: ReactNode }) {
   return (
     <HomeLayout
       {...baseOptions({
-        subtitle:
-          pathname === "/"
-            ? "Thoughts on software, philosophy, and hacking on agent harnesses."
-            : undefined,
+        subtitle: pathname === "/" ? "Software, philosophy, and AI" : undefined,
       })}
       className={pathname === "/" ? "pt-24 sm:pt-32" : undefined}
     >
