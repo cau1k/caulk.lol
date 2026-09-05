@@ -7,7 +7,7 @@ export function baseOptions(): BaseLayoutProps {
     nav: {
       title: (
         <>
-          <Logo />
+          <Logo size={42} />
           caulk.lol
         </>
       ),
