@@ -309,7 +309,7 @@ function markdown(data) {
     ...data.rows.map(tableRow),
     "",
   ];
-  return `${lines.join("\n")}\n`;
+  return `${lines.join("\n").trimEnd()}\n`;
 }
 
 function errorSummary(samples) {
