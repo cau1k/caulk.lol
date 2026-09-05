@@ -17,8 +17,38 @@ I was never big into open source. I benefited from it, but contributing felt lik
 
 ---
 
-Now, I could argue that, by definition, free and open doesn't actually mean "free" or "open," but I tend to dislike semantic arguments made by others. So I'll just stop myself there.
-
 What I do want to argue is that shipping software is a completely different domain than writing software. It's like comparing metallurgical artists to Navy Hull Maintenance Technicians. At these two professions' cores, they deal with the same core mechanism of welding. That's not to say the latter profession couldn't be an artist, nor couldn't an artist be a Navy welder, but they acquire separate specializations that take years and years of practice and experience.
 
-What I'm trying to say is that shipping software is a craft; writing the code that makes up software is another craft of its own, but isn't mission critical per se.
+What I'm trying to say is that shipping software is a craft. Writing the code is part of it. So is figuring out whether that code belongs in a project other people depend on.
+
+A patch can fix the problem I'm having and still be wrong for the project. Say my agent fixes a file-watching bug on Linux. It passes the tests I ran, so I open a PR. But the project also supports macOS, and the fix depends on behavior that only exists on Linux. Someone has to catch that, explain it, and work out a solution that supports both. If I haven't checked the project's requirements, I've left that discovery to the maintainer.
+
+My agent saving me an afternoon doesn't tell us whether I've saved anyone else any time. I might have just moved the afternoon onto someone who never agreed to spend it.
+
+This can happen with handwritten code too. Agents don't invent careless contributors. But making patches easier to produce doesn't, by itself, establish that the people reviewing them can absorb more of them. Agents may help with review as well. Someone still has to decide what evidence is sufficient to accept a change and take responsibility for that decision.
+
+## What can a maintainer reasonably ask for?
+
+I think DHH has a fair objection to blanket bans. Someone can use an agent, understand the patch, test it properly, and stick around through review. Someone else can handwrite a mess and disappear. I'd rather judge the contribution and the person's willingness to take responsibility for it.
+
+That means I can't defend every restriction just because a maintainer made it. If a project rejects a well-supported contribution solely because an agent helped write it, I want a better explanation too.
+
+But suppose a project repeatedly receives submissions whose authors can't explain them or respond usefully to review. The maintainers spend their available time investigating patches that go nowhere. Limiting those submissions is a reasonable response to that workload. A blanket restriction may be too blunt, and I'd prefer requirements around testing, explanation, and follow-through. Enforcing those requirements still takes time, though. A small project may decide it can't afford to evaluate every submission individually.
+
+I can disagree with that decision without assuming the people making it are protecting their social standing. The freedom to modify a project doesn't make its maintainers available to finish my modification for me.
+
+## And Nietzsche?
+
+DHH invokes *ressentiment* to explain the backlash: developers resent newcomers getting access to abilities they spent years acquiring. He dismisses concerns about quality and attribution as excuses for protecting that status.
+
+Some developers probably do feel that way. I'm sure it sucks to build your identity around something that suddenly becomes easier for everyone else. But pointing to a contribution restriction doesn't establish that this is why it exists. You still have to look at what happened in the project and what accepting those contributions asked of the people maintaining it.
+
+Otherwise, any boundary becomes evidence of insecurity. A maintainer says they can't handle the review burden, and the answer is that they're afraid of becoming irrelevant. How are they supposed to demonstrate a practical limit if you've already decided their explanation is dishonest?
+
+DHH's argument needs to distinguish between people defending exclusivity and people deciding how much work they can take on. His essay gives us very little basis for doing that.
+
+---
+
+I want people to have the way into open source that I found. Agents can help with that. But if I submit a patch, I should be able to explain what it does, show how I checked it, and work through the review. I should be willing to hear that it doesn't belong.
+
+Those seem like reasonable things to ask of someone who wants their work included in a project other people maintain.
