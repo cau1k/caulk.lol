@@ -12,6 +12,11 @@ import { Excalidraw } from "../../src/components/excalidraw";
 
 import { Quote } from "../../src/components/quote";
 
+<Callout type="info" title="Editor's note">
+  Caching has <strong>largely</strong> improved since I wrote this. Is it still
+  relevant? Sure. But I'll let you decide.
+</Callout>
+
 Every coding agent harness relies on prompt caching to speed up generation and cut costs. Though, every agentic harness employing multi-turn workflows similarly reaps these benefits. Put simply, any time you send multiple messages to an LLM API, prompt caching means the model doesn't have to re-read everything from scratch each time. It remembers what it's already processed, and only needs to handle the new parts.
 
 For reference, cached tokens are both ~10x cheaper and, according to Anthropic, can reduce time to first token (TTFT) by up to 85%. This is a fantastic bargain for the end user.
@@ -22,7 +27,11 @@ We, as humans, operate on a "best effort" basis. We rarely have a perfect unders
 
 Let's assume that we are in an interative editing loop within Claude Code. Opus makes a bash call to build `file.ts` which errors due to a missing dependency. It repeats this loop but it errors again. Finally, it fixes the error and compiles it successfully (see below).
 
-<Excalidraw src="/media/context-pruning-sucks/dynamic-context.excalidraw" alt="Dynamic context diagram" subtitle="Dynamic vs. cached prompts" />
+<Excalidraw
+  src="/media/context-pruning-sucks/dynamic-context.excalidraw"
+  alt="Dynamic context diagram"
+  subtitle="Dynamic vs. cached prompts"
+/>
 
 Now this is a very dumb diagram. But it shows the cost of your tokens. Do you think your LLM will perform better with three different file versions and errored bash calls in its context window? Or would it make more sense to only have the most up-to-date file and working calls?
 
@@ -32,17 +41,18 @@ Now this is a very dumb diagram. But it shows the cost of your tokens. Do you th
 
 Providers, like OpenAI and Anthropic et al. all implement this at the root level. You'll pay the standard price per million (PPM) tokens if you send a the LLM API anything that doesn't match the response you got from them, invalidating the cache.
 
-Cache hits require exact prefix matches. Change a single token anywhere in your cached prefix? Miss. The savings evaporate. This can hurt, especially when: (a) Anthropic charges 1.25x base input price just to *write* to cache, and (b) your harness assumes you want to cache your tokens. So, in most cases, you're blindly paying a premium upfront and gambling that you'll reuse them enough times to break even. Which, most of the time, you don't have an alternative.
+Cache hits require exact prefix matches. Change a single token anywhere in your cached prefix? Miss. The savings evaporate. This can hurt, especially when: (a) Anthropic charges 1.25x base input price just to _write_ to cache, and (b) your harness assumes you want to cache your tokens. So, in most cases, you're blindly paying a premium upfront and gambling that you'll reuse them enough times to break even. Which, most of the time, you don't have an alternative.
 
-But, for coding agents, I think this is a losing bet. Codebases change drastically, agents make mistakes, and context windows are often plagued with rotting tokens. And in the year of multi-agent systems, shit *will* change often.
+But, for coding agents, I think this is a losing bet. Codebases change drastically, agents make mistakes, and context windows are often plagued with rotting tokens. And in the year of multi-agent systems, shit _will_ change often.
 
 ## The prefix problem
 
 Coding agents are prefix-chaos machines. They continuously inject tool outputs: file reads, diffs, search results, build logs, stack traces. They re-read the same file after edits, creating near-duplicates. They change tool schemas. They prepend timestamps, environment info, session banners.
 
-Prompt caching wants static instructions at the beginning, variable stuff at the end. Coding agents produce variable stuff *everywhere*.
+Prompt caching wants static instructions at the beginning, variable stuff at the end. Coding agents produce variable stuff _everywhere_.
 
 The ugly choice:
+
 - Keep history unmodified → better cache hit rates, but **context bloat**, **context poisoning**, and eventual **context window death**
 - Prune history → better model behavior and token counts, but you "break" caching
 
@@ -50,15 +60,15 @@ Most of the time, pruning wins anyway.
 
 ## Why you should care if you're on a subscription plan
 
-If you're using GitHub Copilot, Claude Code, Codex, or any flat-rate coding assistant, prompt caching is *their* problem, not yours. You don't pay per-token. What you *do* care about is the quality of your sessions.
+If you're using GitHub Copilot, Claude Code, Codex, or any flat-rate coding assistant, prompt caching is _their_ problem, not yours. You don't pay per-token. What you _do_ care about is the quality of your sessions.
 
-Caching incentivizes keeping history unmodified. But that's blatantly worse for *you*:
+Caching incentivizes keeping history unmodified. But that's blatantly worse for _you_:
 
 1. Caching doesn't increase your context window. Every token eats at it like it's RAM on an electron app.
 
 2. With stale file reads, old diffs, and superseded tool outputs, models miss details, loop, redo work, run unnecessary tools, fail edits. Wastes more time than you could save with faster TTFT that comes with caching.
 
-3. Cache retention is short. OpenAI's is often minutes. You tab away, come back, cache is gone anyway. The provider eats full price; consequently, if the provider optimizes for caching over pruning, your context is now bloated *and* uncached.
+3. Cache retention is short. OpenAI's is often minutes. You tab away, come back, cache is gone anyway. The provider eats full price; consequently, if the provider optimizes for caching over pruning, your context is now bloated _and_ uncached.
 
 The providers who understand this **can** and should prioritize context quality over cache hits. Quality over quantity.
 
@@ -67,25 +77,31 @@ The providers who understand this **can** and should prioritize context quality 
 Re: [opencode-dynamic-context-pruning](https://github.com/Opencode-DCP/opencode-dynamic-context-pruning), a plugin that gives models tools to manage their own context windows.
 
 <Quote author="snugglespud">
-I think of DCP like a benevolent blacking out. You only forget the pieces you didn't need anyway.
+  I think of DCP like a benevolent blacking out. You only forget the pieces you
+  didn't need anyway.
 </Quote>
 
 Claude is already [aware](https://www.cognition.ai/blog/devin-sonnet-4-5-lessons-and-challenges#the-model-is-aware-of-its-context-window) of its context window, but awareness without agency is just watching yourself drown. DCP gives the model tools to perform like an endurance swimmer.
 
 The approach is to give the coding agent:
+
 - a list of prunable I/O
 - tools: `discard` (remove completed/noisy content) and `extract` (distill findings, then remove raw output)
 - Run automatic zero-LLM-cost strategies: deduplication, superseding writes, purging errors
 
 The result? A near infinite context window:
 
-<img src="/media/context-pruning-sucks/dcp-example.png" alt="Infinite context window" width="100%" />
+<img
+  src="/media/context-pruning-sucks/dcp-example.png"
+  alt="Infinite context window"
+  width="100%"
+/>
 
 This explicitly trades cache hits for smaller prompts and better model behavior. For subscription users, that means longer coherent sessions and fewer "the model forgot everything" moments.
 
-{/** **The punchline**: prompt caching optimizes for reusing the same big prefix. Coding agents are a war of attrition against ever-growing, ever-changing context. If you're paying per-token, caching matters. If you're on a subscription, you want a tool that prioritizes context hygiene over cache hit rates—because that's what keeps the model useful over long sessions. **/}
+{/* * **The punchline**: prompt caching optimizes for reusing the same big prefix. Coding agents are a war of attrition against ever-growing, ever-changing context. If you're paying per-token, caching matters. If you're on a subscription, you want a tool that prioritizes context hygiene over cache hit rates—because that's what keeps the model useful over long sessions. * */}
 
-## The provider-level alternative 
+## The provider-level alternative
 
 ### Rethinking cache invalidation
 
@@ -95,25 +111,61 @@ There's been a lot of recent work on position-independent caching. Most propose 
 
 <Accordions>
   <Accordion title="CacheBlend (Yao et al., 2025)">
-    CacheBlend enables reuse of precomputed KV caches for multiple retrieved chunks even when they are not a shared prompt prefix. It concatenates independently computed per-chunk KV caches (with positional alignment) and then selectively recomputes KV for a small subset of tokens per layer to recover the missing cross-chunk interactions. The recomputed tokens are chosen as high KV-deviation tokens using a progressive filtering scheme across layers, exploiting attention sparsity. 2.2-3.3x TTFT reduction, 2.8-5x throughput improvement versus full KV recompute, minimal quality loss. <br />[https://arxiv.org/abs/2405.16444](https://arxiv.org/abs/2405.16444)
+    CacheBlend enables reuse of precomputed KV caches for multiple retrieved
+    chunks even when they are not a shared prompt prefix. It concatenates
+    independently computed per-chunk KV caches (with positional alignment) and
+    then selectively recomputes KV for a small subset of tokens per layer to
+    recover the missing cross-chunk interactions. The recomputed tokens are
+    chosen as high KV-deviation tokens using a progressive filtering scheme
+    across layers, exploiting attention sparsity. 2.2-3.3x TTFT reduction,
+    2.8-5x throughput improvement versus full KV recompute, minimal quality
+    loss. <br />
+    [https://arxiv.org/abs/2405.16444](https://arxiv.org/abs/2405.16444)
   </Accordion>
 </Accordions>
 
 <Accordions>
   <Accordion title="EPIC (Hu et al., 2025)">
-    EPIC formalizes position-independent caching (PIC) as a compile step that precomputes KV per immutable chunk (with local position IDs) and a link step that concatenates cached KV for the final prompt. Its LegoLink algorithm restores accuracy by recomputing only the first k tokens of each cached chunk (k ≤ 32, excluding the first chunk), targeting the attention sink behavior caused by chunk-initial tokens being encoded at position 0 during compilation. Up to 8x lower TTFT and up to 7x higher throughput than prior systems, negligible accuracy loss. <br />[https://arxiv.org/abs/2410.15332](https://arxiv.org/abs/2410.15332)
+    EPIC formalizes position-independent caching (PIC) as a compile step that
+    precomputes KV per immutable chunk (with local position IDs) and a link step
+    that concatenates cached KV for the final prompt. Its LegoLink algorithm
+    restores accuracy by recomputing only the first k tokens of each cached
+    chunk (k ≤ 32, excluding the first chunk), targeting the attention sink
+    behavior caused by chunk-initial tokens being encoded at position 0 during
+    compilation. Up to 8x lower TTFT and up to 7x higher throughput than prior
+    systems, negligible accuracy loss. <br />
+    [https://arxiv.org/abs/2410.15332](https://arxiv.org/abs/2410.15332)
   </Accordion>
 </Accordions>
 
 <Accordions>
   <Accordion title="Block-Attention (Ma et al., 2025)">
-    Block-Attention modifies the causal attention mask by partitioning the prompt into blocks (one retrieved passage per block plus a final query block). Each non-final block computes KV using full attention within the block only, with no attention to other blocks, making its KV cache reusable across requests. The final block uses a mask that allows it to attend to all prior blocks. Practical reuse requires position re-encoding (for RoPE) and block-aware fine-tuning. For a 32K prompt with cached passages: 98.7% TTFT reduction, 99.8% FLOPs-to-first-token reduction versus full attention. <br />[https://arxiv.org/abs/2409.15355](https://arxiv.org/abs/2409.15355)
+    Block-Attention modifies the causal attention mask by partitioning the
+    prompt into blocks (one retrieved passage per block plus a final query
+    block). Each non-final block computes KV using full attention within the
+    block only, with no attention to other blocks, making its KV cache reusable
+    across requests. The final block uses a mask that allows it to attend to all
+    prior blocks. Practical reuse requires position re-encoding (for RoPE) and
+    block-aware fine-tuning. For a 32K prompt with cached passages: 98.7% TTFT
+    reduction, 99.8% FLOPs-to-first-token reduction versus full attention.{" "}
+    <br />
+    [https://arxiv.org/abs/2409.15355](https://arxiv.org/abs/2409.15355)
   </Accordion>
 </Accordions>
 
 <Accordions>
   <Accordion title="KVLink (Yang et al., 2025)">
-    KVLink targets segment-level KV reuse by precomputing and storing the KV cache for each document independently, then concatenating cached segments at inference. To avoid positional mismatch under RoPE, it stores KV in a position-decoupled form (unrotated) and applies the correct global rotary rotation after concatenation. To recover cross-document dependencies lost under independent encoding, KVLink inserts trainable link tokens per segment and fine-tunes the model with a block-structured attention mask where link tokens attend to all preceding segments. 85-96% TTFT reduction versus standard decoding as context length grows, with improved QA accuracy over prior cache-reuse baselines. <br />[https://arxiv.org/abs/2502.16002](https://arxiv.org/abs/2502.16002)
+    KVLink targets segment-level KV reuse by precomputing and storing the KV
+    cache for each document independently, then concatenating cached segments at
+    inference. To avoid positional mismatch under RoPE, it stores KV in a
+    position-decoupled form (unrotated) and applies the correct global rotary
+    rotation after concatenation. To recover cross-document dependencies lost
+    under independent encoding, KVLink inserts trainable link tokens per segment
+    and fine-tunes the model with a block-structured attention mask where link
+    tokens attend to all preceding segments. 85-96% TTFT reduction versus
+    standard decoding as context length grows, with improved QA accuracy over
+    prior cache-reuse baselines. <br />
+    [https://arxiv.org/abs/2502.16002](https://arxiv.org/abs/2502.16002)
   </Accordion>
 </Accordions>
 
