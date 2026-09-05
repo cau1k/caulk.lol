@@ -10,4 +10,11 @@ test("the footer silhouette is generated from the current engraving", async () =
     silhouette.includes(`sha256:${createHash("sha256").update(source).digest("hex")}`),
     "regenerate the silhouette with node apps/blog/scripts/footer.mjs after changing the artwork",
   );
+  const generator = await readFile(new URL("../scripts/footer.mjs", import.meta.url));
+  assert.ok(
+    silhouette.includes(
+      `footer.mjs sha256:${createHash("sha256").update(generator).digest("hex")}`,
+    ),
+    "regenerate the mask after changing its contour generator",
+  );
 });

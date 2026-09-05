@@ -225,7 +225,9 @@ for (const theme of ["light", "dark"]) {
       .evaluate((canvas) => {
         canvas.style.backgroundColor = "rgb(255, 0, 255)";
       });
-    const screenshot = await artwork.screenshot();
+    const screenshot = await artwork.screenshot({
+      path: resolve(repository, `test-results/footer/openings-${theme}.png`),
+    });
     const pixels = await page.evaluate(async (base64) => {
       const image = new Image();
       image.src = `data:image/png;base64,${base64}`;
@@ -240,9 +242,21 @@ for (const theme of ["light", "dark"]) {
           context.getImageData(Math.floor(x * image.width), Math.floor(y * image.height), 1, 1)
             .data,
         );
-      return { sky: at(0.5, 0.05), terrain: at(850 / 1672, 700 / 941) };
+      return {
+        sky: at(0.5, 0.05),
+        columns: at(1208 / 1672, 330 / 941),
+        branches: at(803 / 1672, 456 / 941),
+        vegetation: at(700 / 1672, 510 / 941),
+        terrain: at(850 / 1672, 700 / 941),
+      };
     }, screenshot.toString("base64"));
     assert.deepEqual(pixels.sky, [255, 0, 255, 255], "open sky keeps the stars visible");
+    for (const gap of ["columns", "branches", "vegetation"]) {
+      assert.ok(
+        pixels[gap][0] > 240 && pixels[gap][1] < 20 && pixels[gap][2] > 240,
+        `open space between ${gap} must reveal shooting stars: ${pixels[gap]}`,
+      );
+    }
     assert.ok(
       pixels.terrain[1] >= pixels.terrain[0] - 4,
       `shooting-star color leaked through solid scenery: ${pixels.terrain}`,

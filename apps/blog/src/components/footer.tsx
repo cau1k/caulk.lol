@@ -112,7 +112,8 @@ export function Footer() {
         </div>
       </div>
 
-      {/* The solid silhouette blocks stars between the engraving's hatch marks.
+      {/* The occlusion mask fills tiny hatch gaps while preserving open space
+          between columns, branches, and vegetation throughout the scene.
           The separate luminance mask supplies theme-colored ink above it.
           Overlap the empty sky with the intro so the scenery peeks above the
           homepage fold. The overlap scales with the full-width 16:9 mask;

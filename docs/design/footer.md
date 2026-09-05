@@ -12,10 +12,11 @@ contrast, with clear space between them. Each has a soft theme-colored shadow
 at 70% opacity, letting the scenery show through its edges. Both adapt to the
 active theme.
 The footer stays transparent and does not isolate its children in a stacking
-context. Only the artwork rises above the shooting-star canvas. A solid
-`bg-background` silhouette blocks stars behind the scenery, including gaps
-between engraved strokes. A second mask paints the green ink above it. Both
-leave the open sky transparent. The credits follow the artwork at the same
+context. Only the artwork rises above the shooting-star canvas. A
+`bg-background` occlusion mask blocks stars behind engraved surfaces and fills
+tiny hatch gaps. A second mask paints the green ink above it. Both leave open
+space between columns and vegetation transparent, including enclosed openings
+below the skyline. The credits follow the artwork at the same
 layer so they remain readable.
 
 The original Roman engraving was generated with the built-in image generation
@@ -34,11 +35,14 @@ Final asset: `apps/blog/public/media/roman.webp`, 1672 × 941, 390,398 bytes.
 Encoded from the generated PNG with ImageMagick at WebP quality 88; no runtime
 image library or new dependency. The supplied portrait remains untouched.
 
-The occlusion silhouette is `apps/blog/public/media/roman.svg`, 8,767 bytes. It
-uses an alpha mask and fills everything below the engraving's skyline. Rebuild
-it after changing the WebP with `node apps/blog/scripts/footer.mjs` (requires
-ImageMagick 7). The generator records the source SHA-256 in the SVG; a unit test
-checks that it matches the current image.
+The occlusion mask is `apps/blog/public/media/roman.svg`, 80,411 bytes (18,691
+bytes with Brotli compression). It closes narrow hatch gaps with a 3px disk and
+fills enclosed gaps smaller than 64 source pixels. Larger openings remain
+transparent throughout the image. The generated SVG uses even-odd contours and
+relative coordinates, simplified within 0.75 source pixels. Rebuild it after
+changing the WebP or algorithm with `node apps/blog/scripts/footer.mjs` (requires
+ImageMagick 7). A unit test checks the image and generator SHA-256 hashes stored
+in the SVG to prevent stale output.
 
 Shooting stars use document coordinates and elapsed time. The canvas remains
 viewport-sized, projecting each position with `pagePosition - scrollOffset`.
@@ -65,8 +69,9 @@ Two initial-viewport checks at 1314 × 1034 also decode the mask pixels to verif
 that actual engraving is visible without scrolling, rather than just its empty
 sky. The same pixel measurement checks clearance below the navigation.
 Pixel occlusion tests put a bright shooting-star layer behind the artwork and
-check that it remains visible in the sky but cannot leak through the scenery in
-either theme. A controlled-clock test follows one star out of view and back in,
+check that it remains visible in the sky, between columns, and around tree
+branches, while solid terrain still blocks it in either theme. A controlled-clock
+test follows one star out of view and back in,
 then verifies pause, scrolling while paused, and resuming without a jump. Unit
 tests also check equal travel at different frame rates and after skipped frames.
 The fixture renders the actual footer, router, fonts, and styles outside public
