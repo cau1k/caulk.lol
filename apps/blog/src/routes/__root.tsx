@@ -143,7 +143,15 @@ function PublicShell({ children }: { children: ReactNode }) {
   // The shared header hydrates with the root, independently of lazy page content.
   // Keep the existing outer DOM and the homepage's header/content offset.
   return (
-    <HomeLayout {...baseOptions()} className={pathname === "/" ? "pt-24 sm:pt-32" : undefined}>
+    <HomeLayout
+      {...baseOptions({
+        subtitle:
+          pathname === "/"
+            ? "Thoughts on software, philosophy, and hacking on agent harnesses."
+            : undefined,
+      })}
+      className={pathname === "/" ? "pt-24 sm:pt-32" : undefined}
+    >
       {children}
     </HomeLayout>
   );

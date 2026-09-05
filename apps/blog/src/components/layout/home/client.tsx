@@ -119,6 +119,8 @@ export function Header({ nav = {}, links, githubUrl, themeSwitch = {} }: HomeLay
     if (previousPathnameRef.current === pathname) return;
     previousPathnameRef.current = pathname;
     setMenuOpen(false);
+    // Remeasure the full navigation when the homepage subtitle appears or leaves.
+    setIsCondensed(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -130,15 +132,15 @@ export function Header({ nav = {}, links, githubUrl, themeSwitch = {} }: HomeLay
   const title = typeof nav.title === "function" ? nav.title({}) : (nav.title ?? "caulk.lol");
 
   return (
-    <header id="nd-nav" className="sticky top-0 z-40 h-14 bg-background! opacity-100!">
+    <header id="nd-nav" className="sticky top-0 z-40 min-h-14 bg-background! opacity-100!">
       <div className="border-b border-border bg-background!">
         <nav
           ref={navRef}
-          className="mx-auto flex h-14 w-full max-w-(--fd-layout-width) items-center px-4"
+          className="mx-auto flex min-h-14 w-full max-w-(--fd-layout-width) items-center px-4 py-1"
         >
           <HeaderLink
             href={nav.url ?? "/"}
-            className="inline-flex items-center gap-2.5 font-semibold"
+            className="inline-flex shrink-0 items-center gap-2.5 font-semibold"
             onNavigate={triggerNavigationFeedback}
           >
             {title}
