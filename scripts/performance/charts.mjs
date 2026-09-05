@@ -225,6 +225,11 @@ async function captureChart(browser, url, panel, theme) {
 }
 
 async function assertTooltipHeadroom(page, panel) {
+  await page.evaluate(() => {
+    const report = document.getElementById("report");
+    if (report) report.style.width = "720px";
+  });
+  await page.waitForTimeout(250);
   const chart = page
     .locator("#report figure [role='img'][aria-label^='Performance comparison']")
     .first();

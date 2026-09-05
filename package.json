@@ -8,6 +8,7 @@
   ],
   "type": "module",
   "scripts": {
+    "test:browser": "node --test scripts/browser/*.test.mjs",
     "perf:serve": "node scripts/performance/serve.mjs",
     "perf": "node scripts/performance/run.mjs",
     "perf:test": "node --test scripts/performance/*.test.mjs",
