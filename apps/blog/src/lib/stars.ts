@@ -38,9 +38,11 @@ type AsteroidSprite = {
 };
 
 export type ShootingStar = {
+  /** Position in document CSS pixels; scrolling never changes the simulation. */
   x: number;
   y: number;
   angle: number;
+  /** CSS pixels per second, independent of the display's refresh rate. */
   speed: number;
   distance: number;
   trail: TrailPoint[];
@@ -53,6 +55,14 @@ type AsteroidShade = "light" | "mid" | "dark";
 export type CanvasSize = {
   width: number;
   height: number;
+};
+
+export type ShootingStarFrame = {
+  elapsedMs: number;
+  scrollX: number;
+  scrollY: number;
+  /** The whole page, not the canvas viewport. */
+  bounds: CanvasSize;
 };
 
 export const STAR_CONFIG = {
@@ -70,11 +80,11 @@ export const SHOOTING_STAR_CONFIG = {
   maxActive: 3,
   minInterval: 3000,
   maxInterval: 8000,
-  minSpeed: 2,
-  maxSpeed: 4,
+  minSpeed: 120,
+  maxSpeed: 240,
   pixelSize: 3,
   trailSpacing: 12,
-  trailFadeRate: 0.025,
+  trailFadeRate: 1.5,
 } as const;
 
 const ASTEROID_VARIANTS: Array<{
@@ -219,13 +229,13 @@ export function createStar(width: number, height: number): Star {
   };
 }
 
-export function createShootingStar(width: number): ShootingStar {
+export function createShootingStar(width: number, pageY: number): ShootingStar {
   const x = Math.random() * width * 0.8;
   const angle = 45 + Math.random() * 45;
 
   return {
     x,
-    y: 0,
+    y: pageY,
     angle,
     speed:
       SHOOTING_STAR_CONFIG.minSpeed +
@@ -249,30 +259,41 @@ function createAsteroidSprite(): AsteroidSprite {
   };
 }
 
-function updateShootingStar(star: ShootingStar, bounds: CanvasSize): void {
+function updateShootingStar(star: ShootingStar, frame: ShootingStarFrame): void {
+  const seconds = frame.elapsedMs / 1000;
+  const previousDistance = star.distance;
   const radians = (star.angle * Math.PI) / 180;
-  star.x += star.speed * Math.cos(radians);
-  star.y += star.speed * Math.sin(radians);
-  star.distance += star.speed;
-
-  if (
-    !isShootingStarOutOfBounds(star, bounds) &&
-    star.distance % SHOOTING_STAR_CONFIG.trailSpacing < star.speed
-  ) {
-    star.trail.push({
-      x: star.x,
-      y: star.y,
-      opacity: 1.0,
-    });
-  }
+  star.x += star.speed * seconds * Math.cos(radians);
+  star.y += star.speed * seconds * Math.sin(radians);
+  star.distance += star.speed * seconds;
 
   for (const point of star.trail) {
-    point.opacity -= SHOOTING_STAR_CONFIG.trailFadeRate;
+    point.opacity -= SHOOTING_STAR_CONFIG.trailFadeRate * seconds;
   }
   star.trail = star.trail.filter((p) => p.opacity > 0);
+
+  // Sample by distance, preserving the same dotted trail at any frame rate.
+  // After a long frame, generate only points that have not already faded away.
+  const start = Math.max(
+    previousDistance,
+    star.distance - star.speed / SHOOTING_STAR_CONFIG.trailFadeRate,
+  );
+  for (
+    let distance = (Math.floor(start / SHOOTING_STAR_CONFIG.trailSpacing) + 1) * SHOOTING_STAR_CONFIG.trailSpacing;
+    distance <= star.distance;
+    distance += SHOOTING_STAR_CONFIG.trailSpacing
+  ) {
+    const behind = star.distance - distance;
+    const point = {
+      x: star.x - behind * Math.cos(radians),
+      y: star.y - behind * Math.sin(radians),
+      opacity: 1 - (behind / star.speed) * SHOOTING_STAR_CONFIG.trailFadeRate,
+    };
+    if (!isShootingStarOutOfBounds(point, frame.bounds)) star.trail.push(point);
+  }
 }
 
-function isShootingStarOutOfBounds(star: ShootingStar, bounds: CanvasSize) {
+function isShootingStarOutOfBounds(star: { x: number; y: number }, bounds: CanvasSize) {
   return star.x < -50 || star.x > bounds.width + 50 || star.y < -50 || star.y > bounds.height + 50;
 }
 
@@ -358,12 +379,16 @@ export function drawStaticFrame(
   stars: Star[],
   shootingStars: ShootingStar[],
   isDark: boolean,
+  scroll: { x: number; y: number },
 ): void {
   drawStars(starsCtx, stars, isDark);
 
+  asteroidCtx.save();
+  asteroidCtx.translate(-scroll.x, -scroll.y);
   for (const star of shootingStars) {
     drawShootingStar(asteroidCtx, star, isDark);
   }
+  asteroidCtx.restore();
 }
 
 function drawStars(starsCtx: CanvasRenderingContext2D, stars: Star[], isDark: boolean): void {
@@ -400,21 +425,24 @@ export function renderStars(
   drawStars(ctx, stars, isDark);
 }
 
-/** Advance and paint existing asteroids; creation remains on the original clock. */
+/** Advance in document space even offscreen, then project onto a viewport-sized canvas. */
 export function renderShootingStars(
   ctx: CanvasRenderingContext2D,
   stars: ShootingStar[],
   isDark: boolean,
+  frame: ShootingStarFrame,
 ): ShootingStar[] {
   // Check before advancing: the final disappearing trail still needs one clear.
   if (stars.length === 0) return stars;
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  return stars.filter((star) => {
-    updateShootingStar(star, ctx.canvas);
-    if (isShootingStarOutOfBounds(star, ctx.canvas) && star.trail.length === 0) {
-      return false;
-    }
-    drawShootingStar(ctx, star, isDark);
-    return true;
+  const remaining = stars.filter((star) => {
+    updateShootingStar(star, frame);
+    return !isShootingStarOutOfBounds(star, frame.bounds) || star.trail.length > 0;
   });
+  if (remaining.length === 0) return remaining;
+  ctx.save();
+  ctx.translate(-frame.scrollX, -frame.scrollY);
+  for (const star of remaining) drawShootingStar(ctx, star, isDark);
+  ctx.restore();
+  return remaining;
 }

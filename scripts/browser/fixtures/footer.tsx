@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { createRoot } from "react-dom/client";
 import { BackgroundStars } from "@/components/background-stars";
+import { BackgroundStarsProvider, useBackgroundStars } from "@/components/background-stars-context";
 import { Footer } from "@/components/footer";
 import "./tooltip.css";
 
@@ -19,15 +20,21 @@ document.documentElement.classList.toggle(
 );
 const rootRoute = createRootRoute({
   component: () => (
-    <>
+    <BackgroundStarsProvider>
       <BackgroundStars />
       <main className="mx-auto w-full max-w-2xl px-4" style={{ minHeight: shortPage ? 600 : 4000 }}>
         <h1>Footer layout</h1>
+        <PauseStars />
       </main>
       <Footer />
-    </>
+    </BackgroundStarsProvider>
   ),
 });
+
+function PauseStars() {
+  const { paused, setPaused } = useBackgroundStars();
+  return <button type="button" onClick={() => setPaused((value) => !value)}>{paused ? "Resume stars" : "Pause stars"}</button>;
+}
 const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: "/" });
 const router = createRouter({
   routeTree: rootRoute.addChildren([indexRoute]),

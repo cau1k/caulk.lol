@@ -40,9 +40,12 @@ export const BackgroundStars = memo(
     // Retained pixels must be repainted after initialization, theme, resize, or resume.
     const starsDirtyRef = useRef(true);
     const canvasSizeRef = useRef<CanvasSize>({ width: 0, height: 0 });
+    const pageSizeRef = useRef<CanvasSize>({ width: 0, height: 0 });
+    const lastFrameTimeRef = useRef<number | null>(null);
 
     useEffect(() => {
       pausedRef.current = paused;
+      lastFrameTimeRef.current = null;
       if (!paused) starsDirtyRef.current = true;
 
       if (paused) {
@@ -86,6 +89,7 @@ export const BackgroundStars = memo(
             starsRef.current,
             shootingStarsRef.current,
             isDarkRef.current,
+            { x: window.scrollX, y: window.scrollY },
           );
         }
       }
@@ -106,21 +110,28 @@ export const BackgroundStars = memo(
       }
 
       const isDark = isDarkRef.current;
+      const elapsedMs = lastFrameTimeRef.current === null ? 0 : time - lastFrameTimeRef.current;
+      lastFrameTimeRef.current = time;
       renderStars(starsCtx, starsRef.current, time, isDark, starsDirtyRef.current);
       starsDirtyRef.current = false;
+
+      shootingStarsRef.current = renderShootingStars(asteroidCtx, shootingStarsRef.current, isDark, {
+        elapsedMs,
+        scrollX: window.scrollX,
+        scrollY: window.scrollY,
+        bounds: pageSizeRef.current,
+      });
 
       if (
         time > nextShootingStarRef.current &&
         shootingStarsRef.current.length < SHOOTING_STAR_CONFIG.maxActive
       ) {
-        shootingStarsRef.current.push(createShootingStar(starsCanvas.width));
+        shootingStarsRef.current.push(createShootingStar(starsCanvas.width, window.scrollY));
         nextShootingStarRef.current =
           time +
           SHOOTING_STAR_CONFIG.minInterval +
           Math.random() * (SHOOTING_STAR_CONFIG.maxInterval - SHOOTING_STAR_CONFIG.minInterval);
       }
-
-      shootingStarsRef.current = renderShootingStars(asteroidCtx, shootingStarsRef.current, isDark);
 
       animationRef.current = requestAnimationFrame(animate);
     }, []);
@@ -130,7 +141,14 @@ export const BackgroundStars = memo(
       const asteroidCanvas = asteroidCanvasRef.current;
       if (!starsCanvas || !asteroidCanvas) return;
 
+      // Track the simulation's document bounds without layout reads on every frame.
+      const updatePageSize = () => {
+        const root = document.documentElement;
+        pageSizeRef.current = { width: root.scrollWidth, height: root.scrollHeight };
+      };
+
       const resize = () => {
+        updatePageSize();
         const viewportSize = getViewportSize();
 
         if (
@@ -161,6 +179,7 @@ export const BackgroundStars = memo(
               starsRef.current,
               shootingStarsRef.current,
               isDarkRef.current,
+              { x: window.scrollX, y: window.scrollY },
             );
           }
         }
@@ -182,6 +201,7 @@ export const BackgroundStars = memo(
             starsRef.current,
             shootingStarsRef.current,
             isDarkRef.current,
+            { x: window.scrollX, y: window.scrollY },
           );
         }
       }
@@ -192,14 +212,31 @@ export const BackgroundStars = memo(
         attributeFilter: ["class"],
       });
 
+      const pageObserver = new ResizeObserver(updatePageSize);
+      pageObserver.observe(document.body);
+      // A deliberate pause freezes time, not the camera's view of the page.
+      const scroll = () => {
+        if (!pausedRef.current) return;
+        const context = asteroidCanvas.getContext("2d");
+        if (!context) return;
+        shootingStarsRef.current = renderShootingStars(context, shootingStarsRef.current, isDarkRef.current, {
+          elapsedMs: 0,
+          scrollX: window.scrollX,
+          scrollY: window.scrollY,
+          bounds: pageSizeRef.current,
+        });
+      };
       window.addEventListener("resize", resize);
+      window.addEventListener("scroll", scroll, { passive: true });
 
       return () => {
         if (animationRef.current) {
           cancelAnimationFrame(animationRef.current);
         }
         themeObserver.disconnect();
+        pageObserver.disconnect();
         window.removeEventListener("resize", resize);
+        window.removeEventListener("scroll", scroll);
       };
     }, [animate, initStars, updateTheme]);
 

@@ -6,6 +6,7 @@ import { after, before, test } from "node:test";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { chromium } from "playwright";
 import { expect } from "playwright/test";
+import { assertShootingStarMotion } from "./motion.mjs";
 
 const repository = fileURLToPath(new URL("../../", import.meta.url));
 const blog = resolve(repository, "apps/blog");
@@ -50,6 +51,12 @@ before(async () => {
 after(async () => {
   await browser?.close();
   await server?.close();
+});
+
+test("shooting stars continue in page space offscreen and preserve explicit pauses", async (t) => {
+  const page = await browser.newPage({ viewport: { width: 800, height: 300 }, reducedMotion: "reduce" });
+  t.after(() => page.close());
+  await assertShootingStarMotion(page, origin);
 });
 
 for (const width of [320, 390, 640, 1440]) {
@@ -121,7 +128,7 @@ for (const width of [320, 390, 640, 1440]) {
       await artworkResponses[0].finished();
       assert.equal(artworkRequests.length, 1, "the artwork loads once as it enters view");
       const colors = await artwork.evaluate((element) => {
-        const style = getComputedStyle(element);
+        const style = getComputedStyle(element.querySelector('[data-scene-layer="ink"]'));
         return {
           mode: style.maskMode,
           ink: style.backgroundColor,
@@ -178,6 +185,39 @@ for (const width of [320, 390, 640, 1440]) {
 }
 
 for (const theme of ["light", "dark"]) {
+  test(`scenery hides shooting stars through engraving gaps in ${theme} mode`, async (t) => {
+    const page = await browser.newPage({ viewport: { width: 1314, height: 1034 }, reducedMotion: "reduce" });
+    t.after(() => page.close());
+    await page.goto(`${origin}/footer.html?short&theme=${theme}`);
+    const artwork = page.locator('footer > div[aria-hidden="true"]');
+    await artwork.scrollIntoViewIfNeeded();
+    await expect(artwork).toBeVisible();
+    await page.evaluate(() => document.fonts.ready);
+    await artwork.locator("[data-scene-layer]").evaluateAll((layers) => Promise.all(layers.map(async (layer) => {
+      const image = new Image();
+      image.src = getComputedStyle(layer).maskImage.slice(5, -2);
+      await image.decode();
+    })));
+    // An opaque probe on the real shooting-star canvas makes every transparent
+    // engraving gap obvious, independently of the random star positions.
+    await page.locator("canvas").nth(1).evaluate((canvas) => { canvas.style.backgroundColor = "rgb(255, 0, 255)"; });
+    const screenshot = await artwork.screenshot();
+    const pixels = await page.evaluate(async (base64) => {
+      const image = new Image();
+      image.src = `data:image/png;base64,${base64}`;
+      await image.decode();
+      const canvas = document.createElement("canvas");
+      canvas.width = image.width;
+      canvas.height = image.height;
+      const context = canvas.getContext("2d");
+      context.drawImage(image, 0, 0);
+      const at = (x, y) => Array.from(context.getImageData(Math.floor(x * image.width), Math.floor(y * image.height), 1, 1).data);
+      return { sky: at(0.5, 0.05), terrain: at(850 / 1672, 700 / 941) };
+    }, screenshot.toString("base64"));
+    assert.deepEqual(pixels.sky, [255, 0, 255, 255], "open sky keeps the stars visible");
+    assert.ok(pixels.terrain[1] >= pixels.terrain[0] - 4, `shooting-star color leaked through solid scenery: ${pixels.terrain}`);
+  });
+
   test(`footer artwork sits above shooting stars with a transparent sky in ${theme} mode`, async (t) => {
     const page = await browser.newPage({
       viewport: { width: 1314, height: 1034 },
@@ -252,7 +292,7 @@ for (const theme of ["light", "dark"]) {
 async function firstInkTop(artwork) {
   return artwork.evaluate(async (element) => {
     const image = new Image();
-    image.src = getComputedStyle(element).maskImage.slice(5, -2);
+    image.src = getComputedStyle(element.querySelector('[data-scene-layer="ink"]')).maskImage.slice(5, -2);
     await image.decode();
     const canvas = document.createElement("canvas");
     canvas.width = image.naturalWidth;

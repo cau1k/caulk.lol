@@ -112,22 +112,30 @@ export function Footer() {
         </div>
       </div>
 
-      {/* White ink becomes the theme's green; black sky becomes transparent.
-          Luminance (not alpha) preserves this opaque engraving's fine lines.
+      {/* The solid silhouette blocks stars between the engraving's hatch marks.
+          The separate luminance mask supplies theme-colored ink above it.
           Overlap the empty sky with the intro so the scenery peeks above the
           homepage fold. The overlap scales with the full-width 16:9 mask;
           visible ink still starts below the links at every breakpoint.
-          Raise only the mask above shooting stars (z-45). Keep the footer
+          Raise only the scenery above shooting stars (z-45). Keep the footer
           transparent and unisolated so its sky still shows the star field. */}
       <div
         ref={artworkRef}
         aria-hidden="true"
-        className="pointer-events-none relative z-50 -mt-[6vw] aspect-video w-full bg-primary [mask-mode:luminance] [mask-size:100%_100%] [mask-repeat:no-repeat] dark:opacity-70"
-        style={{
-          maskImage: loadArtwork ? 'url("/media/roman.webp")' : "none",
-          visibility: loadArtwork ? "visible" : "hidden",
-        }}
-      />
+        className="pointer-events-none relative z-50 -mt-[6vw] aspect-video w-full"
+        style={{ visibility: loadArtwork ? "visible" : "hidden" }}
+      >
+        <div
+          data-scene-layer="silhouette"
+          className="absolute inset-0 bg-background [mask-mode:alpha] [mask-size:100%_100%] [mask-repeat:no-repeat]"
+          style={{ maskImage: loadArtwork ? 'url("/media/roman.svg")' : "none" }}
+        />
+        <div
+          data-scene-layer="ink"
+          className="absolute inset-0 bg-primary [mask-mode:luminance] [mask-size:100%_100%] [mask-repeat:no-repeat] dark:opacity-70"
+          style={{ maskImage: loadArtwork ? 'url("/media/roman.webp")' : "none" }}
+        />
+      </div>
       {/* Separate backings protect text contrast without hiding the scenery
           between them. Translucent theme-colored shadows soften each edge. */}
       <div className="absolute inset-x-0 bottom-8 z-50 mx-auto w-full max-w-2xl px-4">
