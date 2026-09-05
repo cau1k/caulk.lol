@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check-types": "tsc --noEmit",
+    "check-types": "node ../../scripts/routes.mjs && tsc --noEmit",
     "build": "vite build",
     "serve": "vite preview",
     "dev:bare": "vite dev"

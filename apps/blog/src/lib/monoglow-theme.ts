@@ -1,4 +1,4 @@
-import type { ThemeRegistration } from "shiki";
+import type { ThemeRegistration } from "@shikijs/types";
 
 /**
  * Monoglow "z" variant - a minimal dark theme with green accent
