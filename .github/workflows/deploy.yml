@@ -41,10 +41,10 @@ jobs:
       - name: Verify blog regressions
         run: pnpm --filter blog test
 
-      - name: Install browser for chart regressions
+      - name: Install browser for UI regressions
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Verify chart tooltip visibility
+      - name: Verify chart tooltips and footer layouts
         run: pnpm test:browser
 
       - name: Deploy

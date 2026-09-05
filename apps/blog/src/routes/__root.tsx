@@ -13,7 +13,7 @@ import {
   useBackgroundStarsOptional,
 } from "@/components/background-stars-context";
 import { NotFound } from "@/components/not-found";
-import { TerminalFooter } from "@/components/terminal-footer";
+import { Footer } from "@/components/footer";
 import { HomeLayout } from "@/components/layout/home";
 import { baseOptions } from "@/lib/layout.shared";
 // Keep global and theme CSS in the entry's manifest so both are available in
@@ -127,7 +127,7 @@ function RootDocument({ children }: { children: ReactNode }) {
           <BackgroundStars />
           <RootProvider search={{ enabled: false }}>
             <PublicShell>{children}</PublicShell>
-            <TerminalFooter />
+            <Footer />
           </RootProvider>
         </BackgroundStarsProvider>
         <Scripts />

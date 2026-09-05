@@ -25,6 +25,9 @@ before(async () => {
     configFile: false,
     envDir: false,
     root: fileURLToPath(new URL("./fixtures", import.meta.url)),
+    // Keep the chart's dependency optimizer independent of other browser suites.
+    cacheDir: resolve(repository, "node_modules/.vite/tooltip"),
+    optimizeDeps: { entries: [fileURLToPath(new URL("./fixtures/index.html", import.meta.url))] },
     publicDir: resolve(blog, "public"),
     resolve: { alias: { "@": resolve(blog, "src") }, dedupe: ["react", "react-dom"] },
     plugins: [tailwindcss(), react()],
