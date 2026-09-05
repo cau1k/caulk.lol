@@ -46,21 +46,9 @@ export function Footer() {
     <footer className="relative isolate mt-32 w-full bg-background">
       <div className="mx-auto w-full max-w-2xl px-4 pt-16 sm:pt-24">
         <div className="flex flex-col justify-between gap-12 sm:flex-row sm:gap-8">
-          <div className="max-w-xs">
-            <Link
-              to="/"
-              className="inline-flex text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
-            >
-              <Logo variant="text" size={64} />
-            </Link>
-            <p className="mt-5 max-w-[28ch] font-serif text-lg leading-snug text-muted-foreground">
-              Thoughts on software, philosophy, and hacking on agent harnesses.
-            </p>
-          </div>
-
-          <nav aria-label="Footer" className="grid grid-cols-3 gap-6 font-serif text-base">
+          <nav aria-label="Footer" className="grid grid-cols-3 gap-24 font-serif text-base">
             <div>
-              <h2 className="mb-5 text-xs font-normal uppercase tracking-wide text-primary sm:text-sm">
+              <h2 className="mb-5 text-xs font-normal font-sans uppercase tracking-wide text-primary sm:text-sm">
                 Explore
               </h2>
               <ul>
@@ -74,7 +62,7 @@ export function Footer() {
               </ul>
             </div>
             <div>
-              <h2 className="mb-5 text-xs font-normal uppercase tracking-wide text-primary sm:text-sm">
+              <h2 className="mb-5 text-xs font-normal font-sans uppercase tracking-wide text-primary sm:text-sm">
                 Elsewhere
               </h2>
               <ul>
@@ -88,7 +76,7 @@ export function Footer() {
               </ul>
             </div>
             <div>
-              <h2 className="mb-5 text-xs font-normal uppercase tracking-wide text-primary sm:text-sm">
+              <h2 className="mb-5 text-xs font-normal font-sans uppercase tracking-wide text-primary sm:text-sm">
                 Colophon
               </h2>
               <ul>
@@ -110,6 +98,14 @@ export function Footer() {
               </ul>
             </div>
           </nav>
+          <div className="max-w-xs">
+            <Link
+              to="/"
+              className="inline-flex text-primary scale-x-[-1] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+            >
+              <Logo variant="icon" size={128} />
+            </Link>
+          </div>
         </div>
       </div>
 
