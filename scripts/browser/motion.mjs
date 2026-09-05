@@ -60,6 +60,21 @@ export async function assertShootingStarMotion(page, origin) {
     reduced,
     "reduced-motion preference must pause the animation",
   );
+  const background = page.locator("canvas").first();
+  const beforeTheme = await background.evaluate((canvas) => canvas.toDataURL());
+  await page.evaluate(() => document.documentElement.classList.toggle("dark"));
+  await expect
+    .poll(() => background.evaluate((canvas) => canvas.toDataURL()))
+    .not.toBe(beforeTheme);
+  await page.setViewportSize({ width: 800, height: 400 });
+  await expect
+    .poll(() =>
+      background.evaluate((canvas) => {
+        const data = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
+        return data.some((value, i) => i % 4 === 3 && value > 0);
+      }),
+    )
+    .toBe(true);
 }
 
 function headBounds(meteor) {

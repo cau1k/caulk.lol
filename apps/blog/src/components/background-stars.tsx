@@ -35,6 +35,7 @@ export const BackgroundStars = memo(
     const shootingStarsRef = useRef<ShootingStar[]>([]);
     const animationRef = useRef<number | null>(null);
     const isDarkRef = useRef<boolean>(true);
+    const colorsRef = useRef({ core: "", glow: "" });
     const nextShootingStarRef = useRef<number>(0);
     const pausedRef = useRef(paused);
     const prefersReducedMotionRef = useRef(false);
@@ -70,11 +71,16 @@ export const BackgroundStars = memo(
     }, []);
 
     const updateTheme = useCallback(() => {
+      const style = getComputedStyle(document.documentElement);
+      colorsRef.current = {
+        core: style.getPropertyValue("--foreground"),
+        glow: style.getPropertyValue("--primary"),
+      };
       const isDark = document.documentElement.classList.contains("dark");
       if (isDarkRef.current !== isDark) starsDirtyRef.current = true;
       isDarkRef.current = isDark;
 
-      if (pausedRef.current) {
+      if (pausedRef.current || prefersReducedMotionRef.current) {
         const starsCanvas = starsCanvasRef.current;
         const asteroidCanvas = asteroidCanvasRef.current;
         const starsCtx = starsCanvas?.getContext("2d");
@@ -91,6 +97,7 @@ export const BackgroundStars = memo(
             shootingStarsRef.current,
             isDarkRef.current,
             { x: window.scrollX, y: window.scrollY },
+            colorsRef.current,
           );
         }
       }
@@ -126,6 +133,7 @@ export const BackgroundStars = memo(
           scrollY: window.scrollY,
           bounds: pageSizeRef.current,
         },
+        colorsRef.current,
       );
 
       if (
@@ -171,7 +179,7 @@ export const BackgroundStars = memo(
         asteroidCanvas.height = viewportSize.height;
         initStars();
 
-        if (pausedRef.current) {
+        if (pausedRef.current || prefersReducedMotionRef.current) {
           const starsCtx = starsCanvas.getContext("2d");
           const asteroidCtx = asteroidCanvas.getContext("2d");
           if (starsCtx && asteroidCtx) {
@@ -186,17 +194,17 @@ export const BackgroundStars = memo(
               shootingStarsRef.current,
               isDarkRef.current,
               { x: window.scrollX, y: window.scrollY },
+              colorsRef.current,
             );
           }
         }
       };
 
-      resize();
-      updateTheme();
-      nextShootingStarRef.current = performance.now() + 1000 + Math.random() * 2000;
-
       const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
       prefersReducedMotionRef.current = motionQuery.matches;
+      updateTheme();
+      resize();
+      nextShootingStarRef.current = performance.now() + 1000 + Math.random() * 2000;
 
       if (!pausedRef.current && !prefersReducedMotionRef.current) {
         animationRef.current = requestAnimationFrame(animate);
@@ -211,6 +219,7 @@ export const BackgroundStars = memo(
             shootingStarsRef.current,
             isDarkRef.current,
             { x: window.scrollX, y: window.scrollY },
+            colorsRef.current,
           );
         }
       }
@@ -253,6 +262,7 @@ export const BackgroundStars = memo(
             scrollY: window.scrollY,
             bounds: pageSizeRef.current,
           },
+          colorsRef.current,
         );
       };
       window.addEventListener("resize", resize);

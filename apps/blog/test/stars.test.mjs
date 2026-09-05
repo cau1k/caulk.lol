@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { renderShootingStars, renderStars } from "../src/lib/stars.ts";
+import { renderShootingStars as paintShootingStars, renderStars } from "../src/lib/stars.ts";
+
+// Fixed colors keep these motion tests independent of the DOM theme resolver.
+const renderShootingStars = (ctx, stars, dark, frame) =>
+  paintShootingStars(ctx, stars, dark, frame, { core: "#fafafa", glow: "#00ffa2" });
 
 function canvas() {
   const commands = [];
@@ -128,7 +132,6 @@ test("an empty asteroid layer is untouched, including after its last trail disap
     speed: 180,
     distance: 0,
     trail: [{ x: 20, y: 20, opacity: 0.01 }],
-    asteroid: { pixels: [], segments: [], rotation: 0, scale: 1, alpha: 0.5 },
   };
   const remaining = renderShootingStars(ctx, [shootingStar], true, frame());
   assert.deepEqual(remaining, []);
@@ -146,13 +149,6 @@ test("active meteors still move and paint on every frame with unchanged speed an
     speed: 180,
     distance: 0,
     trail: [{ x: 5, y: 10, opacity: 1 }],
-    asteroid: {
-      pixels: [{ x: 0, y: 0, shade: "light" }],
-      segments: [],
-      rotation: 0,
-      scale: 1,
-      alpha: 0.5,
-    },
   };
   const remaining = renderShootingStars(ctx, [shootingStar], true, frame());
   assert.equal(remaining[0], shootingStar);
@@ -173,13 +169,6 @@ test("active meteors paint as a tapered glow with a compact bright head", () => 
     speed: 180,
     distance: 0,
     trail: [{ x: 5, y: 10, opacity: 1 }],
-    asteroid: {
-      pixels: [{ x: 0, y: 0, shade: "light" }],
-      segments: [],
-      rotation: 0,
-      scale: 1,
-      alpha: 0.5,
-    },
   };
   renderShootingStars(ctx, [shootingStar], true, frame());
   const linear = ctx.commands.find(([command]) => command === "linearGradient");
@@ -187,7 +176,7 @@ test("active meteors paint as a tapered glow with a compact bright head", () => 
   assert.ok(linear, "meteor trail needs a directional gradient");
   assert.ok(radial, "meteor head needs a local glow");
   assert.ok(
-    linear.at(-1).some(([offset, color]) => offset === 0 && color.includes("0)")),
+    linear.at(-1).some(([offset, color]) => offset === 0 && color === "transparent"),
     "trail fades to transparent at its tail",
   );
   assert.ok(
@@ -209,7 +198,6 @@ function meteor() {
     speed: 180,
     distance: 0,
     trail: [],
-    asteroid: { pixels: [], segments: [], rotation: 0, scale: 1, alpha: 0.5 },
   };
 }
 

@@ -47,6 +47,16 @@ and fading their trails. Article and manual pauses still freeze motion. Scrollin
 while paused changes the view of the frozen positions; resuming excludes the
 paused time so stars do not jump ahead.
 
+Meteors use continuous fading light trails and a small luminous head. The glow
+stays within 22 CSS pixels of the head; normal alpha compositing keeps overlapping
+paths from adding unbounded brightness. Colors come from the active Tailwind
+`--foreground` and `--primary` tokens, read only when the theme changes. There are
+no bitmap sprites, full-canvas blur filters, or flashing brightness effects.
+The browser's reduced-motion preference freezes the animation, including changes
+made while the page is open. Static stars still repaint on theme changes and
+resize. Browser pixel tests check continuous trails, faint halos, transparency
+outside the glow, and brightness limits for three overlapping meteors.
+
 `pnpm test:browser` checks heading clearance at 320, 390, 640, and 1440 pixels in
 both themes, horizontal overflow, deferred asset loading, the 16:9 frame,
 luminance masking, active-theme ink color, text column alignment, colophon

@@ -15,6 +15,8 @@ type TrailPoint = {
   opacity: number;
 };
 
+export type ShootingStarColors = { core: string; glow: string };
+
 export type ShootingStar = {
   /** Position in document CSS pixels; scrolling never changes the simulation. */
   x: number;
@@ -58,7 +60,6 @@ export const SHOOTING_STAR_CONFIG = {
   maxInterval: 8000,
   minSpeed: 120,
   maxSpeed: 240,
-  pixelSize: 3,
   trailSpacing: 12,
   trailFadeRate: 1.5,
 } as const;
@@ -127,7 +128,7 @@ function updateShootingStar(star: ShootingStar, frame: ShootingStarFrame): void 
   }
   star.trail = star.trail.filter((p) => p.opacity > 0);
 
-  // Sample by distance, preserving the same dotted trail at any frame rate.
+  // Sample by distance, preserving the same trail lifetime at any frame rate.
   // After a long frame, generate only points that have not already faded away.
   const start = Math.max(
     previousDistance,
@@ -158,6 +159,7 @@ function drawShootingStar(
   ctx: CanvasRenderingContext2D,
   star: ShootingStar,
   isDark: boolean,
+  colors: ShootingStarColors,
 ): void {
   const radians = (star.angle * Math.PI) / 180;
   const dx = Math.cos(radians);
@@ -165,15 +167,15 @@ function drawShootingStar(
   const tailLength = Math.min(star.distance, star.speed / SHOOTING_STAR_CONFIG.trailFadeRate);
   const tailX = star.x - tailLength * dx;
   const tailY = star.y - tailLength * dy;
-  const palette = getMeteorPalette(isDark);
+  const palette = getMeteorPalette(isDark, colors);
   const trail = ctx.createLinearGradient(tailX, tailY, star.x, star.y);
   trail.addColorStop(0, palette.transparent);
   trail.addColorStop(0.58, palette.wake);
   trail.addColorStop(0.88, palette.core);
   trail.addColorStop(1, palette.head);
 
-  // Keep the glow bounded and faint: the page needs atmosphere without reducing
-  // prose contrast when a meteor crosses behind text.
+  // Keep the glow local and translucent. Normal source-over blending avoids
+  // additive flashes when paths overlap; no full-canvas blur is needed.
   ctx.save();
   ctx.lineCap = "round";
   ctx.strokeStyle = trail;
@@ -184,7 +186,7 @@ function drawShootingStar(
   ctx.lineTo(star.x, star.y);
   ctx.stroke();
 
-  ctx.globalAlpha = isDark ? 0.28 : 0.28;
+  ctx.globalAlpha = 0.28;
   ctx.lineWidth = 4.5;
   ctx.beginPath();
   ctx.moveTo(tailX + tailLength * 0.18 * dx, tailY + tailLength * 0.18 * dy);
@@ -211,30 +213,21 @@ function drawShootingStar(
   ctx.fillStyle = palette.head;
   ctx.globalAlpha = isDark ? 0.62 : 0.68;
   ctx.beginPath();
-  ctx.arc(star.x, star.y, 2.4, 0, Math.PI * 2);
+  ctx.arc(star.x, star.y, 1.6, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 }
 
-function getMeteorPalette(isDark: boolean) {
-  if (isDark) {
-    return {
-      transparent: "rgba(120, 220, 160, 0)",
-      wake: "rgba(120, 220, 160, 0.08)",
-      core: "rgba(190, 255, 218, 0.2)",
-      head: "rgba(226, 255, 238, 0.38)",
-      halo: "rgba(120, 220, 160, 0.035)",
-      aura: "rgba(120, 220, 160, 0.011)",
-    };
-  }
-
+function getMeteorPalette(isDark: boolean, colors: ShootingStarColors) {
+  // Canvas accepts resolved CSS colors, including the theme's OKLCH values.
+  const light = `color-mix(in oklab, ${colors.core} 70%, ${colors.glow})`;
   return {
-    transparent: "rgba(60, 140, 90, 0)",
-    wake: "rgba(60, 140, 90, 0.06)",
-    core: "rgba(42, 118, 74, 0.2)",
-    head: "rgba(25, 91, 56, 0.48)",
-    halo: "rgba(60, 140, 90, 0.035)",
-    aura: "rgba(60, 140, 90, 0.012)",
+    transparent: "transparent",
+    wake: `color-mix(in srgb, ${colors.glow} ${isDark ? 8 : 6}%, transparent)`,
+    core: `color-mix(in srgb, ${light} 20%, transparent)`,
+    head: `color-mix(in srgb, ${light} ${isDark ? 38 : 48}%, transparent)`,
+    halo: `color-mix(in srgb, ${colors.glow} 3.5%, transparent)`,
+    aura: `color-mix(in srgb, ${colors.glow} 1.2%, transparent)`,
   };
 }
 
@@ -245,13 +238,14 @@ export function drawStaticFrame(
   shootingStars: ShootingStar[],
   isDark: boolean,
   scroll: { x: number; y: number },
+  colors: ShootingStarColors,
 ): void {
   drawStars(starsCtx, stars, isDark);
 
   asteroidCtx.save();
   asteroidCtx.translate(-scroll.x, -scroll.y);
   for (const star of shootingStars) {
-    drawShootingStar(asteroidCtx, star, isDark);
+    drawShootingStar(asteroidCtx, star, isDark, colors);
   }
   asteroidCtx.restore();
 }
@@ -296,6 +290,7 @@ export function renderShootingStars(
   stars: ShootingStar[],
   isDark: boolean,
   frame: ShootingStarFrame,
+  colors: ShootingStarColors,
 ): ShootingStar[] {
   // Check before advancing: the final disappearing trail still needs one clear.
   if (stars.length === 0) return stars;
@@ -307,7 +302,7 @@ export function renderShootingStars(
   if (remaining.length === 0) return remaining;
   ctx.save();
   ctx.translate(-frame.scrollX, -frame.scrollY);
-  for (const star of remaining) drawShootingStar(ctx, star, isDark);
+  for (const star of remaining) drawShootingStar(ctx, star, isDark, colors);
   ctx.restore();
   return remaining;
 }
