@@ -10,6 +10,8 @@ export default defineConfig({
   format: "esm",
   outDir: "./dist",
   clean: true,
+  // This is a deployable Worker, not a library with published declarations.
+  dts: false,
   alias: {
     "better-auth": betterAuthMinimalBarrel,
   },

@@ -2,28 +2,46 @@ packages:
   - apps/*
   - packages/*
   - workers/*
+
+# Install current stable releases, including same-day releases, as pnpm 10 did.
+minimumReleaseAge: 0
+
 allowBuilds:
+  "@swc/core": true
   esbuild: true
   msw: true
   sharp: true
   workerd: true
+
 catalog:
-  dotenv: ^17.2.2
-  zod: ^4.1.13
-  typescript: ^5.9.3
-  "@types/node": ^24.10.2
-  hono: ^4.8.2
-  "@trpc/client": ^11.16.0
-  "@trpc/server": ^11.16.0
-  better-auth: ^1.6.14
-  evlog: ^2.18.1
-  alchemy: ^0.93.11
-  wrangler: ^4.77.0
-  next-themes: ^0.4.6
-  react: ^19.2.3
-  react-dom: ^19.2.3
-  "@types/react": ^19.2.7
-  "@types/react-dom": ^19.2.3
+  "@trpc/client": ^11.18.0
+  "@trpc/server": ^11.18.0
+  "@types/node": ^24.13.3
+  "@types/react": ^19.2.18
+  "@types/react-dom": ^19.2.7
+  alchemy: 0.94.0
+  # 1.7 requires a rehearsed account identity data migration before deployment.
+  better-auth: ~1.6.30
+  dotenv: ^17.4.2
   drizzle-orm: ^0.45.2
+  evlog: ^2.28.1
+  hono: ^4.13.7
+  next-themes: ^0.4.6
+  react: ^19.2.8
+  react-dom: ^19.2.8
+  # Twoslash requires the compiler API; tsdown's TS 7 declaration support is experimental.
+  typescript: ~6.0.3
+  wrangler: ^4.129.0
+  zod: ^4.5.4
+
 patchedDependencies:
   alchemy: patches/alchemy.patch
+
+# Patch vulnerable transitive ranges until their upstream packages update.
+overrides:
+  "esbuild@<=0.24.2": ^0.28.2
+  "nanoid@<3.3.18": ^3.3.18
+  "nanoid@>=4.0.0 <5.1.16": ^5.1.16
+  "lodash-es@<4.18.1": ^4.18.1
+  "sharp@<0.35.0": ^0.35.4
+  "undici@>=7.0.0 <7.29.0": ^7.29.1

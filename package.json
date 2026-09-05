@@ -32,11 +32,11 @@
   },
   "devDependencies": {
     "@caulk.lol/config": "workspace:*",
-    "@types/node": "catalog:",
-    "oxfmt": "^0.53.0",
-    "oxlint": "^1.68.0",
-    "turbo": "^2.9.16",
+    "@types/node": "24.13.3",
+    "oxfmt": "^0.66.0",
+    "oxlint": "^1.81.0",
+    "turbo": "^2.10.12",
     "typescript": "catalog:"
   },
-  "packageManager": "pnpm@10.26.0"
+  "packageManager": "pnpm@11.25.0"
 }

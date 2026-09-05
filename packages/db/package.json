@@ -18,15 +18,15 @@
   },
   "dependencies": {
     "@caulk.lol/env": "workspace:*",
-    "@libsql/client": "0.15.15",
+    "@libsql/client": "0.18.0",
     "dotenv": "catalog:",
     "drizzle-orm": "catalog:",
-    "libsql": "0.5.22",
+    "libsql": "0.5.29",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@caulk.lol/config": "workspace:*",
-    "drizzle-kit": "^0.31.8",
+    "drizzle-kit": "^0.31.10",
     "typescript": "catalog:"
   }
 }

@@ -13,14 +13,14 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@t3-oss/env-core": "^0.13.1",
+    "@t3-oss/env-core": "^0.13.11",
     "dotenv": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@caulk.lol/config": "workspace:*",
     "@caulk.lol/infra": "workspace:*",
-    "@types/node": "catalog:",
+    "@types/node": "24.13.3",
     "typescript": "catalog:"
   }
 }

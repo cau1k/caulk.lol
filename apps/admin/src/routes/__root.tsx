@@ -6,7 +6,7 @@ import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanst
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createMiddleware } from "@tanstack/react-start";
 import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
-import { evlogErrorHandler } from "evlog/nitro/v3";
+import { EvlogError } from "evlog";
 
 import appCss from "../index.css?url";
 
@@ -17,7 +17,18 @@ type RouterAppContext = {
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
   server: {
-    middleware: [createMiddleware().server(evlogErrorHandler)],
+    middleware: [
+      createMiddleware().server(async ({ next }) => {
+        try {
+          return await next();
+        } catch (error) {
+          if (!EvlogError.isEvlogError(error)) throw error;
+
+          // Preserve structured errors directly in Start; this app runs on Workers.
+          throw Response.json(error.toJSON(), { status: error.status });
+        }
+      }),
+    ],
   },
 
   head: () => ({

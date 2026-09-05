@@ -9,40 +9,30 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LlmsFullDottxtRouteImport } from './routes/llms-full[.]txt'
-import { Route as LinksRouteImport } from './routes/links'
-import { Route as AnalyticsRouteImport } from './routes/analytics'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as LinksRouteImport } from './routes/links'
+import { Route as LlmsFullDottxtRouteImport } from './routes/llms-full[.]txt'
+import { Route as AdminLinksRouteImport } from './routes/admin/links'
+import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as ApiAnalyticsRouteImport } from './routes/api/analytics'
+import { Route as ApiLinkPreviewImageRouteImport } from './routes/api/link-preview-image'
+import { Route as ApiSearchRouteImport } from './routes/api/search'
+import { Route as LlmsDotmdxSplatRouteImport } from './routes/llms[.]mdx.$'
 import { Route as PostsIndexRouteImport } from './routes/posts/index'
 import { Route as PostsSlugRouteImport } from './routes/posts/$slug'
-import { Route as LlmsDotmdxSplatRouteImport } from './routes/llms[.]mdx.$'
-import { Route as ApiSearchRouteImport } from './routes/api/search'
-import { Route as ApiLinkPreviewImageRouteImport } from './routes/api/link-preview-image'
-import { Route as ApiAnalyticsRouteImport } from './routes/api/analytics'
-import { Route as AdminLoginRouteImport } from './routes/admin/login'
-import { Route as AdminLinksRouteImport } from './routes/admin/links'
+import { Route as ApiAdminBootstrapRouteImport } from './routes/api/admin/bootstrap'
+import { Route as ApiAnalyticsRumRouteImport } from './routes/api/analytics/rum'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiTweetIdRouteImport } from './routes/api/tweet/$id'
+import { Route as OgPostsSplatRouteImport } from './routes/og/posts/$'
 import { Route as PostsTagsIndexRouteImport } from './routes/posts/tags/index'
 import { Route as PostsTagsTagRouteImport } from './routes/posts/tags/$tag'
-import { Route as OgPostsSplatRouteImport } from './routes/og/posts/$'
-import { Route as ApiTweetIdRouteImport } from './routes/api/tweet/$id'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
-import { Route as ApiAnalyticsRumRouteImport } from './routes/api/analytics/rum'
-import { Route as ApiAdminBootstrapRouteImport } from './routes/api/admin/bootstrap'
 
-const LlmsFullDottxtRoute = LlmsFullDottxtRouteImport.update({
-  id: '/llms-full.txt',
-  path: '/llms-full.txt',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LinksRoute = LinksRouteImport.update({
-  id: '/links',
-  path: '/links',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AnalyticsRoute = AnalyticsRouteImport.update({
-  id: '/analytics',
-  path: '/analytics',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -50,9 +40,49 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LinksRoute = LinksRouteImport.update({
+  id: '/links',
+  path: '/links',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LlmsFullDottxtRoute = LlmsFullDottxtRouteImport.update({
+  id: '/llms-full.txt',
+  path: '/llms-full.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLinksRoute = AdminLinksRouteImport.update({
+  id: '/admin/links',
+  path: '/admin/links',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAnalyticsRoute = ApiAnalyticsRouteImport.update({
+  id: '/api/analytics',
+  path: '/api/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiLinkPreviewImageRoute = ApiLinkPreviewImageRouteImport.update({
+  id: '/api/link-preview-image',
+  path: '/api/link-preview-image',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSearchRoute = ApiSearchRouteImport.update({
+  id: '/api/search',
+  path: '/api/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LlmsDotmdxSplatRoute = LlmsDotmdxSplatRouteImport.update({
+  id: '/llms.mdx/$',
+  path: '/llms.mdx/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PostsIndexRoute = PostsIndexRouteImport.update({
@@ -65,34 +95,29 @@ const PostsSlugRoute = PostsSlugRouteImport.update({
   path: '/posts/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LlmsDotmdxSplatRoute = LlmsDotmdxSplatRouteImport.update({
-  id: '/llms.mdx/$',
-  path: '/llms.mdx/$',
+const ApiAdminBootstrapRoute = ApiAdminBootstrapRouteImport.update({
+  id: '/api/admin/bootstrap',
+  path: '/api/admin/bootstrap',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiSearchRoute = ApiSearchRouteImport.update({
-  id: '/api/search',
-  path: '/api/search',
+const ApiAnalyticsRumRoute = ApiAnalyticsRumRouteImport.update({
+  id: '/rum',
+  path: '/rum',
+  getParentRoute: () => ApiAnalyticsRoute,
+} as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiLinkPreviewImageRoute = ApiLinkPreviewImageRouteImport.update({
-  id: '/api/link-preview-image',
-  path: '/api/link-preview-image',
+const ApiTweetIdRoute = ApiTweetIdRouteImport.update({
+  id: '/api/tweet/$id',
+  path: '/api/tweet/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiAnalyticsRoute = ApiAnalyticsRouteImport.update({
-  id: '/api/analytics',
-  path: '/api/analytics',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/admin/login',
-  path: '/admin/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminLinksRoute = AdminLinksRouteImport.update({
-  id: '/admin/links',
-  path: '/admin/links',
+const OgPostsSplatRoute = OgPostsSplatRouteImport.update({
+  id: '/og/posts/$',
+  path: '/og/posts/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PostsTagsIndexRoute = PostsTagsIndexRouteImport.update({
@@ -103,31 +128,6 @@ const PostsTagsIndexRoute = PostsTagsIndexRouteImport.update({
 const PostsTagsTagRoute = PostsTagsTagRouteImport.update({
   id: '/posts/tags/$tag',
   path: '/posts/tags/$tag',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OgPostsSplatRoute = OgPostsSplatRouteImport.update({
-  id: '/og/posts/$',
-  path: '/og/posts/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiTweetIdRoute = ApiTweetIdRouteImport.update({
-  id: '/api/tweet/$id',
-  path: '/api/tweet/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiAnalyticsRumRoute = ApiAnalyticsRumRouteImport.update({
-  id: '/rum',
-  path: '/rum',
-  getParentRoute: () => ApiAnalyticsRoute,
-} as any)
-const ApiAdminBootstrapRoute = ApiAdminBootstrapRouteImport.update({
-  id: '/api/admin/bootstrap',
-  path: '/api/admin/bootstrap',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -291,25 +291,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/llms-full.txt': {
-      id: '/llms-full.txt'
-      path: '/llms-full.txt'
-      fullPath: '/llms-full.txt'
-      preLoaderRoute: typeof LlmsFullDottxtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/links': {
-      id: '/links'
-      path: '/links'
-      fullPath: '/links'
-      preLoaderRoute: typeof LinksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/analytics': {
-      id: '/analytics'
-      path: '/analytics'
-      fullPath: '/analytics'
-      preLoaderRoute: typeof AnalyticsRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -319,11 +305,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/links': {
+      id: '/links'
+      path: '/links'
+      fullPath: '/links'
+      preLoaderRoute: typeof LinksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/llms-full.txt': {
+      id: '/llms-full.txt'
+      path: '/llms-full.txt'
+      fullPath: '/llms-full.txt'
+      preLoaderRoute: typeof LlmsFullDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/links': {
+      id: '/admin/links'
+      path: '/admin/links'
+      fullPath: '/admin/links'
+      preLoaderRoute: typeof AdminLinksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/analytics': {
+      id: '/api/analytics'
+      path: '/api/analytics'
+      fullPath: '/api/analytics'
+      preLoaderRoute: typeof ApiAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/link-preview-image': {
+      id: '/api/link-preview-image'
+      path: '/api/link-preview-image'
+      fullPath: '/api/link-preview-image'
+      preLoaderRoute: typeof ApiLinkPreviewImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/search': {
+      id: '/api/search'
+      path: '/api/search'
+      fullPath: '/api/search'
+      preLoaderRoute: typeof ApiSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/llms.mdx/$': {
+      id: '/llms.mdx/$'
+      path: '/llms.mdx/$'
+      fullPath: '/llms.mdx/$'
+      preLoaderRoute: typeof LlmsDotmdxSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/posts/': {
@@ -340,46 +382,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PostsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/llms.mdx/$': {
-      id: '/llms.mdx/$'
-      path: '/llms.mdx/$'
-      fullPath: '/llms.mdx/$'
-      preLoaderRoute: typeof LlmsDotmdxSplatRouteImport
+    '/api/admin/bootstrap': {
+      id: '/api/admin/bootstrap'
+      path: '/api/admin/bootstrap'
+      fullPath: '/api/admin/bootstrap'
+      preLoaderRoute: typeof ApiAdminBootstrapRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/search': {
-      id: '/api/search'
-      path: '/api/search'
-      fullPath: '/api/search'
-      preLoaderRoute: typeof ApiSearchRouteImport
+    '/api/analytics/rum': {
+      id: '/api/analytics/rum'
+      path: '/rum'
+      fullPath: '/api/analytics/rum'
+      preLoaderRoute: typeof ApiAnalyticsRumRouteImport
+      parentRoute: typeof ApiAnalyticsRoute
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/link-preview-image': {
-      id: '/api/link-preview-image'
-      path: '/api/link-preview-image'
-      fullPath: '/api/link-preview-image'
-      preLoaderRoute: typeof ApiLinkPreviewImageRouteImport
+    '/api/tweet/$id': {
+      id: '/api/tweet/$id'
+      path: '/api/tweet/$id'
+      fullPath: '/api/tweet/$id'
+      preLoaderRoute: typeof ApiTweetIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/analytics': {
-      id: '/api/analytics'
-      path: '/api/analytics'
-      fullPath: '/api/analytics'
-      preLoaderRoute: typeof ApiAnalyticsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/login': {
-      id: '/admin/login'
-      path: '/admin/login'
-      fullPath: '/admin/login'
-      preLoaderRoute: typeof AdminLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/links': {
-      id: '/admin/links'
-      path: '/admin/links'
-      fullPath: '/admin/links'
-      preLoaderRoute: typeof AdminLinksRouteImport
+    '/og/posts/$': {
+      id: '/og/posts/$'
+      path: '/og/posts/$'
+      fullPath: '/og/posts/$'
+      preLoaderRoute: typeof OgPostsSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/posts/tags/': {
@@ -394,41 +429,6 @@ declare module '@tanstack/react-router' {
       path: '/posts/tags/$tag'
       fullPath: '/posts/tags/$tag'
       preLoaderRoute: typeof PostsTagsTagRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/og/posts/$': {
-      id: '/og/posts/$'
-      path: '/og/posts/$'
-      fullPath: '/og/posts/$'
-      preLoaderRoute: typeof OgPostsSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/tweet/$id': {
-      id: '/api/tweet/$id'
-      path: '/api/tweet/$id'
-      fullPath: '/api/tweet/$id'
-      preLoaderRoute: typeof ApiTweetIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/analytics/rum': {
-      id: '/api/analytics/rum'
-      path: '/rum'
-      fullPath: '/api/analytics/rum'
-      preLoaderRoute: typeof ApiAnalyticsRumRouteImport
-      parentRoute: typeof ApiAnalyticsRoute
-    }
-    '/api/admin/bootstrap': {
-      id: '/api/admin/bootstrap'
-      path: '/api/admin/bootstrap'
-      fullPath: '/api/admin/bootstrap'
-      preLoaderRoute: typeof ApiAdminBootstrapRouteImport
       parentRoute: typeof rootRouteImport
     }
   }

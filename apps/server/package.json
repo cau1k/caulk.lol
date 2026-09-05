@@ -12,9 +12,9 @@
     "@caulk.lol/auth": "workspace:*",
     "@caulk.lol/db": "workspace:*",
     "@caulk.lol/env": "workspace:*",
-    "@hono/trpc-server": "^0.4.0",
+    "@hono/trpc-server": "^0.4.2",
     "@trpc/server": "catalog:",
-    "better-auth": "catalog:",
+    "better-auth": "~1.6.30",
     "dotenv": "catalog:",
     "evlog": "catalog:",
     "hono": "catalog:",
@@ -22,9 +22,9 @@
   },
   "devDependencies": {
     "@caulk.lol/config": "workspace:*",
-    "@types/node": "catalog:",
-    "alchemy": "catalog:",
-    "tsdown": "^0.21.9",
+    "@types/node": "24.13.3",
+    "alchemy": "0.94.0",
+    "tsdown": "^0.23.0",
     "typescript": "catalog:",
     "wrangler": "catalog:"
   }

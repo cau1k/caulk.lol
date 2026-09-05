@@ -1,6 +1,6 @@
 "use client";
 import * as Primitive from "fumadocs-core/toc";
-import { useI18n } from "fumadocs-ui/contexts/i18n";
+import { useTranslations } from "@fuma-translate/react";
 import { type ComponentProps, useEffect, useRef, useState } from "react";
 import { cn } from "../../lib/cn";
 import { mergeRefs } from "../../lib/merge-refs";
@@ -9,7 +9,7 @@ import { TocThumb, useTOCItems } from "./index";
 export function TOCItems({ ref, className, ...props }: ComponentProps<"div">) {
   const containerRef = useRef<HTMLDivElement>(null);
   const items = useTOCItems();
-  const { text } = useI18n();
+  const t = useTranslations({ note: "table of contents" });
 
   const [svg, setSvg] = useState<{
     path: string;
@@ -35,10 +35,7 @@ export function TOCItems({ ref, className, ...props }: ComponentProps<"div">) {
         const styles = getComputedStyle(element);
         const offset = getLineOffset(items[i].depth) + 1,
           top = element.offsetTop + parseFloat(styles.paddingTop),
-          bottom =
-            element.offsetTop +
-            element.clientHeight -
-            parseFloat(styles.paddingBottom);
+          bottom = element.offsetTop + element.clientHeight - parseFloat(styles.paddingBottom);
 
         w = Math.max(offset, w);
         h = Math.max(h, bottom);
@@ -66,7 +63,7 @@ export function TOCItems({ ref, className, ...props }: ComponentProps<"div">) {
   if (items.length === 0)
     return (
       <div className="rounded-lg border bg-card p-3 text-xs text-muted-foreground">
-        {text.tocNoHeadings}
+        {t("No Headings")}
       </div>
     );
 
@@ -108,11 +105,7 @@ export function TOCItems({ ref, className, ...props }: ComponentProps<"div">) {
           </div>
         </>
       )}
-      <div
-        ref={mergeRefs(containerRef, ref)}
-        className={cn("flex flex-col", className)}
-        {...props}
-      >
+      <div ref={mergeRefs(containerRef, ref)} className={cn("flex flex-col", className)} {...props}>
         {items.map((item) => (
           <TOCItem key={item.url} item={item} />
         ))}

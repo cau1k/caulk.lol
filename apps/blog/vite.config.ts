@@ -6,7 +6,6 @@ import react from "@vitejs/plugin-react-swc";
 import alchemy from "alchemy/cloudflare/tanstack-start";
 import mdx from "fumadocs-mdx/vite";
 import { defineConfig } from "vite";
-import tsConfigPaths from "vite-tsconfig-paths";
 
 const alchemyConfigPath = fileURLToPath(
   new URL("./.alchemy/local/wrangler.jsonc", import.meta.url),
@@ -33,6 +32,7 @@ export default defineConfig({
     allowedHosts: ["arch.catla-justice.ts.net"],
   },
   resolve: {
+    tsconfigPaths: true,
     alias: [
       {
         find: /^better-auth$/,
@@ -57,9 +57,6 @@ export default defineConfig({
   plugins: [
     mdx(await import("./source.config")),
     tailwindcss(),
-    tsConfigPaths({
-      projects: ["./tsconfig.json"],
-    }),
     ...(shouldUseAlchemy ? [alchemy({ configPath: alchemyConfigPath })] : []),
     tanstackStart({
       prerender: {

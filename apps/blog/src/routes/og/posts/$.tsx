@@ -36,16 +36,12 @@ export const Route = createFileRoute("/og/posts/$")({
           }
 
           const fonts = await getOgFonts(request);
-          const [{ ImageResponse }, { default: takumiModule }] =
-            await Promise.all([
-              import("@takumi-rs/image-response/wasm"),
-              import("@takumi-rs/wasm/next"),
-            ]);
+          const [{ ImageResponse }, { default: takumiModule }] = await Promise.all([
+            import("takumi-js/response"),
+            import("@takumi-rs/wasm/auto"),
+          ]);
           const image = new ImageResponse(
-            <PostImage
-              title={page.data.title}
-              description={page.data.description}
-            />,
+            <PostImage title={page.data.title} description={page.data.description} />,
             {
               width: 1200,
               height: 630,
@@ -59,8 +55,7 @@ export const Route = createFileRoute("/og/posts/$")({
           return image;
         } catch (error) {
           console.error("OG image error", error);
-          const message =
-            error instanceof Error ? error.message : "Unknown error";
+          const message = error instanceof Error ? error.message : "Unknown error";
           return new Response(JSON.stringify({ error: message }), {
             status: 500,
             headers: { "Content-Type": "application/json" },

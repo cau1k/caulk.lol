@@ -1,4 +1,4 @@
-import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
+import type { BaseLayoutProps } from "@/components/layout/shared";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 
 export function baseOptions(): BaseLayoutProps {
