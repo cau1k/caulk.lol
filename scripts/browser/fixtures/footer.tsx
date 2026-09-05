@@ -6,6 +6,7 @@ import {
   RouterProvider,
 } from "@tanstack/react-router";
 import { createRoot } from "react-dom/client";
+import { BackgroundStars } from "@/components/background-stars";
 import { Footer } from "@/components/footer";
 import "./tooltip.css";
 
@@ -19,6 +20,7 @@ document.documentElement.classList.toggle(
 const rootRoute = createRootRoute({
   component: () => (
     <>
+      <BackgroundStars />
       <main className="mx-auto w-full max-w-2xl px-4" style={{ minHeight: shortPage ? 600 : 4000 }}>
         <h1>Footer layout</h1>
       </main>

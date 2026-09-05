@@ -125,7 +125,7 @@ for (const width of [320, 390, 640, 1440]) {
         return {
           mode: style.maskMode,
           ink: style.backgroundColor,
-          primary: getComputedStyle(element.closest("footer").querySelector("a")).color,
+          primary: getComputedStyle(element.closest("footer").querySelector('a[href="/"]')).color,
         };
       });
       assert.equal(colors.mode, "luminance", "black sky must not become an opaque rectangle");
@@ -178,6 +178,49 @@ for (const width of [320, 390, 640, 1440]) {
 }
 
 for (const theme of ["light", "dark"]) {
+  test(`footer artwork sits above shooting stars with a transparent sky in ${theme} mode`, async (t) => {
+    const page = await browser.newPage({
+      viewport: { width: 1314, height: 1034 },
+      colorScheme: theme,
+      reducedMotion: "reduce",
+    });
+    t.after(() => page.close());
+    await page.goto(`${origin}/footer.html?short&theme=${theme}`);
+    const footer = page.getByRole("contentinfo");
+    await footer.waitFor();
+    assert.equal(
+      await footer.evaluate((element) => getComputedStyle(element).backgroundColor),
+      "rgba(0, 0, 0, 0)",
+      "the footer must leave the background star field visible",
+    );
+    const artwork = footer.locator(':scope > div[aria-hidden="true"]');
+    await artwork.scrollIntoViewIfNeeded();
+    await expect(artwork).toBeVisible();
+    const canvases = page.locator("canvas");
+    await expect(canvases).toHaveCount(2);
+    // Include decorative canvases in hit testing without altering paint order.
+    // This detects stacking-context mistakes that comparing z-index values misses.
+    await canvases.evaluateAll((elements) => {
+      elements.forEach((element) => {
+        element.style.pointerEvents = "auto";
+      });
+    });
+    await artwork.evaluate((element) => {
+      element.style.pointerEvents = "auto";
+    });
+    for (const target of [artwork, footer.getByText(/caulk.lol ©/)]) {
+      await target.scrollIntoViewIfNeeded();
+      assert.ok(
+        await target.evaluate((element) => {
+          const box = element.getBoundingClientRect();
+          const top = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
+          return top === element || element.contains(top);
+        }),
+        "artwork must paint above shooting stars, with copyright above the artwork",
+      );
+    }
+  });
+
   test(`scenery peeks into the initial short-page viewport in ${theme} mode`, async (t) => {
     const page = await browser.newPage({
       viewport: { width: 1314, height: 1034 },

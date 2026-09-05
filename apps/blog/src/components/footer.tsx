@@ -43,10 +43,13 @@ export function Footer() {
   }, []);
 
   return (
-    <footer className="relative isolate mt-32 w-full bg-background">
+    <footer className="relative mt-32 w-full">
       <div className="mx-auto w-full max-w-2xl px-4 pt-16 sm:pt-24">
         <div className="flex flex-col justify-between gap-12 sm:flex-row sm:gap-8">
-          <nav aria-label="Footer" className="grid grid-cols-3 gap-24 font-serif text-base">
+          <nav
+            aria-label="Footer"
+            className="grid grid-cols-3 gap-6 font-serif text-base sm:gap-24"
+          >
             <div>
               <h2 className="mb-5 text-xs font-normal font-sans uppercase tracking-wide text-primary sm:text-sm">
                 Explore
@@ -113,11 +116,13 @@ export function Footer() {
           Luminance (not alpha) preserves this opaque engraving's fine lines.
           Overlap the empty sky with the intro so the scenery peeks above the
           homepage fold. The overlap scales with the full-width 16:9 mask;
-          visible ink still starts below the links at every breakpoint. */}
+          visible ink still starts below the links at every breakpoint.
+          Raise only the mask above shooting stars (z-45). Keep the footer
+          transparent and unisolated so its sky still shows the star field. */}
       <div
         ref={artworkRef}
         aria-hidden="true"
-        className="pointer-events-none -mt-[6vw] aspect-video w-full bg-primary [mask-mode:luminance] [mask-size:100%_100%] [mask-repeat:no-repeat] dark:opacity-70"
+        className="pointer-events-none relative z-50 -mt-[6vw] aspect-video w-full bg-primary [mask-mode:luminance] [mask-size:100%_100%] [mask-repeat:no-repeat] dark:opacity-70"
         style={{
           maskImage: loadArtwork ? 'url("/media/roman.webp")' : "none",
           visibility: loadArtwork ? "visible" : "hidden",
@@ -125,7 +130,7 @@ export function Footer() {
       />
       {/* Separate backings protect text contrast without hiding the scenery
           between them. Translucent theme-colored shadows soften each edge. */}
-      <div className="absolute inset-x-0 bottom-8 z-10 mx-auto w-full max-w-2xl px-4">
+      <div className="absolute inset-x-0 bottom-8 z-50 mx-auto w-full max-w-2xl px-4">
         <div className="flex flex-wrap items-center justify-between gap-x-16 gap-y-6 font-serif text-sm text-foreground">
           <p className={colophonClassName}>
             caulk.lol &copy; <span suppressHydrationWarning>{new Date().getFullYear()}</span>{" "}

@@ -11,6 +11,10 @@ Copyright and timings have separate opaque `bg-background` backings for text
 contrast, with clear space between them. Each has a soft theme-colored shadow
 at 70% opacity, letting the scenery show through its edges. Both adapt to the
 active theme.
+The footer stays transparent and does not isolate its children in a stacking
+context. Only the artwork rises above the shooting-star canvas: the engraving
+paints in front of passing stars while its transparent sky keeps the star field
+visible. The credits follow the artwork at the same layer so they remain readable.
 
 The original Roman engraving was generated with the built-in image generation
 tool. Its white ink and black sky form a **luminance mask**, so `bg-primary`
