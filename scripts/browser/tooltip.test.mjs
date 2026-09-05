@@ -49,15 +49,15 @@ for (const width of [1200, 390]) {
       const page = await browser.newPage({
         viewport: { width, height: 1000 },
         colorScheme: theme,
-        reducedMotion: "reduce",
+        reducedMotion: "no-preference",
       });
       t.after(() => page.close());
       const errors = [];
       page.on("pageerror", (error) => errors.push(error.message));
       await page.goto(`${origin}/?theme=${theme}`);
-      await page.evaluate(() => document.fonts.ready);
       const chart = page.locator('[aria-label^="Performance comparison chart"]');
       await chart.waitFor();
+      await page.evaluate(() => document.fonts.ready);
 
       for (const [index, label] of labels.entries()) {
         await t.test(`top edge, category ${index + 1}`, async () => {
