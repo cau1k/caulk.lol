@@ -33,7 +33,19 @@ I think a blanket restriction makes the most sense here. "Judge every contributi
 
 Of course this excludes some good contributions. Someone can use an agent, understand the patch, test it properly, and stick around through review. Someone else can handwrite a mess and disappear. That's a real cost of a blanket rule. I still think it's a reasonable tradeoff for a project trying to keep its review workload manageable. Maintainers don't owe us an individual assessment of every patch we can produce.
 
-Suppose a project repeatedly receives submissions whose authors can't explain them or respond usefully to review. The maintainers spend their available time investigating patches that go nowhere. A blanket restriction gives them a policy they can point to without reopening the argument for every submission. People can ignore it or conceal their use of agents, so it won't eliminate the problem. It does establish what work the project is willing to accept.
+Mitchell Hashimoto has put an explicit contribution gate into practice with Ghostty. Its [contribution guide](https://github.com/ghostty-org/ghostty/blob/main/CONTRIBUTING.md#first-time-contributors) tells newcomers to open a GitHub discussion explaining what they want to change and why, in their own words. A maintainer has to vouch for them before they can submit PRs; otherwise, those PRs are automatically closed. In the [FAQ for Vouch](https://github.com/mitchellh/vouch/blob/main/FAQ.md#how-do-first-time-contributors-get-vouched), the system behind this, Hashimoto puts it plainly:
+
+> Basically: introduce yourself like any normal human social environment, and you're vouched.
+
+Mario Zechner's Pi has a similarly blunt [contribution policy](https://github.com/earendil-works/pi/blob/main/CONTRIBUTING.md#contribution-gate):
+
+> All issues and PRs from new contributors are auto-closed by default.
+
+Maintainers review the closed issues and reopen worthwhile ones. Approval to submit future issues and approval to submit PRs are separate; a contributor needs the latter before opening a PR. The guide explains that automatic closure lets maintainers process the queue on their own schedule. Hashimoto even [credits Pi's system](https://github.com/mitchellh/vouch#vouch) as the basis for Vouch.
+
+Both projects allow AI-written code when the contributor understands it. Their blanket restriction applies to participation before approval. That's the part I like: a patch arriving doesn't automatically create a claim on the maintainer's attention. There's a process for establishing whether someone should be contributing before the project takes on their code.
+
+These gates still require judgment, and they won't eliminate bad submissions. But they let maintainers start with a short explanation of the problem and the person proposing to solve it. That's a much more reasonable starting point than an unsolicited pile of code. I think it also challenges DHH's protectionism argument: these projects explicitly permit agent-written code and still restrict who can submit it.
 
 I support that boundary. The freedom to modify a project doesn't make its maintainers available to review my modification, even if I think it's good. I can use my changes myself or maintain a fork. Getting them included upstream means working within that project's contribution rules.
 
