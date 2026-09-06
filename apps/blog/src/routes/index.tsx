@@ -91,7 +91,7 @@ function Home() {
 
             {rest.length > 0 && (
               <section>
-                <h2 className="mb-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                <h2 className="mb-6 text-sm font-normal font-sans text-muted-foreground uppercase tracking-wider">
                   Recent
                 </h2>
                 <div className="group/list">
