@@ -133,8 +133,8 @@ export function Footer() {
         />
         <div
           data-scene-layer="ink"
-          className="absolute inset-0 bg-primary [mask-mode:luminance] [mask-size:100%_100%] [mask-repeat:no-repeat] dark:opacity-70"
-          style={{ maskImage: loadArtwork ? 'url("/media/roman.webp")' : "none" }}
+          className="footer-ink absolute inset-0 bg-primary [mask-mode:luminance] [mask-size:100%_100%] [mask-repeat:no-repeat] dark:opacity-70"
+          style={{ maskImage: loadArtwork ? "var(--footer-ink)" : "none" }}
         />
       </div>
       {/* Separate backings protect text contrast without hiding the scenery

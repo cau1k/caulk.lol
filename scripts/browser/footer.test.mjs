@@ -8,6 +8,7 @@ import { chromium } from "playwright";
 import { expect } from "playwright/test";
 import { assertShootingStarMotion } from "./motion.mjs";
 import { assertMeteorAppearance } from "./meteor.mjs";
+import { assertFooterResolution } from "./resolution.mjs";
 
 const repository = fileURLToPath(new URL("../../", import.meta.url));
 const blog = resolve(repository, "apps/blog");
@@ -53,6 +54,24 @@ after(async () => {
   await browser?.close();
   await server?.close();
 });
+
+for (const [width, deviceScaleFactor, asset] of [
+  [390, 3, "roman.webp"],
+  [1440, 1, "roman.webp"],
+  [1440, 2, "roman@2x.webp"],
+  [1920, 1, "roman@2x.webp"],
+  [640, 3, "roman@2x.webp"],
+]) {
+  test(`footer selects sharp artwork at ${width}px and ${deviceScaleFactor}x density`, async (t) => {
+    const page = await browser.newPage({
+      viewport: { width, height: 900 },
+      deviceScaleFactor,
+      reducedMotion: "reduce",
+    });
+    t.after(() => page.close());
+    await assertFooterResolution(page, origin, asset);
+  });
+}
 
 test("shooting stars continue in page space offscreen and preserve explicit pauses", async (t) => {
   const page = await browser.newPage({
@@ -200,6 +219,7 @@ for (const theme of ["light", "dark"]) {
   test(`only colonnade openings reveal shooting stars within the scenery in ${theme} mode`, async (t) => {
     const page = await browser.newPage({
       viewport: { width: 1314, height: 1034 },
+      deviceScaleFactor: 2,
       reducedMotion: "reduce",
     });
     t.after(() => page.close());

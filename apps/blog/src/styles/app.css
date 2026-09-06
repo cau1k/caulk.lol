@@ -5,6 +5,22 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Keep phones on the smaller engraving. Wide and dense displays get the
+   sharpened 2x export; CSS responds to resizing/zoom without JS listeners.
+   The URL is only consumed when the footer's lazy-load gate opens. */
+.footer-ink {
+  --footer-ink: url("/media/roman.webp");
+}
+
+@media (min-width: 1673px),
+  (min-width: 1338px) and (min-resolution: 1.25dppx),
+  (min-width: 837px) and (min-resolution: 1.5dppx),
+  (min-width: 558px) and (min-resolution: 2.5dppx) {
+  .footer-ink {
+    --footer-ink: url("/media/roman@2x.webp");
+  }
+}
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);

@@ -31,9 +31,27 @@ This brings a small part of the engraving into the homepage's initial desktop
 viewport while keeping the visible ink below the links and the credits at the
 bottom of the artwork. Shorter viewports still use normal document scrolling.
 
-Final asset: `apps/blog/public/media/roman.webp`, 1672 × 941, 390,398 bytes.
-Encoded from the generated PNG with ImageMagick at WebP quality 88; no runtime
-image library or new dependency. The supplied portrait remains untouched.
+The engraving has two sharpened exports: `apps/blog/public/media/roman.webp`
+(1672 × 941, 476,618 bytes) and `roman@2x.webp` (3344 × 1882, about 1.25 MB).
+Both come from the generated PNG, preserved as a lossless 8-bit monochrome master
+at `apps/blog/scripts/assets/roman.png`. Converting that master to grayscale
+removes irrelevant color data from the white-on-black luminance artwork.
+The master stays outside `public`, so browsers never download it.
+
+Run `node apps/blog/scripts/upscale.mjs` with ImageMagick 7 to rebuild both WebPs
+and the SVG occlusion mask. Lanczos resampling preserves the scene's exact
+composition; a small unsharp-mask radius (0.4 source pixels, doubled at 2x)
+strengthens fine ink edges without broad halos. WebP quality 92 preserves more
+linework than the previous quality-88 export. This is deterministic sharpening
+and resampling, not invented architectural detail or a generative redraw.
+No runtime image library or new dependency is needed.
+
+CSS selects the large export above 1672 CSS pixels, above 1337 pixels at 1.25x
+density, above 836 pixels at 1.5x density, or above 557 pixels at 2.5x density.
+This includes desktop zoom and dense tablets while keeping phones on the smaller
+asset. The selected URL is not used until the existing viewport gate opens.
+Both variants occupy the same reserved frame and share the same vector
+occlusion geometry. The supplied portrait remains untouched.
 
 The occlusion mask is `apps/blog/public/media/roman.svg`, about 4.3 KB (1.6 KB
 with Brotli compression). It fills below the skyline, then carves seven
@@ -78,6 +96,10 @@ then verifies pause, scrolling while paused, and resuming without a jump. Unit
 tests also check equal travel at different frame rates and after skipped frames.
 The fixture renders the actual footer, router, fonts, and styles outside public
 application routes. Browser suites use separate Vite caches and entry scans.
+Resolution tests cover phones, standard and high-density desktops, and wide
+screens. They hold the image response to verify that the frame and document
+height stay fixed through decoding and that only the selected export loads.
+The column-opening pixel checks also run against the 2x engraving.
 
 Generation prompt:
 
