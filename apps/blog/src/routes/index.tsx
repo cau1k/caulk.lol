@@ -68,7 +68,7 @@ function Home() {
                 <Link to={featured.url} className="group block">
                   <article>
                     <time
-                      className="text-sm text-muted-foreground"
+                      className="text-xs text-muted-foreground uppercase font-mono"
                       title={featured.date ? formatDateTime(featured.date) : undefined}
                     >
                       {featured.date && formatDate(featured.date)}
@@ -81,7 +81,7 @@ function Home() {
                         {featured.description}
                       </p>
                     )}
-                    <span className="mt-4 inline-block text-sm font-medium text-primary group-hover:underline">
+                    <span className="mt-4 inline-block text-sm font-medium text-muted-foreground group-hover:text-primary transition-all duration-200">
                       Read more
                     </span>
                   </article>
@@ -105,7 +105,7 @@ function Home() {
                         {post.title}
                       </span>
                       <time
-                        className="text-sm text-muted-foreground shrink-0"
+                        className="text-xs text-muted-foreground uppercase font-mono"
                         title={post.date ? formatDateTime(post.date) : undefined}
                       >
                         {post.date && formatDate(post.date)}

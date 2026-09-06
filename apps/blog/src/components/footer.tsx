@@ -18,7 +18,7 @@ const elsewhereLinks = [
 ] as const;
 
 const linkClassName =
-  "inline-block py-2 text-foreground/70 underline-offset-4 transition-colors hover:text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary";
+  "inline-block py-2 underline-offset-4 transition-colors hover:text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary";
 
 const colophonClassName = "bg-background shadow-[0_0_1.5rem_0.75rem] shadow-background/70";
 
@@ -51,7 +51,7 @@ export function Footer() {
             className="grid grid-cols-3 gap-6 font-serif text-base sm:gap-24"
           >
             <div>
-              <h2 className="mb-5 text-xs font-normal font-sans uppercase tracking-wide text-primary sm:text-sm">
+              <h2 className="mb-5 text-xs font-normal font-sans uppercase tracking-wide text-muted-foreground sm:text-sm">
                 Explore
               </h2>
               <ul>
@@ -65,7 +65,7 @@ export function Footer() {
               </ul>
             </div>
             <div>
-              <h2 className="mb-5 text-xs font-normal font-sans uppercase tracking-wide text-primary sm:text-sm">
+              <h2 className="mb-5 text-xs font-normal font-sans uppercase tracking-wide text-muted-foreground sm:text-sm">
                 Elsewhere
               </h2>
               <ul>
@@ -79,7 +79,7 @@ export function Footer() {
               </ul>
             </div>
             <div>
-              <h2 className="mb-5 text-xs font-normal font-sans uppercase tracking-wide text-primary sm:text-sm">
+              <h2 className="mb-5 text-xs font-normal font-sans uppercase tracking-wide text-muted-foreground sm:text-sm">
                 Colophon
               </h2>
               <ul>
