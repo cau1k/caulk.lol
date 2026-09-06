@@ -112,8 +112,8 @@ export function Footer() {
         </div>
       </div>
 
-      {/* The occlusion mask fills tiny hatch gaps while preserving open space
-          between columns, branches, and vegetation throughout the scene.
+      {/* The foreground stays solid except for the main colonnade openings.
+          Foliage, stairs, and terrain hide shooting stars completely.
           The separate luminance mask supplies theme-colored ink above it.
           Overlap the empty sky with the intro so the scenery peeks above the
           homepage fold. The overlap scales with the full-width 16:9 mask;

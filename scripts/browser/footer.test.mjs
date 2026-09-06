@@ -197,7 +197,7 @@ for (const width of [320, 390, 640, 1440]) {
 }
 
 for (const theme of ["light", "dark"]) {
-  test(`scenery hides shooting stars through engraving gaps in ${theme} mode`, async (t) => {
+  test(`only colonnade openings reveal shooting stars within the scenery in ${theme} mode`, async (t) => {
     const page = await browser.newPage({
       viewport: { width: 1314, height: 1034 },
       reducedMotion: "reduce",
@@ -244,23 +244,34 @@ for (const theme of ["light", "dark"]) {
         );
       return {
         sky: at(0.5, 0.05),
-        columns: at(1208 / 1672, 330 / 941),
+        columns: [
+          at(1095 / 1672, 330 / 941),
+          at(1128 / 1672, 330 / 941),
+          at(1170 / 1672, 320 / 941),
+          at(1208 / 1672, 330 / 941),
+          at(1255 / 1672, 310 / 941),
+          at(1310 / 1672, 280 / 941),
+          at(1370 / 1672, 265 / 941),
+        ],
         branches: at(803 / 1672, 456 / 941),
         vegetation: at(700 / 1672, 510 / 941),
+        steps: at(565 / 1672, 820 / 941),
         terrain: at(850 / 1672, 700 / 941),
       };
     }, screenshot.toString("base64"));
     assert.deepEqual(pixels.sky, [255, 0, 255, 255], "open sky keeps the stars visible");
-    for (const gap of ["columns", "branches", "vegetation"]) {
+    for (const pixel of pixels.columns) {
       assert.ok(
-        pixels[gap][0] > 240 && pixels[gap][1] < 20 && pixels[gap][2] > 240,
-        `open space between ${gap} must reveal shooting stars: ${pixels[gap]}`,
+        pixel[0] > 240 && pixel[1] < 20 && pixel[2] > 240,
+        `open space between columns must reveal shooting stars: ${pixel}`,
       );
     }
-    assert.ok(
-      pixels.terrain[1] >= pixels.terrain[0] - 4,
-      `shooting-star color leaked through solid scenery: ${pixels.terrain}`,
-    );
+    for (const surface of ["branches", "vegetation", "steps", "terrain"]) {
+      assert.ok(
+        pixels[surface][1] >= pixels[surface][0] - 4,
+        `shooting-star color leaked through ${surface}: ${pixels[surface]}`,
+      );
+    }
   });
 
   test(`footer artwork sits above shooting stars with a transparent sky in ${theme} mode`, async (t) => {

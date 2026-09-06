@@ -32,11 +32,21 @@ const pixels = execFileSync(
 );
 if (pixels.length !== width * height) throw new Error("Unexpected grayscale pixel count");
 
-// Close narrow hatch marks, then fill only tiny enclosed gaps. Large negative
-// spaces survive even when enclosed by columns, branches, or architectural arches.
-// A skyline fill cannot represent those openings: it turns the whole scene solid.
-fillSmallGaps(pixels, width, height);
-const paths = traceContours(pixels, width, height);
+// The landscape is a solid foreground silhouette. Only the selected openings
+// between the colonnade's columns may reveal the animated sky behind it.
+const engraving = execFileSync(
+  "magick",
+  [fileURLToPath(source), "-colorspace", "Gray", "-depth", "8", "gray:-"],
+  { maxBuffer: width * height + 1024 },
+);
+const mask = new Uint8Array(width * height);
+for (let x = 0; x < width; x++) {
+  let skyline = 0;
+  while (skyline < height && engraving[skyline * width + x] < 32) skyline++;
+  for (let y = skyline; y < height; y++) mask[y * width + x] = 255;
+}
+carveColonnade(pixels, mask, width);
+const paths = traceContours(mask, width, height);
 const hash = createHash("sha256")
   .update(await readFile(source))
   .digest("hex");
@@ -51,18 +61,35 @@ console.log(
   `Generated Roman occlusion mask with ${paths.length} contours from ${width} × ${height} source pixels.`,
 );
 
-function fillSmallGaps(pixels, width, height) {
+function carveColonnade(pixels, mask, width) {
+  // Source-pixel seeds identify the seven main column openings in roman.webp.
+  // Tracing each enclosed region follows its stone edges without opening dark
+  // texture in the foliage, stairs, rocks, or the buildings below the colonnade.
+  const openings = [
+    [1095, 330],
+    [1128, 330],
+    [1170, 320],
+    [1208, 330],
+    [1255, 310],
+    [1310, 280],
+    [1370, 265],
+  ];
   const seen = new Uint8Array(pixels.length);
-  for (let start = 0; start < pixels.length; start++) {
-    if (pixels[start] || seen[start]) continue;
+  for (const [seedX, seedY] of openings) {
+    const start = seedY * width + seedX;
+    if (pixels[start]) throw new Error(`Column opening at ${seedX},${seedY} is no longer empty`);
     const region = [start];
     seen[start] = 1;
-    let touchesEdge = false;
     for (let i = 0; i < region.length; i++) {
       const index = region[i];
       const x = index % width;
       const y = Math.floor(index / width);
-      if (x === 0 || x === width - 1 || y === 0 || y === height - 1) touchesEdge = true;
+      // Fail on changed artwork instead of accidentally carving the entire sky
+      // component through the foreground if a column boundary stops enclosing it.
+      if (x < 1010 || x > 1455 || y < 235 || y > 450) {
+        throw new Error(`Column opening at ${seedX},${seedY} escapes the colonnade`);
+      }
+      mask[index] = 0;
       for (const next of [
         x > 0 ? index - 1 : -1,
         x < width - 1 ? index + 1 : -1,
@@ -74,15 +101,11 @@ function fillSmallGaps(pixels, width, height) {
         region.push(next);
       }
     }
-    if (!touchesEdge && region.length < 64)
-      region.forEach((index) => {
-        pixels[index] = 255;
-      });
   }
 }
 
 /** Trace pixel boundaries into SVG contours. Even-odd fill preserves holes;
- * subpixel simplification keeps the mask small without erasing narrow branches. */
+ * subpixel simplification keeps the skyline and column edges compact. */
 function traceContours(pixels, width, height) {
   const stride = width + 1;
   const edges = new Map();
@@ -129,7 +152,7 @@ function traceContours(pixels, width, height) {
       ...simplify([...points.slice(middle), points[0]]).slice(1, -1),
     ];
     if (simplified.length >= 3) {
-      // Relative offsets compress the detailed vegetation much better than
+      // Relative offsets compress the detailed skyline much better than
       // repeating four-digit document coordinates for every small edge.
       paths.push(
         `M${simplified[0].join(",")}${simplified

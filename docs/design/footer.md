@@ -13,10 +13,10 @@ at 70% opacity, letting the scenery show through its edges. Both adapt to the
 active theme.
 The footer stays transparent and does not isolate its children in a stacking
 context. Only the artwork rises above the shooting-star canvas. A
-`bg-background` occlusion mask blocks stars behind engraved surfaces and fills
-tiny hatch gaps. A second mask paints the green ink above it. Both leave open
-space between columns and vegetation transparent, including enclosed openings
-below the skyline. The credits follow the artwork at the same
+`bg-background` occlusion mask blocks stars throughout the foreground, including
+foliage, stairs, and terrain. Only the seven main openings between the colonnade's
+columns remain transparent below the skyline. A second mask paints the green
+ink above it. The credits follow the artwork at the same
 layer so they remain readable.
 
 The original Roman engraving was generated with the built-in image generation
@@ -35,11 +35,13 @@ Final asset: `apps/blog/public/media/roman.webp`, 1672 × 941, 390,398 bytes.
 Encoded from the generated PNG with ImageMagick at WebP quality 88; no runtime
 image library or new dependency. The supplied portrait remains untouched.
 
-The occlusion mask is `apps/blog/public/media/roman.svg`, 80,411 bytes (18,691
-bytes with Brotli compression). It closes narrow hatch gaps with a 3px disk and
-fills enclosed gaps smaller than 64 source pixels. Larger openings remain
-transparent throughout the image. The generated SVG uses even-odd contours and
-relative coordinates, simplified within 0.75 source pixels. Rebuild it after
+The occlusion mask is `apps/blog/public/media/roman.svg`, about 4.3 KB (1.6 KB
+with Brotli compression). It fills below the skyline, then carves seven
+explicitly selected column openings. A 3px morphological close seals fine hatch
+gaps before tracing each opening's stone boundary. The generator fails if a
+selected opening no longer exists or escapes the colonnade. The generated SVG
+uses even-odd contours and relative coordinates, simplified within 0.75 source
+pixels. Rebuild it after
 changing the WebP or algorithm with `node apps/blog/scripts/footer.mjs` (requires
 ImageMagick 7). A unit test checks the image and generator SHA-256 hashes stored
 in the SVG to prevent stale output.
@@ -69,8 +71,8 @@ Two initial-viewport checks at 1314 × 1034 also decode the mask pixels to verif
 that actual engraving is visible without scrolling, rather than just its empty
 sky. The same pixel measurement checks clearance below the navigation.
 Pixel occlusion tests put a bright shooting-star layer behind the artwork and
-check that it remains visible in the sky, between columns, and around tree
-branches, while solid terrain still blocks it in either theme. A controlled-clock
+check that it remains visible in the sky and all seven column openings, while
+branches, vegetation, steps, and terrain block it in either theme. A controlled-clock
 test follows one star out of view and back in,
 then verifies pause, scrolling while paused, and resuming without a jump. Unit
 tests also check equal travel at different frame rates and after skipped frames.
