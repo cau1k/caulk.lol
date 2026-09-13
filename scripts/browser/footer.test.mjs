@@ -4,16 +4,18 @@ import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import { after, before, test } from "node:test";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { chromium } from "playwright";
+import { chromium, webkit } from "playwright";
 import { expect } from "playwright/test";
 import { assertShootingStarMotion } from "./motion.mjs";
 import { assertMeteorAppearance } from "./meteor.mjs";
 import { assertFooterResolution } from "./resolution.mjs";
+import { assertFooterMask } from "./mask.mjs";
 
 const repository = fileURLToPath(new URL("../../", import.meta.url));
 const blog = resolve(repository, "apps/blog");
 let server;
 let browser;
+let safari;
 let origin;
 
 before(async () => {
@@ -47,13 +49,34 @@ before(async () => {
   assert.ok(address && typeof address !== "string");
   origin = `http://127.0.0.1:${address.port}`;
   browser = await chromium.launch({ executablePath: process.env.PERF_CHROMIUM });
+  safari = await webkit.launch();
   await mkdir(resolve(repository, "test-results/footer"), { recursive: true });
 });
 
 after(async () => {
   await browser?.close();
+  await safari?.close();
   await server?.close();
 });
+
+for (const engine of ["chromium", "webkit"]) {
+  for (const [width, deviceScaleFactor] of [
+    [390, 3],
+    [1440, 2],
+  ]) {
+    for (const theme of ["light", "dark"]) {
+      test(`footer mask paints engraving in ${engine} at ${width}px in ${theme}`, async (t) => {
+        const page = await (engine === "webkit" ? safari : browser).newPage({
+          viewport: { width, height: 1000 },
+          deviceScaleFactor,
+          reducedMotion: "reduce",
+        });
+        t.after(() => page.close());
+        await assertFooterMask(page, origin, repository, `${engine}-${width}`, theme);
+      });
+    }
+  }
+}
 
 for (const [width, deviceScaleFactor, asset] of [
   [390, 3, "roman.webp"],
@@ -100,10 +123,12 @@ for (const width of [320, 390, 640, 1440]) {
       const artworkResponses = [];
       page.on("pageerror", (error) => errors.push(error.message));
       page.on("request", (request) => {
-        if (request.url().endsWith("/media/roman.webp")) artworkRequests.push(request.url());
+        if (new URL(request.url()).pathname === "/media/roman.webp")
+          artworkRequests.push(request.url());
       });
       page.on("response", (response) => {
-        if (response.url().endsWith("/media/roman.webp")) artworkResponses.push(response);
+        if (new URL(response.url()).pathname === "/media/roman.webp")
+          artworkResponses.push(response);
       });
       await page.goto(`${origin}/footer.html?theme=${theme}`);
       const footer = page.getByRole("contentinfo");
@@ -166,7 +191,7 @@ for (const width of [320, 390, 640, 1440]) {
           primary: getComputedStyle(element.closest("footer").querySelector('a[href="/"]')).color,
         };
       });
-      assert.equal(colors.mode, "luminance", "black sky must not become an opaque rectangle");
+      assert.equal(colors.mode, "alpha", "ink must not depend on WebKit luminance conversion");
       assert.equal(
         colors.ink.replace(/\s/g, ""),
         colors.primary.replace(/\s/g, ""),
@@ -383,7 +408,7 @@ async function firstInkTop(artwork) {
     const row = Array.from({ length: canvas.height }, (_, y) => y).find((y) => {
       let ink = 0;
       for (let x = 0; x < canvas.width; x++) {
-        if (data[(y * canvas.width + x) * 4] > 128) ink++;
+        if (data[(y * canvas.width + x) * 4 + 3] > 128) ink++;
       }
       return ink >= 16;
     });

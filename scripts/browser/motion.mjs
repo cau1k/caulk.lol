@@ -51,8 +51,21 @@ export async function assertShootingStarMotion(page, origin) {
     "resuming must not jump ahead by the intentionally paused time",
   );
 
+  // Media changes arrive on a browser rendering task, outside the mocked
+  // animation clock. Wait for that event before taking the frozen-frame sample.
+  const preferenceChanged = page.evaluate(
+    () =>
+      new Promise((resolve) => {
+        matchMedia("(prefers-reduced-motion: reduce)").addEventListener(
+          "change",
+          () => resolve(true),
+          { once: true },
+        );
+      }),
+  );
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.clock.runFor(32);
+  await preferenceChanged;
   const reduced = await meteor.evaluate((canvas) => canvas.toDataURL());
   await page.clock.fastForward(2000);
   assert.equal(

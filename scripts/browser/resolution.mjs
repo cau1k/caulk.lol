@@ -8,7 +8,7 @@ export async function assertFooterResolution(page, origin, asset) {
   const waiting = new Promise((resolve) => {
     release = resolve;
   });
-  await page.route(/\/media\/roman(?:@2x)?\.webp$/, async (route) => {
+  await page.route(/\/media\/roman(?:@2x)?\.webp\?mask=alpha$/, async (route) => {
     requests.push(new URL(route.request().url()).pathname);
     await waiting;
     await route.continue();

@@ -41,8 +41,8 @@ jobs:
       - name: Verify blog regressions
         run: pnpm --filter blog test
 
-      - name: Install browser for UI regressions
-        run: pnpm exec playwright install --with-deps chromium
+      - name: Install browsers for UI regressions
+        run: pnpm exec playwright install --with-deps chromium webkit
 
       - name: Verify chart tooltips and footer layouts
         run: pnpm test:browser

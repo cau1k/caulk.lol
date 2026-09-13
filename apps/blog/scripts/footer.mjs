@@ -17,8 +17,8 @@ const pixels = execFileSync(
   "magick",
   [
     fileURLToPath(source),
-    "-colorspace",
-    "Gray",
+    "-alpha",
+    "Extract",
     "-threshold",
     "12.5%",
     "-morphology",
@@ -36,7 +36,7 @@ if (pixels.length !== width * height) throw new Error("Unexpected grayscale pixe
 // between the colonnade's columns may reveal the animated sky behind it.
 const engraving = execFileSync(
   "magick",
-  [fileURLToPath(source), "-colorspace", "Gray", "-depth", "8", "gray:-"],
+  [fileURLToPath(source), "-alpha", "Extract", "-depth", "8", "gray:-"],
   { maxBuffer: width * height + 1024 },
 );
 const mask = new Uint8Array(width * height);

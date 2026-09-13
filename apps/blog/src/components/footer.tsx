@@ -114,7 +114,8 @@ export function Footer() {
 
       {/* The foreground stays solid except for the main colonnade openings.
           Foliage, stairs, and terrain hide shooting stars completely.
-          The separate luminance mask supplies theme-colored ink above it.
+          The separate alpha mask supplies theme-colored ink above it. Its
+          transparency is baked in to avoid WebKit's luminance-mask paint bug.
           Overlap the empty sky with the intro so the scenery peeks above the
           homepage fold. The overlap scales with the full-width 16:9 mask;
           visible ink still starts below the links at every breakpoint.
@@ -133,7 +134,7 @@ export function Footer() {
         />
         <div
           data-scene-layer="ink"
-          className="footer-ink absolute inset-0 bg-primary [mask-mode:luminance] [mask-size:100%_100%] [mask-repeat:no-repeat] dark:opacity-70"
+          className="footer-ink absolute inset-0 bg-primary [mask-mode:alpha] [mask-size:100%_100%] [mask-repeat:no-repeat] dark:opacity-70"
           style={{ maskImage: loadArtwork ? "var(--footer-ink)" : "none" }}
         />
       </div>

@@ -9,7 +9,8 @@
    sharpened 2x export; CSS responds to resizing/zoom without JS listeners.
    The URL is only consumed when the footer's lazy-load gate opens. */
 .footer-ink {
-  --footer-ink: url("/media/roman.webp");
+  /* Different URLs prevent reuse of the previous opaque luminance exports. */
+  --footer-ink: url("/media/roman.webp?mask=alpha");
 }
 
 @media (min-width: 1673px),
@@ -17,7 +18,7 @@
   (min-width: 837px) and (min-resolution: 1.5dppx),
   (min-width: 558px) and (min-resolution: 2.5dppx) {
   .footer-ink {
-    --footer-ink: url("/media/roman@2x.webp");
+    --footer-ink: url("/media/roman@2x.webp?mask=alpha");
   }
 }
 

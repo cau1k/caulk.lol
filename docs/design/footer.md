@@ -20,9 +20,13 @@ ink above it. The credits follow the artwork at the same
 layer so they remain readable.
 
 The original Roman engraving was generated with the built-in image generation
-tool. Its white ink and black sky form a **luminance mask**, so `bg-primary`
-supplies the exact green for each theme. Alpha masking would turn this opaque
-image into a rectangle. The 16:9 artwork fits without cutting off the stairs or
+tool. The export step converts its white ink and black sky into **alpha
+transparency**, so `bg-primary` supplies the exact green for each theme.
+Both mask layers use `mask-mode: alpha`. The earlier opaque WebP depended on
+runtime luminance conversion, which can produce a solid green rectangle in
+Safari at particular sizes ([WebKit bug 282530](https://bugs.webkit.org/show_bug.cgi?id=282530)).
+Precomputing transparency removes that faulty paint path for every browser.
+The 16:9 artwork fits without cutting off the stairs or
 colonnade. Dark mode reduces only ink opacity; the silhouette stays opaque.
 The decorative masks request their assets
 within 600px of the viewport; its reserved frame prevents layout shifts.
@@ -32,7 +36,7 @@ viewport while keeping the visible ink below the links and the credits at the
 bottom of the artwork. Shorter viewports still use normal document scrolling.
 
 The engraving has two sharpened exports: `apps/blog/public/media/roman.webp`
-(1672 × 941, 476,618 bytes) and `roman@2x.webp` (3344 × 1882, about 1.25 MB).
+(1672 × 941, 555,798 bytes) and `roman@2x.webp` (3344 × 1882, about 1.91 MB).
 Both come from the generated PNG, preserved as a lossless 8-bit monochrome master
 at `apps/blog/scripts/assets/roman.png`. Converting that master to grayscale
 removes irrelevant color data from the white-on-black luminance artwork.
@@ -41,20 +45,26 @@ The master stays outside `public`, so browsers never download it.
 Run `node apps/blog/scripts/upscale.mjs` with ImageMagick 7 to rebuild both WebPs
 and the SVG occlusion mask. Lanczos resampling preserves the scene's exact
 composition; a small unsharp-mask radius (0.4 source pixels, doubled at 2x)
-strengthens fine ink edges without broad halos. WebP quality 92 preserves more
-linework than the previous quality-88 export. This is deterministic sharpening
+strengthens fine ink edges without broad halos. Brightness is copied into alpha,
+then RGB is set to white. The alpha channel retains 64 opacity levels, with at
+most 2/255 quantization error; no edge moves or blurs, and black sky becomes
+exactly transparent. WebP alpha quality 100 preserves those levels during
+encoding; color quality 92 only affects the solid white RGB plane.
+This is deterministic sharpening
 and resampling, not invented architectural detail or a generative redraw.
 No runtime image library or new dependency is needed.
 
 CSS selects the large export above 1672 CSS pixels, above 1337 pixels at 1.25x
 density, above 836 pixels at 1.5x density, or above 557 pixels at 2.5x density.
 This includes desktop zoom and dense tablets while keeping phones on the smaller
-asset. The selected URL is not used until the existing viewport gate opens.
+asset. The `?mask=alpha` asset URLs avoid cached copies of the earlier opaque
+exports. The selected URL is not used until the existing viewport gate opens.
 Both variants occupy the same reserved frame and share the same vector
 occlusion geometry. The supplied portrait remains untouched.
 
 The occlusion mask is `apps/blog/public/media/roman.svg`, about 4.3 KB (1.6 KB
-with Brotli compression). It fills below the skyline, then carves seven
+with Brotli compression). It reads the engraving's alpha channel, fills below
+the skyline, then carves seven
 explicitly selected column openings. A 3px morphological close seals fine hatch
 gaps before tracing each opening's stone boundary. The generator fails if a
 selected opening no longer exists or escapes the colonnade. The generated SVG
@@ -83,7 +93,7 @@ outside the glow, and brightness limits for three overlapping meteors.
 
 `pnpm test:browser` checks heading clearance at 320, 390, 640, and 1440 pixels in
 both themes, horizontal overflow, deferred asset loading, the 16:9 frame,
-luminance masking, active-theme ink color, text column alignment, colophon
+alpha masking, active-theme ink color, text column alignment, colophon
 placement, and at least 4.5:1 contrast for its copyright and timing text.
 Two initial-viewport checks at 1314 × 1034 also decode the mask pixels to verify
 that actual engraving is visible without scrolling, rather than just its empty
@@ -100,6 +110,12 @@ Resolution tests cover phones, standard and high-density desktops, and wide
 screens. They hold the image response to verify that the frame and document
 height stay fixed through decoding and that only the selected export loads.
 The column-opening pixel checks also run against the 2x engraving.
+Chromium and WebKit paint tests at 390px/3x and 1440px/2x inspect screenshots in
+both themes for transparent sky, visible green strokes, and empty column gaps.
+The WebKit desktop tests reproduced the solid rectangle before the alpha fix;
+both pass afterwards. These are Linux WebKit tests, not tests on a physical
+iPhone. CI installs both engines with `pnpm exec playwright install --with-deps
+chromium webkit` and runs the regressions before deployment.
 
 Generation prompt:
 
