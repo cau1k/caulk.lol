@@ -1,3 +1,5 @@
+import { adminUrl } from "@caulk.lol/env/urls";
+import { env } from "@caulk.lol/env/web";
 import { Button } from "@caulk.lol/ui/components/button";
 import { Separator } from "@caulk.lol/ui/components/separator";
 import { Link } from "@tanstack/react-router";
@@ -5,10 +7,14 @@ import { ArrowUpRightIcon, ClipboardIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { copyToClipboard } from "@/components/settings/utils";
+import { cliLogin } from "@/lib/environment";
 
 export function DeviceSettingsPage() {
   async function copyDeviceCommand() {
-    await copyToClipboard("caulk auth login --device-auth", "Device auth command copied.");
+    await copyToClipboard(
+      cliLogin(env.VITE_SERVER_URL, "--device-auth"),
+      "Device auth command copied.",
+    );
   }
 
   return (
@@ -28,7 +34,7 @@ export function DeviceSettingsPage() {
           </Button>
         }
         label="CLI login"
-        value="caulk auth login --device-auth"
+        value={cliLogin(env.VITE_SERVER_URL, "--device-auth")}
       >
         Approve the code in the device auth route.
       </SettingsRow>
@@ -40,7 +46,7 @@ export function DeviceSettingsPage() {
           </Button>
         }
         label="Approval page"
-        value="admin.caulk.lol/device"
+        value={adminUrl(env.VITE_SERVER_URL, "/device")}
       >
         Device codes require the owner session.
       </SettingsRow>
@@ -63,7 +69,7 @@ function SettingsRow({
     <div className="grid gap-3 py-2 sm:grid-cols-[10rem_minmax(0,1fr)_auto] sm:items-center">
       <p className="text-muted-foreground">{label}</p>
       <div className="min-w-0">
-        <p className="break-all font-medium">{value}</p>
+        <p className="whitespace-pre-wrap break-all font-medium">{value}</p>
         <p className="mt-1 text-muted-foreground">{children}</p>
       </div>
       {action}

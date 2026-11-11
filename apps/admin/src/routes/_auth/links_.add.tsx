@@ -1,5 +1,6 @@
 import type { CreateLinkInput } from "@caulk.lol/api/links";
 import { type LinkPreviewResponse, linkPreviewResponseSchema } from "@caulk.lol/api/link-preview";
+import { adminUrl } from "@caulk.lol/env/urls";
 import { env } from "@caulk.lol/env/web";
 import { Button } from "@caulk.lol/ui/components/button";
 import { LinkCard } from "@caulk.lol/ui/components/link-preview";
@@ -12,6 +13,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 
 import { LinkForm, type LinkFormInitialValues } from "@/components/link-form";
+import { linkShortcut } from "@/lib/environment";
 import { useTRPC, useTRPCClient } from "@/utils/trpc";
 
 const searchValueSchema = z
@@ -31,8 +33,7 @@ const addLinkSearchSchema = z.object({
   url: searchValueSchema,
 });
 
-const addLinkShortcutHref =
-  "javascript:(()=>{const p=new URLSearchParams({url:location.href,title:document.title});location.href='https://admin.caulk.lol/links/add?'+p.toString()})()";
+const addLinkShortcutHref = linkShortcut(env.VITE_SERVER_URL);
 
 export const Route = createFileRoute("/_auth/links_/add")({
   validateSearch: addLinkSearchSchema,
@@ -74,7 +75,8 @@ function AddLinkRoute() {
         <header className="space-y-1">
           <h1 className="text-2xl font-medium tracking-tight">Add link</h1>
           <p className="text-xs text-muted-foreground">
-            Paste a URL, use query params, or visit admin.caulk.lol/&lt;link&gt;.
+            Paste a URL, use query params, or visit{" "}
+            {new URL(adminUrl(env.VITE_SERVER_URL, "/")).host}/&lt;link&gt;.
           </p>
         </header>
 

@@ -20,8 +20,9 @@ config({ path: "../../apps/blog/.env" });
 config({ path: "../../apps/admin/.env" });
 config({ path: "../../apps/server/.env" });
 
-const stage = process.env.STAGE ?? "prod";
-const apiDomainName = "api.caulk.lol";
+// Leave stage selection to Alchemy so --stage takes precedence over .env.
+// Passing an explicit stage option would override the CLI flag in Alchemy 0.94.
+process.env.STAGE ??= "prod";
 const serverCwd = fileURLToPath(new URL("../../apps/server/", import.meta.url));
 const blogCwd = fileURLToPath(new URL("../../apps/blog/", import.meta.url));
 const serverBetterAuthMinimalBarrel = path.join(
@@ -31,12 +32,19 @@ const serverBetterAuthMinimalBarrel = path.join(
 const hasBlogBuildOutput = existsSync(path.join(blogCwd, "dist/server/index.js"));
 
 const app = await alchemy("caulk-lol", {
-  stage,
   stateStore: process.env.CI
     ? (scope) => new CloudflareStateStore(scope, { forceUpdate: true })
     : undefined,
   adopt: true,
 });
+
+const stage = app.stage;
+const domains = app.local
+  ? undefined
+  : {
+      prod: { blog: "caulk.lol", admin: "admin.caulk.lol", server: "api.caulk.lol" },
+      dev: { blog: "dev.caulk.lol", admin: "dev-admin.caulk.lol", server: "dev-api.caulk.lol" },
+    }[stage];
 
 const tweetCache = await KVNamespace("tweet-cache", {
   title: `${app.name}-${app.stage}-tweet-cache`,
@@ -46,7 +54,10 @@ const linkPreviewCache = await KVNamespace("link-preview-cache", {
   title: `${app.name}-${app.stage}-link-preview-cache`,
 });
 
-const analyticsDatasetName = "CAULK_SITE_METRICS";
+const analyticsDatasetName =
+  stage === "prod"
+    ? "CAULK_SITE_METRICS"
+    : `CAULK_SITE_METRICS_${stage.replace(/[^a-z0-9_]/gi, "_").toUpperCase()}`;
 
 const siteMetrics = AnalyticsEngineDataset("site-metrics", {
   dataset: analyticsDatasetName,
@@ -59,8 +70,10 @@ const linksDb = await D1Database("links-db", {
 
 const authSecret = requiredSecret("BETTER_AUTH_SECRET", "better-auth-secret");
 const adminBootstrapToken = requiredSecret("ADMIN_BOOTSTRAP_TOKEN", "admin-bootstrap-token");
-const betterAuthUrl = resolveBetterAuthUrl(stage, requiredEnv("BETTER_AUTH_URL"));
-const corsOrigin = resolveCorsOrigin(stage, requiredEnv("CORS_ORIGIN"));
+const betterAuthUrl = domains ? `https://${domains.server}` : requiredEnv("BETTER_AUTH_URL");
+const corsOrigin = domains
+  ? `https://${domains.blog},https://${domains.admin}`
+  : resolveCorsOrigin(requiredEnv("CORS_ORIGIN"));
 const ownerEmail = requiredEnv("OWNER_EMAIL");
 const authEmailFrom = "noreply@caulk.lol";
 const serverEmailSender = EmailSender({
@@ -90,19 +103,8 @@ export const server = await Worker("server", {
       },
     ],
   },
+  ...publicConfig(domains?.server),
   url: true,
-  ...(stage === "prod"
-    ? {
-        domains: [
-          {
-            domainName: apiDomainName,
-            zoneId: requiredEnv("CLOUDFLARE_ZONE_ID"),
-            adopt: true,
-            overrideExistingOrigin: true,
-          },
-        ],
-      }
-    : {}),
   bindings: {
     DB: linksDb,
     LINKS_DB: linksDb,
@@ -120,8 +122,7 @@ export const server = await Worker("server", {
   },
 });
 
-const serverUrl =
-  stage === "prod" ? `https://${apiDomainName}` : requireResourceUrl("server", server.url);
+const serverUrl = domains ? `https://${domains.server}` : requireResourceUrl("server", server.url);
 
 const sharedSiteBindings = {
   DB: linksDb,
@@ -141,45 +142,11 @@ const sharedSiteBindings = {
   ...optionalSecretBinding("ANALYTICS_API_TOKEN", analyticsApiToken, "analytics-api-token"),
 };
 
-const blogPublicConfig =
-  stage === "prod"
-    ? {
-        domains: [
-          {
-            domainName: "caulk.lol",
-            zoneId: requiredEnv("CLOUDFLARE_ZONE_ID"),
-            adopt: true,
-            overrideExistingOrigin: true,
-          },
-        ],
-        url: false,
-      }
-    : {
-        url: true,
-      };
-
-const adminPublicConfig =
-  stage === "prod"
-    ? {
-        domains: [
-          {
-            domainName: "admin.caulk.lol",
-            zoneId: requiredEnv("CLOUDFLARE_ZONE_ID"),
-            adopt: true,
-            overrideExistingOrigin: true,
-          },
-        ],
-        url: false,
-      }
-    : {
-        url: true,
-      };
-
 export const blog = await TanStackStart("blog", {
   cwd: "../../apps/blog",
   name: `${app.name}-${app.stage}-blog`,
-  ...blogPublicConfig,
-  assets: stage === "prod" ? blogAssets : { run_worker_first: false },
+  ...publicConfig(domains?.blog),
+  assets: app.local ? { run_worker_first: false } : blogAssets,
   build: {
     memoize:
       process.env.CI || !hasBlogBuildOutput
@@ -210,7 +177,7 @@ export const blog = await TanStackStart("blog", {
 export const admin = await TanStackStart("admin", {
   cwd: "../../apps/admin",
   name: `${app.name}-${app.stage}-admin`,
-  ...adminPublicConfig,
+  ...publicConfig(domains?.admin),
   bindings: sharedSiteBindings,
   dev: {
     command: "vite dev --host 127.0.0.1 --port 3002",
@@ -243,18 +210,27 @@ function requireResourceUrl(name: string, url: string | undefined): string {
   return url;
 }
 
-function resolveBetterAuthUrl(currentStage: string, value: string): string {
-  return currentStage === "prod" ? `https://${apiDomainName}` : value;
-}
-
-function resolveCorsOrigin(currentStage: string, value: string): string {
-  const origins =
-    currentStage === "prod"
-      ? ["https://caulk.lol", "https://admin.caulk.lol"]
-      : uniqueOrigins(parseOriginList(value));
+function resolveCorsOrigin(value: string): string {
+  const origins = uniqueOrigins(parseOriginList(value));
 
   if (origins.length === 0) throw new Error("CORS_ORIGIN must include at least one origin.");
   return origins.join(",");
+}
+
+function publicConfig(domainName: string | undefined) {
+  if (!domainName) return { url: true };
+
+  return {
+    domains: [
+      {
+        domainName,
+        zoneId: requiredEnv("CLOUDFLARE_ZONE_ID"),
+        adopt: true,
+        overrideExistingOrigin: true,
+      },
+    ],
+    url: false,
+  };
 }
 
 function parseOriginList(value: string): string[] {

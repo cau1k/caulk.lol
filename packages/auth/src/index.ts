@@ -195,7 +195,8 @@ function getDeviceVerificationUri(runtimeEnv: RuntimeEnv) {
 function getAdminOrigin(runtimeEnv: RuntimeEnv) {
   const adminOrigin = readTrustedOrigins(runtimeEnv).find((origin) => {
     try {
-      return new URL(origin).hostname.startsWith("admin.");
+      const hostname = new URL(origin).hostname;
+      return hostname.startsWith("admin.") || hostname === "dev-admin.caulk.lol";
     } catch {
       return false;
     }

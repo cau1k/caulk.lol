@@ -1,3 +1,4 @@
+import { env } from "@caulk.lol/env/web";
 import { Button } from "@caulk.lol/ui/components/button";
 import { Input } from "@caulk.lol/ui/components/input";
 import { Label } from "@caulk.lol/ui/components/label";
@@ -8,6 +9,7 @@ import { type FormEvent, useState } from "react";
 import { toast } from "sonner";
 
 import { copyToClipboard, errorMessage, formField } from "@/components/settings/utils";
+import { cliLogin } from "@/lib/environment";
 import { useTRPCClient } from "@/utils/trpc";
 
 export function ApiKeysSettingsPage() {
@@ -34,7 +36,10 @@ export function ApiKeysSettingsPage() {
   }
 
   async function copyApiKeyCommand() {
-    await copyToClipboard("caulk auth login --api-key <key>", "API key command copied.");
+    await copyToClipboard(
+      cliLogin(env.VITE_SERVER_URL, "--api-key <key>"),
+      "API key command copied.",
+    );
   }
 
   return (

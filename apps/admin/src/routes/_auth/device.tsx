@@ -1,3 +1,4 @@
+import { env } from "@caulk.lol/env/web";
 import { Badge } from "@caulk.lol/ui/components/badge";
 import { Button } from "@caulk.lol/ui/components/button";
 import { Input } from "@caulk.lol/ui/components/input";
@@ -15,6 +16,7 @@ import {
 import { type FormEvent, useMemo, useState } from "react";
 import { toast } from "sonner";
 
+import { cliLogin } from "@/lib/environment";
 import { useTRPC, useTRPCClient } from "@/utils/trpc";
 
 export const Route = createFileRoute("/_auth/device")({
@@ -86,7 +88,9 @@ function DeviceRoute() {
           <aside className="space-y-4 text-xs text-muted-foreground">
             <p className="flex items-center gap-2">
               <CommandIcon className="size-3.5" />
-              caulk auth login --device-auth
+              <span className="min-w-0 whitespace-pre-wrap break-all">
+                {cliLogin(env.VITE_SERVER_URL, "--device-auth")}
+              </span>
             </p>
             <p className="flex items-center gap-2">
               <ShieldCheckIcon className="size-3.5" />
